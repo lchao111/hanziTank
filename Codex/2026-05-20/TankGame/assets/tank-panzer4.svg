@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-label="Panzer IV tank side texture">
+  <defs>
+    <linearGradient id="armor" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#8b8b80"/><stop offset="0.55" stop-color="#5f625c"/><stop offset="1" stop-color="#2e312f"/></linearGradient>
+    <linearGradient id="track" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#343630"/><stop offset="1" stop-color="#10110f"/></linearGradient>
+    <filter id="grit"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" seed="27"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 0.2"/></feComponentTransfer><feBlend mode="multiply" in2="SourceGraphic"/></filter>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#0c0d0c" flood-opacity="0.46"/></filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <ellipse cx="250" cy="238" rx="192" ry="24" fill="#111" opacity="0.55"/>
+    <path d="M47 181h358c30 0 51 16 58 42l-34 34H66l-38-34c4-24 10-37 19-42Z" fill="url(#track)" stroke="#090a09" stroke-width="8"/>
+    <g fill="#252722" stroke="#0b0c0b" stroke-width="5"><circle cx="89" cy="222" r="23"/><circle cx="139" cy="226" r="25"/><circle cx="190" cy="226" r="26"/><circle cx="242" cy="226" r="26"/><circle cx="294" cy="226" r="26"/><circle cx="346" cy="224" r="25"/><circle cx="397" cy="220" r="22"/></g>
+    <g fill="#969789" opacity="0.75"><circle cx="89" cy="222" r="9"/><circle cx="139" cy="226" r="10"/><circle cx="190" cy="226" r="10"/><circle cx="242" cy="226" r="10"/><circle cx="294" cy="226" r="10"/><circle cx="346" cy="224" r="10"/><circle cx="397" cy="220" r="9"/></g>
+    <path d="M62 128h285l78 42 15 49H82l-39-44Z" fill="url(#armor)" stroke="#252827" stroke-width="7" filter="url(#grit)"/>
+    <path d="M166 88h155l44 32-12 46H149l-20-42Z" fill="url(#armor)" stroke="#252827" stroke-width="7" filter="url(#grit)"/>
+    <path d="M342 113h146c12 0 20 7 21 17l-4 10H340Z" fill="#555852" stroke="#252827" stroke-width="8"/>
+    <path d="M74 153c77-9 180-7 285 10" stroke="#bbbbae" stroke-width="4" opacity="0.38" fill="none"/>
+    <path d="M80 193h336" stroke="#151716" stroke-width="6" opacity="0.55"/>
+    <g fill="#1f2220"><circle cx="105" cy="151" r="4"/><circle cx="144" cy="150" r="4"/><circle cx="184" cy="148" r="4"/><circle cx="223" cy="149" r="4"/><circle cx="263" cy="150" r="4"/><circle cx="305" cy="154" r="4"/><circle cx="350" cy="171" r="4"/></g>
+    <path d="M69 174c58 15 122 12 183-3 44 13 98 18 160 7" fill="none" stroke="#30251b" stroke-width="10" opacity="0.34"/>
+  </g>
+</svg>

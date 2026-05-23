@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 280" role="img" aria-label="Enemy scout car side texture">
+  <defs>
+    <linearGradient id="armor" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#9e5a41"/><stop offset="0.52" stop-color="#673023"/><stop offset="1" stop-color="#2a1510"/></linearGradient>
+    <filter id="grit"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="104"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 0.23"/></feComponentTransfer><feBlend mode="multiply" in2="SourceGraphic"/></filter>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#080605" flood-opacity="0.48"/></filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <ellipse cx="236" cy="224" rx="164" ry="21" fill="#130e0c" opacity="0.55"/>
+    <path d="M63 137l204-33 88 43 39 52H73l-30-35Z" fill="url(#armor)" stroke="#27130e" stroke-width="8" filter="url(#grit)"/>
+    <path d="M159 91h105l51 42H136Z" fill="url(#armor)" stroke="#27130e" stroke-width="8" filter="url(#grit)"/>
+    <path d="M296 115h88c10 0 17 6 18 15l-5 10H293Z" fill="#633022" stroke="#27130e" stroke-width="7"/>
+    <g fill="#29231f" stroke="#0a0706" stroke-width="7"><circle cx="115" cy="207" r="34"/><circle cx="330" cy="207" r="36"/></g>
+    <g fill="#a08a73"><circle cx="115" cy="207" r="13"/><circle cx="330" cy="207" r="14"/></g>
+    <path d="M78 166c65-9 145-11 252 12" stroke="#c8876c" stroke-width="4" opacity="0.32" fill="none"/>
+    <path d="M78 179h295" stroke="#150c09" stroke-width="7" opacity="0.62"/>
+    <g fill="#1f100c"><circle cx="102" cy="153" r="4"/><circle cx="148" cy="146" r="4"/><circle cx="197" cy="140" r="4"/><circle cx="252" cy="144" r="4"/><circle cx="315" cy="167" r="4"/></g>
+    <path d="M74 158c43 13 91 11 144-4 44 15 92 18 145 8" fill="none" stroke="#21120d" stroke-width="10" opacity="0.48"/>
+  </g>
+</svg>

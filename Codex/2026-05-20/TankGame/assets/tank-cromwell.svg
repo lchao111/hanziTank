@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-label="Cromwell cruiser tank side texture">
+  <defs>
+    <linearGradient id="armor" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#707c66"/><stop offset="0.5" stop-color="#485545"/><stop offset="1" stop-color="#222a22"/></linearGradient>
+    <linearGradient id="track" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#30362f"/><stop offset="1" stop-color="#0f110f"/></linearGradient>
+    <filter id="grit"><feTurbulence type="fractalNoise" baseFrequency="0.82" numOctaves="3" seed="52"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 0.2"/></feComponentTransfer><feBlend mode="multiply" in2="SourceGraphic"/></filter>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#090b09" flood-opacity="0.46"/></filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <ellipse cx="246" cy="238" rx="184" ry="23" fill="#10120f" opacity="0.55"/>
+    <path d="M55 184h344c27 0 45 15 51 39l-31 31H72l-34-31c4-23 10-34 17-39Z" fill="url(#track)" stroke="#090b09" stroke-width="8"/>
+    <g fill="#252a24" stroke="#090b09" stroke-width="5"><circle cx="94" cy="222" r="22"/><circle cx="145" cy="225" r="24"/><circle cx="198" cy="225" r="25"/><circle cx="252" cy="225" r="25"/><circle cx="306" cy="224" r="24"/><circle cx="360" cy="220" r="22"/></g>
+    <g fill="#8c927e" opacity="0.75"><circle cx="94" cy="222" r="8"/><circle cx="145" cy="225" r="9"/><circle cx="198" cy="225" r="10"/><circle cx="252" cy="225" r="10"/><circle cx="306" cy="224" r="9"/><circle cx="360" cy="220" r="8"/></g>
+    <path d="M65 135h265l81 38 15 46H83l-40-39Z" fill="url(#armor)" stroke="#202820" stroke-width="8" filter="url(#grit)"/>
+    <path d="M171 92h142l48 27-16 48H153l-23-35Z" fill="url(#armor)" stroke="#202820" stroke-width="8" filter="url(#grit)"/>
+    <path d="M342 116h139c12 0 20 7 20 17l-5 10H340Z" fill="#475444" stroke="#202820" stroke-width="8"/>
+    <path d="M82 158c84-9 178-6 294 12" stroke="#a4ae95" stroke-width="4" opacity="0.38" fill="none"/>
+    <path d="M83 194h323" stroke="#121611" stroke-width="7" opacity="0.56"/>
+    <g fill="#172018"><circle cx="114" cy="155" r="4"/><circle cx="154" cy="153" r="4"/><circle cx="194" cy="151" r="4"/><circle cx="239" cy="151" r="4"/><circle cx="286" cy="155" r="4"/><circle cx="346" cy="176" r="4"/></g>
+    <path d="M74 177c56 14 118 11 184-3 52 16 101 19 147 8" fill="none" stroke="#302318" stroke-width="10" opacity="0.34"/>
+  </g>
+</svg>
