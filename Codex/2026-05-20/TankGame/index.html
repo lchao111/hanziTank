@@ -120,6 +120,18 @@
       animation: battlefield-shake 300ms ease;
     }
 
+    .battlefield.stage-advance {
+      animation: stage-background-drive 1500ms cubic-bezier(.2,.72,.24,1) both;
+    }
+
+    .battlefield.stage-advance::before {
+      animation: stage-trenches-drive 520ms linear infinite;
+    }
+
+    .battlefield.stage-advance .ground {
+      animation: stage-ground-drive 420ms linear infinite;
+    }
+
     .phaser-layer {
       position: absolute;
       z-index: 3;
@@ -209,14 +221,22 @@
       position: absolute;
       z-index: 2;
       bottom: 54px;
-      width: min(32vw, 210px);
-      min-width: 148px;
+      width: min(35vw, 232px);
+      min-width: 160px;
       aspect-ratio: 1.5;
       transition: transform 160ms ease;
     }
 
     .tank.player {
       left: clamp(14px, 7vw, 90px);
+    }
+
+    .tank.player.stage-advance {
+      animation: player-stage-drive 1500ms cubic-bezier(.2,.72,.24,1) both;
+    }
+
+    .tank.player.stage-advance .unit-hud {
+      opacity: 0;
     }
 
     .tank.enemy {
@@ -254,6 +274,14 @@
       clip-path: polygon(0 58%, 16% 38%, 32% 56%, 49% 31%, 63% 62%, 78% 45%, 100% 67%, 100% 100%, 0 100%);
       filter: grayscale(0.85) brightness(0.42) contrast(1.35) drop-shadow(0 12px 8px rgba(0, 0, 0, 0.5));
       transform: rotate(-7deg) translateY(16px);
+    }
+
+    .tank.fragmented .tank-sprite,
+    .tank.player.destroyed.fragmented .tank-sprite {
+      opacity: 0;
+      transform: translateY(18px) scale(0.68) rotate(-8deg);
+      filter: grayscale(1) brightness(0.25) contrast(1.45);
+      transition: opacity 220ms ease, transform 300ms ease, filter 260ms ease;
     }
 
     .tank.player.destroyed::before,
@@ -306,6 +334,14 @@
       animation: boss-menace-approach 5000ms linear forwards;
     }
 
+    .tank.enemy-melee.reloading {
+      animation: melee-menace-approach 5000ms linear forwards;
+    }
+
+    .tank.enemy-melee.melee-strike {
+      animation: melee-strike-attack 860ms cubic-bezier(.16,.84,.24,1) forwards;
+    }
+
     .tank-sprite {
       position: absolute;
       z-index: 1;
@@ -324,6 +360,18 @@
 
     .enemy-boss .tank-sprite {
       filter: saturate(0.86) contrast(1.16) drop-shadow(0 14px 12px rgba(10, 6, 5, 0.52));
+    }
+
+    .tank.enemy-boss {
+      z-index: 4;
+    }
+
+    .enemy-boss.phaser-boss-active .tank-sprite {
+      opacity: 0;
+    }
+
+    .tank.player.phaser-player-active .tank-sprite {
+      opacity: 0;
     }
 
     .unit-hud {
@@ -489,6 +537,14 @@
       border-color: rgba(71, 85, 105, 0.76);
       background: rgba(241, 245, 249, 0.96);
       color: #334155;
+    }
+
+    .damage-float.miss-hit {
+      min-width: 62px;
+      border-color: rgba(30, 64, 175, 0.7);
+      background: rgba(219, 234, 254, 0.95);
+      color: #1e3a8a;
+      font-size: 17px;
     }
 
     .defense-effect {
@@ -969,6 +1025,39 @@
       box-shadow: 0 0 18px rgba(255, 242, 161, 0.95);
     }
 
+    .bullet.smoke-shell {
+      width: 32px;
+      height: 14px;
+      background: linear-gradient(90deg, #334155, #cbd5e1 38% 72%, #64748b);
+      box-shadow: 0 0 18px rgba(203, 213, 225, 0.72);
+    }
+
+    .bullet.repair-shell {
+      width: 28px;
+      background: linear-gradient(90deg, #14532d, #bbf7d0 32% 70%, #22c55e);
+      box-shadow: 0 0 16px rgba(34, 197, 94, 0.68);
+    }
+
+    .bullet.armor-shell {
+      width: 30px;
+      background: linear-gradient(90deg, #1e3a8a, #bfdbfe 30% 70%, #475569);
+      box-shadow: 0 0 16px rgba(96, 165, 250, 0.68);
+    }
+
+    .bullet.arcane-shell {
+      width: 32px;
+      height: 14px;
+      background: linear-gradient(90deg, #3b0764, #ddd6fe 30% 68%, #a855f7);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.78);
+    }
+
+    .bullet.flash-shell {
+      width: 32px;
+      height: 14px;
+      background: linear-gradient(90deg, #854d0e, #fef08a 28% 72%, #f97316);
+      box-shadow: 0 0 22px rgba(254, 240, 138, 0.86);
+    }
+
     .bullet.he-shell {
       width: 34px;
       height: 18px;
@@ -1245,7 +1334,9 @@
     }
 
     .perk-panel {
-      width: min(620px, calc(100vw - 28px));
+      width: min(1080px, calc(100vw - 28px));
+      max-height: calc(100vh - 36px);
+      overflow: auto;
       padding: 18px;
       border: 3px solid #2b2520;
       border-radius: 8px;
@@ -1274,7 +1365,70 @@
       gap: 12px;
     }
 
+    .stage-clear-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.82fr) minmax(360px, 1.18fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .stage-clear-column {
+      display: grid;
+      gap: 12px;
+    }
+
+    .inline-war-prep {
+      border: 2px solid #c6b28f;
+      border-radius: 8px;
+      background: #fffaf0;
+      overflow: hidden;
+    }
+
+    .inline-war-prep-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 12px;
+      border-bottom: 2px solid #d5c3a6;
+      background: #fff7e6;
+      color: #33291f;
+      font-weight: 900;
+    }
+
+    .inline-war-prep-title {
+      font-size: 20px;
+      line-height: 1.1;
+    }
+
+    .inline-war-prep-meta {
+      color: #7a5217;
+      font-size: 14px;
+    }
+
+    .inline-war-prep .shop-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      max-height: 390px;
+      overflow: auto;
+      padding: 10px;
+    }
+
+    .inline-war-prep .shop-card {
+      min-height: 196px;
+      padding: 10px;
+    }
+
+    .inline-loadout {
+      padding: 0 10px 10px;
+      color: #4c4339;
+      font-weight: 800;
+    }
+
     .perk-choice {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      gap: 12px;
+      align-items: center;
       min-height: 132px;
       padding: 12px;
       border: 3px solid #526147;
@@ -1289,6 +1443,114 @@
     .perk-choice:focus-visible {
       outline: 4px solid rgba(82, 97, 71, 0.24);
       background: #e5f9dc;
+    }
+
+    .perk-icon {
+      position: relative;
+      width: 58px;
+      height: 58px;
+      border: 3px solid #2f3a25;
+      border-radius: 8px;
+      background: linear-gradient(145deg, #fff7cf, #d4b064 68%, #7a5521);
+      box-shadow: inset 0 3px 0 rgba(255,255,255,0.42), 0 8px 12px rgba(43, 35, 24, 0.22);
+    }
+
+    .perk-icon::before,
+    .perk-icon::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .perk-icon.armor-icon::before {
+      width: 25px;
+      height: 33px;
+      border: 4px solid #244b2a;
+      border-radius: 14px 14px 18px 18px;
+      background: linear-gradient(#7ddf86, #2f8f46);
+      clip-path: polygon(50% 0, 92% 16%, 82% 74%, 50% 100%, 18% 74%, 8% 16%);
+    }
+
+    .perk-icon.repair-icon::before,
+    .perk-icon.repair-icon::after {
+      width: 34px;
+      height: 10px;
+      border-radius: 4px;
+      background: #b91c1c;
+      box-shadow: 0 0 0 3px #fff7e6;
+    }
+
+    .perk-icon.repair-icon::after {
+      transform: translate(-50%, -50%) rotate(90deg);
+    }
+
+    .perk-icon.pierce-icon::before {
+      width: 38px;
+      height: 12px;
+      border-radius: 999px 4px 4px 999px;
+      background: linear-gradient(90deg, #2f281f 0 22%, #d7d2c7 23% 68%, #f97316 69% 100%);
+      transform: translate(-50%, -50%) rotate(-18deg);
+    }
+
+    .perk-icon.pierce-icon::after {
+      width: 18px;
+      height: 26px;
+      border: 4px solid #6b3f1d;
+      border-left: 0;
+      transform: translate(-10%, -50%) rotate(-18deg);
+    }
+
+    .perk-icon.ammo-icon::before {
+      width: 34px;
+      height: 24px;
+      border: 4px solid #4a341c;
+      border-radius: 5px;
+      background:
+        linear-gradient(90deg, transparent 0 18%, rgba(74,52,28,0.55) 18% 26%, transparent 26% 48%, rgba(74,52,28,0.55) 48% 56%, transparent 56% 78%, rgba(74,52,28,0.55) 78% 86%, transparent 86%),
+        linear-gradient(#facc15, #b7791f);
+    }
+
+    .perk-icon.ammo-icon::after {
+      width: 16px;
+      height: 16px;
+      border: 3px solid #6f4a12;
+      border-radius: 50%;
+      background: #ffe08a;
+      transform: translate(18%, 6%);
+    }
+
+    .perk-icon.absolute-icon::before {
+      width: 40px;
+      height: 40px;
+      border: 5px solid #38bdf8;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(224,242,254,0.95) 0 28%, rgba(56,189,248,0.22) 29% 66%, transparent 67%);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.86);
+    }
+
+    .perk-icon.absolute-icon::after {
+      width: 23px;
+      height: 30px;
+      border: 3px solid #075985;
+      border-radius: 12px 12px 16px 16px;
+      clip-path: polygon(50% 0, 92% 16%, 82% 74%, 50% 100%, 18% 74%, 8% 16%);
+    }
+
+    .perk-icon.plating-icon::before {
+      width: 36px;
+      height: 30px;
+      border: 3px solid #1f2937;
+      border-radius: 6px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.48), transparent 35%),
+        repeating-linear-gradient(90deg, #64748b 0 9px, #334155 9px 14px);
+      transform: translate(-50%, -50%) skewX(-10deg);
+    }
+
+    .perk-copy {
+      min-width: 0;
     }
 
     .perk-name {
@@ -2260,18 +2522,48 @@
       72% { transform: translate(3px, 2px); }
     }
 
+    @keyframes stage-background-drive {
+      0% {
+        background-position: 0 0, center bottom, 0 0;
+        filter: saturate(1) brightness(1);
+      }
+      45% {
+        filter: saturate(1.05) brightness(1.05);
+      }
+      100% {
+        background-position: 0 0, calc(50% - 28vw) bottom, 0 0;
+        filter: saturate(1) brightness(1);
+      }
+    }
+
+    @keyframes stage-trenches-drive {
+      0% { background-position: 0 0, 0 0; }
+      100% { background-position: -120px 0, -180px 0; }
+    }
+
+    @keyframes stage-ground-drive {
+      0% { background-position: 0 0, 0 0, 0 0, 0 0; }
+      100% { background-position: -120px 0, -220px 0, -90px 0, 0 0; }
+    }
+
+    @keyframes player-stage-drive {
+      0% { transform: translateX(0) translateY(0); }
+      18% { transform: translateX(clamp(32px, 8vw, 90px)) translateY(-2px); }
+      100% { transform: translateX(clamp(240px, 42vw, 560px)) translateY(0); }
+    }
+
     @keyframes boss-hammer-slam {
       0% {
-        transform: scaleX(-1) translateX(0) translateY(0) rotate(0deg);
+        transform: scaleX(-1) translateX(clamp(300px, 44vw, 760px)) translateY(0) rotate(0deg) scale(1.12);
       }
       28% {
-        transform: scaleX(-1) translateX(92px) translateY(-7px) rotate(-5deg) scale(1.04);
+        transform: scaleX(-1) translateX(clamp(330px, 48vw, 820px)) translateY(-7px) rotate(-5deg) scale(1.14);
       }
       58% {
-        transform: scaleX(-1) translateX(172px) translateY(10px) rotate(11deg) scale(1.1);
+        transform: scaleX(-1) translateX(clamp(360px, 54vw, 900px)) translateY(10px) rotate(11deg) scale(1.18);
       }
       72% {
-        transform: scaleX(-1) translateX(158px) translateY(0) rotate(-3deg) scale(1.06);
+        transform: scaleX(-1) translateX(clamp(340px, 50vw, 840px)) translateY(0) rotate(-3deg) scale(1.14);
       }
       100% {
         transform: scaleX(-1) translateX(0) translateY(0) rotate(0deg);
@@ -2284,8 +2576,29 @@
         filter: drop-shadow(0 12px 12px rgba(10, 6, 5, 0.4));
       }
       100% {
-        transform: scaleX(-1) translateX(72px) scale(1.08);
+        transform: scaleX(-1) translateX(clamp(300px, 44vw, 760px)) scale(1.12);
         filter: drop-shadow(0 18px 18px rgba(10, 6, 5, 0.62));
+      }
+    }
+
+    @keyframes melee-menace-approach {
+      0% {
+        transform: scaleX(-1) translateX(0) scale(1);
+      }
+      100% {
+        transform: scaleX(-1) translateX(clamp(220px, 34vw, 620px)) scale(1.08);
+      }
+    }
+
+    @keyframes melee-strike-attack {
+      0% {
+        transform: scaleX(-1) translateX(clamp(220px, 34vw, 620px)) scale(1.08);
+      }
+      58% {
+        transform: scaleX(-1) translateX(clamp(270px, 42vw, 720px)) translateY(5px) rotate(5deg) scale(1.12);
+      }
+      100% {
+        transform: scaleX(-1) translateX(0) translateY(0) rotate(0deg) scale(1);
       }
     }
 
@@ -2294,16 +2607,16 @@
         transform: scaleX(-1) translateX(0) scale(1);
       }
       100% {
-        transform: scaleX(-1) translateX(96px) scale(1.08);
+        transform: scaleX(-1) translateX(clamp(260px, 38vw, 680px)) scale(1.1);
       }
     }
 
     @keyframes truck-crash-attack {
       0% {
-        transform: scaleX(-1) translateX(96px) scale(1.08);
+        transform: scaleX(-1) translateX(clamp(260px, 38vw, 680px)) scale(1.1);
       }
       62% {
-        transform: scaleX(-1) translateX(178px) translateY(6px) scale(1.13) rotate(3deg);
+        transform: scaleX(-1) translateX(clamp(330px, 50vw, 820px)) translateY(6px) scale(1.16) rotate(3deg);
       }
       100% {
         transform: scaleX(-1) translateX(0) translateY(0) scale(1) rotate(0deg);
@@ -2485,6 +2798,15 @@
         grid-template-columns: 1fr;
       }
 
+      .stage-clear-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .inline-war-prep .shop-grid {
+        grid-template-columns: 1fr;
+        max-height: 280px;
+      }
+
       .summary-grid {
         grid-template-columns: 1fr;
       }
@@ -2601,7 +2923,22 @@
         <div class="perk-panel">
           <div class="perk-title">Stage Clear</div>
           <div class="perk-subtitle" id="perkSubtitle">Choose one upgrade for the next stage.</div>
-          <div class="perk-options" id="perkOptions"></div>
+          <div class="stage-clear-layout">
+            <section class="stage-clear-column" aria-label="Stage clear upgrades">
+              <div class="perk-options" id="perkOptions"></div>
+            </section>
+            <section class="inline-war-prep" aria-label="War Prep">
+              <div class="inline-war-prep-head">
+                <div>
+                  <div class="inline-war-prep-title">War Prep</div>
+                  <div class="inline-war-prep-meta">Coins <span id="inlineShopCoins">0</span></div>
+                </div>
+                <button class="shop-action" id="openFullWarPrepButton" type="button">Full Prep</button>
+              </div>
+              <div class="shop-grid" id="inlineShopGrid"></div>
+              <div class="inline-loadout" id="inlineLoadout"></div>
+            </section>
+          </div>
         </div>
       </div>
 
@@ -2634,7 +2971,7 @@
       <button class="primary" id="nextButton" type="button">Next Word</button>
       <button class="primary" id="reviewButton" type="button">Review Misses</button>
       <button class="primary" id="masteryButton" type="button">Mastery Records</button>
-      <button class="primary war-shop-button" id="arsenalButton" type="button">War Shop</button>
+      <button class="primary war-shop-button" id="arsenalButton" type="button">War Prep</button>
       <button class="primary" id="archiveButton" type="button">War Archives</button>
       <button class="primary" id="debugButton" type="button">Debug Mode</button>
       <button class="primary" id="enemyGalleryButton" type="button">Enemy Gallery</button>
@@ -2646,7 +2983,7 @@
       <section class="arsenal-panel" aria-label="War Shop">
         <div class="arsenal-head">
           <div>
-            <div class="arsenal-title">War Shop</div>
+            <div class="arsenal-title">War Prep</div>
             <div class="arsenal-meta">
               War Coins <span id="shopCoins">0</span> · Today <span id="dailyScore">0</span> pts
             </div>
@@ -2784,6 +3121,7 @@
   <script src="src/data/grade-one-words.js"></script>
   <script src="src/data/enemies.js"></script>
   <script src="src/data/shop-items.js"></script>
+  <script src="src/data/asset-manifest.js"></script>
   <script src="src/core/storage-core.js"></script>
   <script src="src/core/combat-core.js"></script>
   <script src="src/core/learning-core.js"></script>
@@ -2839,12 +3177,12 @@
     } = window.HanziTankQuestions;
 
     const perks = [
-      { id: "armor", name: "Extra Armor", desc: "Max HP +1 and repair 1 HP now.", apply: () => { runUpgrades.maxLives += 1; lives = Math.min(lives + 1, getMaxLives()); } },
-      { id: "repair", name: "Field Repair", desc: "Repair 2 HP now.", apply: () => { lives = Math.min(lives + 2, getMaxLives()); } },
-      { id: "pierce", name: "Piercing Core", desc: "Correct answers deal +1 armor damage.", apply: () => { runUpgrades.damage += 1; } },
-      { id: "ammo", name: "Coin Ammo Box", desc: "+4 extra coins for each correct answer.", apply: () => { runUpgrades.reward += 4; } },
-      { id: "absolute", name: "Absolute Defense", desc: "Add 1 absolute defense. It blocks any one hit, no matter the damage.", apply: () => { runUpgrades.absoluteDefense += 1; absoluteDefenseAvailable += 1; } },
-      { id: "plating", name: "Armor Plating", desc: "Add 2 armor. Incoming damage removes armor before HP.", apply: () => { runUpgrades.armor += 2; playerArmor += 2; } }
+      { id: "armor", iconClass: "armor-icon", name: "Extra Armor", desc: "Max HP +1 and repair 1 HP now.", apply: () => { runUpgrades.maxLives += 1; lives = Math.min(lives + 1, getMaxLives()); } },
+      { id: "repair", iconClass: "repair-icon", name: "Field Repair", desc: "Repair 2 HP now.", apply: () => { lives = Math.min(lives + 2, getMaxLives()); } },
+      { id: "pierce", iconClass: "pierce-icon", name: "Piercing Core", desc: "Correct answers deal +1 armor damage.", apply: () => { runUpgrades.damage += 1; } },
+      { id: "ammo", iconClass: "ammo-icon", name: "Coin Ammo Box", desc: "+4 extra coins for each correct answer.", apply: () => { runUpgrades.reward += 4; } },
+      { id: "absolute", iconClass: "absolute-icon", name: "Absolute Defense", desc: "Add 1 absolute defense. It blocks any one hit, no matter the damage.", apply: () => { runUpgrades.absoluteDefense += 1; absoluteDefenseAvailable += 1; } },
+      { id: "plating", iconClass: "plating-icon", name: "Armor Plating", desc: "Add 2 armor. Incoming damage removes armor before HP.", apply: () => { runUpgrades.armor += 2; playerArmor += 2; } }
     ];
 
     const defaultState = createDefaultState(todayKey);
@@ -2901,6 +3239,10 @@
     const perkScreen = document.querySelector("#perkScreen");
     const perkSubtitle = document.querySelector("#perkSubtitle");
     const perkOptions = document.querySelector("#perkOptions");
+    const inlineShopCoins = document.querySelector("#inlineShopCoins");
+    const inlineShopGrid = document.querySelector("#inlineShopGrid");
+    const inlineLoadout = document.querySelector("#inlineLoadout");
+    const openFullWarPrepButton = document.querySelector("#openFullWarPrepButton");
     const supplyScreen = document.querySelector("#supplyScreen");
     const supplySubtitle = document.querySelector("#supplySubtitle");
     const supplyChest = document.querySelector("#supplyChest");
@@ -3002,6 +3344,7 @@
     let isLevelCleared = false;
     let absoluteDefenseAvailable = 0;
     let playerArmor = 0;
+    let smokeCoverCharges = 0;
     let supplyChallenge = [];
     let supplyIndex = 0;
     let supplyLocked = false;
@@ -3014,18 +3357,26 @@
     let bossSelection = [];
     let shownBossIntroStage = 0;
     let bossIntroToken = 0;
+    let stageAdvanceToken = 0;
     let voicesReady = false;
     let audioContext = null;
     let soundEnabled = localStorage.getItem("hanziTankSound") !== "off";
     let speechRequestToken = 0;
     let pendingSpeechText = "";
+    let queuedSpeechRequest = null;
     let phaserGame = null;
     let phaserEffects = null;
     let phaserPlayerSprite = null;
     let phaserEnemySprite = null;
+    let phaserPlayerTurretSprite = null;
+    let phaserEnemyTurretSprite = null;
+    let phaserPlayerTrackBelt = null;
     let phaserPlayerKey = "";
     let phaserEnemyKey = "";
     let phaserEnemyReloadTween = null;
+    let phaserPlayerTextureReady = false;
+    let phaserBossDismantler = null;
+    let phaserBossTextureReady = false;
     let enemyGalleryGame = null;
     let enemyGalleryScene = null;
     let enemyGallerySprite = null;
@@ -3051,13 +3402,32 @@
             Object.entries(tankSpriteMap).forEach(([key, url]) => this.load.svg(`tank:${key}`, url));
             Object.entries(enemySpriteMap).forEach(([key, url]) => this.load.svg(`enemy:${key}`, url));
             this.load.svg("enemy:boss", bossTemplate.sprite);
+            this.load.image("kenney:playerHull", "assets/sprites/tanks/kenney/tankBody_green.png");
+            this.load.image("kenney:playerTurret", "assets/sprites/tanks/kenney/tankGreen_barrel1.png");
+            this.load.image("kenney:enemyHull", "assets/sprites/tanks/kenney/tankBody_red.png");
+            this.load.image("kenney:enemyTurret", "assets/sprites/tanks/kenney/tankRed_barrel1.png");
+            this.load.spritesheet("playerTankBattle", "assets/sprites/tanks/player-tank-spritesheet.png?v=20260524", {
+              frameWidth: 224,
+              frameHeight: 144
+            });
+            this.load.spritesheet("bossTankDismantler", "assets/sprites/enemies/tank-dismantler-spritesheet.png?v=20260524", {
+              frameWidth: 224,
+              frameHeight: 224
+            });
           },
           create() {
             phaserEffects = this;
-            phaserPlayerSprite = this.add.image(0, 0, "tank:tank_sherman").setOrigin(0.5, 0.5).setDepth(10);
+            this.events.on("update", updatePhaserPlayerTrackMotion);
+            phaserPlayerSprite = this.add.sprite(0, 0, "tank:tank_sherman").setOrigin(0.5, 0.5).setDepth(10);
             phaserEnemySprite = this.add.image(0, 0, "enemy:tank").setOrigin(0.5, 0.5).setDepth(10).setFlipX(true);
+            phaserPlayerTurretSprite = this.add.image(0, 0, "kenney:playerTurret").setOrigin(0.5, 0.5).setDepth(12).setAngle(90);
+            phaserEnemyTurretSprite = this.add.image(0, 0, "kenney:enemyTurret").setOrigin(0.5, 0.5).setDepth(12).setAngle(-90);
+            buildPhaserPlayerTank(this);
+            buildPhaserBossDismantler(this);
             phaserPlayerSprite.setVisible(false);
             phaserEnemySprite.setVisible(false);
+            phaserPlayerTurretSprite.setVisible(false);
+            phaserEnemyTurretSprite.setVisible(false);
             battlefieldEl.classList.add("phaser-actors-ready");
             updatePhaserActors();
           }
@@ -3085,25 +3455,149 @@
 
     function updatePhaserActors() {
       if (!phaserEffects || !phaserPlayerSprite || !phaserEnemySprite) return;
-      const nextPlayerKey = getPlayerTextureKey();
-      const nextEnemyKey = getEnemyTextureKey();
-      if (nextPlayerKey !== phaserPlayerKey && phaserEffects.textures.exists(nextPlayerKey)) {
-        phaserPlayerSprite.setTexture(nextPlayerKey);
-        phaserPlayerKey = nextPlayerKey;
-      }
-      if (nextEnemyKey !== phaserEnemyKey && phaserEffects.textures.exists(nextEnemyKey)) {
-        phaserEnemySprite.setTexture(nextEnemyKey);
-        phaserEnemyKey = nextEnemyKey;
-      }
-      fitPhaserSprite(phaserPlayerSprite, playerTank, playerTank.classList.contains("destroyed") ? 0.94 : 1);
-      fitPhaserSprite(phaserEnemySprite, enemyTank, currentEnemy.id === "boss" ? 1.08 : 1);
+      fitPhaserSprite(phaserPlayerSprite, playerTank, playerTank.classList.contains("destroyed") ? 0.38 : 0.46);
+      fitPhaserSprite(phaserEnemySprite, enemyTank, currentEnemy.id === "boss" ? 0.52 : 0.46);
+      fitPhaserSprite(phaserPlayerTurretSprite, playerTank, playerTank.classList.contains("destroyed") ? 0.38 : 0.46);
+      fitPhaserSprite(phaserEnemyTurretSprite, enemyTank, currentEnemy.id === "boss" ? 0.52 : 0.46);
       phaserPlayerSprite.setAlpha(playerTank.classList.contains("destroyed") ? 0.42 : 1);
-      phaserPlayerSprite.setAngle(playerTank.classList.contains("destroyed") ? -7 : 0);
-      phaserEnemySprite.setFlipX(true);
+      phaserPlayerTurretSprite?.setAlpha(playerTank.classList.contains("destroyed") ? 0.24 : 1);
+      phaserEnemySprite.setAlpha(enemyTank.classList.contains("fragmented") ? 0 : 1);
+      phaserEnemyTurretSprite?.setAlpha(enemyTank.classList.contains("fragmented") ? 0 : 1);
+      phaserPlayerSprite.setAngle(phaserPlayerTextureReady ? 0 : playerTank.classList.contains("destroyed") ? 82 : 90);
+      phaserPlayerTurretSprite?.setAngle(playerTank.classList.contains("destroyed") ? 82 : 90);
+      phaserEnemySprite.setAngle(currentEnemy.id === "boss" ? -90 : -90).setFlipX(false);
+      phaserEnemyTurretSprite?.setAngle(-90).setFlipX(false);
+      updatePhaserPlayerTank();
+      updatePhaserBossDismantler();
+    }
+
+    function buildPhaserPlayerTank(scene) {
+      const playerTexture = scene.textures.get("playerTankBattle");
+      phaserPlayerTextureReady = scene.textures.exists("playerTankBattle") && playerTexture?.key === "playerTankBattle" && (playerTexture.source?.[0]?.width || 0) >= 896;
+      if (!phaserPlayerTextureReady) return;
+      scene.anims.create({ key: "player-tank-idle", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 0, end: 3 }), frameRate: 8, repeat: -1 });
+      scene.anims.create({ key: "player-tank-fire", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 4, end: 7 }), frameRate: 12, repeat: 0 });
+      scene.anims.create({ key: "player-tank-hit", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 8, end: 11 }), frameRate: 12, repeat: 0 });
+      scene.anims.create({ key: "player-tank-weak", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 12, end: 15 }), frameRate: 7, repeat: -1 });
+      scene.anims.create({ key: "player-tank-destroyed", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 16, end: 19 }), frameRate: 7, repeat: 0 });
+      phaserPlayerSprite.setTexture("playerTankBattle", 0).setOrigin(0.5, 0.72).setDepth(14).setAngle(0).setFlipX(false);
+      buildPhaserPlayerTrackBelt(scene);
+      phaserPlayerTurretSprite?.setVisible(false);
+    }
+
+    function buildPhaserPlayerTrackBelt(scene) {
+      if (!scene.textures.exists("playerTrackMotion")) {
+        const graphics = scene.make.graphics({ x: 0, y: 0, add: false });
+        graphics.fillStyle(0x141710, 0.1).fillRect(0, 0, 40, 10);
+        graphics.fillStyle(0xe8d88b, 0.52);
+        for (let x = -12; x < 44; x += 12) graphics.fillRect(x, 1, 5, 8);
+        graphics.generateTexture("playerTrackMotion", 40, 10);
+        graphics.destroy();
+      }
+      phaserPlayerTrackBelt = scene.add.tileSprite(0, 0, 40, 10, "playerTrackMotion")
+        .setOrigin(0.5, 0.5)
+        .setDepth(15)
+        .setAlpha(0.42)
+        .setVisible(false);
+    }
+
+    function getPlayerTankPhaserState() {
+      if (playerTank.classList.contains("destroyed") || lives <= 0 || isGameOver) return "destroyed";
+      if (lives <= Math.max(1, Math.ceil(getMaxLives() * 0.34))) return "weak";
+      return "idle";
+    }
+
+    function updatePhaserPlayerTank() {
+      const active = Boolean(phaserPlayerTextureReady && phaserPlayerSprite && (!playerTank.classList.contains("fragmented") || playerTank.classList.contains("destroyed")));
+      playerTank.classList.toggle("phaser-player-active", active);
+      if (phaserPlayerTrackBelt) phaserPlayerTrackBelt.setVisible(active && !playerTank.classList.contains("destroyed"));
+      if (!active) return;
+      const rect = playerTank.getBoundingClientRect();
+      const point = getBattlefieldPoint(playerTank, 0.5, 0.86);
+      const tankWidth = rect.width * 1.18;
+      const tankHeight = tankWidth * (144 / 224);
+      phaserPlayerSprite.setVisible(true).setPosition(point.x, point.y).setDisplaySize(tankWidth, tankHeight).setAlpha(playerTank.classList.contains("destroyed") ? 0.78 : 1);
+      if (phaserPlayerTrackBelt) {
+        phaserPlayerTrackBelt
+          .setPosition(point.x - tankWidth * 0.06, point.y + tankHeight * 0.08)
+          .setSize(tankWidth * 0.76, tankHeight * 0.11)
+          .setDisplaySize(tankWidth * 0.76, tankHeight * 0.11);
+      }
+      playPhaserPlayerState(getPlayerTankPhaserState());
+    }
+
+    function updatePhaserPlayerTrackMotion() {
+      if (!phaserPlayerTrackBelt?.visible || isPaused || isGameOver) return;
+      phaserPlayerTrackBelt.tilePositionX -= 2.2;
+    }
+
+    function playPhaserPlayerState(stateName, force = false) {
+      if (!phaserPlayerTextureReady || !phaserPlayerSprite?.visible) return;
+      const key = `player-tank-${stateName}`;
+      if (!force && phaserPlayerSprite.anims.currentAnim?.key === key && phaserPlayerSprite.anims.isPlaying) return;
+      phaserPlayerSprite.play(key, true);
+      if (["fire", "hit"].includes(stateName)) {
+        phaserPlayerSprite.once(`animationcomplete-${key}`, () => playPhaserPlayerState(getPlayerTankPhaserState(), true));
+      }
+    }
+
+    function buildPhaserBossDismantler(scene) {
+      if (phaserBossDismantler) return;
+      const bossTexture = scene.textures.get("bossTankDismantler");
+      phaserBossTextureReady = scene.textures.exists("bossTankDismantler") && bossTexture?.key === "bossTankDismantler" && (bossTexture.source?.[0]?.width || 0) >= 1344;
+      if (!phaserBossTextureReady) return;
+      scene.anims.create({
+        key: "tank-dismantler-walk",
+        frames: scene.anims.generateFrameNumbers("bossTankDismantler", { start: 0, end: 5 }),
+        frameRate: 8,
+        repeat: -1
+      });
+      scene.anims.create({
+        key: "tank-dismantler-attack",
+        frames: scene.anims.generateFrameNumbers("bossTankDismantler", { start: 6, end: 11 }),
+        frameRate: 10,
+        repeat: 0
+      });
+      phaserBossDismantler = scene.add.sprite(0, 0, "bossTankDismantler", 0)
+        .setOrigin(0.5, 0.86)
+        .setDepth(16)
+        .setVisible(false);
+    }
+
+    function updatePhaserBossDismantler() {
+      if (!phaserEffects) return;
+      const active = Boolean(phaserBossTextureReady && phaserBossDismantler && currentEnemy.id === "boss" && !enemyTank.classList.contains("fragmented") && !isGameOver);
+      if (phaserBossDismantler) phaserBossDismantler.setVisible(active);
+      enemyTank.classList.toggle("phaser-boss-active", active);
+      phaserEnemySprite.setVisible(false);
+      phaserEnemyTurretSprite?.setVisible(false);
+      if (!active) return;
+      const rect = enemyTank.getBoundingClientRect();
+      const point = getBattlefieldPoint(enemyTank, 0.5, 0.9);
+      const size = Math.max(210, Math.min(360, rect.width * 1.28));
+      phaserBossDismantler.setPosition(point.x, point.y);
+      phaserBossDismantler.setDisplaySize(size, size);
+      phaserBossDismantler.setAlpha(1);
+      if (phaserBossDismantler.anims.currentAnim?.key !== "tank-dismantler-attack") startPhaserBossIdle();
+    }
+
+    function startPhaserBossIdle() {
+      if (!phaserBossDismantler?.visible) return;
+      if (phaserBossDismantler.anims.currentAnim?.key === "tank-dismantler-walk" && phaserBossDismantler.anims.isPlaying) return;
+      phaserBossDismantler.play("tank-dismantler-walk", true);
+    }
+
+    function playPhaserBossSlam() {
+      if (!phaserEffects || !phaserBossDismantler?.visible) return;
+      phaserBossDismantler.play("tank-dismantler-attack", true);
+      phaserBossDismantler.once("animationcomplete-tank-dismantler-attack", () => {
+        if (currentEnemy.id === "boss" && !isGameOver && !isLevelCleared && currentEnemy.hp > 0) startPhaserBossIdle();
+      });
     }
 
     function stopPhaserEnemyApproach(resetPosition = true) {
       if (phaserEffects && phaserEnemySprite) phaserEffects.tweens.killTweensOf(phaserEnemySprite);
+      if (phaserEffects && phaserEnemyTurretSprite) phaserEffects.tweens.killTweensOf(phaserEnemyTurretSprite);
       if (phaserEnemyReloadTween) {
         phaserEnemyReloadTween.stop();
         phaserEnemyReloadTween = null;
@@ -3112,14 +3606,18 @@
     }
 
     function startPhaserEnemyApproach() {
-      if (!phaserEffects || !phaserEnemySprite || !["truck", "boss"].includes(currentEnemy.id)) return;
+      if (!phaserEffects || !phaserEnemySprite || currentEnemy.attackStyle !== "melee") return;
       stopPhaserEnemyApproach(true);
-      const distance = currentEnemy.id === "boss" ? 86 : 104;
+      const playerPoint = getBattlefieldPoint(playerTank, 0.68, 0.54);
+      const enemyPoint = getBattlefieldPoint(enemyTank, 0.5, 0.54);
+      const desiredGap = Math.max(52, Math.min(120, battlefieldEl.clientWidth * 0.07));
+      const distance = Math.max(currentEnemy.approachDistance || 96, enemyPoint.x - playerPoint.x - desiredGap);
+      const actor = currentEnemy.id === "boss" && phaserBossDismantler?.visible ? phaserBossDismantler : phaserEnemySprite;
       phaserEnemyReloadTween = phaserEffects.tweens.add({
-        targets: phaserEnemySprite,
-        x: phaserEnemySprite.x - distance,
-        scaleX: phaserEnemySprite.scaleX * (currentEnemy.id === "boss" ? 1.08 : 1.07),
-        scaleY: phaserEnemySprite.scaleY * (currentEnemy.id === "boss" ? 1.08 : 1.07),
+        targets: (actor === phaserBossDismantler ? [phaserBossDismantler] : [phaserEnemySprite, phaserEnemyTurretSprite]).filter(Boolean),
+        x: actor.x - distance,
+        scaleX: actor.scaleX * (currentEnemy.id === "boss" ? 1.08 : 1.07),
+        scaleY: actor.scaleY * (currentEnemy.id === "boss" ? 1.08 : 1.07),
         duration: enemyAttackInterval * 1000,
         ease: "Linear",
         onComplete: () => {
@@ -3131,17 +3629,20 @@
     function tweenEnemyAttackToBase(distance, windup = {}) {
       if (!phaserEffects || !phaserEnemySprite) return;
       phaserEffects.tweens.killTweensOf(phaserEnemySprite);
-      const startX = phaserEnemySprite.x;
+      if (phaserEnemyTurretSprite) phaserEffects.tweens.killTweensOf(phaserEnemyTurretSprite);
+      const actor = currentEnemy.id === "boss" && phaserBossDismantler?.visible ? phaserBossDismantler : phaserEnemySprite;
+      const targets = currentEnemy.id === "boss" && phaserBossDismantler?.visible ? [phaserBossDismantler] : [phaserEnemySprite, phaserEnemyTurretSprite].filter(Boolean);
+      const startX = actor.x;
       const basePoint = getBattlefieldPoint(enemyTank, 0.5, 0.54);
       phaserEffects.tweens.add({
-        targets: phaserEnemySprite,
+        targets,
         x: startX - distance,
         angle: windup.angle || 0,
         duration: windup.inDuration || 520,
         ease: "Cubic.easeIn",
         onComplete: () => {
           phaserEffects.tweens.add({
-            targets: phaserEnemySprite,
+            targets,
             x: basePoint.x,
             y: basePoint.y,
             angle: 0,
@@ -3169,11 +3670,133 @@
       setTimeout(() => battlefieldEl.classList.remove("screen-shake"), intensity === "heavy" ? 420 : 320);
     }
 
+    function kickPhaserCamera(intensity = "normal") {
+      const camera = phaserEffects?.cameras?.main;
+      if (!camera) return;
+      const heavy = intensity === "heavy";
+      camera.shake(heavy ? 360 : 180, heavy ? 0.012 : 0.005);
+      camera.flash(heavy ? 120 : 70, 255, heavy ? 226 : 245, heavy ? 160 : 210, false);
+    }
+
+    function addPhaserShockwave(scene, x, y, color, heavy = false) {
+      const ring = scene.add.circle(x, y, heavy ? 22 : 14, color, 0.08)
+        .setStrokeStyle(heavy ? 7 : 4, color, 0.92)
+        .setDepth(34);
+      scene.tweens.add({
+        targets: ring,
+        scale: heavy ? 6.2 : 4.2,
+        alpha: 0,
+        duration: heavy ? 640 : 420,
+        ease: "Cubic.easeOut",
+        onComplete: () => ring.destroy()
+      });
+    }
+
+    function addPhaserSmoke(scene, x, y, heavy = false) {
+      const puffCount = heavy ? 13 : 8;
+      for (let index = 0; index < puffCount; index += 1) {
+        const angle = Math.random() * Math.PI * 2;
+        const startDistance = Math.random() * (heavy ? 26 : 16);
+        const smoke = scene.add.circle(
+          x + Math.cos(angle) * startDistance,
+          y + Math.sin(angle) * startDistance + 10,
+          10 + Math.random() * (heavy ? 20 : 12),
+          Math.random() > 0.45 ? 0x1f2933 : 0x475569,
+          heavy ? 0.34 : 0.25
+        ).setDepth(30);
+        scene.tweens.add({
+          targets: smoke,
+          x: smoke.x + Math.cos(angle) * (heavy ? 72 : 44),
+          y: smoke.y - (36 + Math.random() * (heavy ? 64 : 38)),
+          scale: 1.9 + Math.random() * 1.2,
+          alpha: 0,
+          duration: heavy ? 1200 + Math.random() * 420 : 820 + Math.random() * 260,
+          ease: "Sine.easeOut",
+          onComplete: () => smoke.destroy()
+        });
+      }
+    }
+
+    function addPhaserSparks(scene, x, y, heavy = false) {
+      const sparkCount = heavy ? 34 : 18;
+      for (let index = 0; index < sparkCount; index += 1) {
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 36 + Math.random() * (heavy ? 128 : 76);
+        const color = Math.random() > 0.32 ? 0xffd166 : 0xff6b2f;
+        const spark = scene.add.rectangle(x, y, 7 + Math.random() * 9, 3, color, 0.96)
+          .setDepth(36)
+          .setRotation(angle);
+        scene.tweens.add({
+          targets: spark,
+          x: x + Math.cos(angle) * distance,
+          y: y + Math.sin(angle) * distance + Math.random() * 26,
+          rotation: angle + Math.random() * 5,
+          alpha: 0,
+          scale: 0.25,
+          duration: heavy ? 780 + Math.random() * 360 : 520 + Math.random() * 240,
+          ease: "Cubic.easeOut",
+          onComplete: () => spark.destroy()
+        });
+      }
+    }
+
+    function addPhaserArmorDebris(scene, x, y, heavy = false, direction = 1) {
+      const chunkCount = heavy ? 42 : 26;
+      const palette = [0x1f2937, 0x334155, 0x64748b, 0x78350f, 0x111827];
+      for (let index = 0; index < chunkCount; index += 1) {
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 52 + Math.random() * (heavy ? 170 : 105);
+        const chunk = scene.add.rectangle(
+          x + direction * (Math.random() * 18 - 9),
+          y + Math.random() * 18 - 9,
+          10 + Math.random() * (heavy ? 20 : 14),
+          5 + Math.random() * (heavy ? 12 : 8),
+          palette[Math.floor(Math.random() * palette.length)],
+          0.98
+        ).setDepth(39).setRotation(Math.random() * Math.PI);
+        scene.tweens.add({
+          targets: chunk,
+          x: x + direction * Math.cos(angle) * distance,
+          y: y + Math.sin(angle) * distance - Math.random() * (heavy ? 90 : 54),
+          rotation: chunk.rotation + (Math.random() * 8 - 4),
+          alpha: 0,
+          scale: 0.25,
+          duration: heavy ? 980 + Math.random() * 520 : 760 + Math.random() * 360,
+          ease: "Cubic.easeOut",
+          onComplete: () => chunk.destroy()
+        });
+      }
+    }
+
+    function playPhaserDestruction(targetEl, options = {}) {
+      if (!phaserEffects || !targetEl) return;
+      const scene = phaserEffects;
+      const heavy = Boolean(options.heavy);
+      const direction = options.direction || 1;
+      const { x, y } = getBattlefieldPoint(targetEl, 0.5, 0.56);
+      targetEl.classList.add("fragmented");
+      kickPhaserCamera(heavy ? "heavy" : "normal");
+      addPhaserShockwave(scene, x, y, heavy ? 0xfff0a3 : 0xffb84d, heavy);
+      addPhaserArmorDebris(scene, x, y, heavy, direction);
+      addPhaserSparks(scene, x, y, heavy);
+      addPhaserSmoke(scene, x, y, heavy);
+      const blast = scene.add.circle(x, y, heavy ? 72 : 48, 0xff7a2f, 0.5).setDepth(35);
+      scene.tweens.add({
+        targets: blast,
+        scale: heavy ? 2.4 : 1.9,
+        alpha: 0,
+        duration: heavy ? 760 : 520,
+        ease: "Quad.easeOut",
+        onComplete: () => blast.destroy()
+      });
+    }
+
     function playPhaserImpact(targetEl, type = "hit") {
       if (!phaserEffects) return;
       const { x, y } = getBattlefieldPoint(targetEl);
       const scene = phaserEffects;
       const color = type === "absolute" ? 0x7dd3fc : type === "armor" ? 0xe5e7eb : 0xffb84d;
+      if (type === "hit" || type === "armor") kickPhaserCamera(type === "armor" ? "normal" : "light");
       const ring = scene.add.circle(x, y, type === "absolute" ? 34 : 18, color, type === "absolute" ? 0.22 : 0.38)
         .setStrokeStyle(type === "absolute" ? 4 : 2, color, 0.95);
       scene.tweens.add({
@@ -3208,35 +3831,24 @@
       const { x, y } = getBattlefieldPoint(targetEl, 0.55, 0.58);
       const scene = phaserEffects;
       const heavy = variant === "heavy";
-      const core = scene.add.circle(x, y, heavy ? 38 : 24, 0xfff0a3, 0.9);
-      const fire = scene.add.circle(x, y, heavy ? 54 : 36, 0xff6b2f, 0.55);
-      const smoke = scene.add.circle(x, y + 8, heavy ? 74 : 52, 0x1f2933, 0.34);
-      [core, fire, smoke].forEach((circle, index) => {
+      kickPhaserCamera(heavy ? "heavy" : "normal");
+      addPhaserShockwave(scene, x, y, heavy ? 0xffd166 : 0xffb84d, heavy);
+      const whiteFlash = scene.add.circle(x, y, heavy ? 28 : 18, 0xffffff, 0.95).setDepth(38);
+      const core = scene.add.circle(x, y, heavy ? 42 : 26, 0xfff0a3, 0.92).setDepth(37);
+      const fire = scene.add.circle(x, y, heavy ? 62 : 40, 0xff6b2f, 0.62).setDepth(35);
+      const ember = scene.add.circle(x, y, heavy ? 82 : 54, 0x9a3412, 0.36).setDepth(33);
+      [whiteFlash, core, fire, ember].forEach((circle, index) => {
         scene.tweens.add({
           targets: circle,
-          scale: 1.8 + index * 0.35,
+          scale: 1.8 + index * 0.42,
           alpha: 0,
-          duration: heavy ? 820 : 560,
+          duration: heavy ? 760 + index * 100 : 480 + index * 80,
           ease: "Quad.easeOut",
           onComplete: () => circle.destroy()
         });
       });
-      for (let index = 0; index < (heavy ? 26 : 15); index += 1) {
-        const angle = Math.random() * Math.PI * 2;
-        const distance = 38 + Math.random() * (heavy ? 110 : 70);
-        const shard = scene.add.rectangle(x, y, 8 + Math.random() * 8, 3, 0x3f342a, 0.9).setRotation(angle);
-        scene.tweens.add({
-          targets: shard,
-          x: x + Math.cos(angle) * distance,
-          y: y + Math.sin(angle) * distance + Math.random() * 24,
-          rotation: angle + Math.random() * 4,
-          alpha: 0,
-          duration: heavy ? 900 : 620,
-          ease: "Cubic.easeOut",
-          onComplete: () => shard.destroy()
-        });
-      }
-      shakeBattlefield(heavy ? "heavy" : "normal");
+      addPhaserSparks(scene, x, y, heavy);
+      addPhaserSmoke(scene, x, y, heavy);
     }
 
     function tweenPhaserSprite(sprite, props, duration = 300, ease = "Sine.easeOut") {
@@ -3244,22 +3856,108 @@
       phaserEffects.tweens.add({ targets: sprite, duration, ease, ...props });
     }
 
+    function addPhaserMuzzleFlash(scene, x, y, angle, color) {
+      const flash = scene.add.star(x, y, 7, 6, 26, color, 0.95)
+        .setDepth(29)
+        .setRotation(angle);
+      const bloom = scene.add.circle(x, y, 18, color, 0.24).setDepth(28);
+      scene.tweens.add({
+        targets: [flash, bloom],
+        scale: 1.65,
+        alpha: 0,
+        duration: 160,
+        ease: "Quad.easeOut",
+        onComplete: () => {
+          flash.destroy();
+          bloom.destroy();
+        }
+      });
+    }
+
+    function addPhaserProjectileTrail(scene, start, end, color, duration) {
+      const trailCount = 8;
+      for (let index = 0; index < trailCount; index += 1) {
+        const ratio = index / trailCount;
+        const trail = scene.add.circle(start.x, start.y, 5 + index * 0.45, color, 0.2)
+          .setDepth(20);
+        scene.tweens.add({
+          targets: trail,
+          x: start.x + (end.x - start.x) * ratio,
+          y: start.y + (end.y - start.y) * ratio,
+          alpha: 0,
+          scale: 1.8,
+          delay: 40 + index * 32,
+          duration: Math.max(120, duration * 0.42),
+          ease: "Sine.easeOut",
+          onComplete: () => trail.destroy()
+        });
+      }
+    }
+
+    function addPhaserImpactGlint(scene, x, y, color) {
+      const glint = scene.add.circle(x, y, 10, color, 0.58)
+        .setStrokeStyle(2, 0xffffff, 0.88)
+        .setDepth(30);
+      scene.tweens.add({
+        targets: glint,
+        scale: 2.6,
+        alpha: 0,
+        duration: 220,
+        ease: "Quad.easeOut",
+        onComplete: () => glint.destroy()
+      });
+    }
+
+    function playPhaserTargetingLine(fromEl, toEl, options = {}) {
+      if (!phaserEffects) return;
+      const start = getBattlefieldPoint(fromEl, options.fromX ?? 0.22, options.fromY ?? 0.48);
+      const end = getBattlefieldPoint(toEl, options.toX ?? 0.72, options.toY ?? 0.5);
+      const color = options.color || 0xff6b4a;
+      const line = phaserEffects.add.line(0, 0, start.x, start.y, end.x, end.y, color, 0.42)
+        .setOrigin(0, 0)
+        .setDepth(18)
+        .setLineWidth(options.width || 3);
+      const reticle = phaserEffects.add.circle(end.x, end.y, 18, color, 0.08)
+        .setStrokeStyle(2, color, 0.78)
+        .setDepth(19);
+      phaserEffects.tweens.add({
+        targets: line,
+        alpha: 0,
+        duration: options.duration || 360,
+        ease: "Sine.easeOut",
+        onComplete: () => line.destroy()
+      });
+      phaserEffects.tweens.add({
+        targets: reticle,
+        scale: 1.8,
+        alpha: 0,
+        duration: options.duration || 360,
+        ease: "Quad.easeOut",
+        onComplete: () => reticle.destroy()
+      });
+    }
+
     function playPhaserProjectile(fromEl, toEl, options = {}) {
       if (!phaserEffects) return;
       const start = getBattlefieldPoint(fromEl, options.fromX ?? 0.78, options.fromY ?? 0.48);
       const end = getBattlefieldPoint(toEl, options.toX ?? 0.28, options.toY ?? 0.48);
       const color = options.color || 0xf3b23c;
+      const duration = options.duration || 540;
+      const angle = Math.atan2(end.y - start.y, end.x - start.x);
+      addPhaserMuzzleFlash(phaserEffects, start.x, start.y, angle, color);
+      addPhaserProjectileTrail(phaserEffects, start, end, color, duration);
       const projectile = phaserEffects.add.ellipse(start.x, start.y, options.width || 24, options.height || 10, color, 1)
         .setDepth(22)
-        .setRotation(Math.atan2(end.y - start.y, end.x - start.x));
+        .setRotation(angle);
       const glow = phaserEffects.add.ellipse(start.x - 10, start.y, 30, 16, color, 0.22).setDepth(21);
       phaserEffects.tweens.add({
         targets: [projectile, glow],
         x: end.x,
         y: end.y,
-        duration: options.duration || 540,
+        duration,
         ease: "Cubic.easeIn",
         onComplete: () => {
+          addPhaserImpactGlint(phaserEffects, end.x, end.y, color);
           projectile.destroy();
           glow.destroy();
         }
@@ -3398,6 +4096,7 @@
     }
 
     function showProfileGate(message = "") {
+      cancelStageAdvance();
       stopCountdown();
       locked = true;
       profileGate.classList.remove("hidden");
@@ -3414,6 +4113,7 @@
     }
 
     function resetRunForProfile() {
+      cancelStageAdvance();
       isGameOver = false;
       isLevelCleared = false;
       score = 0;
@@ -3426,8 +4126,11 @@
       };
       levelNumber = 1;
       currentEnemy = createEnemy(levelNumber);
+      enemyTank.classList.remove("fragmented");
+      playerTank.classList.remove("fragmented", "destroyed");
       absoluteDefenseAvailable = 0;
       playerArmor = 0;
+      smokeCoverCharges = 0;
       warShopAvailable = false;
       runUpgradeLog = [];
       runWordDamage = {};
@@ -3504,6 +4207,45 @@
       return Math.max(0, Number(playerState.ammo?.[itemId] || 0));
     }
 
+    function getEquippedAmmoIds() {
+      return [playerState.equipped?.shell, playerState.equipped?.weapon].filter(Boolean);
+    }
+
+    function isAmmoEquipped(itemId) {
+      return getEquippedAmmoIds().includes(itemId);
+    }
+
+    function equipAmmo(itemId) {
+      const item = getItem(itemId);
+      if (!isAmmoItem(item) || getAmmoCount(itemId) <= 0) return false;
+      playerState.equipped = playerState.equipped && typeof playerState.equipped === "object" ? playerState.equipped : { ...defaultState.equipped };
+      if (isAmmoEquipped(itemId)) return true;
+      if (!playerState.equipped.shell) {
+        playerState.equipped.shell = itemId;
+        return true;
+      }
+      if (!playerState.equipped.weapon) {
+        playerState.equipped.weapon = itemId;
+        return true;
+      }
+      messageEl.textContent = "Only two special ammo types can be equipped. Unequip one first.";
+      return false;
+    }
+
+    function unequipAmmo(itemId) {
+      if (playerState.equipped?.shell === itemId) playerState.equipped.shell = "";
+      if (playerState.equipped?.weapon === itemId) playerState.equipped.weapon = "";
+    }
+
+    function sellAmmo(itemId) {
+      const item = getItem(itemId);
+      if (!isAmmoItem(item) || getAmmoCount(itemId) <= 0) return false;
+      playerState.ammo[itemId] = getAmmoCount(itemId) - 1;
+      if (playerState.ammo[itemId] <= 0) unequipAmmo(itemId);
+      playerState.coins += Math.max(1, Math.floor(item.cost / 2));
+      return true;
+    }
+
     function getEquippedItems() {
       return Object.values(playerState.equipped)
         .map(getItem)
@@ -3524,7 +4266,7 @@
     }
 
     function getAmmoPriority() {
-      return ["weapon_cannon", "shell_he", "shell_ap"];
+      return [playerState.equipped?.shell, playerState.equipped?.weapon].filter(Boolean);
     }
 
     function consumeSpecialAmmo() {
@@ -3533,11 +4275,43 @@
       if (!ammoId) return null;
       const ammo = getItem(ammoId);
       playerState.ammo[ammoId] = Math.max(0, getAmmoCount(ammoId) - 1);
+      if (playerState.ammo[ammoId] <= 0) unequipAmmo(ammoId);
       return ammo;
     }
 
     function getShotDamage(ammo) {
       return getCombatShotDamage(getDamage(), ammo);
+    }
+
+    function applyAmmoHitEffects(ammo) {
+      if (!ammo) return "";
+      const notes = [];
+      if (ammo.smokeCover) {
+        smokeCoverCharges += ammo.smokeCover;
+        notes.push("Smoke cover: next enemy attack will miss.");
+      }
+      if (ammo.repairOnHit) {
+        const beforeLives = lives;
+        lives = Math.min(getMaxLives(), lives + ammo.repairOnHit);
+        if (lives > beforeLives) notes.push(`Repair +${lives - beforeLives} HP.`);
+      }
+      if (ammo.armorOnHit) {
+        runUpgrades.armor += ammo.armorOnHit;
+        playerArmor += ammo.armorOnHit;
+        notes.push(`Armor +${ammo.armorOnHit}.`);
+      }
+      if (notes.length > 0) syncHud();
+      return notes.join(" ");
+    }
+
+    function consumeSmokeCover() {
+      if (smokeCoverCharges <= 0) return false;
+      smokeCoverCharges -= 1;
+      return true;
+    }
+
+    function createMissResult() {
+      return { missed: true, absoluteBlocked: false, armorDamage: 0, hpDamage: 0, totalDamage: 0 };
     }
 
     function createEnemy(number) {
@@ -3577,8 +4351,8 @@
 
     function showDamage(targetTank, amount, options = {}) {
       const damage = document.createElement("div");
-      damage.className = `damage-float${options.absolute ? " absolute-hit" : ""}${options.armor ? " armor-hit" : ""}`;
-      damage.textContent = options.absolute ? "ABS" : `-${amount}`;
+      damage.className = `damage-float${options.absolute ? " absolute-hit" : ""}${options.armor ? " armor-hit" : ""}${options.miss ? " miss-hit" : ""}`;
+      damage.textContent = options.miss ? "MISS" : options.absolute ? "ABS" : `-${amount}`;
       targetTank.appendChild(damage);
       damage.addEventListener("animationend", () => damage.remove(), { once: true });
       playPhaserImpact(targetTank, options.absolute ? "absolute" : options.armor ? "armor" : "hit");
@@ -3649,7 +4423,7 @@
       stopCountdown();
       countdown = Math.max(1, Math.min(enemyAttackInterval, seconds || enemyAttackInterval));
       syncLevelHud();
-      enemyTank.classList.toggle("reloading", ["truck", "boss"].includes(currentEnemy.id));
+      enemyTank.classList.toggle("reloading", currentEnemy.attackStyle === "melee");
       startPhaserEnemyApproach();
       countdownId = setInterval(() => {
         if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) {
@@ -3661,9 +4435,10 @@
         if (countdown <= 0) {
           stopCountdown({ preserveEnemyPosition: true });
           locked = true;
-          messageEl.textContent = `${currentEnemy.name} hit you. Lose 1 HP.`;
-          const result = takeDamage(currentEnemy.damage || 1);
-          if (result.absoluteBlocked) messageEl.textContent = "Absolute defense blocked the blast.";
+          const smokeMissed = consumeSmokeCover();
+          messageEl.textContent = smokeMissed ? "Smoke cover worked. Enemy attack missed." : `${currentEnemy.name} hit you. Lose 1 HP.`;
+          const result = smokeMissed ? createMissResult() : takeDamage(currentEnemy.damage || 1);
+          if (!smokeMissed && result.absoluteBlocked) messageEl.textContent = "Absolute defense blocked the blast.";
           enemyFire(currentEnemy.damage || 1, result);
           setTimeout(() => {
             if (isGameOver || isLevelCleared || currentEnemy.hp <= 0) return;
@@ -3768,9 +4543,11 @@
       syncDefenseBar(playerArmorRow, playerArmorFill, playerArmorText, playerArmor, runUpgrades.armor);
       coinsEl.textContent = playerState.coins;
       shopCoins.textContent = playerState.coins;
+      inlineShopCoins.textContent = playerState.coins;
       dailyScoreEl.textContent = playerState.dailyScore;
       const equippedNames = getEquippedItems().map((item) => item.name).join(" / ");
       loadoutEl.textContent = `Loadout: ${equippedNames || "Basic gear"}`;
+      inlineLoadout.textContent = loadoutEl.textContent;
       document.body.dataset.shell = "";
       ["tank-sherman", "tank-tiger", "tank-panzer", "tank-is2", "tank-t34", "tank-cromwell", "tank-churchill"].forEach((className) => {
         playerTank.classList.remove(className);
@@ -3795,6 +4572,7 @@
       enemyTank.classList.toggle("enemy-heavy-infantry", currentEnemy.id === "heavyInfantry");
       enemyTank.classList.toggle("enemy-rpg-infantry", currentEnemy.id === "rpgInfantry");
       enemyTank.classList.toggle("enemy-boss", currentEnemy.id === "boss");
+      enemyTank.classList.toggle("enemy-melee", currentEnemy.attackStyle === "melee" && !["boss", "truck"].includes(currentEnemy.id));
       updatePhaserActors();
       wordCountEl.textContent = `Grade 1 word bank: ${words.length} Hanzi · Review queue ${getReviewCount()}`;
       reviewButton.textContent = reviewMode ? "Exit Review" : `Review Misses (${getReviewWords().length})`;
@@ -3803,33 +4581,52 @@
     }
 
     function renderShop() {
-      shopGrid.innerHTML = "";
+      renderShopGrid(shopGrid);
+      renderShopGrid(inlineShopGrid);
+      syncHud();
+    }
+
+    function renderShopGrid(targetGrid) {
+      targetGrid.innerHTML = "";
       shopItems.forEach((item) => {
         const ammoItem = isAmmoItem(item);
         const ammoCount = getAmmoCount(item.id);
+        const ammoEquipped = ammoItem && isAmmoEquipped(item.id);
         const owned = !ammoItem && playerState.owned.includes(item.id);
         const equipped = !ammoItem && playerState.equipped[item.type] === item.id;
         const canBuy = playerState.coins >= item.cost;
         const card = document.createElement("article");
         card.className = `shop-card${equipped ? " equipped" : ""}`;
-        card.innerHTML = `
-          <div class="shop-type">${item.typeLabel}</div>
-          <div class="shop-name">${item.name}</div>
-          <div class="shop-desc">${item.desc}</div>
-          <div class="shop-cost">${ammoItem ? `${ammoCount} rounds · ${item.cost} coins / +${item.ammoPerPurchase}` : owned ? "Owned" : `${item.cost} coins`}</div>
-          <button class="shop-action" type="button" data-item="${item.id}">
-            ${ammoItem ? `Buy +${item.ammoPerPurchase}` : equipped ? "Equipped" : owned ? "Equip" : "Buy"}
-          </button>
-        `;
-
-        const action = card.querySelector(".shop-action");
-        action.disabled = equipped || (!owned && !canBuy);
-        if (!canBuy && (ammoItem || !owned)) {
-          action.textContent = "Not enough coins";
+        if (ammoItem) {
+          card.classList.toggle("equipped", ammoEquipped);
+          card.innerHTML = `
+            <div class="shop-type">${item.typeLabel} · ${item.doctrine || "Special"}</div>
+            <div class="shop-name">${item.name}</div>
+            <div class="shop-desc">${item.desc}</div>
+            <div class="shop-cost">${ammoCount} round${ammoCount === 1 ? "" : "s"} · ${ammoEquipped ? "Equipped" : "Reserve"} · ${item.cost} coins / +1</div>
+            <button class="shop-action" type="button" data-item="${item.id}" data-action="buy">${canBuy ? "Buy 1" : "Not enough coins"}</button>
+            <button class="shop-action" type="button" data-item="${item.id}" data-action="${ammoEquipped ? "unequip" : "equip"}">${ammoEquipped ? "Unequip" : "Equip"}</button>
+            <button class="shop-action" type="button" data-item="${item.id}" data-action="sell">Sell 1</button>
+          `;
+          card.querySelector('[data-action="buy"]').disabled = !canBuy;
+          card.querySelector('[data-action="equip"][data-item], [data-action="unequip"][data-item]').disabled = !ammoEquipped && ammoCount <= 0;
+          card.querySelector('[data-action="sell"]').disabled = ammoCount <= 0;
+        } else {
+          card.innerHTML = `
+            <div class="shop-type">${item.typeLabel}</div>
+            <div class="shop-name">${item.name}</div>
+            <div class="shop-desc">${item.desc}</div>
+            <div class="shop-cost">${owned ? "Owned" : `${item.cost} coins`}</div>
+            <button class="shop-action" type="button" data-item="${item.id}" data-action="buy-or-equip">
+              ${equipped ? "Equipped" : owned ? "Equip" : "Buy"}
+            </button>
+          `;
+          const action = card.querySelector(".shop-action");
+          action.disabled = equipped || (!owned && !canBuy);
+          if (!canBuy && !owned) action.textContent = "Not enough coins";
         }
-        shopGrid.appendChild(card);
+        targetGrid.appendChild(card);
       });
-      syncHud();
     }
 
     function openArsenal() {
@@ -3849,14 +4646,35 @@
       if (warShopAvailable) arsenalButton.focus();
     }
 
-    function buyOrEquip(itemId) {
+    function buyOrEquip(itemId, actionType = "buy-or-equip") {
       const item = getItem(itemId);
       if (!item) return;
 
       if (isAmmoItem(item)) {
+        playerState.ammo = playerState.ammo && typeof playerState.ammo === "object" ? playerState.ammo : {};
+        if (actionType === "sell") {
+          if (!sellAmmo(item.id)) return;
+          playUiSound();
+          saveState();
+          renderShop();
+          return;
+        }
+        if (actionType === "equip") {
+          if (!equipAmmo(item.id)) return;
+          playSuccessSound();
+          saveState();
+          renderShop();
+          return;
+        }
+        if (actionType === "unequip") {
+          unequipAmmo(item.id);
+          playUiSound();
+          saveState();
+          renderShop();
+          return;
+        }
         if (playerState.coins < item.cost) return;
         playerState.coins -= item.cost;
-        playerState.ammo = playerState.ammo && typeof playerState.ammo === "object" ? playerState.ammo : {};
         playerState.ammo[item.id] = getAmmoCount(item.id) + item.ammoPerPurchase;
         playSuccessSound();
         saveState();
@@ -3892,15 +4710,59 @@
       saveState();
       syncHud();
       messageEl.textContent = `Stage ${levelNumber} clear! Earned ${bonus} bonus coins.`;
-      warShopAvailable = levelNumber % 5 === 0;
+      warShopAvailable = true;
       syncHud();
-      setTimeout(() => {
+      playStageAdvance(() => {
         if (levelNumber % 5 === 0) {
           showSupplyChallenge();
           return;
         }
         showPerkChoices();
-      }, 500);
+      });
+    }
+
+    function cancelStageAdvance() {
+      stageAdvanceToken += 1;
+      battlefieldEl.classList.remove("stage-advance");
+      playerTank.classList.remove("stage-advance");
+      if (phaserEffects && phaserPlayerSprite) phaserEffects.tweens.killTweensOf(phaserPlayerSprite);
+      if (phaserEffects && phaserPlayerTrackBelt) phaserEffects.tweens.killTweensOf(phaserPlayerTrackBelt);
+    }
+
+    function playStageAdvance(onDone) {
+      const token = ++stageAdvanceToken;
+      const duration = 1500;
+      let finished = false;
+      battlefieldEl.classList.remove("stage-advance");
+      playerTank.classList.remove("stage-advance");
+      void battlefieldEl.offsetWidth;
+      battlefieldEl.classList.add("stage-advance");
+      playerTank.classList.add("stage-advance");
+      messageEl.textContent = `Stage ${levelNumber} clear! Rolling to the next battlefield.`;
+
+      const finish = () => {
+        if (finished || token !== stageAdvanceToken) return;
+        finished = true;
+        battlefieldEl.classList.remove("stage-advance");
+        playerTank.classList.remove("stage-advance");
+        updatePhaserActors();
+        onDone();
+      };
+
+      if (phaserEffects && phaserPlayerSprite?.visible) {
+        const travel = Math.max(240, Math.min(560, battlefieldEl.clientWidth * 0.48));
+        const targets = [phaserPlayerSprite, phaserPlayerTrackBelt].filter(Boolean);
+        phaserEffects.tweens.killTweensOf(targets);
+        playPhaserPlayerState("idle", true);
+        phaserEffects.tweens.add({
+          targets,
+          x: `+=${travel}`,
+          duration,
+          ease: "Sine.easeInOut",
+          onComplete: finish
+        });
+      }
+      setTimeout(finish, duration + 80);
     }
 
     function showSupplyChallenge() {
@@ -3999,11 +4861,15 @@
         button.className = "perk-choice";
         button.dataset.perk = perk.id;
         button.innerHTML = `
-          <div class="perk-name">${perk.name}</div>
-          <div class="perk-desc">${perk.desc}</div>
+          <span class="perk-icon ${perk.iconClass}" aria-hidden="true"></span>
+          <span class="perk-copy">
+            <span class="perk-name">${perk.name}</span>
+            <span class="perk-desc">${perk.desc}</span>
+          </span>
         `;
         perkOptions.appendChild(button);
       });
+      renderShop();
       perkScreen.classList.add("show");
       perkScreen.setAttribute("aria-hidden", "false");
       perkOptions.querySelector("button")?.focus();
@@ -4040,7 +4906,7 @@
 
     function speakWord(word) {
       if (!word) return;
-      speakChinese(getSpokenWordText(word));
+      queueChineseSpeech(getSpokenWordText(word), { preserveMessage: true, autoRetry: true, delay: 80 });
     }
 
     function recordCorrectWord(word) {
@@ -4110,6 +4976,7 @@
         renderBossQuestion(options);
         return;
       }
+      enemyTank.classList.remove("fragmented");
       if (!options.preserveReload) stopCountdown();
       currentWord = word;
       locked = false;
@@ -4144,6 +5011,7 @@
 
     function renderBossQuestion(options = {}) {
       if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
+      enemyTank.classList.remove("fragmented");
       if (!options.preserveReload) stopCountdown();
       if (shownBossIntroStage !== levelNumber) {
         showBossIntro(() => renderBossQuestion(options));
@@ -4178,6 +5046,7 @@
       queueChineseSpeech(phraseToSpeak.text, {
         delay: 180,
         preserveMessage: true,
+        autoRetry: true,
         shouldSpeak: () => currentEnemy.id === "boss" && bossPhrase === phraseToSpeak && !locked
       });
       if (!options.preserveReload) startCountdown();
@@ -4242,8 +5111,11 @@
           } else {
             showDamage(enemyTank, damage.totalDamage || shotDamage, { armor: damage.armorDamage > 0 });
           }
+          const ammoEffectText = applyAmmoHitEffects(shotAmmo);
+          if (ammoEffectText) messageEl.textContent += ` ${ammoEffectText}`;
           syncHud();
           if (currentEnemy.hp <= 0) {
+            playPhaserDestruction(enemyTank, { heavy: currentEnemy.id === "boss", direction: -1 });
             completeLevel();
             return;
           }
@@ -4270,9 +5142,12 @@
       saveState();
       syncHud();
       const damage = currentEnemy.damage || 1;
-      const result = takeDamage(damage);
+      const smokeMissed = consumeSmokeCover();
+      const result = smokeMissed ? createMissResult() : takeDamage(damage);
       recordWordDamage(currentWord, result.hpDamage + result.armorDamage);
-      if (!result.absoluteBlocked) {
+      if (smokeMissed) {
+        messageEl.textContent = "Smoke cover worked. Enemy attack missed.";
+      } else if (!result.absoluteBlocked) {
         messageEl.textContent = `${currentWord.hanzi} was added to review.`;
       }
       enemyFire(damage, result);
@@ -4310,10 +5185,11 @@
         const phraseRecord = { hanzi: bossPhrase.text, meaning: "boss word", phrase: bossPhrase.text };
         bossPhrase.chars.forEach((char) => recordWrongBank(wordByHanzi[char] || { hanzi: char, meaning: "boss word", phrase: bossPhrase.text }));
         const damage = currentEnemy.damage || 1;
-        const result = takeDamage(damage);
+        const smokeMissed = consumeSmokeCover();
+        const result = smokeMissed ? createMissResult() : takeDamage(damage);
         recordWordDamage(phraseRecord, result.hpDamage + result.armorDamage);
         saveState();
-        messageEl.textContent = `Wrong sequence. Boss word was ${bossPhrase.text}.`;
+        messageEl.textContent = smokeMissed ? `Wrong sequence. Boss word was ${bossPhrase.text}. Smoke cover made the attack miss.` : `Wrong sequence. Boss word was ${bossPhrase.text}.`;
         enemyFire(damage, result);
         setTimeout(() => {
           if (lives <= 0) {
@@ -4328,7 +5204,7 @@
       bossPhrase.chars.forEach((char) => recordCorrectWord(wordByHanzi[char]));
       bossPhrase.chars.forEach((char) => recordCorrectBank(wordByHanzi[char] || { hanzi: char, meaning: "boss word", phrase: bossPhrase.text }));
       saveState();
-      speakChinese(bossPhrase.text);
+      queueChineseSpeech(bossPhrase.text, { preserveMessage: true, autoRetry: true, delay: 80 });
       playSuccessSound();
       messageEl.textContent = "Correct boss word. Fire!";
       const shotAmmo = consumeSpecialAmmo();
@@ -4346,8 +5222,11 @@
         } else {
           showDamage(enemyTank, damage.totalDamage || shotDamage, { armor: damage.armorDamage > 0 });
         }
+        const ammoEffectText = applyAmmoHitEffects(shotAmmo);
+        if (ammoEffectText) messageEl.textContent += ` ${ammoEffectText}`;
         syncHud();
         if (currentEnemy.hp <= 0) {
+          playPhaserDestruction(enemyTank, { heavy: true, direction: -1 });
           completeLevel();
           return;
         }
@@ -4359,14 +5238,16 @@
       playCannonSound();
       playerTank.classList.remove("fire");
       enemyTank.classList.remove("hit");
-      bullet.classList.remove("fly", "ap-shell", "he-shell", "cannon-shell");
+      bullet.classList.remove("fly", "ap-shell", "he-shell", "cannon-shell", "smoke-shell", "repair-shell", "armor-shell", "arcane-shell", "flash-shell");
       burst.classList.remove("show", "he-burst");
       const playerStartX = phaserPlayerSprite?.x || 0;
+      playPhaserPlayerState("fire", true);
       tweenPhaserSprite(phaserPlayerSprite, { x: playerStartX + 10, yoyo: true }, 150);
+      tweenPhaserSprite(phaserPlayerTurretSprite, { x: playerStartX + 10, yoyo: true }, 150);
       playPhaserProjectile(playerTank, enemyTank, {
-        color: ammo?.id === "shell_he" ? 0xff7a2f : ammo?.id === "weapon_cannon" ? 0xdbeafe : ammo?.id === "shell_ap" ? 0xfff2a1 : 0xf3b23c,
+        color: ammo?.projectileColor || (ammo?.id === "shell_he" ? 0xff7a2f : ammo?.id === "weapon_cannon" ? 0xdbeafe : ammo?.id === "shell_ap" ? 0xfff2a1 : 0xf3b23c),
         width: ammo ? 34 : 24,
-        height: ammo?.id === "shell_he" ? 16 : 10
+        height: ammo?.projectileHeight || (ammo?.id === "shell_he" ? 16 : 10)
       });
 
       requestAnimationFrame(() => {
@@ -4773,6 +5654,7 @@
     }
 
     function startDebugBattle(stage) {
+      cancelStageAdvance();
       clearPauseState();
       isGameOver = false;
       isLevelCleared = false;
@@ -4791,6 +5673,9 @@
       score = 0;
       levelNumber = stage;
       currentEnemy = createEnemy(levelNumber);
+      enemyTank.classList.remove("fragmented");
+      playerTank.classList.remove("fragmented", "destroyed");
+      smokeCoverCharges = 0;
       lives = getMaxLives();
       locked = false;
       reviewMode = false;
@@ -4839,6 +5724,7 @@
 
     function showGameOver() {
       if (isGameOver) return;
+      cancelStageAdvance();
       isGameOver = true;
       clearPauseState();
       stopCountdown();
@@ -4846,10 +5732,12 @@
       enemyTank.classList.remove("reloading", "fire", "boss-slam", "crash-attack");
       enemyBullet.classList.remove("fly");
       playerTank.classList.remove("hit", "fire");
-      playerTank.classList.add("destroyed");
+      playerTank.classList.add("destroyed", "fragmented");
       updatePhaserActors();
+      playPhaserPlayerState("destroyed", true);
       playerBurst.classList.add("show");
       playExplosionSound();
+      playPhaserDestruction(playerTank, { heavy: true, direction: 1 });
       playPhaserExplosion(playerTank, "heavy");
       buildWarSummary();
       syncHud();
@@ -4862,6 +5750,7 @@
     function restartGame() {
       unlockAudio();
       playUiSound();
+      cancelStageAdvance();
       clearPauseState();
       stopCountdown();
       score = 0;
@@ -4877,6 +5766,7 @@
       isLevelCleared = false;
       absoluteDefenseAvailable = 0;
       playerArmor = 0;
+      smokeCoverCharges = 0;
       warShopAvailable = false;
       runUpgradeLog = [];
       runWordDamage = {};
@@ -4891,8 +5781,10 @@
       reviewMode = false;
       syncHud();
       playerTank.classList.remove("hit", "fire", "destroyed");
+      playerTank.classList.remove("fragmented");
       enemyTank.classList.remove("hit", "fire");
-      bullet.classList.remove("fly", "ap-shell", "he-shell", "cannon-shell");
+      enemyTank.classList.remove("fragmented");
+      bullet.classList.remove("fly", "ap-shell", "he-shell", "cannon-shell", "smoke-shell", "repair-shell", "armor-shell", "arcane-shell", "flash-shell");
       enemyBullet.classList.remove("fly");
       burst.classList.remove("show", "he-burst");
       playerBurst.classList.remove("show");
@@ -4910,6 +5802,10 @@
         truckCrashAttack(damage, result);
         return;
       }
+      if (currentEnemy.attackStyle === "melee") {
+        meleeStrikeAttack(damage, result);
+        return;
+      }
       playCannonSound();
       enemyTank.classList.remove("fire");
       playerTank.classList.remove("hit");
@@ -4917,6 +5813,8 @@
       playerBurst.classList.remove("show");
       const enemyStartX = phaserEnemySprite?.x || 0;
       tweenPhaserSprite(phaserEnemySprite, { x: enemyStartX - 10, yoyo: true }, 160);
+      tweenPhaserSprite(phaserEnemyTurretSprite, { x: enemyStartX - 10, yoyo: true }, 160);
+      playPhaserTargetingLine(enemyTank, playerTank, { color: 0xff6b4a, duration: 360 });
       playPhaserProjectile(enemyTank, playerTank, { fromX: 0.22, toX: 0.72, color: 0xff6b4a, width: 24, height: 10 });
 
       requestAnimationFrame(() => {
@@ -4928,13 +5826,16 @@
       setTimeout(() => {
         if (isGameOver || isLevelCleared) return;
         playHitSound();
-        if (result.absoluteBlocked) {
+        if (result.missed) {
+          showDamage(playerTank, 0, { miss: true });
+        } else if (result.absoluteBlocked) {
           showDamage(playerTank, 0, { absolute: true });
         } else {
           showDamage(playerTank, result.totalDamage || damage, { armor: result.armorDamage > 0 });
         }
         playerBurst.classList.add("show");
         playerTank.classList.add("hit");
+        playPhaserPlayerState("hit", true);
         shakeBattlefield();
       }, 520);
 
@@ -4960,19 +5861,57 @@
         if (isGameOver || isLevelCleared) return;
         playExplosionSound();
         playPhaserExplosion(playerTank, "heavy");
-        if (result.absoluteBlocked) {
+        if (result.missed) {
+          showDamage(playerTank, 0, { miss: true });
+        } else if (result.absoluteBlocked) {
           showDamage(playerTank, 0, { absolute: true });
         } else {
           showDamage(playerTank, result.totalDamage || damage, { armor: result.armorDamage > 0 });
         }
         playerBurst.classList.add("show");
         playerTank.classList.add("hit");
+        playPhaserPlayerState("hit", true);
       }, 520);
 
       setTimeout(() => {
         enemyTank.classList.remove("crash-attack");
         if (!playerTank.classList.contains("destroyed")) playerTank.classList.remove("hit");
       }, 880);
+    }
+
+    function meleeStrikeAttack(damage = 1, result = { hpDamage: damage }) {
+      if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
+      playTone(96, 0.18, { type: "sawtooth", endFrequency: 52, volume: 0.1 });
+      enemyTank.classList.remove("reloading", "fire", "melee-strike");
+      playerTank.classList.remove("hit");
+      playerBurst.classList.remove("show");
+      tweenEnemyAttackToBase(currentEnemy.approachDistance || 112, { angle: 5, inDuration: 460, outDuration: 340 });
+      requestAnimationFrame(() => {
+        if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
+        enemyTank.classList.add("melee-strike");
+      });
+
+      setTimeout(() => {
+        if (isGameOver || isLevelCleared) return;
+        playHitSound();
+        playPhaserImpact(playerTank, result.missed ? "absolute" : "hit");
+        if (result.missed) {
+          showDamage(playerTank, 0, { miss: true });
+        } else if (result.absoluteBlocked) {
+          showDamage(playerTank, 0, { absolute: true });
+        } else {
+          showDamage(playerTank, result.totalDamage || damage, { armor: result.armorDamage > 0 });
+        }
+        playerBurst.classList.add("show");
+        playerTank.classList.add("hit");
+        playPhaserPlayerState("hit", true);
+        shakeBattlefield();
+      }, 460);
+
+      setTimeout(() => {
+        enemyTank.classList.remove("melee-strike");
+        if (!playerTank.classList.contains("destroyed")) playerTank.classList.remove("hit");
+      }, 860);
     }
 
     function bossHammerAttack(damage = 1, result = { hpDamage: damage }) {
@@ -4982,6 +5921,7 @@
       playerTank.classList.remove("hit");
       playerBurst.classList.remove("show");
       tweenEnemyAttackToBase(165, { angle: -9, inDuration: 620, outDuration: 430 });
+      playPhaserBossSlam();
       requestAnimationFrame(() => {
         if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
         enemyTank.classList.add("boss-slam");
@@ -4991,13 +5931,16 @@
         if (isGameOver || isLevelCleared) return;
         playExplosionSound();
         playPhaserExplosion(playerTank, "heavy");
-        if (result.absoluteBlocked) {
+        if (result.missed) {
+          showDamage(playerTank, 0, { miss: true });
+        } else if (result.absoluteBlocked) {
           showDamage(playerTank, 0, { absolute: true });
         } else {
           showDamage(playerTank, result.totalDamage || damage, { armor: result.armorDamage > 0 });
         }
         playerBurst.classList.add("show");
         playerTank.classList.add("hit");
+        playPhaserPlayerState("hit", true);
       }, 620);
 
       setTimeout(() => {
@@ -5027,21 +5970,46 @@
       if (!("speechSynthesis" in window)) return;
       window.speechSynthesis.getVoices();
       voicesReady = true;
+      flushQueuedSpeech();
     }
 
     function queueChineseSpeech(text, options = {}) {
       if (!text) return;
       const token = ++speechRequestToken;
       pendingSpeechText = text;
+      queuedSpeechRequest = {
+        text,
+        options,
+        token,
+        attempts: 0,
+        maxAttempts: options.maxAttempts || 5
+      };
       setTimeout(() => {
-        if (token !== speechRequestToken) return;
-        if (options.shouldSpeak && !options.shouldSpeak()) return;
-        speakChinese(text, options);
-        if (pendingSpeechText === text) pendingSpeechText = "";
+        flushQueuedSpeech(token);
       }, options.delay || 0);
     }
 
+    function flushQueuedSpeech(expectedToken = speechRequestToken) {
+      const request = queuedSpeechRequest;
+      if (!request || request.token !== expectedToken) return false;
+      if (request.options.shouldSpeak && !request.options.shouldSpeak()) return false;
+      if (("speechSynthesis" in window) && !voicesReady && request.attempts < request.maxAttempts) {
+        request.attempts += 1;
+        window.speechSynthesis.getVoices();
+        setTimeout(() => flushQueuedSpeech(expectedToken), 160 * request.attempts);
+        return false;
+      }
+      queuedSpeechRequest = null;
+      const spoken = speakChinese(request.text, request.options);
+      if (spoken && pendingSpeechText === request.text) pendingSpeechText = "";
+      return spoken;
+    }
+
     function retryPendingSpeech() {
+      if (queuedSpeechRequest) {
+        flushQueuedSpeech(queuedSpeechRequest.token);
+        return;
+      }
       if (!pendingSpeechText) return;
       const text = pendingSpeechText;
       pendingSpeechText = "";
@@ -5068,6 +6036,9 @@
       }
       utterance.onerror = () => {
         pendingSpeechText = text;
+        if (options.autoRetry && !queuedSpeechRequest) {
+          queueChineseSpeech(text, { ...options, delay: 300, autoRetry: false, preserveMessage: true });
+        }
         if (!options.preserveMessage) {
           messageEl.textContent = "Speech was blocked or no Chinese voice is available. Click Speak once, then answer again.";
         }
@@ -5155,8 +6126,14 @@
     shopGrid.addEventListener("click", (event) => {
       const button = event.target.closest("[data-item]");
       if (!button) return;
-      buyOrEquip(button.dataset.item);
+      buyOrEquip(button.dataset.item, button.dataset.action || "buy-or-equip");
     });
+    inlineShopGrid.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-item]");
+      if (!button) return;
+      buyOrEquip(button.dataset.item, button.dataset.action || "buy-or-equip");
+    });
+    openFullWarPrepButton.addEventListener("click", openArsenal);
     perkOptions.addEventListener("click", (event) => {
       const button = event.target.closest("[data-perk]");
       if (!button) return;
