@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "test": "node tests/speech-regression.test.js && node tests/pause-regression.test.js && node tests/mastery-core.test.js && node tests/mastery-regression.test.js"
+  }
+}

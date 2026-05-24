@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-label="Tank Dismantler armored mech boss portrait">
+  <defs>
+    <linearGradient id="steel" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#d4d1c8"/>
+      <stop offset="0.22" stop-color="#898780"/>
+      <stop offset="0.56" stop-color="#3d3c39"/>
+      <stop offset="1" stop-color="#10100f"/>
+    </linearGradient>
+    <linearGradient id="darkSteel" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#837f77"/>
+      <stop offset="0.48" stop-color="#34322f"/>
+      <stop offset="1" stop-color="#0b0b0a"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" x2="1">
+      <stop offset="0" stop-color="#f1eee4"/>
+      <stop offset="0.45" stop-color="#8d8980"/>
+      <stop offset="1" stop-color="#1b1a18"/>
+    </linearGradient>
+    <linearGradient id="rust" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#b26b43"/>
+      <stop offset="1" stop-color="#3b1710"/>
+    </linearGradient>
+    <radialGradient id="redEye" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#ffd9a1"/>
+      <stop offset="0.32" stop-color="#ff3b2f"/>
+      <stop offset="1" stop-color="#4c0808"/>
+    </radialGradient>
+    <filter id="shadow" x="-18%" y="-20%" width="136%" height="150%">
+      <feDropShadow dx="0" dy="18" stdDeviation="14" flood-color="#030303" flood-opacity="0.72"/>
+    </filter>
+    <filter id="grit" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="4" seed="617"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="table" tableValues="0 0.28"/></feComponentTransfer>
+      <feBlend mode="multiply" in2="SourceGraphic"/>
+    </filter>
+    <filter id="smoke"><feGaussianBlur stdDeviation="7"/></filter>
+  </defs>
+
+  <rect width="900" height="560" fill="none"/>
+  <g opacity="0.72" filter="url(#smoke)">
+    <circle cx="145" cy="116" r="54" fill="#111316" opacity="0.22"/>
+    <circle cx="705" cy="93" r="66" fill="#0f1113" opacity="0.26"/>
+    <circle cx="782" cy="154" r="48" fill="#111" opacity="0.19"/>
+    <path d="M660 105c46-59 64-94 36-120" stroke="#111" stroke-width="28" stroke-linecap="round" opacity="0.2"/>
+    <path d="M217 126c-32-66-28-102 12-130" stroke="#111" stroke-width="24" stroke-linecap="round" opacity="0.16"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <ellipse cx="448" cy="515" rx="286" ry="38" fill="#070605" opacity="0.72"/>
+    <g filter="url(#grit)">
+      <g>
+        <path d="M322 330l87 8-12 79-32 72h-85l18-71Z" fill="url(#darkSteel)" stroke="#080807" stroke-width="10"/>
+        <path d="M491 338l89-8 24 88 18 71h-85l-32-72Z" fill="url(#darkSteel)" stroke="#080807" stroke-width="10"/>
+        <path d="M284 476h116l-12 45H247c7-25 19-40 37-45Z" fill="url(#steel)" stroke="#070706" stroke-width="9"/>
+        <path d="M506 476h116c18 5 30 20 37 45H518Z" fill="url(#steel)" stroke="#070706" stroke-width="9"/>
+        <g stroke="#d8d4ca" stroke-width="5" opacity="0.28" fill="none">
+          <path d="M312 374h79"/><path d="M299 417h84"/><path d="M510 374h80"/><path d="M521 417h84"/>
+        </g>
+      </g>
+
+      <g>
+        <path d="M272 164l64-76h224l67 78-42 181H312Z" fill="url(#steel)" stroke="#070706" stroke-width="12"/>
+        <path d="M329 193l35-68h171l36 70-30 116H360Z" fill="url(#darkSteel)" stroke="#12110f" stroke-width="10"/>
+        <path d="M372 207h146l-23 78H395Z" fill="#232321" stroke="#0b0b0a" stroke-width="8"/>
+        <path d="M355 313h180l-36 70H392Z" fill="url(#steel)" stroke="#0b0b0a" stroke-width="9"/>
+        <path d="M313 183l-85 26 8 82 84 18 32-102Z" fill="url(#steel)" stroke="#080807" stroke-width="10"/>
+        <path d="M586 207l32 102 84-18 8-82-85-26Z" fill="url(#steel)" stroke="#080807" stroke-width="10"/>
+        <path d="M363 154c43 26 119 25 166 0" fill="none" stroke="#f2eee4" stroke-width="6" opacity="0.22"/>
+        <g fill="#11100f">
+          <circle cx="337" cy="211" r="8"/><circle cx="558" cy="211" r="8"/><circle cx="380" cy="328" r="7"/><circle cx="516" cy="328" r="7"/>
+        </g>
+      </g>
+
+      <g>
+        <path d="M386 76l37-31h53l39 31-12 65-38 26h-34l-38-26Z" fill="url(#steel)" stroke="#070706" stroke-width="9"/>
+        <path d="M411 93h75l-9 43-27 18-28-18Z" fill="#242424" stroke="#090908" stroke-width="7"/>
+        <path d="M405 79h90l16 21H389Z" fill="#161615" stroke="#080807" stroke-width="6"/>
+        <circle cx="430" cy="117" r="10" fill="url(#redEye)"/>
+        <circle cx="466" cy="117" r="10" fill="url(#redEye)"/>
+        <path d="M426 143h46" stroke="#0b0706" stroke-width="7" stroke-linecap="round"/>
+        <path d="M399 64l-25-31h35l20 31ZM497 64l25-31h-35l-20 31Z" fill="url(#darkSteel)" stroke="#090908" stroke-width="6"/>
+      </g>
+
+      <g>
+        <path d="M321 95l-20-76h34l25 87Z" fill="url(#darkSteel)" stroke="#080807" stroke-width="7"/>
+        <path d="M578 106l25-87h34l-20 76Z" fill="url(#darkSteel)" stroke="#080807" stroke-width="7"/>
+        <g stroke="#111" stroke-width="10" stroke-linecap="round" opacity="0.48">
+          <path d="M318 16c-21-37-9-62 30-79"/>
+          <path d="M622 15c26-35 17-61-20-79"/>
+        </g>
+        <g fill="#8d1f19" stroke="#130706" stroke-width="5">
+          <rect x="331" y="118" width="20" height="49" rx="5"/>
+          <rect x="549" y="118" width="20" height="49" rx="5"/>
+        </g>
+      </g>
+
+      <g>
+        <path d="M236 239l-95 83" stroke="#35332f" stroke-width="31" stroke-linecap="round"/>
+        <path d="M152 312l-67 44" stroke="url(#steel)" stroke-width="30" stroke-linecap="round"/>
+        <path d="M86 353l-45 69M96 361l8 82M111 352l66 45" stroke="url(#edge)" stroke-width="13" stroke-linecap="round" fill="none"/>
+        <circle cx="238" cy="239" r="28" fill="url(#steel)" stroke="#080807" stroke-width="8"/>
+        <circle cx="151" cy="313" r="22" fill="url(#darkSteel)" stroke="#080807" stroke-width="7"/>
+      </g>
+
+      <g>
+        <path d="M657 239l91 58" stroke="#35332f" stroke-width="31" stroke-linecap="round"/>
+        <path d="M736 286l74 104" stroke="#2d2a26" stroke-width="25" stroke-linecap="round"/>
+        <path d="M784 361l65 92" stroke="url(#edge)" stroke-width="34" stroke-linecap="round"/>
+        <g fill="#d5d1c8" stroke="#0b0b0a" stroke-width="4">
+          <path d="M817 396l25-6-12 23Z"/><path d="M839 426l26-5-12 23Z"/><path d="M790 371l24-7-10 24Z"/>
+        </g>
+        <circle cx="655" cy="239" r="28" fill="url(#steel)" stroke="#080807" stroke-width="8"/>
+        <path d="M770 333l80 112" stroke="#f68b38" stroke-width="7" stroke-linecap="round" opacity="0.75"/>
+      </g>
+
+      <g fill="none" stroke-linecap="round">
+        <path d="M330 246h231M346 280h201M380 353h136" stroke="#f0ece2" stroke-width="5" opacity="0.24"/>
+        <path d="M306 184c64 36 115 45 155 29 47 15 94 7 141-30" stroke="url(#rust)" stroke-width="11" opacity="0.3"/>
+        <path d="M274 328c76 28 132 21 173-18 41 39 99 46 177 17" stroke="url(#rust)" stroke-width="12" opacity="0.26"/>
+      </g>
+
+      <g fill="#15130f" opacity="0.9">
+        <path d="M388 221l28-8-10 28Z"/><path d="M506 185l36-11-14 33Z"/><path d="M308 282l28-8-8 25Z"/><path d="M584 300l31-10-12 28Z"/>
+        <circle cx="421" cy="186" r="5"/><circle cx="472" cy="187" r="5"/><circle cx="365" cy="294" r="6"/><circle cx="528" cy="294" r="6"/>
+      </g>
+    </g>
+  </g>
+
+  <g opacity="0.88" font-family="Impact, Arial Black, Microsoft YaHei, sans-serif" font-weight="900" fill="#d4cab7" stroke="#191510" stroke-width="2">
+    <text x="34" y="54" font-size="38">TANK DISMANTLER</text>
+    <text x="37" y="86" font-size="18" stroke-width="1">BOSS PROFILE</text>
+  </g>
+</svg>

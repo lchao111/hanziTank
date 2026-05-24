@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-label="Heavy infantry soldier">
+  <defs>
+    <linearGradient id="armor" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#9ca3af"/><stop offset="0.45" stop-color="#64748b"/><stop offset="1" stop-color="#1f2937"/></linearGradient>
+    <linearGradient id="cloth" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#716446"/><stop offset="1" stop-color="#2f3528"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#070706" flood-opacity="0.5"/></filter>
+    <filter id="grit"><feTurbulence type="fractalNoise" baseFrequency="0.74" numOctaves="4" seed="145"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 0.18"/></feComponentTransfer><feBlend mode="multiply" in2="SourceGraphic"/></filter>
+  </defs>
+  <g filter="url(#shadow)" transform="translate(130 12)">
+    <ellipse cx="140" cy="260" rx="108" ry="18" fill="#13100c" opacity="0.55"/>
+    <g filter="url(#grit)">
+      <path d="M86 60c31-29 79-29 110 0l-10 35H96Z" fill="url(#armor)" stroke="#20242a" stroke-width="8"/>
+      <circle cx="141" cy="101" r="33" fill="#9a6a45" stroke="#2e2018" stroke-width="6"/>
+      <path d="M86 126h112l28 74-21 48H75l-23-48Z" fill="url(#cloth)" stroke="#1f2419" stroke-width="8"/>
+      <path d="M99 129h84l17 83H83Z" fill="url(#armor)" stroke="#29313a" stroke-width="7"/>
+      <path d="M75 149l-62 30" stroke="#343126" stroke-width="13" stroke-linecap="round"/>
+      <path d="M205 154l62 30" stroke="#343126" stroke-width="13" stroke-linecap="round"/>
+      <path d="M23 172l181 40" stroke="#1f2937" stroke-width="11" stroke-linecap="round"/>
+      <path d="M203 209l73 18" stroke="#111827" stroke-width="6" stroke-linecap="round"/>
+      <path d="M105 244l-17 42" stroke="#30291f" stroke-width="16" stroke-linecap="round"/>
+      <path d="M178 244l22 42" stroke="#30291f" stroke-width="16" stroke-linecap="round"/>
+      <path d="M79 286h48M186 286h48" stroke="#111111" stroke-width="11" stroke-linecap="round"/>
+      <path d="M95 160h92M100 184h92" stroke="#e5e7eb" stroke-width="4" opacity="0.42"/>
+    </g>
+  </g>
+</svg>

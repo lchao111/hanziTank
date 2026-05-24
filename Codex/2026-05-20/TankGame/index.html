@@ -116,6 +116,36 @@
       background-position: center bottom;
     }
 
+    .battlefield.screen-shake {
+      animation: battlefield-shake 300ms ease;
+    }
+
+    .phaser-layer {
+      position: absolute;
+      z-index: 3;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .phaser-layer canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .battlefield.phaser-actors-ready .bullet,
+    .battlefield.phaser-actors-ready .enemy-bullet,
+    .battlefield.phaser-actors-ready .burst,
+    .battlefield.phaser-actors-ready .player-burst {
+      visibility: hidden;
+    }
+
+    .battlefield.phaser-actors-ready .unit-hud,
+    .battlefield.phaser-actors-ready .damage-float,
+    .battlefield.phaser-actors-ready .defense-effect {
+      visibility: visible;
+    }
+
     .sun {
       position: absolute;
       z-index: 1;
@@ -210,6 +240,72 @@
       animation: shake 340ms ease;
     }
 
+    .tank.enemy.boss-slam {
+      animation: boss-hammer-slam 1180ms cubic-bezier(.18,.82,.2,1) forwards;
+    }
+
+    .tank.player.destroyed {
+      transform: translateY(8px) rotate(-5deg);
+      transition: none;
+    }
+
+    .tank.player.destroyed .tank-sprite {
+      opacity: 0.46;
+      clip-path: polygon(0 58%, 16% 38%, 32% 56%, 49% 31%, 63% 62%, 78% 45%, 100% 67%, 100% 100%, 0 100%);
+      filter: grayscale(0.85) brightness(0.42) contrast(1.35) drop-shadow(0 12px 8px rgba(0, 0, 0, 0.5));
+      transform: rotate(-7deg) translateY(16px);
+    }
+
+    .tank.player.destroyed::before,
+    .tank.player.destroyed::after {
+      content: "";
+      position: absolute;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .tank.player.destroyed::before {
+      left: 18%;
+      right: 8%;
+      bottom: 11%;
+      height: 42%;
+      border-radius: 44% 38% 24% 28%;
+      background:
+        radial-gradient(circle at 22% 68%, #facc15 0 5px, #c2410c 6px 13px, transparent 14px),
+        radial-gradient(circle at 48% 50%, #fed7aa 0 7px, #7f1d1d 8px 18px, transparent 19px),
+        radial-gradient(circle at 74% 63%, #f97316 0 5px, #451a03 6px 15px, transparent 16px),
+        linear-gradient(120deg, #1f1b17, #3a2b20 45%, #111 100%);
+      border: 4px solid #12100e;
+      box-shadow: inset 0 -12px 0 rgba(0,0,0,0.38), 0 0 22px rgba(249, 115, 22, 0.32);
+      transform: rotate(4deg);
+    }
+
+    .tank.player.destroyed::after {
+      left: 30%;
+      top: -18%;
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 38% 58%, rgba(45, 45, 45, 0.86) 0 18px, transparent 19px),
+        radial-gradient(circle at 62% 34%, rgba(70, 70, 70, 0.76) 0 24px, transparent 25px),
+        radial-gradient(circle at 24% 27%, rgba(30, 30, 30, 0.72) 0 15px, transparent 16px);
+      animation: wreck-smoke-rise 1900ms ease-in-out infinite;
+      filter: blur(1px);
+    }
+
+    .tank.enemy-truck.reloading {
+      animation: truck-menace-approach 5000ms linear forwards;
+    }
+
+    .tank.enemy-truck.crash-attack {
+      animation: truck-crash-attack 880ms cubic-bezier(.16,.84,.24,1) forwards;
+    }
+
+    .tank.enemy-boss.reloading {
+      animation: boss-menace-approach 5000ms linear forwards;
+    }
+
     .tank-sprite {
       position: absolute;
       z-index: 1;
@@ -224,6 +320,10 @@
 
     .enemy .tank-sprite {
       filter: saturate(0.9) contrast(1.08) drop-shadow(0 12px 10px rgba(12, 8, 6, 0.38));
+    }
+
+    .enemy-boss .tank-sprite {
+      filter: saturate(0.86) contrast(1.16) drop-shadow(0 14px 12px rgba(10, 6, 5, 0.52));
     }
 
     .unit-hud {
@@ -259,6 +359,43 @@
       border-radius: 999px;
       background: rgba(30, 24, 20, 0.86);
       box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.7), 0 2px 5px rgba(0, 0, 0, 0.35);
+    }
+
+    .reload-row {
+      margin-top: 3px;
+    }
+
+    .reload-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2px;
+      color: #fee2b3;
+      font-size: 9px;
+      font-weight: 900;
+      line-height: 1;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+    }
+
+    .reload-bar {
+      height: 8px;
+      overflow: hidden;
+      border: 2px solid rgba(85, 46, 12, 0.92);
+      border-radius: 999px;
+      background: rgba(45, 30, 19, 0.86);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.72), 0 0 8px rgba(251, 191, 36, 0.25);
+    }
+
+    .reload-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #f97316, #facc15, #fff7ad);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 0 10px rgba(250, 204, 21, 0.78);
+      transition: width 980ms linear;
+    }
+
+    .reload-fill.ready {
+      background: linear-gradient(90deg, #ef4444, #f97316, #facc15);
     }
 
     .defense-row {
@@ -352,6 +489,40 @@
       border-color: rgba(71, 85, 105, 0.76);
       background: rgba(241, 245, 249, 0.96);
       color: #334155;
+    }
+
+    .defense-effect {
+      position: absolute;
+      z-index: 5;
+      inset: -18% -12% -6%;
+      pointer-events: none;
+    }
+
+    .enemy .defense-effect {
+      transform: scaleX(-1);
+    }
+
+    .absolute-effect {
+      border: 5px solid rgba(125, 211, 252, 0.95);
+      border-radius: 50%;
+      background:
+        radial-gradient(ellipse at center, rgba(219, 234, 254, 0.18) 0 48%, rgba(56, 189, 248, 0.2) 49% 58%, transparent 60%),
+        conic-gradient(from 20deg, transparent 0 10%, rgba(224, 242, 254, 0.82) 10% 14%, transparent 14% 34%, rgba(56, 189, 248, 0.68) 34% 39%, transparent 39% 100%);
+      box-shadow: 0 0 26px rgba(56, 189, 248, 0.85), inset 0 0 24px rgba(147, 197, 253, 0.62);
+      animation: absolute-shield-flash 760ms ease-out forwards;
+    }
+
+    .armor-effect {
+      inset: 18% 7% 17%;
+      border-radius: 12px;
+      background:
+        radial-gradient(circle at 18% 58%, #fff7c2 0 3px, #f59e0b 4px 8px, transparent 9px),
+        radial-gradient(circle at 42% 34%, #fff7c2 0 3px, #fb923c 4px 7px, transparent 8px),
+        radial-gradient(circle at 68% 54%, #fff7c2 0 3px, #f97316 4px 8px, transparent 9px),
+        radial-gradient(circle at 83% 38%, #fff7c2 0 2px, #facc15 3px 6px, transparent 7px),
+        linear-gradient(100deg, transparent 0 40%, rgba(226, 232, 240, 0.7) 41% 45%, transparent 46% 100%);
+      filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.78));
+      animation: armor-sparks 680ms ease-out forwards;
     }
 
     .body {
@@ -727,25 +898,26 @@
       height: 20%;
     }
 
-    .word-flag {
-      position: absolute;
-      z-index: 2;
-      left: 50%;
-      top: -54px;
-      transform: translateX(-50%);
-      min-width: 74px;
-      padding: 7px 10px;
-      border: 3px solid #782121;
-      border-radius: 8px;
-      background: #fff8df;
-      text-align: center;
-      font-size: clamp(28px, 6vw, 44px);
-      font-weight: 900;
-      line-height: 1;
+    .tank.enemy-infantry {
+      width: min(30vw, 190px);
+      min-width: 132px;
+      bottom: 44px;
     }
 
-    .enemy .word-flag {
-      transform: translateX(-50%) scaleX(-1);
+    .tank.enemy-heavy-infantry {
+      width: min(28vw, 178px);
+      min-width: 126px;
+    }
+
+    .tank.enemy-rpg-infantry {
+      width: min(31vw, 198px);
+      min-width: 138px;
+    }
+
+    .tank.enemy-boss {
+      width: min(42vw, 285px);
+      min-width: 208px;
+      bottom: 34px;
     }
 
     .bullet {
@@ -1004,6 +1176,74 @@
       display: grid;
     }
 
+    .supply-screen {
+      position: absolute;
+      z-index: 10;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: rgba(23, 28, 27, 0.76);
+    }
+
+    .supply-screen.show {
+      display: grid;
+    }
+
+    .boss-intro {
+      position: absolute;
+      z-index: 11;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background:
+        radial-gradient(circle at 70% 48%, rgba(255, 96, 35, 0.22), transparent 28%),
+        rgba(13, 16, 15, 0.84);
+    }
+
+    .boss-intro.show {
+      display: grid;
+      animation: boss-intro-fade 2000ms ease forwards;
+    }
+
+    .boss-card {
+      display: grid;
+      grid-template-columns: minmax(160px, 260px) minmax(180px, 320px);
+      gap: 18px;
+      align-items: center;
+      width: min(720px, calc(100vw - 28px));
+      padding: 18px;
+      border: 4px solid #211813;
+      border-radius: 8px;
+      background: #f2e4cf;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.48);
+      transform: scale(0.92);
+      animation: boss-card-push 2000ms ease forwards;
+    }
+
+    .boss-portrait {
+      width: 100%;
+      aspect-ratio: 1.2;
+      object-fit: contain;
+      filter: drop-shadow(0 14px 12px rgba(22, 16, 12, 0.55));
+    }
+
+    .boss-name {
+      color: #4b160f;
+      font-size: clamp(30px, 6vw, 54px);
+      line-height: 0.95;
+      font-weight: 900;
+    }
+
+    .boss-threat {
+      margin-top: 10px;
+      color: #38251a;
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
     .perk-panel {
       width: min(620px, calc(100vw - 28px));
       padding: 18px;
@@ -1063,6 +1303,116 @@
       line-height: 1.35;
     }
 
+    .supply-panel {
+      width: min(620px, calc(100vw - 28px));
+      padding: 18px;
+      border: 3px solid #2b2520;
+      border-radius: 8px;
+      background: #fff7e6;
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.38);
+      text-align: center;
+    }
+
+    .supply-title {
+      color: #233326;
+      font-size: clamp(26px, 6vw, 40px);
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .supply-subtitle {
+      margin: 8px 0 14px;
+      color: #625546;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    .supply-chest {
+      position: relative;
+      width: 150px;
+      height: 94px;
+      margin: 8px auto 14px;
+      border: 4px solid #3a2717;
+      border-radius: 8px;
+      background:
+        linear-gradient(90deg, transparent 0 45%, rgba(255, 215, 119, 0.72) 45% 55%, transparent 55% 100%),
+        linear-gradient(#9d5b2f, #5e311c);
+      box-shadow: inset 0 -12px 0 rgba(0, 0, 0, 0.2), 0 12px 22px rgba(0, 0, 0, 0.26);
+    }
+
+    .supply-chest::before {
+      content: "";
+      position: absolute;
+      left: -4px;
+      right: -4px;
+      top: -28px;
+      height: 34px;
+      border: 4px solid #3a2717;
+      border-bottom: 0;
+      border-radius: 18px 18px 4px 4px;
+      background:
+        linear-gradient(90deg, transparent 0 45%, rgba(255, 215, 119, 0.72) 45% 55%, transparent 55% 100%),
+        linear-gradient(#b56c39, #7b4024);
+      transform-origin: bottom center;
+      transition: transform 280ms ease;
+    }
+
+    .supply-chest.open::before {
+      transform: rotateX(58deg) translateY(-10px);
+    }
+
+    .supply-word {
+      display: inline-grid;
+      place-items: center;
+      width: 70px;
+      height: 70px;
+      margin-bottom: 12px;
+      border: 4px solid #2f6f2f;
+      border-radius: 8px;
+      background: #f5ffe6;
+      color: #163b1b;
+      font-size: 46px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .supply-options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .supply-choice {
+      min-height: 42px;
+      padding: 6px 10px;
+      border: 2px solid #24566f;
+      border-radius: 8px;
+      background: #e9f8ff;
+      color: #163246;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .supply-choice.right {
+      border-color: #2f7d3a;
+      background: #ddffd8;
+    }
+
+    .supply-choice.wrong {
+      border-color: #aa2222;
+      background: #ffe1df;
+      animation: shake 280ms ease;
+    }
+
+    .supply-message {
+      min-height: 22px;
+      margin-top: 12px;
+      color: #36506a;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
     .wreck {
       width: min(430px, calc(100vw - 28px));
       padding: 18px;
@@ -1085,6 +1435,69 @@
       font-size: 18px;
       font-weight: 800;
       color: #3f3831;
+    }
+
+    .war-summary {
+      display: grid;
+      gap: 10px;
+      margin: 12px 0;
+      text-align: left;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .summary-stat {
+      padding: 8px;
+      border: 2px solid #c6b28f;
+      border-radius: 8px;
+      background: #fffaf0;
+      text-align: center;
+    }
+
+    .summary-label {
+      color: #6b6257;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .summary-value {
+      margin-top: 3px;
+      color: #2f281f;
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .summary-section {
+      padding: 10px;
+      border: 2px solid #d5c3a6;
+      border-radius: 8px;
+      background: #fff7e6;
+    }
+
+    .summary-heading {
+      color: #33291f;
+      font-size: 14px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .summary-list {
+      margin: 0;
+      padding-left: 18px;
+      color: #3f3831;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .summary-empty {
+      color: #6b6257;
+      font-size: 14px;
+      font-weight: 800;
     }
 
     .wreck-tank {
@@ -1198,6 +1611,20 @@
       display: grid;
     }
 
+    .archive-modal {
+      position: fixed;
+      z-index: 13;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 16px;
+      background: rgba(22, 27, 30, 0.68);
+    }
+
+    .archive-modal.show {
+      display: grid;
+    }
+
     .arsenal-panel {
       width: min(920px, calc(100vw - 24px));
       max-height: calc(100vh - 32px);
@@ -1208,6 +1635,20 @@
       box-shadow: 0 20px 48px rgba(0, 0, 0, 0.36);
     }
 
+    .archive-panel {
+      width: min(920px, calc(100vw - 24px));
+      max-height: calc(100vh - 32px);
+      overflow: auto;
+      border: 3px solid #2b2520;
+      border-radius: 8px;
+      background: #f7efe1;
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.36);
+    }
+
+    .enemy-gallery-panel {
+      width: min(1240px, calc(100vw - 24px));
+    }
+
     .arsenal-head {
       display: grid;
       grid-template-columns: 1fr auto;
@@ -1216,6 +1657,304 @@
       padding: 14px;
       border-bottom: 2px solid #d5c3a6;
       background: #fff7e6;
+    }
+
+    .archive-body {
+      display: grid;
+      gap: 14px;
+      padding: 14px;
+    }
+
+    .archive-section {
+      border: 2px solid #d5c3a6;
+      border-radius: 8px;
+      background: #fffaf0;
+      overflow: hidden;
+    }
+
+    .archive-section-title {
+      padding: 10px 12px;
+      border-bottom: 2px solid #d5c3a6;
+      background: #fff7e6;
+      color: #33291f;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .archive-list,
+    .leaderboard-list {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+    }
+
+    .archive-card,
+    .leaderboard-card {
+      display: grid;
+      gap: 6px;
+      padding: 10px;
+      border: 2px solid #c6b28f;
+      border-radius: 8px;
+      background: #fffdf7;
+    }
+
+    .archive-card-head,
+    .leaderboard-card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: #2f281f;
+      font-weight: 900;
+    }
+
+    .archive-card-meta,
+    .leaderboard-card-meta {
+      color: #5f5549;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .archive-empty {
+      padding: 12px;
+      color: #6b6257;
+      font-weight: 800;
+    }
+
+    .mastery-dashboard {
+      display: grid;
+      gap: 14px;
+    }
+
+    .rank-hero {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 2px solid #b99b61;
+      border-radius: 8px;
+      background: #fff4cf;
+    }
+
+    .rank-title-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      color: #2f281f;
+      font-weight: 900;
+    }
+
+    .rank-title {
+      font-size: 28px;
+      line-height: 1.1;
+    }
+
+    .rank-total {
+      color: #75521d;
+      font-size: 18px;
+    }
+
+    .mastery-progress {
+      height: 18px;
+      overflow: hidden;
+      border: 2px solid #6f512d;
+      border-radius: 999px;
+      background: #dfd0ae;
+    }
+
+    .mastery-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #256f3a, #84cc16, #f3b23c);
+    }
+
+    .rank-next {
+      color: #5c4a33;
+      font-weight: 900;
+    }
+
+    .rank-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .rank-card {
+      display: grid;
+      gap: 7px;
+      padding: 10px;
+      border: 2px solid #c6b28f;
+      border-radius: 8px;
+      background: #fffdf7;
+    }
+
+    .rank-card.current {
+      border-color: #7a4f12;
+      background: #fff1c2;
+    }
+
+    .rank-card.complete {
+      border-color: #326f3a;
+      background: #f1ffe8;
+    }
+
+    .rank-card-title {
+      color: #2f281f;
+      font-weight: 900;
+    }
+
+    .rank-card-meta {
+      color: #695d4f;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .mastered-word-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
+      gap: 8px;
+      max-height: 300px;
+      overflow: auto;
+      padding: 12px;
+    }
+
+    .mastered-word-card {
+      display: grid;
+      place-items: center;
+      gap: 4px;
+      min-height: 86px;
+      padding: 8px;
+      border: 2px solid #c6b28f;
+      border-radius: 8px;
+      background: #fffdf7;
+      text-align: center;
+    }
+
+    .mastered-hanzi {
+      color: #1f2937;
+      font-size: 32px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .mastered-meta {
+      color: #695d4f;
+      font-size: 12px;
+      line-height: 1.2;
+      font-weight: 800;
+    }
+
+    .enemy-gallery-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(230px, 280px);
+      gap: 14px;
+    }
+
+    .enemy-preview-stage {
+      position: relative;
+      min-height: min(520px, calc(100vh - 210px));
+      overflow: hidden;
+      border: 2px solid #2b2520;
+      border-radius: 8px;
+      background:
+        radial-gradient(ellipse at 50% 78%, rgba(8, 7, 6, 0.58) 0 28%, transparent 54%),
+        linear-gradient(#171817 0 54%, #2a2722 54% 100%);
+    }
+
+    .enemy-preview-canvas {
+      position: absolute;
+      inset: 0;
+    }
+
+    .enemy-preview-canvas canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .enemy-gallery-fallback {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(88%, 820px);
+      max-height: 82%;
+      object-fit: contain;
+      transform: translate(-50%, -50%);
+      filter: drop-shadow(0 20px 16px rgba(0, 0, 0, 0.55));
+    }
+
+    .enemy-gallery-info {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      display: grid;
+      gap: 4px;
+      padding: 12px 14px;
+      border: 2px solid rgba(213, 195, 166, 0.72);
+      border-radius: 8px;
+      background: rgba(18, 15, 12, 0.78);
+      color: #f7efe1;
+      font-weight: 900;
+    }
+
+    .enemy-gallery-name {
+      font-size: 28px;
+      line-height: 1.1;
+    }
+
+    .enemy-gallery-meta {
+      color: #d7c8ad;
+      font-size: 16px;
+      line-height: 1.35;
+    }
+
+    .enemy-gallery-list {
+      display: grid;
+      gap: 8px;
+      max-height: min(520px, calc(100vh - 210px));
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .enemy-gallery-choice {
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      gap: 10px;
+      align-items: center;
+      min-height: 86px;
+      padding: 8px;
+      border: 2px solid #c6b28f;
+      border-radius: 8px;
+      background: #fffdf7;
+      color: #2f281f;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .enemy-gallery-choice.active {
+      border-color: #7a4f12;
+      background: #fff1c2;
+    }
+
+    .enemy-gallery-thumb {
+      width: 86px;
+      height: 64px;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    .enemy-gallery-choice-title {
+      font-weight: 900;
+      line-height: 1.15;
+    }
+
+    .enemy-gallery-choice-meta {
+      margin-top: 4px;
+      color: #695d4f;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.25;
     }
 
     .arsenal-title {
@@ -1332,6 +2071,16 @@
       color: #3d2d1d;
       font-weight: 900;
       cursor: pointer;
+    }
+
+    .war-shop-button {
+      display: none;
+      border-color: #7a4f12;
+      background: #ffd166;
+    }
+
+    .war-shop-button.show {
+      display: inline-block;
     }
 
     .level {
@@ -1503,6 +2252,75 @@
       }
     }
 
+    @keyframes battlefield-shake {
+      0%, 100% { transform: translate(0, 0); }
+      18% { transform: translate(-5px, 3px); }
+      36% { transform: translate(6px, -2px); }
+      54% { transform: translate(-4px, -3px); }
+      72% { transform: translate(3px, 2px); }
+    }
+
+    @keyframes boss-hammer-slam {
+      0% {
+        transform: scaleX(-1) translateX(0) translateY(0) rotate(0deg);
+      }
+      28% {
+        transform: scaleX(-1) translateX(92px) translateY(-7px) rotate(-5deg) scale(1.04);
+      }
+      58% {
+        transform: scaleX(-1) translateX(172px) translateY(10px) rotate(11deg) scale(1.1);
+      }
+      72% {
+        transform: scaleX(-1) translateX(158px) translateY(0) rotate(-3deg) scale(1.06);
+      }
+      100% {
+        transform: scaleX(-1) translateX(0) translateY(0) rotate(0deg);
+      }
+    }
+
+    @keyframes boss-menace-approach {
+      0% {
+        transform: scaleX(-1) translateX(0) scale(1);
+        filter: drop-shadow(0 12px 12px rgba(10, 6, 5, 0.4));
+      }
+      100% {
+        transform: scaleX(-1) translateX(72px) scale(1.08);
+        filter: drop-shadow(0 18px 18px rgba(10, 6, 5, 0.62));
+      }
+    }
+
+    @keyframes truck-menace-approach {
+      0% {
+        transform: scaleX(-1) translateX(0) scale(1);
+      }
+      100% {
+        transform: scaleX(-1) translateX(96px) scale(1.08);
+      }
+    }
+
+    @keyframes truck-crash-attack {
+      0% {
+        transform: scaleX(-1) translateX(96px) scale(1.08);
+      }
+      62% {
+        transform: scaleX(-1) translateX(178px) translateY(6px) scale(1.13) rotate(3deg);
+      }
+      100% {
+        transform: scaleX(-1) translateX(0) translateY(0) scale(1) rotate(0deg);
+      }
+    }
+
+    @keyframes boss-intro-fade {
+      0%, 82% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes boss-card-push {
+      0% { transform: scale(0.86) translateY(18px); }
+      22%, 78% { transform: scale(1) translateY(0); }
+      100% { transform: scale(1.06) translateY(-8px); }
+    }
+
     @keyframes damage-rise {
       0% {
         opacity: 0;
@@ -1521,6 +2339,43 @@
       }
     }
 
+    @keyframes absolute-shield-flash {
+      0% {
+        opacity: 0;
+        transform: scale(0.72);
+      }
+      18% {
+        opacity: 1;
+        transform: scale(1.02);
+      }
+      52% {
+        opacity: 0.86;
+        transform: scale(1.1);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(1.28);
+      }
+    }
+
+    @keyframes armor-sparks {
+      0% {
+        opacity: 0;
+        transform: translateX(0) scale(0.92);
+      }
+      16% {
+        opacity: 1;
+        transform: translateX(-4px) scale(1.04);
+      }
+      34% {
+        transform: translateX(5px) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(0) translateY(-16px) scale(1.22);
+      }
+    }
+
     @keyframes smoke {
       0%, 100% {
         opacity: 0.48;
@@ -1529,6 +2384,17 @@
       50% {
         opacity: 0.78;
         transform: translateY(-10px) scale(1.12);
+      }
+    }
+
+    @keyframes wreck-smoke-rise {
+      0%, 100% {
+        opacity: 0.46;
+        transform: translateY(0) scale(0.92);
+      }
+      50% {
+        opacity: 0.82;
+        transform: translateY(-16px) scale(1.18);
       }
     }
 
@@ -1599,16 +2465,36 @@
         bottom: 34px;
       }
 
-      .word-flag {
-        top: -44px;
-      }
-
       .shop-grid {
         grid-template-columns: 1fr;
       }
 
+      .enemy-gallery-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .enemy-preview-stage {
+        min-height: 390px;
+      }
+
+      .enemy-gallery-list {
+        max-height: 260px;
+      }
+
       .perk-options {
         grid-template-columns: 1fr;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .rank-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .rank-title-row {
+        display: grid;
       }
     }
   </style>
@@ -1628,32 +2514,36 @@
 
     <section class="battlefield" aria-live="polite">
       <div class="sun" aria-hidden="true"></div>
+      <div class="phaser-layer" id="phaserLayer" aria-hidden="true"></div>
       <div class="tank player" id="playerTank" aria-hidden="true">
         <div class="unit-hud">
           <div class="health-label"><span id="playerHealthName">Commander</span><span id="playerHpText">3/3</span></div>
           <div class="health-bar"><div class="health-fill" id="playerHealthFill"></div></div>
           <div class="defense-row" id="playerAbsoluteRow">
-            <div class="defense-label"><span>绝对防御</span><span id="playerAbsoluteText">0/0</span></div>
+            <div class="defense-label"><span>Absolute Defense</span><span id="playerAbsoluteText">0/0</span></div>
             <div class="defense-bar"><div class="defense-fill absolute-fill" id="playerAbsoluteFill"></div></div>
           </div>
           <div class="defense-row" id="playerArmorRow">
-            <div class="defense-label"><span>护甲</span><span id="playerArmorText">0/0</span></div>
+            <div class="defense-label"><span>Armor</span><span id="playerArmorText">0/0</span></div>
             <div class="defense-bar"><div class="defense-fill armor-fill" id="playerArmorFill"></div></div>
           </div>
         </div>
         <img class="tank-sprite" id="playerTankSprite" src="assets/tank-sherman.svg" alt="">
       </div>
       <div class="tank enemy" id="enemyTank" aria-hidden="true">
-        <div class="word-flag" id="targetWord">天</div>
         <div class="unit-hud">
-          <div class="health-label"><span>Enemy</span><span id="enemyHpText">1/1</span></div>
+          <div class="health-label"><span id="enemyHealthName">Tank</span><span id="enemyHpText">1/1</span></div>
           <div class="health-bar"><div class="health-fill" id="enemyHealthFill"></div></div>
+          <div class="reload-row">
+            <div class="reload-label"><span>Reload</span><span id="enemyReloadText">5s</span></div>
+            <div class="reload-bar"><div class="reload-fill" id="enemyReloadFill"></div></div>
+          </div>
           <div class="defense-row" id="enemyAbsoluteRow">
-            <div class="defense-label"><span>绝对防御</span><span id="enemyAbsoluteText">0/0</span></div>
+            <div class="defense-label"><span>Absolute Defense</span><span id="enemyAbsoluteText">0/0</span></div>
             <div class="defense-bar"><div class="defense-fill absolute-fill" id="enemyAbsoluteFill"></div></div>
           </div>
           <div class="defense-row" id="enemyArmorRow">
-            <div class="defense-label"><span>护甲</span><span id="enemyArmorText">0/0</span></div>
+            <div class="defense-label"><span>Armor</span><span id="enemyArmorText">0/0</span></div>
             <div class="defense-bar"><div class="defense-fill armor-fill" id="enemyArmorFill"></div></div>
           </div>
         </div>
@@ -1676,7 +2566,7 @@
 
       <div class="game-over" id="gameOver" aria-hidden="true">
         <div class="wreck">
-          <div class="wreck-title">Tank Destroyed</div>
+          <div class="wreck-title">War Summary</div>
           <div class="wreck-tank" aria-hidden="true">
             <div class="wreck-barrel"></div>
             <div class="wreck-body"></div>
@@ -1685,7 +2575,24 @@
             <div class="wreck-smoke smoke-two"></div>
             <div class="wreck-smoke smoke-three"></div>
           </div>
-          <div class="wreck-text">Try again. Read the character, then counterattack.</div>
+          <div class="wreck-text" id="summaryText">The run is over. Review the battle record, then try again.</div>
+          <div class="war-summary">
+            <div class="summary-grid">
+              <div class="summary-stat"><div class="summary-label">Score</div><div class="summary-value" id="summaryScore">0</div></div>
+              <div class="summary-stat"><div class="summary-label">Stage</div><div class="summary-value" id="summaryStage">1</div></div>
+              <div class="summary-stat"><div class="summary-label">Coins</div><div class="summary-value" id="summaryCoins">0</div></div>
+            </div>
+            <div class="summary-section">
+              <div class="summary-heading">Upgrades Used</div>
+              <div class="summary-empty" id="summaryUpgradeEmpty">No upgrades gained this run.</div>
+              <ul class="summary-list" id="summaryUpgrades"></ul>
+            </div>
+            <div class="summary-section">
+              <div class="summary-heading">Most Damaging Words</div>
+              <div class="summary-empty" id="summaryDamageEmpty">No word caused damage this run.</div>
+              <ul class="summary-list" id="summaryDamageWords"></ul>
+            </div>
+          </div>
           <button class="restart" id="restartButton" type="button">Restart</button>
         </div>
       </div>
@@ -1697,31 +2604,159 @@
           <div class="perk-options" id="perkOptions"></div>
         </div>
       </div>
+
+      <div class="supply-screen" id="supplyScreen" aria-hidden="true">
+        <div class="supply-panel">
+          <div class="supply-title">War Supply</div>
+          <div class="supply-subtitle" id="supplySubtitle">Answer both characters correctly to open the chest.</div>
+          <div class="supply-chest" id="supplyChest" aria-hidden="true"></div>
+          <div class="supply-word" id="supplyWord">天</div>
+          <div class="supply-options" id="supplyOptions"></div>
+          <div class="supply-message" id="supplyMessage" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div class="boss-intro" id="bossIntro" aria-hidden="true">
+        <div class="boss-card">
+          <img class="boss-portrait" id="bossPortrait" src="assets/enemy-boss-dismantler.svg" alt="">
+          <div>
+            <div class="boss-name" id="bossIntroName">Tank Dismantler</div>
+            <div class="boss-threat" id="bossIntroText">A hammer-wielding breaker closes in. Listen carefully and dismantle his attack.</div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <footer class="controls">
       <button class="primary" id="soundButton" type="button" aria-pressed="true">Sound On</button>
+      <button class="primary" id="pauseButton" type="button" aria-pressed="false">Pause</button>
       <button class="primary" id="speakButton" type="button">Speak</button>
       <button class="primary" id="nextButton" type="button">Next Word</button>
       <button class="primary" id="reviewButton" type="button">Review Misses</button>
-      <button class="primary" id="arsenalButton" type="button">Arsenal</button>
+      <button class="primary" id="masteryButton" type="button">Mastery Records</button>
+      <button class="primary war-shop-button" id="arsenalButton" type="button">War Shop</button>
+      <button class="primary" id="archiveButton" type="button">War Archives</button>
+      <button class="primary" id="debugButton" type="button">Debug Mode</button>
+      <button class="primary" id="enemyGalleryButton" type="button">Enemy Gallery</button>
       <button class="primary" id="switchProfileButton" type="button">Switch Player</button>
       <span class="level" id="wordCount">Loading word bank</span>
     </footer>
 
     <div class="arsenal" id="arsenal" aria-hidden="true">
-      <section class="arsenal-panel" aria-label="Arsenal">
+      <section class="arsenal-panel" aria-label="War Shop">
         <div class="arsenal-head">
           <div>
-            <div class="arsenal-title">Arsenal</div>
+            <div class="arsenal-title">War Shop</div>
             <div class="arsenal-meta">
-              Coins <span id="shopCoins">0</span> · Today <span id="dailyScore">0</span> pts
+              War Coins <span id="shopCoins">0</span> · Today <span id="dailyScore">0</span> pts
             </div>
           </div>
-          <button class="close-shop" id="closeArsenalButton" type="button" aria-label="Close arsenal">×</button>
+          <button class="close-shop" id="closeArsenalButton" type="button" aria-label="Close war shop">×</button>
         </div>
         <div class="shop-grid" id="shopGrid"></div>
         <div class="loadout" id="loadout"></div>
+      </section>
+    </div>
+
+    <div class="archive-modal" id="archiveModal" aria-hidden="true">
+      <section class="archive-panel" aria-label="War Archives">
+        <div class="arsenal-head">
+          <div>
+            <div class="arsenal-title">War Archives</div>
+            <div class="arsenal-meta" id="archiveMeta">Review battle records and player best stages.</div>
+          </div>
+          <button class="close-shop" id="closeArchiveButton" type="button" aria-label="Close war archives">×</button>
+        </div>
+        <div class="archive-body">
+          <section class="archive-section">
+            <div class="archive-section-title">Current Player Archive</div>
+            <div class="archive-empty" id="archiveEmpty">No war archive yet. Complete a run to create one.</div>
+            <div class="archive-list" id="archiveList"></div>
+          </section>
+          <section class="archive-section">
+            <div class="archive-section-title">Player Best Stage Leaderboard</div>
+            <div class="archive-empty" id="leaderboardEmpty">No player records yet.</div>
+            <div class="leaderboard-list" id="leaderboardList"></div>
+          </section>
+        </div>
+      </section>
+    </div>
+
+    <div class="archive-modal" id="masteryModal" aria-hidden="true">
+      <section class="archive-panel" aria-label="Mastery Records">
+        <div class="arsenal-head">
+          <div>
+            <div class="arsenal-title">Mastery Records</div>
+            <div class="arsenal-meta" id="masteryMeta">Track learned Hanzi and rank progress toward 3000 characters.</div>
+          </div>
+          <button class="close-shop" id="closeMasteryButton" type="button" aria-label="Close mastery records">×</button>
+        </div>
+        <div class="archive-body mastery-dashboard">
+          <section class="rank-hero">
+            <div class="rank-title-row">
+              <div class="rank-title" id="currentRankName">Recruit</div>
+              <div class="rank-total" id="masteryTotal">0 / 3000 Hanzi</div>
+            </div>
+            <div class="mastery-progress" aria-hidden="true"><div class="mastery-progress-fill" id="masteryProgressFill"></div></div>
+            <div class="rank-next" id="nextRankText">Learn your first Hanzi to begin promotion.</div>
+          </section>
+          <section class="archive-section">
+            <div class="archive-section-title">Rank Ladder</div>
+            <div class="rank-grid" id="rankGrid"></div>
+          </section>
+          <section class="archive-section">
+            <div class="archive-section-title">Mastered Hanzi</div>
+            <div class="archive-empty" id="masteredEmpty">No mastered Hanzi yet. Win answers to build this archive.</div>
+            <div class="mastered-word-grid" id="masteredWordGrid"></div>
+          </section>
+        </div>
+      </section>
+    </div>
+
+    <div class="archive-modal" id="debugModal" aria-hidden="true">
+      <section class="archive-panel" aria-label="Debug Mode">
+        <div class="arsenal-head">
+          <div>
+            <div class="arsenal-title">Debug Mode</div>
+            <div class="arsenal-meta">Jump directly into a specific battle scenario.</div>
+          </div>
+          <button class="close-shop" id="closeDebugButton" type="button" aria-label="Close debug mode">×</button>
+        </div>
+        <div class="archive-body">
+          <section class="archive-section">
+            <div class="archive-section-title">Battle Target</div>
+            <div class="shop-grid" id="debugGrid"></div>
+          </section>
+        </div>
+      </section>
+    </div>
+
+    <div class="archive-modal" id="enemyGalleryModal" aria-hidden="true">
+      <section class="archive-panel enemy-gallery-panel" aria-label="Enemy Gallery">
+        <div class="arsenal-head">
+          <div>
+            <div class="arsenal-title">Enemy Gallery</div>
+            <div class="arsenal-meta">Phaser preview of every in-game enemy portrait.</div>
+          </div>
+          <button class="close-shop" id="closeEnemyGalleryButton" type="button" aria-label="Close enemy gallery">×</button>
+        </div>
+        <div class="archive-body">
+          <section class="archive-section">
+            <div class="archive-section-title">Phaser Portrait Preview</div>
+            <div class="enemy-gallery-layout">
+              <div class="enemy-preview-stage">
+                <div class="enemy-preview-canvas" id="enemyGalleryPreview" aria-hidden="true"></div>
+                <img class="enemy-gallery-fallback" id="enemyGalleryFallback" src="assets/enemy-suicide-truck.svg" alt="">
+                <div class="enemy-gallery-info">
+                  <div class="enemy-gallery-name" id="enemyGalleryName">Self-Destruct Truck</div>
+                  <div class="enemy-gallery-meta" id="enemyGalleryMeta">HP 1 · Damage 1</div>
+                  <div class="enemy-gallery-meta" id="enemyGalleryDesc">Closest Phaser-style portrait based on the reference image.</div>
+                </div>
+              </div>
+              <div class="enemy-gallery-list" id="enemyGalleryList"></div>
+            </div>
+          </section>
+        </div>
       </section>
     </div>
   </main>
@@ -1745,60 +2780,50 @@
     </form>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
+  <script src="src/core/mastery-core.js"></script>
   <script>
-    const words = [
-      { hanzi: "天", meaning: "sky", phrase: "天空" },
-      { hanzi: "地", meaning: "ground", phrase: "土地" },
-      { hanzi: "火", meaning: "fire", phrase: "火焰" },
-      { hanzi: "水", meaning: "water", phrase: "喝水" },
-      { hanzi: "山", meaning: "mountain", phrase: "高山" },
-      { hanzi: "日", meaning: "sun", phrase: "日出" },
-      { hanzi: "月", meaning: "moon", phrase: "月亮" },
-      { hanzi: "木", meaning: "wood", phrase: "木头" },
-      { hanzi: "田", meaning: "field", phrase: "农田" },
-      { hanzi: "土", meaning: "soil", phrase: "泥土" },
-      { hanzi: "石", meaning: "stone", phrase: "石头" },
-      { hanzi: "云", meaning: "cloud", phrase: "白云" },
-      { hanzi: "雨", meaning: "rain", phrase: "下雨" },
-      { hanzi: "风", meaning: "wind", phrase: "大风" },
-      { hanzi: "花", meaning: "flower", phrase: "花朵" },
-      { hanzi: "草", meaning: "grass", phrase: "小草" },
-      { hanzi: "林", meaning: "forest", phrase: "树林" },
-      { hanzi: "人", meaning: "person", phrase: "人们" },
-      { hanzi: "口", meaning: "mouth", phrase: "开口" },
-      { hanzi: "手", meaning: "hand", phrase: "小手" },
-      { hanzi: "足", meaning: "foot", phrase: "足球" },
-      { hanzi: "目", meaning: "eye", phrase: "目光" },
-      { hanzi: "耳", meaning: "ear", phrase: "耳朵" },
-      { hanzi: "心", meaning: "heart", phrase: "爱心" },
-      { hanzi: "爸", meaning: "dad", phrase: "爸爸" },
-      { hanzi: "妈", meaning: "mom", phrase: "妈妈" },
-      { hanzi: "子", meaning: "child", phrase: "孩子" },
-      { hanzi: "女", meaning: "girl", phrase: "女孩" },
-      { hanzi: "大", meaning: "big", phrase: "大小" },
-      { hanzi: "小", meaning: "small", phrase: "小鸟" },
-      { hanzi: "上", meaning: "up", phrase: "上面" },
-      { hanzi: "下", meaning: "down", phrase: "下面" },
-      { hanzi: "左", meaning: "left", phrase: "左边" },
-      { hanzi: "右", meaning: "right", phrase: "右边" },
-      { hanzi: "中", meaning: "middle", phrase: "中间" },
-      { hanzi: "来", meaning: "come", phrase: "过来" },
-      { hanzi: "去", meaning: "go", phrase: "出去" },
-      { hanzi: "看", meaning: "look", phrase: "看见" },
-      { hanzi: "听", meaning: "listen", phrase: "听见" },
-      { hanzi: "说", meaning: "speak", phrase: "说话" },
-      { hanzi: "走", meaning: "walk", phrase: "走路" },
-      { hanzi: "跑", meaning: "run", phrase: "跑步" },
-      { hanzi: "吃", meaning: "eat", phrase: "吃饭" },
-      { hanzi: "喝", meaning: "drink", phrase: "喝水" },
-      { hanzi: "书", meaning: "book", phrase: "书本" },
-      { hanzi: "车", meaning: "vehicle", phrase: "汽车" },
-      { hanzi: "门", meaning: "door", phrase: "大门" },
-      { hanzi: "家", meaning: "home", phrase: "回家" },
-      { hanzi: "学", meaning: "learn", phrase: "学习" },
-      { hanzi: "兵", meaning: "soldier", phrase: "士兵" },
-      { hanzi: "炮", meaning: "cannon", phrase: "大炮" }
+    const gradeOneWordData = [
+      ["一", "one", ["一个", "一只"]], ["二", "two", ["二月", "二人"]], ["三", "three", ["三个", "三天"]], ["四", "four", ["四月", "四方"]], ["五", "five", ["五个", "五月"]],
+      ["六", "six", ["六天", "六月"]], ["七", "seven", ["七个", "七月"]], ["八", "eight", ["八只", "八方"]], ["九", "nine", ["九月", "九只"]], ["十", "ten", ["十个", "十天"]],
+      ["百", "hundred", ["一百", "百花"]], ["千", "thousand", ["千里", "千山"]], ["万", "ten thousand", ["万一", "千万"]], ["上", "up", ["上面", "上学"]], ["下", "down", ["下面", "下雨"]],
+      ["左", "left", ["左边", "左右"]], ["右", "right", ["右边", "左右"]], ["中", "middle", ["中间", "中国"]], ["大", "big", ["大门", "大小"]], ["小", "small", ["小鸟", "小草"]],
+      ["多", "many", ["多少", "很多"]], ["少", "few", ["多少", "少见"]], ["天", "sky", ["天空", "今天"]], ["地", "ground", ["土地", "大地"]], ["日", "sun", ["日出", "日月"]],
+      ["月", "moon", ["月亮", "月光"]], ["水", "water", ["喝水", "水田"]], ["火", "fire", ["火山", "大火"]], ["山", "mountain", ["高山", "山水"]], ["石", "stone", ["石头", "石子"]],
+      ["田", "field", ["田地", "水田"]], ["土", "soil", ["泥土", "土地"]], ["木", "wood", ["木头", "木门"]], ["禾", "grain", ["禾苗", "禾田"]], ["竹", "bamboo", ["竹子", "竹林"]],
+      ["花", "flower", ["花朵", "红花"]], ["草", "grass", ["草地", "草坪"]], ["林", "forest", ["树林", "竹林"]], ["云", "cloud", ["白云", "云朵"]], ["雨", "rain", ["下雨", "雨水"]],
+      ["风", "wind", ["大风", "风雨"]], ["雪", "snow", ["下雪", "雪花"]], ["人", "person", ["人们", "大人"]], ["你", "you", ["你好", "你们"]], ["我", "I", ["我们", "我的"]],
+      ["他", "he", ["他们", "他的"]], ["她", "she", ["她们", "她的"]], ["们", "plural people", ["我们", "他们"]], ["子", "child", ["孩子", "儿子"]], ["女", "female", ["女孩", "女儿"]],
+      ["儿", "child", ["儿子", "女儿"]], ["爸", "dad", ["爸爸", "爸妈"]], ["妈", "mom", ["妈妈", "爸妈"]], ["爷", "grandpa", ["爷爷", "大爷"]], ["奶", "grandma", ["奶奶", "牛奶"]],
+      ["哥", "older brother", ["哥哥", "大哥"]], ["弟", "younger brother", ["弟弟", "小弟"]], ["姐", "older sister", ["姐姐", "大姐"]], ["妹", "younger sister", ["妹妹", "小妹"]], ["口", "mouth", ["开口", "人口"]],
+      ["耳", "ear", ["耳朵", "木耳"]], ["目", "eye", ["目光", "耳目"]], ["手", "hand", ["小手", "手心"]], ["足", "foot", ["足球", "手足"]], ["头", "head", ["头发", "石头"]],
+      ["心", "heart", ["爱心", "中心"]], ["牙", "tooth", ["牙齿", "门牙"]], ["鸟", "bird", ["小鸟", "飞鸟"]], ["虫", "bug", ["小虫", "虫子"]], ["鱼", "fish", ["小鱼", "鱼水"]],
+      ["马", "horse", ["小马", "马上"]], ["牛", "cow", ["小牛", "牛奶"]], ["羊", "sheep", ["山羊", "小羊"]], ["犬", "dog", ["小犬", "犬牙"]], ["猫", "cat", ["小猫", "花猫"]],
+      ["车", "vehicle", ["汽车", "火车"]], ["门", "door", ["大门", "木门"]], ["书", "book", ["书本", "看书"]], ["本", "notebook", ["书本", "本子"]], ["笔", "pen", ["毛笔", "铅笔"]],
+      ["刀", "knife", ["小刀", "刀口"]], ["尺", "ruler", ["尺子", "直尺"]], ["包", "bag", ["书包", "包子"]], ["衣", "clothes", ["上衣", "衣服"]], ["鞋", "shoes", ["鞋子", "小鞋"]],
+      ["袜", "socks", ["袜子", "小袜"]], ["家", "home", ["回家", "大家"]], ["学", "learn", ["学习", "上学"]], ["校", "school", ["学校", "校门"]], ["老", "old", ["老师", "老人"]],
+      ["师", "teacher", ["老师", "师生"]], ["同", "same", ["同学", "同桌"]], ["友", "friend", ["朋友", "友好"]], ["东", "east", ["东西", "东方"]], ["西", "west", ["东西", "西方"]],
+      ["南", "south", ["南方", "东南"]], ["北", "north", ["北方", "东北"]], ["前", "front", ["前面", "以前"]], ["后", "back", ["后面", "以后"]], ["里", "inside", ["里面", "这里"]],
+      ["外", "outside", ["外面", "门外"]], ["来", "come", ["过来", "来到"]], ["去", "go", ["出去", "来去"]], ["出", "out", ["出去", "日出"]], ["入", "enter", ["入口", "出入"]],
+      ["开", "open", ["开门", "开心"]], ["关", "close", ["关门", "开关"]], ["坐", "sit", ["坐下", "坐车"]], ["立", "stand", ["立正", "站立"]], ["走", "walk", ["走路", "走开"]],
+      ["跑", "run", ["跑步", "快跑"]], ["跳", "jump", ["跳高", "跳水"]], ["飞", "fly", ["飞机", "飞鸟"]], ["看", "look", ["看见", "看书"]], ["见", "see", ["看见", "再见"]],
+      ["听", "listen", ["听见", "听说"]], ["说", "speak", ["说话", "听说"]], ["读", "read", ["读书", "朗读"]], ["写", "write", ["写字", "书写"]], ["画", "draw", ["画画", "图画"]],
+      ["唱", "sing", ["唱歌", "歌唱"]], ["吃", "eat", ["吃饭", "吃草"]], ["喝", "drink", ["喝水", "喝茶"]], ["笑", "smile", ["大笑", "笑话"]], ["哭", "cry", ["哭声", "哭了"]],
+      ["玩", "play", ["玩具", "好玩"]], ["睡", "sleep", ["睡觉", "午睡"]], ["早", "early", ["早上", "早安"]], ["晚", "late", ["晚上", "晚安"]], ["明", "bright", ["明天", "明月"]],
+      ["年", "year", ["今年", "新年"]], ["今", "now", ["今天", "今年"]], ["昨", "yesterday", ["昨天", "昨日"]], ["午", "noon", ["上午", "中午"]], ["春", "spring", ["春天", "春风"]],
+      ["夏", "summer", ["夏天", "夏日"]], ["秋", "autumn", ["秋天", "秋风"]], ["冬", "winter", ["冬天", "冬日"]], ["红", "red", ["红花", "红日"]], ["黄", "yellow", ["黄牛", "黄色"]],
+      ["蓝", "blue", ["蓝天", "蓝色"]], ["绿", "green", ["绿草", "绿色"]], ["白", "white", ["白云", "白天"]], ["黑", "black", ["黑夜", "黑色"]], ["金", "gold", ["金鱼", "金色"]],
+      ["有", "have", ["没有", "有用"]], ["无", "none", ["无心", "无声"]], ["是", "is", ["不是", "可是"]], ["不", "not", ["不是", "不要"]], ["的", "of", ["好的", "我的"]],
+      ["了", "done", ["好了", "来了"]], ["在", "at", ["正在", "在家"]], ["和", "and", ["和平", "和好"]], ["也", "also", ["也是", "也好"]], ["又", "again", ["又来", "又大"]]
     ];
+
+    const words = gradeOneWordData.map(([hanzi, meaning, phrases]) => ({
+      hanzi,
+      meaning,
+      phrases,
+      phrase: phrases[0]
+    }));
+    const wordByHanzi = Object.fromEntries(words.map((word) => [word.hanzi, word]));
 
     const todayKey = new Date().toLocaleDateString("en-CA");
     const shopItems = [
@@ -1882,35 +2907,41 @@
       {
         id: "shell_ap",
         type: "shell",
-        typeLabel: "Shell",
+        typeLabel: "Ammo",
         name: "Armor-Piercing Shell",
         cost: 45,
         maxLives: 0,
-        rewardBonus: 2,
+        rewardBonus: 0,
+        ammoPerPurchase: 3,
+        damageBonus: 1,
         bulletClass: "ap-shell",
-        desc: "+2 coins per correct answer. Brighter shell trail."
+        desc: "Consumable ammo. +1 attack for one shot. Buy 3 rounds."
       },
       {
         id: "shell_he",
         type: "shell",
-        typeLabel: "Shell",
+        typeLabel: "Ammo",
         name: "High-Explosive Shell",
         cost: 95,
         maxLives: 0,
-        rewardBonus: 4,
+        rewardBonus: 0,
+        ammoPerPurchase: 3,
+        damageBonus: 2,
         bulletClass: "he-shell",
-        desc: "+4 coins per correct answer. Bigger explosion."
+        desc: "Consumable ammo. +2 attack for one shot and bigger explosion. Buy 3 rounds."
       },
       {
         id: "weapon_cannon",
         type: "weapon",
-        typeLabel: "Weapon",
-        name: "Long-Barrel Cannon",
+        typeLabel: "Ammo",
+        name: "Long-Barrel Shot",
         cost: 120,
         maxLives: 0,
-        rewardBonus: 5,
+        rewardBonus: 0,
+        ammoPerPurchase: 3,
+        damageBonus: 3,
         bulletClass: "cannon-shell",
-        desc: "+5 coins per correct answer. Good for long practice runs."
+        desc: "Consumable ammo. +3 attack for one shot. Buy 3 rounds."
       }
     ];
 
@@ -1919,38 +2950,83 @@
         id: "tank",
         name: "Tank",
         hp: 1,
+        damage: 1,
         intro: "Enemy tank. Answer correctly once to destroy it."
+      },
+      {
+        id: "infantry",
+        name: "Infantry Squad",
+        hp: 2,
+        damage: 1,
+        intro: "Two rifle soldiers. Each hit from them deals 1 HP."
       },
       {
         id: "armor",
         name: "Armored Tank",
         hp: 2,
+        damage: 1,
         absoluteDefense: 1,
         armor: 1,
         intro: "Heavy armor with absolute defense and armor. Break defenses, then destroy it."
       },
       {
+        id: "heavyInfantry",
+        name: "Heavy Soldier",
+        hp: 2,
+        damage: 1,
+        intro: "Heavy soldier. It deals 1 HP damage and has 2 HP."
+      },
+      {
         id: "truck",
-        name: "Bomb Truck",
+        name: "Self-Destruct Truck",
         hp: 1,
-        timer: 8,
-        intro: "Bomb truck incoming. Answer before the timer ends or lose 1 HP."
+        damage: 1,
+        intro: "Self-destruct truck incoming. It attacks every 5 seconds."
+      },
+      {
+        id: "rpgInfantry",
+        name: "RPG Soldier",
+        hp: 1,
+        damage: 2,
+        intro: "Anti-tank RPG soldier. Its missile deals 2 HP damage."
       },
       {
         id: "scout",
         name: "Scout Car",
         hp: 1,
-        timer: 6,
-        intro: "Fast scout car. Answer before the timer ends or it will strike."
+        damage: 2,
+        intro: "Fast scout car. It attacks every 5 seconds."
       }
     ];
+
+    const bossTemplate = {
+      id: "boss",
+      name: "Tank Dismantler",
+      hp: 1,
+      damage: 1,
+      armor: 5,
+      sprite: "assets/enemy-boss-dismantler.svg",
+      intro: "Boss battle. The Tank Dismantler swings a giant hammer. Listen to the word, then pick the two Hanzi in order."
+    };
+
+    const enemyPortraitDetails = {
+      tank: "Basic armored target. Clean silhouette for early stages.",
+      infantry: "Light infantry group with small profile and low damage.",
+      armor: "Armored tank with absolute defense and plating.",
+      heavyInfantry: "Heavy soldier with thicker armor and bigger stance.",
+      truck: "Closest Phaser-style version of the reference: rusted suicide truck, front spikes, explosive cargo, smoke, and hand-painted markings.",
+      rpgInfantry: "Anti-tank RPG soldier. Low HP but dangerous burst damage.",
+      scout: "Fast light vehicle that hits harder than a basic tank.",
+      boss: "Boss portrait for the Tank Dismantler hammer fight."
+    };
+
+    const enemyAttackInterval = 5;
 
     const perks = [
       { id: "armor", name: "Extra Armor", desc: "Max HP +1 and repair 1 HP now.", apply: () => { runUpgrades.maxLives += 1; lives = Math.min(lives + 1, getMaxLives()); } },
       { id: "repair", name: "Field Repair", desc: "Repair 2 HP now.", apply: () => { lives = Math.min(lives + 2, getMaxLives()); } },
       { id: "pierce", name: "Piercing Core", desc: "Correct answers deal +1 armor damage.", apply: () => { runUpgrades.damage += 1; } },
       { id: "ammo", name: "Coin Ammo Box", desc: "+4 extra coins for each correct answer.", apply: () => { runUpgrades.reward += 4; } },
-      { id: "timer", name: "Steady Aim", desc: "Timed stages give you +2 seconds.", apply: () => { runUpgrades.timer += 2; } },
       { id: "absolute", name: "Absolute Defense", desc: "Add 1 absolute defense. It blocks any one hit, no matter the damage.", apply: () => { runUpgrades.absoluteDefense += 1; absoluteDefenseAvailable += 1; } },
       { id: "plating", name: "Armor Plating", desc: "Add 2 armor. Incoming damage removes armor before HP.", apply: () => { runUpgrades.armor += 2; playerArmor += 2; } }
     ];
@@ -1960,6 +3036,10 @@
       dailyDate: todayKey,
       dailyScore: 0,
       review: {},
+      correctBank: {},
+      wrongBank: {},
+      warArchive: [],
+      ammo: {},
       owned: ["tank_sherman"],
       equipped: {
         tank: "tank_sherman",
@@ -1975,7 +3055,8 @@
     const enemyNameEl = document.querySelector("#enemyName");
     const enemyHpEl = document.querySelector("#enemyHp");
     const timerTextEl = document.querySelector("#timerText");
-    const targetWordEl = document.querySelector("#targetWord");
+    const battlefieldEl = document.querySelector(".battlefield");
+    const phaserLayer = document.querySelector("#phaserLayer");
     const questionWordEl = document.querySelector("#questionWord");
     const choicesEl = document.querySelector("#choices");
     const messageEl = document.querySelector("#message");
@@ -1997,7 +3078,10 @@
     const enemyAbsoluteText = document.querySelector("#enemyAbsoluteText");
     const playerArmorText = document.querySelector("#playerArmorText");
     const enemyArmorText = document.querySelector("#enemyArmorText");
+    const enemyReloadFill = document.querySelector("#enemyReloadFill");
+    const enemyReloadText = document.querySelector("#enemyReloadText");
     const playerHealthName = document.querySelector("#playerHealthName");
+    const enemyHealthName = document.querySelector("#enemyHealthName");
     const playerHpText = document.querySelector("#playerHpText");
     const enemyHpText = document.querySelector("#enemyHpText");
     const bullet = document.querySelector("#bullet");
@@ -2005,17 +3089,68 @@
     const burst = document.querySelector("#burst");
     const playerBurst = document.querySelector("#playerBurst");
     const gameOver = document.querySelector("#gameOver");
+    const summaryText = document.querySelector("#summaryText");
+    const summaryScore = document.querySelector("#summaryScore");
+    const summaryStage = document.querySelector("#summaryStage");
+    const summaryCoins = document.querySelector("#summaryCoins");
+    const summaryUpgrades = document.querySelector("#summaryUpgrades");
+    const summaryUpgradeEmpty = document.querySelector("#summaryUpgradeEmpty");
+    const summaryDamageWords = document.querySelector("#summaryDamageWords");
+    const summaryDamageEmpty = document.querySelector("#summaryDamageEmpty");
     const perkScreen = document.querySelector("#perkScreen");
     const perkSubtitle = document.querySelector("#perkSubtitle");
     const perkOptions = document.querySelector("#perkOptions");
+    const supplyScreen = document.querySelector("#supplyScreen");
+    const supplySubtitle = document.querySelector("#supplySubtitle");
+    const supplyChest = document.querySelector("#supplyChest");
+    const supplyWordEl = document.querySelector("#supplyWord");
+    const supplyOptions = document.querySelector("#supplyOptions");
+    const supplyMessage = document.querySelector("#supplyMessage");
+    const bossIntro = document.querySelector("#bossIntro");
+    const bossPortrait = document.querySelector("#bossPortrait");
+    const bossIntroName = document.querySelector("#bossIntroName");
+    const bossIntroText = document.querySelector("#bossIntroText");
     const restartButton = document.querySelector("#restartButton");
     const nextButton = document.querySelector("#nextButton");
     const soundButton = document.querySelector("#soundButton");
+    const pauseButton = document.querySelector("#pauseButton");
     const speakButton = document.querySelector("#speakButton");
     const reviewButton = document.querySelector("#reviewButton");
+    const masteryButton = document.querySelector("#masteryButton");
+    const archiveButton = document.querySelector("#archiveButton");
+    const debugButton = document.querySelector("#debugButton");
+    const enemyGalleryButton = document.querySelector("#enemyGalleryButton");
     const arsenal = document.querySelector("#arsenal");
     const arsenalButton = document.querySelector("#arsenalButton");
     const closeArsenalButton = document.querySelector("#closeArsenalButton");
+    const archiveModal = document.querySelector("#archiveModal");
+    const closeArchiveButton = document.querySelector("#closeArchiveButton");
+    const archiveMeta = document.querySelector("#archiveMeta");
+    const archiveEmpty = document.querySelector("#archiveEmpty");
+    const archiveList = document.querySelector("#archiveList");
+    const leaderboardEmpty = document.querySelector("#leaderboardEmpty");
+    const leaderboardList = document.querySelector("#leaderboardList");
+    const masteryModal = document.querySelector("#masteryModal");
+    const closeMasteryButton = document.querySelector("#closeMasteryButton");
+    const masteryMeta = document.querySelector("#masteryMeta");
+    const currentRankName = document.querySelector("#currentRankName");
+    const masteryTotal = document.querySelector("#masteryTotal");
+    const masteryProgressFill = document.querySelector("#masteryProgressFill");
+    const nextRankText = document.querySelector("#nextRankText");
+    const rankGrid = document.querySelector("#rankGrid");
+    const masteredEmpty = document.querySelector("#masteredEmpty");
+    const masteredWordGrid = document.querySelector("#masteredWordGrid");
+    const debugModal = document.querySelector("#debugModal");
+    const closeDebugButton = document.querySelector("#closeDebugButton");
+    const debugGrid = document.querySelector("#debugGrid");
+    const enemyGalleryModal = document.querySelector("#enemyGalleryModal");
+    const closeEnemyGalleryButton = document.querySelector("#closeEnemyGalleryButton");
+    const enemyGalleryPreview = document.querySelector("#enemyGalleryPreview");
+    const enemyGalleryFallback = document.querySelector("#enemyGalleryFallback");
+    const enemyGalleryName = document.querySelector("#enemyGalleryName");
+    const enemyGalleryMeta = document.querySelector("#enemyGalleryMeta");
+    const enemyGalleryDesc = document.querySelector("#enemyGalleryDesc");
+    const enemyGalleryList = document.querySelector("#enemyGalleryList");
     const shopGrid = document.querySelector("#shopGrid");
     const shopCoins = document.querySelector("#shopCoins");
     const dailyScoreEl = document.querySelector("#dailyScore");
@@ -2042,9 +3177,34 @@
     const enemySpriteMap = {
       tank: "assets/enemy-tank.svg",
       armor: "assets/enemy-armor.svg",
-      truck: "assets/enemy-truck.svg",
-      scout: "assets/enemy-scout.svg"
+      truck: "assets/enemy-suicide-truck.svg",
+      scout: "assets/enemy-scout.svg",
+      infantry: "assets/enemy-infantry.svg",
+      heavyInfantry: "assets/enemy-heavy-infantry.svg",
+      rpgInfantry: "assets/enemy-rpg-infantry.svg"
     };
+
+    const {
+      masteryGoal,
+      rankSize,
+      rankTiers,
+      getRankForMastery,
+      getNextRank,
+      getMasteredEntries,
+      countMasteredHanzi
+    } = window.HanziTankMastery;
+
+    const debugTargets = [
+      { stage: 1, title: "Tank", desc: "Basic tank battle." },
+      { stage: 2, title: "Infantry Squad", desc: "Two rifle soldiers. 2 HP, 1 damage." },
+      { stage: 3, title: "Armored Tank", desc: "Absolute defense + armor test." },
+      { stage: 4, title: "Heavy Soldier", desc: "2 HP infantry unit." },
+      { stage: 5, title: "Tank Dismantler Boss", desc: "Boss intro, listening challenge, hammer attack." },
+      { stage: 6, title: "RPG Soldier", desc: "1 HP, 2 damage anti-tank unit." },
+      { stage: 7, title: "Scout Car", desc: "Fast light vehicle with 2 damage." },
+      { stage: 12, title: "Self-Destruct Truck", desc: "Self-destruct truck approach and crash attack." },
+      { stage: 10, title: "Boss Stage 10", desc: "Boss scaling and repeated boss flow." }
+    ];
 
     let activeProfileId = "";
     let activeProfileName = "";
@@ -2055,7 +3215,6 @@
       maxLives: 0,
       damage: 0,
       reward: 0,
-      timer: 0,
       absoluteDefense: 0,
       armor: 0
     };
@@ -2066,11 +3225,275 @@
     let currentEnemy = createEnemy(levelNumber);
     let countdown = 0;
     let countdownId = 0;
+    let pausedCountdownWasActive = false;
+    let pausedLockedState = false;
+    let pausedMessage = "";
+    let isPaused = false;
     let absoluteDefenseAvailable = 0;
     let playerArmor = 0;
+    let supplyChallenge = [];
+    let supplyIndex = 0;
+    let supplyLocked = false;
+    let warShopAvailable = false;
+    let runUpgradeLog = [];
+    let runWordDamage = {};
+    let runWordCorrect = {};
+    let runSeenWords = {};
+    let bossPhrase = null;
+    let bossSelection = [];
+    let shownBossIntroStage = 0;
+    let bossIntroToken = 0;
     let voicesReady = false;
     let audioContext = null;
     let soundEnabled = localStorage.getItem("hanziTankSound") !== "off";
+    let speechRequestToken = 0;
+    let pendingSpeechText = "";
+    let phaserGame = null;
+    let phaserEffects = null;
+    let phaserPlayerSprite = null;
+    let phaserEnemySprite = null;
+    let phaserPlayerKey = "";
+    let phaserEnemyKey = "";
+    let phaserEnemyReloadTween = null;
+    let enemyGalleryGame = null;
+    let enemyGalleryScene = null;
+    let enemyGallerySprite = null;
+    let selectedEnemyGalleryId = "truck";
+
+    function initPhaserEffects() {
+      if (!window.Phaser || !phaserLayer || phaserGame) return;
+      const width = Math.max(1, phaserLayer.clientWidth || battlefieldEl.clientWidth || 800);
+      const height = Math.max(1, phaserLayer.clientHeight || battlefieldEl.clientHeight || 520);
+      phaserGame = new Phaser.Game({
+        type: Phaser.AUTO,
+        parent: "phaserLayer",
+        width,
+        height,
+        transparent: true,
+        backgroundColor: "rgba(0,0,0,0)",
+        scale: {
+          mode: Phaser.Scale.RESIZE,
+          autoCenter: Phaser.Scale.NO_CENTER
+        },
+        scene: {
+          preload() {
+            Object.entries(tankSpriteMap).forEach(([key, url]) => this.load.svg(`tank:${key}`, url));
+            Object.entries(enemySpriteMap).forEach(([key, url]) => this.load.svg(`enemy:${key}`, url));
+            this.load.svg("enemy:boss", bossTemplate.sprite);
+          },
+          create() {
+            phaserEffects = this;
+            phaserPlayerSprite = this.add.image(0, 0, "tank:tank_sherman").setOrigin(0.5, 0.5).setDepth(10);
+            phaserEnemySprite = this.add.image(0, 0, "enemy:tank").setOrigin(0.5, 0.5).setDepth(10).setFlipX(true);
+            phaserPlayerSprite.setVisible(false);
+            phaserEnemySprite.setVisible(false);
+            battlefieldEl.classList.add("phaser-actors-ready");
+            updatePhaserActors();
+          }
+        }
+      });
+    }
+
+    function getEnemyTextureKey() {
+      if (currentEnemy.id === "boss") return "enemy:boss";
+      return `enemy:${currentEnemy.id in enemySpriteMap ? currentEnemy.id : "tank"}`;
+    }
+
+    function getPlayerTextureKey() {
+      const tankId = playerState?.equipped?.tank || "tank_sherman";
+      return `tank:${tankId in tankSpriteMap ? tankId : "tank_sherman"}`;
+    }
+
+    function fitPhaserSprite(sprite, targetEl, scale = 1) {
+      if (!sprite || !targetEl) return;
+      const rect = targetEl.getBoundingClientRect();
+      const point = getBattlefieldPoint(targetEl, 0.5, 0.54);
+      sprite.setPosition(point.x, point.y);
+      sprite.setDisplaySize(rect.width * scale, rect.height * scale);
+    }
+
+    function updatePhaserActors() {
+      if (!phaserEffects || !phaserPlayerSprite || !phaserEnemySprite) return;
+      const nextPlayerKey = getPlayerTextureKey();
+      const nextEnemyKey = getEnemyTextureKey();
+      if (nextPlayerKey !== phaserPlayerKey && phaserEffects.textures.exists(nextPlayerKey)) {
+        phaserPlayerSprite.setTexture(nextPlayerKey);
+        phaserPlayerKey = nextPlayerKey;
+      }
+      if (nextEnemyKey !== phaserEnemyKey && phaserEffects.textures.exists(nextEnemyKey)) {
+        phaserEnemySprite.setTexture(nextEnemyKey);
+        phaserEnemyKey = nextEnemyKey;
+      }
+      fitPhaserSprite(phaserPlayerSprite, playerTank, playerTank.classList.contains("destroyed") ? 0.94 : 1);
+      fitPhaserSprite(phaserEnemySprite, enemyTank, currentEnemy.id === "boss" ? 1.08 : 1);
+      phaserPlayerSprite.setAlpha(playerTank.classList.contains("destroyed") ? 0.42 : 1);
+      phaserPlayerSprite.setAngle(playerTank.classList.contains("destroyed") ? -7 : 0);
+      phaserEnemySprite.setFlipX(true);
+    }
+
+    function stopPhaserEnemyApproach(resetPosition = true) {
+      if (phaserEffects && phaserEnemySprite) phaserEffects.tweens.killTweensOf(phaserEnemySprite);
+      if (phaserEnemyReloadTween) {
+        phaserEnemyReloadTween.stop();
+        phaserEnemyReloadTween = null;
+      }
+      if (resetPosition) updatePhaserActors();
+    }
+
+    function startPhaserEnemyApproach() {
+      if (!phaserEffects || !phaserEnemySprite || !["truck", "boss"].includes(currentEnemy.id)) return;
+      stopPhaserEnemyApproach(true);
+      const distance = currentEnemy.id === "boss" ? 86 : 104;
+      phaserEnemyReloadTween = phaserEffects.tweens.add({
+        targets: phaserEnemySprite,
+        x: phaserEnemySprite.x - distance,
+        scaleX: phaserEnemySprite.scaleX * (currentEnemy.id === "boss" ? 1.08 : 1.07),
+        scaleY: phaserEnemySprite.scaleY * (currentEnemy.id === "boss" ? 1.08 : 1.07),
+        duration: enemyAttackInterval * 1000,
+        ease: "Linear",
+        onComplete: () => {
+          phaserEnemyReloadTween = null;
+        }
+      });
+    }
+
+    function tweenEnemyAttackToBase(distance, windup = {}) {
+      if (!phaserEffects || !phaserEnemySprite) return;
+      phaserEffects.tweens.killTweensOf(phaserEnemySprite);
+      const startX = phaserEnemySprite.x;
+      const basePoint = getBattlefieldPoint(enemyTank, 0.5, 0.54);
+      phaserEffects.tweens.add({
+        targets: phaserEnemySprite,
+        x: startX - distance,
+        angle: windup.angle || 0,
+        duration: windup.inDuration || 520,
+        ease: "Cubic.easeIn",
+        onComplete: () => {
+          phaserEffects.tweens.add({
+            targets: phaserEnemySprite,
+            x: basePoint.x,
+            y: basePoint.y,
+            angle: 0,
+            duration: windup.outDuration || 360,
+            ease: "Cubic.easeOut",
+            onComplete: updatePhaserActors
+          });
+        }
+      });
+    }
+
+    function getBattlefieldPoint(targetEl, xRatio = 0.5, yRatio = 0.55) {
+      const fieldRect = battlefieldEl.getBoundingClientRect();
+      const targetRect = targetEl.getBoundingClientRect();
+      return {
+        x: targetRect.left - fieldRect.left + targetRect.width * xRatio,
+        y: targetRect.top - fieldRect.top + targetRect.height * yRatio
+      };
+    }
+
+    function shakeBattlefield(intensity = "normal") {
+      battlefieldEl.classList.remove("screen-shake");
+      void battlefieldEl.offsetWidth;
+      battlefieldEl.classList.add("screen-shake");
+      setTimeout(() => battlefieldEl.classList.remove("screen-shake"), intensity === "heavy" ? 420 : 320);
+    }
+
+    function playPhaserImpact(targetEl, type = "hit") {
+      if (!phaserEffects) return;
+      const { x, y } = getBattlefieldPoint(targetEl);
+      const scene = phaserEffects;
+      const color = type === "absolute" ? 0x7dd3fc : type === "armor" ? 0xe5e7eb : 0xffb84d;
+      const ring = scene.add.circle(x, y, type === "absolute" ? 34 : 18, color, type === "absolute" ? 0.22 : 0.38)
+        .setStrokeStyle(type === "absolute" ? 4 : 2, color, 0.95);
+      scene.tweens.add({
+        targets: ring,
+        scale: type === "absolute" ? 2.1 : 1.7,
+        alpha: 0,
+        duration: type === "absolute" ? 620 : 420,
+        ease: "Quad.easeOut",
+        onComplete: () => ring.destroy()
+      });
+
+      const sparkCount = type === "armor" ? 18 : 11;
+      for (let index = 0; index < sparkCount; index += 1) {
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 22 + Math.random() * (type === "armor" ? 56 : 38);
+        const spark = scene.add.rectangle(x, y, type === "armor" ? 9 : 6, 3, color, 0.95).setRotation(angle);
+        scene.tweens.add({
+          targets: spark,
+          x: x + Math.cos(angle) * distance,
+          y: y + Math.sin(angle) * distance,
+          alpha: 0,
+          scale: 0.3,
+          duration: 360 + Math.random() * 220,
+          ease: "Cubic.easeOut",
+          onComplete: () => spark.destroy()
+        });
+      }
+    }
+
+    function playPhaserExplosion(targetEl, variant = "normal") {
+      if (!phaserEffects) return;
+      const { x, y } = getBattlefieldPoint(targetEl, 0.55, 0.58);
+      const scene = phaserEffects;
+      const heavy = variant === "heavy";
+      const core = scene.add.circle(x, y, heavy ? 38 : 24, 0xfff0a3, 0.9);
+      const fire = scene.add.circle(x, y, heavy ? 54 : 36, 0xff6b2f, 0.55);
+      const smoke = scene.add.circle(x, y + 8, heavy ? 74 : 52, 0x1f2933, 0.34);
+      [core, fire, smoke].forEach((circle, index) => {
+        scene.tweens.add({
+          targets: circle,
+          scale: 1.8 + index * 0.35,
+          alpha: 0,
+          duration: heavy ? 820 : 560,
+          ease: "Quad.easeOut",
+          onComplete: () => circle.destroy()
+        });
+      });
+      for (let index = 0; index < (heavy ? 26 : 15); index += 1) {
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 38 + Math.random() * (heavy ? 110 : 70);
+        const shard = scene.add.rectangle(x, y, 8 + Math.random() * 8, 3, 0x3f342a, 0.9).setRotation(angle);
+        scene.tweens.add({
+          targets: shard,
+          x: x + Math.cos(angle) * distance,
+          y: y + Math.sin(angle) * distance + Math.random() * 24,
+          rotation: angle + Math.random() * 4,
+          alpha: 0,
+          duration: heavy ? 900 : 620,
+          ease: "Cubic.easeOut",
+          onComplete: () => shard.destroy()
+        });
+      }
+      shakeBattlefield(heavy ? "heavy" : "normal");
+    }
+
+    function tweenPhaserSprite(sprite, props, duration = 300, ease = "Sine.easeOut") {
+      if (!phaserEffects || !sprite) return;
+      phaserEffects.tweens.add({ targets: sprite, duration, ease, ...props });
+    }
+
+    function playPhaserProjectile(fromEl, toEl, options = {}) {
+      if (!phaserEffects) return;
+      const start = getBattlefieldPoint(fromEl, options.fromX ?? 0.78, options.fromY ?? 0.48);
+      const end = getBattlefieldPoint(toEl, options.toX ?? 0.28, options.toY ?? 0.48);
+      const color = options.color || 0xf3b23c;
+      const projectile = phaserEffects.add.ellipse(start.x, start.y, options.width || 24, options.height || 10, color, 1)
+        .setDepth(22)
+        .setRotation(Math.atan2(end.y - start.y, end.x - start.x));
+      const glow = phaserEffects.add.ellipse(start.x - 10, start.y, 30, 16, color, 0.22).setDepth(21);
+      phaserEffects.tweens.add({
+        targets: [projectile, glow],
+        x: end.x,
+        y: end.y,
+        duration: options.duration || 540,
+        ease: "Cubic.easeIn",
+        onComplete: () => {
+          projectile.destroy();
+          glow.destroy();
+        }
+      });
+    }
 
     function getAudioContext() {
       if (!soundEnabled) return null;
@@ -2167,6 +3590,10 @@
       return {
         ...defaultState,
         review: {},
+        correctBank: {},
+        wrongBank: {},
+        warArchive: [],
+        ammo: {},
         owned: [...defaultState.owned],
         equipped: { ...defaultState.equipped }
       };
@@ -2219,6 +3646,10 @@
           ...saved,
           equipped: { ...defaultState.equipped, ...(saved?.equipped || {}) },
           review: saved?.review && typeof saved.review === "object" ? saved.review : {},
+          correctBank: saved?.correctBank && typeof saved.correctBank === "object" ? saved.correctBank : {},
+          wrongBank: saved?.wrongBank && typeof saved.wrongBank === "object" ? saved.wrongBank : {},
+          warArchive: Array.isArray(saved?.warArchive) ? saved.warArchive : [],
+          ammo: saved?.ammo && typeof saved.ammo === "object" ? saved.ammo : {},
           owned: Array.isArray(saved?.owned) ? saved.owned : defaultState.owned
         };
         if (merged.dailyDate !== todayKey) {
@@ -2261,7 +3692,6 @@
         maxLives: 0,
         damage: 0,
         reward: 0,
-        timer: 0,
         absoluteDefense: 0,
         armor: 0
       };
@@ -2269,6 +3699,14 @@
       currentEnemy = createEnemy(levelNumber);
       absoluteDefenseAvailable = 0;
       playerArmor = 0;
+      warShopAvailable = false;
+      runUpgradeLog = [];
+      runWordDamage = {};
+      runWordCorrect = {};
+      runSeenWords = {};
+      bossPhrase = null;
+      bossSelection = [];
+      bossIntroToken += 1;
       lives = getMaxLives();
       reviewMode = false;
       locked = false;
@@ -2329,10 +3767,18 @@
       return shopItems.find((item) => item.id === id);
     }
 
+    function isAmmoItem(item) {
+      return Boolean(item?.ammoPerPurchase);
+    }
+
+    function getAmmoCount(itemId) {
+      return Math.max(0, Number(playerState.ammo?.[itemId] || 0));
+    }
+
     function getEquippedItems() {
       return Object.values(playerState.equipped)
         .map(getItem)
-        .filter(Boolean);
+        .filter((item) => item && !isAmmoItem(item));
     }
 
     function getMaxLives() {
@@ -2348,13 +3794,32 @@
       return 1 + runUpgrades.damage;
     }
 
+    function getAmmoPriority() {
+      return ["weapon_cannon", "shell_he", "shell_ap"];
+    }
+
+    function consumeSpecialAmmo() {
+      playerState.ammo = playerState.ammo && typeof playerState.ammo === "object" ? playerState.ammo : {};
+      const ammoId = getAmmoPriority().find((itemId) => getAmmoCount(itemId) > 0);
+      if (!ammoId) return null;
+      const ammo = getItem(ammoId);
+      playerState.ammo[ammoId] = Math.max(0, getAmmoCount(ammoId) - 1);
+      return ammo;
+    }
+
+    function getShotDamage(ammo) {
+      return getDamage() + (ammo?.damageBonus || 0);
+    }
+
     function createEnemy(number) {
-      const template = levelTypes[(number - 1) % levelTypes.length];
+      const template = number % 5 === 0 ? bossTemplate : levelTypes[(number - 1) % levelTypes.length];
       const hpBonus = Math.floor((number - 1) / levelTypes.length);
+      const isBoss = template.id === "boss";
       return {
         ...template,
-        maxHp: template.hp + hpBonus,
-        hp: template.hp + hpBonus,
+        maxHp: template.hp + (isBoss ? 0 : hpBonus),
+        hp: template.hp + (isBoss ? 0 : hpBonus),
+        damage: template.damage || 1,
         maxAbsoluteDefense: template.absoluteDefense || 0,
         absoluteDefense: template.absoluteDefense || 0,
         maxArmor: template.armor || 0,
@@ -2384,12 +3849,32 @@
       fill.style.width = `${getHealthPercent(current, max || 1)}%`;
     }
 
+    function syncReloadBar() {
+      const isReloading = countdownId > 0 || (isPaused && pausedCountdownWasActive && countdown > 0);
+      const elapsed = isReloading ? enemyAttackInterval - Math.max(countdown, 0) : 0;
+      const progress = isReloading ? getHealthPercent(elapsed, enemyAttackInterval) : 0;
+      enemyReloadFill.style.width = `${progress}%`;
+      enemyReloadFill.classList.toggle("ready", progress >= 100);
+      enemyReloadText.textContent = isPaused && countdown > 0 ? `Paused ${countdown}s` : countdown > 0 ? `${countdown}s` : `${enemyAttackInterval}s`;
+    }
+
     function showDamage(targetTank, amount, options = {}) {
       const damage = document.createElement("div");
       damage.className = `damage-float${options.absolute ? " absolute-hit" : ""}${options.armor ? " armor-hit" : ""}`;
       damage.textContent = options.absolute ? "ABS" : `-${amount}`;
       targetTank.appendChild(damage);
       damage.addEventListener("animationend", () => damage.remove(), { once: true });
+      playPhaserImpact(targetTank, options.absolute ? "absolute" : options.armor ? "armor" : "hit");
+      if (options.absolute || options.armor) {
+        playDefenseEffect(targetTank, options.absolute ? "absolute" : "armor");
+      }
+    }
+
+    function playDefenseEffect(targetTank, type) {
+      const effect = document.createElement("div");
+      effect.className = `defense-effect ${type === "absolute" ? "absolute-effect" : "armor-effect"}`;
+      targetTank.appendChild(effect);
+      effect.addEventListener("animationend", () => effect.remove(), { once: true });
     }
 
     function damageEnemy(amount) {
@@ -2408,48 +3893,118 @@
     function syncLevelHud() {
       levelNumberEl.textContent = levelNumber;
       enemyNameEl.textContent = currentEnemy.name;
+      enemyHealthName.textContent = currentEnemy.name;
       enemyHpEl.textContent = currentEnemy.hp;
       enemyHpText.textContent = `${currentEnemy.hp}/${currentEnemy.maxHp}`;
       syncHealthBar(enemyHealthFill, currentEnemy.hp, currentEnemy.maxHp);
       syncDefenseBar(enemyAbsoluteRow, enemyAbsoluteFill, enemyAbsoluteText, currentEnemy.absoluteDefense || 0, currentEnemy.maxAbsoluteDefense || 0);
       syncDefenseBar(enemyArmorRow, enemyArmorFill, enemyArmorText, currentEnemy.armor || 0, currentEnemy.maxArmor || 0);
-      timerTextEl.textContent = countdown > 0 ? ` · ${countdown}s` : "";
+      timerTextEl.textContent = isPaused ? " · Paused" : countdown > 0 ? ` · ${countdown}s` : "";
+      syncReloadBar();
     }
 
-    function stopCountdown() {
+    function pauseCountdown() {
+      pausedCountdownWasActive = countdownId > 0;
       if (countdownId) {
         clearInterval(countdownId);
         countdownId = 0;
       }
+      enemyTank.classList.remove("reloading");
+      stopPhaserEnemyApproach(false);
+      syncLevelHud();
+    }
+
+    function stopCountdown(options = {}) {
+      if (countdownId) {
+        clearInterval(countdownId);
+        countdownId = 0;
+      }
+      if (!isPaused) pausedCountdownWasActive = false;
+      enemyTank.classList.remove("reloading");
+      stopPhaserEnemyApproach(!options.preserveEnemyPosition);
       countdown = 0;
       syncLevelHud();
     }
 
-    function startCountdown() {
+    function clearPauseState() {
+      isPaused = false;
+      pausedCountdownWasActive = false;
+      pausedLockedState = false;
+      pausedMessage = "";
+      syncPauseButton();
+    }
+
+    function startCountdown(seconds = enemyAttackInterval) {
+      if (isPaused) return;
       stopCountdown();
-      if (!currentEnemy.timer) return;
-      countdown = currentEnemy.timer + runUpgrades.timer;
+      countdown = Math.max(1, Math.min(enemyAttackInterval, seconds || enemyAttackInterval));
       syncLevelHud();
+      enemyTank.classList.toggle("reloading", ["truck", "boss"].includes(currentEnemy.id));
+      startPhaserEnemyApproach();
       countdownId = setInterval(() => {
         countdown -= 1;
         syncLevelHud();
         if (countdown <= 0) {
-          stopCountdown();
+          stopCountdown({ preserveEnemyPosition: true });
           locked = true;
           messageEl.textContent = `${currentEnemy.name} hit you. Lose 1 HP.`;
-          const result = takeDamage(1);
+          const result = takeDamage(currentEnemy.damage || 1);
           if (result.absoluteBlocked) messageEl.textContent = "Absolute defense blocked the blast.";
-          enemyFire(1, result);
+          enemyFire(currentEnemy.damage || 1, result);
           setTimeout(() => {
             if (lives <= 0) {
               showGameOver();
               return;
             }
+            if (isPaused) {
+              pausedLockedState = false;
+              locked = true;
+              return;
+            }
             locked = false;
-            renderQuestion();
+            messageEl.textContent = `${currentEnemy.name} is reloading. Choose the correct meaning.`;
+            startCountdown();
           }, 950);
         }
       }, 1000);
+    }
+
+    function syncPauseButton() {
+      pauseButton.textContent = isPaused ? "Resume" : "Pause";
+      pauseButton.setAttribute("aria-pressed", String(isPaused));
+    }
+
+    function pauseGame() {
+      if (isPaused || lives <= 0) return;
+      isPaused = true;
+      pausedLockedState = locked;
+      pausedMessage = messageEl.textContent;
+      locked = true;
+      pauseCountdown();
+      messageEl.textContent = "Paused. Press Resume to continue.";
+      syncPauseButton();
+    }
+
+    function resumeGame() {
+      if (!isPaused) return;
+      isPaused = false;
+      locked = pausedLockedState;
+      const shouldResumeCountdown = pausedCountdownWasActive && countdown > 0 && lives > 0 && !locked;
+      pausedCountdownWasActive = false;
+      messageEl.textContent = pausedMessage || "Choose the correct meaning.";
+      syncPauseButton();
+      syncLevelHud();
+      if (shouldResumeCountdown) startCountdown(countdown);
+    }
+
+    function togglePause() {
+      unlockAudio();
+      playUiSound();
+      if (isPaused) {
+        resumeGame();
+        return;
+      }
+      pauseGame();
     }
 
     function takeDamage(amount) {
@@ -2475,6 +4030,20 @@
       return Object.values(playerState.review).reduce((total, count) => total + count, 0);
     }
 
+    function recordWordDamage(word, damage) {
+      if (!word || damage <= 0) return;
+      const entry = runWordDamage[word.hanzi] || {
+        hanzi: word.hanzi,
+        meaning: word.meaning,
+        phrase: getWordPhrase(word),
+        damage: 0,
+        misses: 0
+      };
+      entry.damage += damage;
+      entry.misses += 1;
+      runWordDamage[word.hanzi] = entry;
+    }
+
     function syncHud() {
       scoreEl.textContent = score;
       livesEl.textContent = lives;
@@ -2488,7 +4057,7 @@
       dailyScoreEl.textContent = playerState.dailyScore;
       const equippedNames = getEquippedItems().map((item) => item.name).join(" / ");
       loadoutEl.textContent = `Loadout: ${equippedNames || "Basic gear"}`;
-      document.body.dataset.shell = playerState.equipped.shell || playerState.equipped.weapon || "";
+      document.body.dataset.shell = "";
       ["tank-sherman", "tank-tiger", "tank-panzer", "tank-is2", "tank-t34", "tank-cromwell", "tank-churchill"].forEach((className) => {
         playerTank.classList.remove(className);
       });
@@ -2504,19 +4073,28 @@
       playerTank.classList.add(tankClassMap[playerState.equipped.tank] || "tank-sherman");
       playerTankSprite.src = tankSpriteMap[playerState.equipped.tank] || tankSpriteMap.tank_sherman;
       enemyTankSprite.src = enemySpriteMap[currentEnemy.id] || enemySpriteMap.tank;
+      if (currentEnemy.id === "boss") enemyTankSprite.src = currentEnemy.sprite || enemySpriteMap.armor;
       enemyTank.classList.toggle("enemy-truck", currentEnemy.id === "truck");
       enemyTank.classList.toggle("enemy-scout", currentEnemy.id === "scout");
-      enemyTank.classList.toggle("enemy-armor", currentEnemy.id === "armor");
-      wordCountEl.textContent = `Word bank: ${words.length} Hanzi · Review queue ${getReviewCount()}`;
+      enemyTank.classList.toggle("enemy-armor", currentEnemy.id === "armor" || currentEnemy.id === "boss");
+      enemyTank.classList.toggle("enemy-infantry", ["infantry", "heavyInfantry", "rpgInfantry"].includes(currentEnemy.id));
+      enemyTank.classList.toggle("enemy-heavy-infantry", currentEnemy.id === "heavyInfantry");
+      enemyTank.classList.toggle("enemy-rpg-infantry", currentEnemy.id === "rpgInfantry");
+      enemyTank.classList.toggle("enemy-boss", currentEnemy.id === "boss");
+      updatePhaserActors();
+      wordCountEl.textContent = `Grade 1 word bank: ${words.length} Hanzi · Review queue ${getReviewCount()}`;
       reviewButton.textContent = reviewMode ? "Exit Review" : `Review Misses (${getReviewWords().length})`;
+      arsenalButton.classList.toggle("show", warShopAvailable);
       syncLevelHud();
     }
 
     function renderShop() {
       shopGrid.innerHTML = "";
       shopItems.forEach((item) => {
-        const owned = playerState.owned.includes(item.id);
-        const equipped = playerState.equipped[item.type] === item.id;
+        const ammoItem = isAmmoItem(item);
+        const ammoCount = getAmmoCount(item.id);
+        const owned = !ammoItem && playerState.owned.includes(item.id);
+        const equipped = !ammoItem && playerState.equipped[item.type] === item.id;
         const canBuy = playerState.coins >= item.cost;
         const card = document.createElement("article");
         card.className = `shop-card${equipped ? " equipped" : ""}`;
@@ -2524,15 +4102,15 @@
           <div class="shop-type">${item.typeLabel}</div>
           <div class="shop-name">${item.name}</div>
           <div class="shop-desc">${item.desc}</div>
-          <div class="shop-cost">${owned ? "Owned" : `${item.cost} coins`}</div>
+          <div class="shop-cost">${ammoItem ? `${ammoCount} rounds · ${item.cost} coins / +${item.ammoPerPurchase}` : owned ? "Owned" : `${item.cost} coins`}</div>
           <button class="shop-action" type="button" data-item="${item.id}">
-            ${equipped ? "Equipped" : owned ? "Equip" : "Buy"}
+            ${ammoItem ? `Buy +${item.ammoPerPurchase}` : equipped ? "Equipped" : owned ? "Equip" : "Buy"}
           </button>
         `;
 
         const action = card.querySelector(".shop-action");
         action.disabled = equipped || (!owned && !canBuy);
-        if (!owned && !canBuy) {
+        if (!canBuy && (ammoItem || !owned)) {
           action.textContent = "Not enough coins";
         }
         shopGrid.appendChild(card);
@@ -2541,6 +4119,7 @@
     }
 
     function openArsenal() {
+      if (!warShopAvailable) return;
       unlockAudio();
       playUiSound();
       renderShop();
@@ -2553,12 +4132,23 @@
       playUiSound();
       arsenal.classList.remove("show");
       arsenal.setAttribute("aria-hidden", "true");
-      arsenalButton.focus();
+      if (warShopAvailable) arsenalButton.focus();
     }
 
     function buyOrEquip(itemId) {
       const item = getItem(itemId);
       if (!item) return;
+
+      if (isAmmoItem(item)) {
+        if (playerState.coins < item.cost) return;
+        playerState.coins -= item.cost;
+        playerState.ammo = playerState.ammo && typeof playerState.ammo === "object" ? playerState.ammo : {};
+        playerState.ammo[item.id] = getAmmoCount(item.id) + item.ammoPerPurchase;
+        playSuccessSound();
+        saveState();
+        renderShop();
+        return;
+      }
 
       if (!playerState.owned.includes(item.id)) {
         if (playerState.coins < item.cost) return;
@@ -2576,6 +4166,7 @@
     }
 
     function completeLevel() {
+      clearPauseState();
       stopCountdown();
       locked = true;
       playSuccessSound();
@@ -2585,7 +4176,101 @@
       saveState();
       syncHud();
       messageEl.textContent = `Stage ${levelNumber} clear! Earned ${bonus} bonus coins.`;
-      setTimeout(showPerkChoices, 500);
+      warShopAvailable = levelNumber % 5 === 0;
+      syncHud();
+      setTimeout(() => {
+        if (levelNumber % 5 === 0) {
+          showSupplyChallenge();
+          return;
+        }
+        showPerkChoices();
+      }, 500);
+    }
+
+    function showSupplyChallenge() {
+      supplyChallenge = shuffle(words).slice(0, 2);
+      supplyIndex = 0;
+      supplyLocked = false;
+      supplyChest.classList.remove("open");
+      supplyScreen.classList.add("show");
+      supplyScreen.setAttribute("aria-hidden", "false");
+      renderSupplyQuestion();
+    }
+
+    function renderSupplyQuestion() {
+      const word = supplyChallenge[supplyIndex];
+      if (!word) return;
+      supplyLocked = false;
+      supplySubtitle.textContent = `Supply check ${supplyIndex + 1}/2. Answer both correctly to open the chest.`;
+      supplyWordEl.textContent = word.hanzi;
+      supplyMessage.textContent = "Choose the correct meaning.";
+      supplyOptions.innerHTML = "";
+      const wrongChoices = shuffle(words.filter((item) => item.hanzi !== word.hanzi)).slice(0, 3);
+      const answers = shuffle([word, ...wrongChoices]);
+      answers.forEach((answer) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "supply-choice";
+        button.textContent = answer.meaning;
+        button.dataset.hanzi = answer.hanzi;
+        supplyOptions.appendChild(button);
+      });
+      if (activeProfileId) speakWord(word);
+      supplyOptions.querySelector("button")?.focus();
+    }
+
+    function closeSupplyChallenge() {
+      supplyScreen.classList.remove("show");
+      supplyScreen.setAttribute("aria-hidden", "true");
+      showPerkChoices();
+    }
+
+    function grantSupplyReward() {
+      const rewardCoins = 30 + levelNumber * 4;
+      playerState.coins += rewardCoins;
+      playerState.dailyScore += rewardCoins;
+      lives = Math.min(getMaxLives(), lives + 1);
+      runUpgrades.armor += 1;
+      playerArmor += 1;
+      runUpgradeLog.push(`War Supply: +${rewardCoins} coins, repair 1 HP, +1 armor`);
+      saveState();
+      syncHud();
+      supplyChest.classList.add("open");
+      playSuccessSound();
+      supplySubtitle.textContent = "Supply chest opened.";
+      supplyMessage.textContent = `Extra supply: +${rewardCoins} coins, repair 1 HP, +1 armor.`;
+      setTimeout(closeSupplyChallenge, 1200);
+    }
+
+    function chooseSupplyAnswer(button) {
+      if (supplyLocked) return;
+      unlockAudio();
+      supplyLocked = true;
+      const word = supplyChallenge[supplyIndex];
+      if (!word) return;
+      if (button.dataset.hanzi !== word.hanzi) {
+        button.classList.add("wrong");
+        recordWrongBank(word);
+        saveState();
+        playMissSound();
+        supplyMessage.textContent = "Supply check failed. No chest this time.";
+        setTimeout(closeSupplyChallenge, 900);
+        return;
+      }
+
+      button.classList.add("right");
+      recordCorrectBank(word);
+      saveState();
+      speakWord(word);
+      playSuccessSound();
+      supplyIndex += 1;
+      if (supplyIndex >= supplyChallenge.length) {
+        supplyMessage.textContent = "Both answers correct. Opening supply chest.";
+        setTimeout(grantSupplyReward, 450);
+        return;
+      }
+      supplyMessage.textContent = "Correct. One more character.";
+      setTimeout(renderSupplyQuestion, 520);
     }
 
     function showPerkChoices() {
@@ -2612,10 +4297,11 @@
       const perk = perks.find((item) => item.id === perkId);
       if (!perk) return;
       perk.apply();
+      runUpgradeLog.push(perk.name);
       levelNumber += 1;
       currentEnemy = createEnemy(levelNumber);
-      absoluteDefenseAvailable = runUpgrades.absoluteDefense;
-      playerArmor = runUpgrades.armor;
+      warShopAvailable = false;
+      closeArsenal();
       perkScreen.classList.remove("show");
       perkScreen.setAttribute("aria-hidden", "true");
       syncHud();
@@ -2626,28 +4312,152 @@
       return [...list].sort(() => Math.random() - 0.5);
     }
 
+    function getWordPhrase(word) {
+      const phrases = Array.isArray(word.phrases) && word.phrases.length > 0 ? word.phrases : [word.phrase].filter(Boolean);
+      return phrases[Math.floor(Math.random() * phrases.length)] || word.hanzi;
+    }
+
+    function getSpokenWordText(word) {
+      return `${word.hanzi}，${getWordPhrase(word)}`;
+    }
+
+    function speakWord(word) {
+      if (!word) return;
+      speakChinese(getSpokenWordText(word));
+    }
+
+    function recordCorrectWord(word) {
+      if (!word) return;
+      runWordCorrect[word.hanzi] = (runWordCorrect[word.hanzi] || 0) + 1;
+    }
+
+    function normalizeBankWord(word) {
+      if (!word?.hanzi) return null;
+      return {
+        hanzi: word.hanzi,
+        meaning: word.meaning || "boss word",
+        phrase: word.phrase || getWordPhrase(word)
+      };
+    }
+
+    function recordProfileWord(bankName, word) {
+      const normalized = normalizeBankWord(word);
+      if (!normalized) return;
+      playerState[bankName] = playerState[bankName] && typeof playerState[bankName] === "object" ? playerState[bankName] : {};
+      const entry = playerState[bankName][normalized.hanzi] || {
+        ...normalized,
+        count: 0,
+        lastSeen: ""
+      };
+      entry.count += 1;
+      entry.meaning = normalized.meaning;
+      entry.phrase = normalized.phrase;
+      entry.lastSeen = new Date().toISOString();
+      playerState[bankName][normalized.hanzi] = entry;
+    }
+
+    function recordCorrectBank(word) {
+      recordProfileWord("correctBank", word);
+    }
+
+    function recordWrongBank(word) {
+      recordProfileWord("wrongBank", word);
+    }
+
+    function markSeenWords(list) {
+      list.forEach((word) => {
+        if (word?.hanzi) runSeenWords[word.hanzi] = word;
+      });
+    }
+
+    function getSeenWords() {
+      const seen = Object.values(runSeenWords);
+      return seen.length >= 6 ? seen : words.slice(0, 12);
+    }
+
+    function getBossPhraseOptions(seenWords) {
+      const seenMap = new Set(seenWords.map((word) => word.hanzi));
+      const options = [];
+      seenWords.forEach((word) => {
+        (word.phrases || []).forEach((phrase) => {
+          const chars = [...phrase];
+          if (chars.length !== 2) return;
+          if (chars.every((char) => seenMap.has(char) && wordByHanzi[char])) {
+            options.push({ text: phrase, chars });
+          }
+        });
+      });
+      if (options.length > 0) return options;
+      const fallbackChars = seenWords.slice(0, 2).map((word) => word.hanzi);
+      return [{ text: fallbackChars.join(""), chars: fallbackChars }];
+    }
+
+    function pickBossPhrase() {
+      const seenWords = getSeenWords();
+      const options = getBossPhraseOptions(seenWords);
+      return options[Math.floor(Math.random() * options.length)];
+    }
+
+    function getBossChoiceWords(phrase) {
+      const seenWords = getSeenWords();
+      const phraseSet = new Set(phrase.chars);
+      const phraseWords = phrase.chars.map((char) => wordByHanzi[char]).filter(Boolean);
+      const distractors = shuffle(seenWords.filter((word) => !phraseSet.has(word.hanzi))).slice(0, 6 - phraseWords.length);
+      const filled = [...phraseWords, ...distractors];
+      if (filled.length < 6) {
+        filled.push(...shuffle(words.filter((word) => !filled.some((item) => item.hanzi === word.hanzi))).slice(0, 6 - filled.length));
+      }
+      return shuffle(filled).slice(0, 6);
+    }
+
+    function getWordWeight(word) {
+      const correctCount = runWordCorrect[word.hanzi] || 0;
+      return correctCount >= 3 ? 0.2 : 1;
+    }
+
+    function pickWeightedWord(options) {
+      const totalWeight = options.reduce((total, word) => total + getWordWeight(word), 0);
+      if (totalWeight <= 0) return options[Math.floor(Math.random() * options.length)];
+      let roll = Math.random() * totalWeight;
+      for (const word of options) {
+        roll -= getWordWeight(word);
+        if (roll <= 0) return word;
+      }
+      return options[options.length - 1];
+    }
+
     function pickWord() {
       const source = reviewMode && getReviewWords().length > 0 ? getReviewWords() : words;
       const options = source.filter((word) => word.hanzi !== currentWord.hanzi);
       if (options.length === 0) return source[0] || words[0];
-      return options[Math.floor(Math.random() * options.length)];
+      return pickWeightedWord(options);
     }
 
-    function renderQuestion(word = pickWord()) {
-      stopCountdown();
+    function renderQuestion(word = pickWord(), options = {}) {
+      if (currentEnemy.id === "boss") {
+        renderBossQuestion(options);
+        return;
+      }
+      if (!options.preserveReload) stopCountdown();
       currentWord = word;
       locked = false;
+      if (isPaused) {
+        pausedLockedState = false;
+        locked = true;
+      }
       gameOver.classList.remove("show");
       gameOver.setAttribute("aria-hidden", "true");
       perkScreen.classList.remove("show");
       perkScreen.setAttribute("aria-hidden", "true");
-      targetWordEl.textContent = word.hanzi;
+      supplyScreen.classList.remove("show");
+      supplyScreen.setAttribute("aria-hidden", "true");
       questionWordEl.textContent = word.hanzi;
       messageEl.textContent = `${reviewMode ? "Review: " : ""}${currentEnemy.intro} Choose the correct meaning.`;
       choicesEl.innerHTML = "";
 
       const wrongChoices = shuffle(words.filter((item) => item.hanzi !== word.hanzi)).slice(0, 3);
       const answers = shuffle([word, ...wrongChoices]);
+      markSeenWords(answers);
 
       answers.forEach((answer) => {
         const button = document.createElement("button");
@@ -2657,18 +4467,76 @@
         button.addEventListener("click", () => chooseAnswer(button, answer));
         choicesEl.appendChild(button);
       });
-      startCountdown();
+      if (!options.preserveReload) startCountdown();
+    }
+
+    function renderBossQuestion(options = {}) {
+      if (!options.preserveReload) stopCountdown();
+      if (shownBossIntroStage !== levelNumber) {
+        showBossIntro(() => renderBossQuestion(options));
+        return;
+      }
+      locked = false;
+      if (isPaused) {
+        pausedLockedState = false;
+        locked = true;
+      }
+      bossPhrase = pickBossPhrase();
+      bossSelection = [];
+      gameOver.classList.remove("show");
+      gameOver.setAttribute("aria-hidden", "true");
+      perkScreen.classList.remove("show");
+      perkScreen.setAttribute("aria-hidden", "true");
+      supplyScreen.classList.remove("show");
+      supplyScreen.setAttribute("aria-hidden", "true");
+      questionWordEl.textContent = "??";
+      messageEl.textContent = "Boss battle: listen to the word, then pick the two Hanzi in order.";
+      choicesEl.innerHTML = "";
+      getBossChoiceWords(bossPhrase).forEach((word) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "choice";
+        button.textContent = word.hanzi;
+        button.dataset.hanzi = word.hanzi;
+        button.addEventListener("click", () => chooseBossAnswer(button));
+        choicesEl.appendChild(button);
+      });
+      const phraseToSpeak = bossPhrase;
+      queueChineseSpeech(phraseToSpeak.text, {
+        delay: 180,
+        preserveMessage: true,
+        shouldSpeak: () => currentEnemy.id === "boss" && bossPhrase === phraseToSpeak && !locked
+      });
+      if (!options.preserveReload) startCountdown();
+    }
+
+    function showBossIntro(onDone) {
+      locked = true;
+      const token = ++bossIntroToken;
+      shownBossIntroStage = levelNumber;
+      bossPortrait.src = currentEnemy.sprite || "assets/enemy-boss-dismantler.svg";
+      bossIntroName.textContent = currentEnemy.name;
+      bossIntroText.textContent = "A hammer-wielding breaker closes in. Listen carefully and dismantle his attack.";
+      bossIntro.classList.add("show");
+      bossIntro.setAttribute("aria-hidden", "false");
+      setTimeout(() => {
+        if (token !== bossIntroToken) return;
+        bossIntro.classList.remove("show");
+        bossIntro.setAttribute("aria-hidden", "true");
+        onDone();
+      }, 2000);
     }
 
     function chooseAnswer(button, answer) {
-      if (locked) return;
+      if (locked || isPaused) return;
       locked = true;
-      stopCountdown();
 
       if (answer.hanzi === currentWord.hanzi) {
         button.classList.add("right");
+        recordCorrectWord(currentWord);
+        recordCorrectBank(currentWord);
         playSuccessSound();
-        speakChinese(`${currentWord.hanzi}，${currentWord.phrase}`);
+        speakWord(currentWord);
         const reward = getReward();
         score += reward;
         playerState.coins += reward;
@@ -2685,13 +4553,19 @@
         if (!messageEl.textContent.includes("Removed from review")) {
           messageEl.textContent = `Correct! +${reward} coins. Fire!`;
         }
-        fire();
+        const shotAmmo = consumeSpecialAmmo();
+        if (shotAmmo) {
+          saveState();
+          messageEl.textContent += ` ${shotAmmo.name} used (${getAmmoCount(shotAmmo.id)} left).`;
+        }
+        fire(shotAmmo);
         setTimeout(() => {
-          const damage = damageEnemy(getDamage());
+          const shotDamage = getShotDamage(shotAmmo);
+          const damage = damageEnemy(shotDamage);
           if (damage.absoluteBlocked) {
             showDamage(enemyTank, 0, { absolute: true });
           } else {
-            showDamage(enemyTank, damage.totalDamage || getDamage(), { armor: damage.armorDamage > 0 });
+            showDamage(enemyTank, damage.totalDamage || shotDamage, { armor: damage.armorDamage > 0 });
           }
           syncHud();
           if (currentEnemy.hp <= 0) {
@@ -2708,18 +4582,21 @@
             : currentEnemy.armor > 0
               ? `${currentEnemy.name} armor has ${currentEnemy.armor} left. Keep attacking.`
             : `${currentEnemy.name} has ${currentEnemy.hp} armor left. Keep attacking.`;
-          renderQuestion();
+          renderQuestion(pickWord());
         }, 1100);
         return;
       }
 
+      stopCountdown({ preserveEnemyPosition: true });
       button.classList.add("wrong");
       playMissSound();
+      recordWrongBank(currentWord);
       playerState.review[currentWord.hanzi] = Math.min((playerState.review[currentWord.hanzi] || 0) + 2, 6);
       saveState();
       syncHud();
-      const damage = currentEnemy.id === "scout" ? 2 : 1;
+      const damage = currentEnemy.damage || 1;
       const result = takeDamage(damage);
+      recordWordDamage(currentWord, result.hpDamage + result.armorDamage);
       if (!result.absoluteBlocked) {
         messageEl.textContent = `${currentWord.hanzi} was added to review.`;
       }
@@ -2730,28 +4607,102 @@
           showGameOver();
           return;
         }
+        if (isPaused) {
+          pausedLockedState = false;
+          locked = true;
+          return;
+        }
         locked = false;
+        startCountdown();
       }, 950);
     }
 
-    function fire() {
+    function chooseBossAnswer(button) {
+      if (locked || isPaused || !bossPhrase) return;
+      button.disabled = true;
+      button.classList.add("right");
+      bossSelection.push(button.dataset.hanzi);
+      messageEl.textContent = `Selected: ${bossSelection.join(" ")}`;
+      if (bossSelection.length < 2) return;
+
+      locked = true;
+      const correct = bossSelection.join("") === bossPhrase.text;
+      if (!correct) {
+        stopCountdown({ preserveEnemyPosition: true });
+        [...choicesEl.querySelectorAll(".choice")].forEach((choice) => choice.classList.remove("right"));
+        button.classList.add("wrong");
+        playMissSound();
+        const phraseRecord = { hanzi: bossPhrase.text, meaning: "boss word", phrase: bossPhrase.text };
+        bossPhrase.chars.forEach((char) => recordWrongBank(wordByHanzi[char] || { hanzi: char, meaning: "boss word", phrase: bossPhrase.text }));
+        const damage = currentEnemy.damage || 1;
+        const result = takeDamage(damage);
+        recordWordDamage(phraseRecord, result.hpDamage + result.armorDamage);
+        saveState();
+        messageEl.textContent = `Wrong sequence. Boss word was ${bossPhrase.text}.`;
+        enemyFire(damage, result);
+        setTimeout(() => {
+          if (lives <= 0) {
+            showGameOver();
+            return;
+          }
+          renderBossQuestion();
+        }, 950);
+        return;
+      }
+
+      bossPhrase.chars.forEach((char) => recordCorrectWord(wordByHanzi[char]));
+      bossPhrase.chars.forEach((char) => recordCorrectBank(wordByHanzi[char] || { hanzi: char, meaning: "boss word", phrase: bossPhrase.text }));
+      saveState();
+      speakChinese(bossPhrase.text);
+      playSuccessSound();
+      messageEl.textContent = "Correct boss word. Fire!";
+      const shotAmmo = consumeSpecialAmmo();
+      if (shotAmmo) {
+        saveState();
+        messageEl.textContent += ` ${shotAmmo.name} used (${getAmmoCount(shotAmmo.id)} left).`;
+      }
+      fire(shotAmmo);
+      setTimeout(() => {
+        const shotDamage = getShotDamage(shotAmmo);
+        const damage = damageEnemy(shotDamage);
+        if (damage.absoluteBlocked) {
+          showDamage(enemyTank, 0, { absolute: true });
+        } else {
+          showDamage(enemyTank, damage.totalDamage || shotDamage, { armor: damage.armorDamage > 0 });
+        }
+        syncHud();
+        if (currentEnemy.hp <= 0) {
+          completeLevel();
+          return;
+        }
+        renderBossQuestion();
+      }, 1100);
+    }
+
+    function fire(ammo = null) {
       playCannonSound();
       playerTank.classList.remove("fire");
       enemyTank.classList.remove("hit");
       bullet.classList.remove("fly", "ap-shell", "he-shell", "cannon-shell");
       burst.classList.remove("show", "he-burst");
+      const playerStartX = phaserPlayerSprite?.x || 0;
+      tweenPhaserSprite(phaserPlayerSprite, { x: playerStartX + 10, yoyo: true }, 150);
+      playPhaserProjectile(playerTank, enemyTank, {
+        color: ammo?.id === "shell_he" ? 0xff7a2f : ammo?.id === "weapon_cannon" ? 0xdbeafe : ammo?.id === "shell_ap" ? 0xfff2a1 : 0xf3b23c,
+        width: ammo ? 34 : 24,
+        height: ammo?.id === "shell_he" ? 16 : 10
+      });
 
       requestAnimationFrame(() => {
-        getEquippedItems().forEach((item) => {
-          if (item.bulletClass) bullet.classList.add(item.bulletClass);
-        });
+        if (ammo?.bulletClass) bullet.classList.add(ammo.bulletClass);
         playerTank.classList.add("fire");
         bullet.classList.add("fly");
       });
 
       setTimeout(() => {
         playExplosionSound();
-        if (playerState.equipped.shell === "shell_he") {
+        playPhaserExplosion(enemyTank, ammo?.id === "shell_he" ? "heavy" : "normal");
+        if (ammo?.id === "shell_he") {
           burst.classList.add("he-burst");
         }
         burst.classList.add("show");
@@ -2764,11 +4715,465 @@
       }, 900);
     }
 
+    function getTopDamagingWords() {
+      return Object.values(runWordDamage)
+        .sort((a, b) => b.damage - a.damage || b.misses - a.misses)
+        .slice(0, 5);
+    }
+
+    function renderSummaryList(listEl, emptyEl, items, formatter) {
+      listEl.innerHTML = "";
+      emptyEl.style.display = items.length > 0 ? "none" : "block";
+      items.forEach((item) => {
+        const li = document.createElement("li");
+        li.textContent = formatter(item);
+        listEl.appendChild(li);
+      });
+    }
+
+    function formatDate(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "Unknown date";
+      return date.toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+    }
+
+    function renderPlayerArchive() {
+      const archive = Array.isArray(playerState.warArchive) ? playerState.warArchive : [];
+      archiveList.innerHTML = "";
+      archiveEmpty.style.display = archive.length > 0 ? "none" : "block";
+      archive.slice(0, 10).forEach((record) => {
+        const topWords = (record.topDamagingWords || [])
+          .slice(0, 3)
+          .map((word) => `${word.hanzi} (${word.meaning}) ${word.damage} dmg`)
+          .join(" · ") || "No damaging words";
+        const upgrades = (record.upgrades || []).slice(0, 3).join(" · ") || "No upgrades";
+        const card = document.createElement("article");
+        card.className = "archive-card";
+        card.innerHTML = `
+          <div class="archive-card-head"><span>${formatDate(record.date)}</span><span>Stage ${record.stage || 1}</span></div>
+          <div class="archive-card-meta">Score ${record.score || 0} · Coins ${record.coins || 0}</div>
+          <div class="archive-card-meta">Upgrades: ${upgrades}</div>
+          <div class="archive-card-meta">Damage Words: ${topWords}</div>
+        `;
+        archiveList.appendChild(card);
+      });
+    }
+
+    function getProfileBestRecord(profileId, profile) {
+      const state = loadState(profileId);
+      const archive = Array.isArray(state.warArchive) ? state.warArchive : [];
+      const masteredCount = countMasteredHanzi(state.correctBank);
+      const rank = getRankForMastery(masteredCount);
+      const best = archive.reduce((top, record) => {
+        if (!top) return record;
+        if ((record.stage || 0) > (top.stage || 0)) return record;
+        if ((record.stage || 0) === (top.stage || 0) && (record.score || 0) > (top.score || 0)) return record;
+        return top;
+      }, null);
+      return {
+        profileId,
+        name: profile.name || profileId,
+        stage: best?.stage || 0,
+        score: best?.score || 0,
+        coins: best?.coins || 0,
+        masteredCount,
+        rankName: rank.name,
+        rankZh: rank.zh,
+        date: best?.date || ""
+      };
+    }
+
+    function renderLeaderboard() {
+      const profiles = getProfiles();
+      const records = Object.entries(profiles)
+        .map(([profileId, profile]) => getProfileBestRecord(profileId, profile))
+        .filter((record) => record.stage > 0)
+        .sort((a, b) => b.stage - a.stage || b.score - a.score || a.name.localeCompare(b.name));
+
+      leaderboardList.innerHTML = "";
+      leaderboardEmpty.style.display = records.length > 0 ? "none" : "block";
+      records.forEach((record, index) => {
+        const card = document.createElement("article");
+        card.className = "leaderboard-card";
+        card.innerHTML = `
+          <div class="leaderboard-card-head"><span>#${index + 1} ${record.name}</span><span>Stage ${record.stage}</span></div>
+          <div class="leaderboard-card-meta">Mastered ${record.masteredCount} Hanzi · Rank ${record.rankZh} · ${record.rankName}</div>
+          <div class="leaderboard-card-meta">Best Score ${record.score} · Coins ${record.coins} · ${formatDate(record.date)}</div>
+        `;
+        leaderboardList.appendChild(card);
+      });
+    }
+
+    function getMasteredWords() {
+      const bank = playerState.correctBank && typeof playerState.correctBank === "object" ? playerState.correctBank : {};
+      return getMasteredEntries(bank);
+    }
+
+    function renderRankLadder(masteredCount) {
+      rankGrid.innerHTML = "";
+      const currentRank = getRankForMastery(masteredCount);
+      rankTiers.forEach((rank, index) => {
+        const nextMin = rankTiers[index + 1]?.min || masteryGoal;
+        const rangeStart = rank.min + 1;
+        const rangeEnd = Math.max(rank.min, nextMin);
+        const inRankCount = Math.max(0, Math.min(masteredCount, nextMin) - rank.min);
+        const rankTarget = Math.max(1, nextMin - rank.min);
+        const card = document.createElement("article");
+        card.className = `rank-card${rank === currentRank ? " current" : ""}${masteredCount >= nextMin ? " complete" : ""}`;
+        card.innerHTML = `
+          <div class="rank-card-title">${rank.zh} · ${rank.name}</div>
+          <div class="rank-card-meta">${rangeStart}-${rangeEnd} Hanzi</div>
+          <div class="mastery-progress" aria-hidden="true"><div class="mastery-progress-fill" style="width:${getHealthPercent(inRankCount, rankTarget)}%"></div></div>
+          <div class="rank-card-meta">${Math.min(inRankCount, rankTarget)} / ${rankTarget}</div>
+        `;
+        rankGrid.appendChild(card);
+      });
+    }
+
+    function renderMasteredWords(wordsList) {
+      masteredWordGrid.innerHTML = "";
+      masteredEmpty.style.display = wordsList.length > 0 ? "none" : "block";
+      wordsList.forEach((word) => {
+        const card = document.createElement("article");
+        card.className = "mastered-word-card";
+        card.innerHTML = `
+          <div class="mastered-hanzi">${word.hanzi}</div>
+          <div class="mastered-meta">${word.phrase || word.meaning || "mastered"}</div>
+          <div class="mastered-meta">x${word.count || 1}</div>
+        `;
+        masteredWordGrid.appendChild(card);
+      });
+    }
+
+    function renderMasteryRecords() {
+      const masteredWords = getMasteredWords();
+      const masteredCount = masteredWords.length;
+      const currentRank = getRankForMastery(masteredCount);
+      const nextRank = getNextRank(masteredCount);
+      currentRankName.textContent = `${currentRank.zh} · ${currentRank.name}`;
+      masteryTotal.textContent = `${masteredCount} / ${masteryGoal} Hanzi`;
+      masteryProgressFill.style.width = `${getHealthPercent(masteredCount, masteryGoal)}%`;
+      masteryMeta.textContent = activeProfileName
+        ? `${activeProfileName}'s mastered Hanzi archive. War losses do not erase learning.`
+        : "Track learned Hanzi and rank progress toward 3000 characters.";
+      nextRankText.textContent = nextRank
+        ? `${nextRank.min - masteredCount} more Hanzi to reach ${nextRank.zh} · ${nextRank.name}.`
+        : "3000 Hanzi mastered. Highest rank reached.";
+      renderRankLadder(masteredCount);
+      renderMasteredWords(masteredWords);
+    }
+
+    function openMasteryRecords() {
+      unlockAudio();
+      playUiSound();
+      arsenal.classList.remove("show");
+      arsenal.setAttribute("aria-hidden", "true");
+      archiveModal.classList.remove("show");
+      archiveModal.setAttribute("aria-hidden", "true");
+      debugModal.classList.remove("show");
+      debugModal.setAttribute("aria-hidden", "true");
+      enemyGalleryModal.classList.remove("show");
+      enemyGalleryModal.setAttribute("aria-hidden", "true");
+      renderMasteryRecords();
+      masteryModal.classList.add("show");
+      masteryModal.setAttribute("aria-hidden", "false");
+      closeMasteryButton.focus();
+    }
+
+    function closeMasteryRecords() {
+      const wasOpen = masteryModal.classList.contains("show");
+      if (!wasOpen) return;
+      playUiSound();
+      masteryModal.classList.remove("show");
+      masteryModal.setAttribute("aria-hidden", "true");
+      masteryButton.focus();
+    }
+
+    function openArchives() {
+      unlockAudio();
+      playUiSound();
+      archiveMeta.textContent = activeProfileName
+        ? `${activeProfileName}'s archive and all-player best stages.`
+        : "Review battle records and player best stages.";
+      renderPlayerArchive();
+      renderLeaderboard();
+      archiveModal.classList.add("show");
+      archiveModal.setAttribute("aria-hidden", "false");
+      closeArchiveButton.focus();
+    }
+
+    function closeArchives() {
+      playUiSound();
+      archiveModal.classList.remove("show");
+      archiveModal.setAttribute("aria-hidden", "true");
+      archiveButton.focus();
+    }
+
+    function renderDebugTargets() {
+      debugGrid.innerHTML = "";
+      debugTargets.forEach((target) => {
+        const card = document.createElement("article");
+        card.className = "shop-card";
+        card.innerHTML = `
+          <div class="shop-type">Stage ${target.stage}</div>
+          <div class="shop-name">${target.title}</div>
+          <div class="shop-desc">${target.desc}</div>
+          <button class="shop-action" type="button" data-debug-stage="${target.stage}">Start Debug Battle</button>
+        `;
+        debugGrid.appendChild(card);
+      });
+    }
+
+    function openDebugMode() {
+      unlockAudio();
+      playUiSound();
+      renderDebugTargets();
+      debugModal.classList.add("show");
+      debugModal.setAttribute("aria-hidden", "false");
+      debugGrid.querySelector("button")?.focus();
+    }
+
+    function closeDebugMode() {
+      playUiSound();
+      debugModal.classList.remove("show");
+      debugModal.setAttribute("aria-hidden", "true");
+      debugButton.focus();
+    }
+
+    function getEnemyGalleryItems() {
+      const regularEnemies = levelTypes.map((enemy) => ({
+        id: enemy.id,
+        name: enemy.name,
+        hp: enemy.hp,
+        damage: enemy.damage || 1,
+        sprite: enemySpriteMap[enemy.id] || enemySpriteMap.tank,
+        desc: enemyPortraitDetails[enemy.id] || enemy.intro
+      }));
+      return [
+        ...regularEnemies,
+        {
+          id: "boss",
+          name: bossTemplate.name,
+          hp: bossTemplate.hp,
+          damage: bossTemplate.damage || 1,
+          sprite: bossTemplate.sprite,
+          desc: enemyPortraitDetails.boss
+        }
+      ];
+    }
+
+    function getEnemyGalleryItem(id = selectedEnemyGalleryId) {
+      return getEnemyGalleryItems().find((item) => item.id === id) || getEnemyGalleryItems()[0];
+    }
+
+    function drawEnemyGalleryBackdrop(scene) {
+      const graphics = scene.add.graphics();
+      graphics.fillStyle(0x111211, 1);
+      graphics.fillRect(0, 0, 880, 520);
+      graphics.fillGradientStyle(0x1a1b18, 0x10110f, 0x34302a, 0x1f1a17, 1);
+      graphics.fillRect(0, 0, 880, 520);
+      graphics.fillStyle(0x080706, 0.45);
+      graphics.fillEllipse(440, 406, 660, 82);
+      graphics.fillStyle(0x262623, 0.5);
+      for (let index = 0; index < 9; index += 1) {
+        const smoke = scene.add.circle(110 + index * 86, 112 + (index % 3) * 26, 48 + (index % 4) * 12, 0x1b1b1a, 0.16);
+        scene.tweens.add({
+          targets: smoke,
+          y: smoke.y - 18,
+          alpha: 0.06,
+          scale: 1.24,
+          duration: 1800 + index * 120,
+          yoyo: true,
+          repeat: -1,
+          ease: "Sine.easeInOut"
+        });
+      }
+      graphics.lineStyle(4, 0x65513d, 0.58);
+      graphics.beginPath();
+      graphics.moveTo(0, 414);
+      graphics.lineTo(880, 388);
+      graphics.strokePath();
+    }
+
+    function initEnemyGalleryPhaser() {
+      if (!window.Phaser || !enemyGalleryPreview || enemyGalleryGame) return;
+      enemyGalleryGame = new Phaser.Game({
+        type: Phaser.CANVAS,
+        parent: "enemyGalleryPreview",
+        width: 880,
+        height: 520,
+        transparent: true,
+        backgroundColor: "rgba(0,0,0,0)",
+        scene: {
+          preload() {
+            getEnemyGalleryItems().forEach((item) => this.load.svg(`gallery:${item.id}`, item.sprite));
+          },
+          create() {
+            enemyGalleryScene = this;
+            drawEnemyGalleryBackdrop(this);
+            enemyGallerySprite = this.add.image(440, 276, `gallery:${selectedEnemyGalleryId}`).setOrigin(0.5, 0.5).setDepth(5);
+            this.tweens.add({ targets: enemyGallerySprite, y: 264, duration: 1200, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
+            renderEnemyGalleryPreview(selectedEnemyGalleryId);
+          }
+        }
+      });
+    }
+
+    function fitEnemyGallerySprite() {
+      if (!enemyGallerySprite) return;
+      const source = enemyGallerySprite.texture.getSourceImage?.();
+      const width = source?.width || 760;
+      const height = source?.height || 430;
+      const ratio = Math.min(760 / width, 360 / height);
+      enemyGallerySprite.setDisplaySize(width * ratio, height * ratio);
+      enemyGallerySprite.setPosition(440, selectedEnemyGalleryId === "boss" ? 272 : 284);
+      enemyGallerySprite.setFlipX(false);
+      enemyGallerySprite.setAlpha(1);
+    }
+
+    function renderEnemyGalleryPreview(id) {
+      const item = getEnemyGalleryItem(id);
+      selectedEnemyGalleryId = item.id;
+      enemyGalleryFallback.src = item.sprite;
+      enemyGalleryName.textContent = item.name;
+      enemyGalleryMeta.textContent = `HP ${item.hp} · Damage ${item.damage}`;
+      enemyGalleryDesc.textContent = item.desc;
+      enemyGalleryList.querySelectorAll(".enemy-gallery-choice").forEach((button) => {
+        button.classList.toggle("active", button.dataset.enemyId === item.id);
+      });
+      if (enemyGallerySprite && enemyGalleryScene?.textures.exists(`gallery:${item.id}`)) {
+        enemyGalleryFallback.style.display = "none";
+        enemyGallerySprite.setTexture(`gallery:${item.id}`);
+        fitEnemyGallerySprite();
+        enemyGalleryScene.tweens.add({ targets: enemyGallerySprite, scaleX: enemyGallerySprite.scaleX * 1.04, scaleY: enemyGallerySprite.scaleY * 1.04, duration: 160, yoyo: true, ease: "Sine.easeOut" });
+      } else {
+        enemyGalleryFallback.style.display = "block";
+      }
+    }
+
+    function renderEnemyGalleryList() {
+      enemyGalleryList.innerHTML = "";
+      getEnemyGalleryItems().forEach((item) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `enemy-gallery-choice${item.id === selectedEnemyGalleryId ? " active" : ""}`;
+        button.dataset.enemyId = item.id;
+        button.innerHTML = `
+          <img class="enemy-gallery-thumb" src="${item.sprite}" alt="">
+          <span>
+            <span class="enemy-gallery-choice-title">${item.name}</span>
+            <span class="enemy-gallery-choice-meta">HP ${item.hp} · Damage ${item.damage}</span>
+          </span>
+        `;
+        enemyGalleryList.appendChild(button);
+      });
+    }
+
+    function openEnemyGallery() {
+      unlockAudio();
+      playUiSound();
+      arsenal.classList.remove("show");
+      arsenal.setAttribute("aria-hidden", "true");
+      archiveModal.classList.remove("show");
+      archiveModal.setAttribute("aria-hidden", "true");
+      debugModal.classList.remove("show");
+      debugModal.setAttribute("aria-hidden", "true");
+      selectedEnemyGalleryId = "truck";
+      renderEnemyGalleryList();
+      renderEnemyGalleryPreview(selectedEnemyGalleryId);
+      enemyGalleryModal.classList.add("show");
+      enemyGalleryModal.setAttribute("aria-hidden", "false");
+      initEnemyGalleryPhaser();
+      closeEnemyGalleryButton.focus();
+    }
+
+    function closeEnemyGallery() {
+      const wasOpen = enemyGalleryModal.classList.contains("show");
+      if (!wasOpen) return;
+      playUiSound();
+      enemyGalleryModal.classList.remove("show");
+      enemyGalleryModal.setAttribute("aria-hidden", "true");
+      enemyGalleryButton.focus();
+    }
+
+    function startDebugBattle(stage) {
+      clearPauseState();
+      stopCountdown();
+      hideProfileGate();
+      closeDebugMode();
+      closeArsenal();
+      closeArchives();
+      bossIntroToken += 1;
+      bossIntro.classList.remove("show");
+      bossIntro.setAttribute("aria-hidden", "true");
+      activeProfileId = activeProfileId || "debug";
+      activeProfileName = activeProfileName || "Debug Commander";
+      playerNameDisplay.textContent = activeProfileName;
+      playerState = playerState || cloneDefaultState();
+      score = 0;
+      levelNumber = stage;
+      currentEnemy = createEnemy(levelNumber);
+      lives = getMaxLives();
+      locked = false;
+      reviewMode = false;
+      warShopAvailable = stage % 5 === 0;
+      shownBossIntroStage = 0;
+      runSeenWords = Object.fromEntries(words.slice(0, Math.max(20, Math.min(words.length, stage * 3))).map((word) => [word.hanzi, word]));
+      syncHud();
+      renderQuestion(words[0]);
+    }
+
+    function saveWarArchive(summary) {
+      playerState.warArchive = Array.isArray(playerState.warArchive) ? playerState.warArchive : [];
+      playerState.warArchive.unshift(summary);
+      playerState.warArchive = playerState.warArchive.slice(0, 20);
+      saveState();
+    }
+
+    function buildWarSummary() {
+      const topWords = getTopDamagingWords();
+      const coinsBeforeDefeat = playerState.coins;
+      const summary = {
+        date: new Date().toISOString(),
+        player: activeProfileName || "Commander",
+        score,
+        stage: levelNumber,
+        coins: coinsBeforeDefeat,
+        upgrades: [...runUpgradeLog],
+        topDamagingWords: topWords
+      };
+      saveWarArchive(summary);
+      score = 0;
+      playerState.coins = 0;
+      playerState.dailyScore = 0;
+      saveState();
+
+      summaryText.textContent = `${summary.player}'s war archive has been saved. Score and coins reset; mastered Hanzi were preserved.`;
+      summaryScore.textContent = summary.score;
+      summaryStage.textContent = summary.stage;
+      summaryCoins.textContent = summary.coins;
+      renderSummaryList(summaryUpgrades, summaryUpgradeEmpty, summary.upgrades, (item) => item);
+      renderSummaryList(summaryDamageWords, summaryDamageEmpty, summary.topDamagingWords, (item) => (
+        `${item.hanzi} (${item.meaning}) - ${item.damage} damage, ${item.misses} miss${item.misses === 1 ? "" : "es"}`
+      ));
+      return summary;
+    }
+
     function showGameOver() {
+      clearPauseState();
       stopCountdown();
       locked = true;
+      enemyTank.classList.remove("reloading", "fire", "boss-slam", "crash-attack");
+      enemyBullet.classList.remove("fly");
+      playerTank.classList.remove("hit", "fire");
+      playerTank.classList.add("destroyed");
+      updatePhaserActors();
+      playerBurst.classList.add("show");
       playExplosionSound();
-      messageEl.textContent = "Tank destroyed. Click Restart.";
+      playPhaserExplosion(playerTank, "heavy");
+      buildWarSummary();
+      syncHud();
+      messageEl.textContent = "Tank destroyed. War summary saved.";
       gameOver.classList.add("show");
       gameOver.setAttribute("aria-hidden", "false");
       restartButton.focus();
@@ -2777,6 +5182,7 @@
     function restartGame() {
       unlockAudio();
       playUiSound();
+      clearPauseState();
       stopCountdown();
       score = 0;
       levelNumber = 1;
@@ -2784,32 +5190,51 @@
         maxLives: 0,
         damage: 0,
         reward: 0,
-        timer: 0,
         absoluteDefense: 0,
         armor: 0
       };
       currentEnemy = createEnemy(levelNumber);
       absoluteDefenseAvailable = 0;
       playerArmor = 0;
+      warShopAvailable = false;
+      runUpgradeLog = [];
+      runWordDamage = {};
+      runWordCorrect = {};
+      runSeenWords = {};
+      bossPhrase = null;
+      bossSelection = [];
+      bossIntroToken += 1;
       lives = getMaxLives();
       locked = false;
       reviewMode = false;
       syncHud();
-      playerTank.classList.remove("hit", "fire");
+      playerTank.classList.remove("hit", "fire", "destroyed");
       enemyTank.classList.remove("hit", "fire");
       bullet.classList.remove("fly", "ap-shell", "he-shell", "cannon-shell");
       enemyBullet.classList.remove("fly");
       burst.classList.remove("show", "he-burst");
       playerBurst.classList.remove("show");
+      updatePhaserActors();
       renderQuestion(words[0]);
     }
 
     function enemyFire(damage = 1, result = { hpDamage: damage }) {
+      if (currentEnemy.id === "boss") {
+        bossHammerAttack(damage, result);
+        return;
+      }
+      if (currentEnemy.id === "truck") {
+        truckCrashAttack(damage, result);
+        return;
+      }
       playCannonSound();
       enemyTank.classList.remove("fire");
       playerTank.classList.remove("hit");
       enemyBullet.classList.remove("fly");
       playerBurst.classList.remove("show");
+      const enemyStartX = phaserEnemySprite?.x || 0;
+      tweenPhaserSprite(phaserEnemySprite, { x: enemyStartX - 10, yoyo: true }, 160);
+      playPhaserProjectile(enemyTank, playerTank, { fromX: 0.22, toX: 0.72, color: 0xff6b4a, width: 24, height: 10 });
 
       requestAnimationFrame(() => {
         enemyTank.classList.add("fire");
@@ -2825,17 +5250,78 @@
         }
         playerBurst.classList.add("show");
         playerTank.classList.add("hit");
+        shakeBattlefield();
       }, 520);
 
       setTimeout(() => {
         enemyTank.classList.remove("fire");
-        playerTank.classList.remove("hit");
+        if (!playerTank.classList.contains("destroyed")) playerTank.classList.remove("hit");
       }, 900);
+    }
+
+    function truckCrashAttack(damage = 1, result = { hpDamage: damage }) {
+      playTone(82, 0.28, { type: "sawtooth", endFrequency: 45, volume: 0.12 });
+      enemyTank.classList.remove("reloading", "crash-attack");
+      playerTank.classList.remove("hit");
+      playerBurst.classList.remove("show");
+      tweenEnemyAttackToBase(130, { angle: 3, inDuration: 520, outDuration: 360 });
+      requestAnimationFrame(() => {
+        enemyTank.classList.add("crash-attack");
+      });
+
+      setTimeout(() => {
+        playExplosionSound();
+        playPhaserExplosion(playerTank, "heavy");
+        if (result.absoluteBlocked) {
+          showDamage(playerTank, 0, { absolute: true });
+        } else {
+          showDamage(playerTank, result.totalDamage || damage, { armor: result.armorDamage > 0 });
+        }
+        playerBurst.classList.add("show");
+        playerTank.classList.add("hit");
+      }, 520);
+
+      setTimeout(() => {
+        enemyTank.classList.remove("crash-attack");
+        if (!playerTank.classList.contains("destroyed")) playerTank.classList.remove("hit");
+      }, 880);
+    }
+
+    function bossHammerAttack(damage = 1, result = { hpDamage: damage }) {
+      playTone(68, 0.24, { type: "sawtooth", endFrequency: 38, volume: 0.13 });
+      enemyTank.classList.remove("reloading", "boss-slam");
+      playerTank.classList.remove("hit");
+      playerBurst.classList.remove("show");
+      tweenEnemyAttackToBase(165, { angle: -9, inDuration: 620, outDuration: 430 });
+      requestAnimationFrame(() => {
+        enemyTank.classList.add("boss-slam");
+      });
+
+      setTimeout(() => {
+        playExplosionSound();
+        playPhaserExplosion(playerTank, "heavy");
+        if (result.absoluteBlocked) {
+          showDamage(playerTank, 0, { absolute: true });
+        } else {
+          showDamage(playerTank, result.totalDamage || damage, { armor: result.armorDamage > 0 });
+        }
+        playerBurst.classList.add("show");
+        playerTank.classList.add("hit");
+      }, 620);
+
+      setTimeout(() => {
+        enemyTank.classList.remove("boss-slam");
+        if (!playerTank.classList.contains("destroyed")) playerTank.classList.remove("hit");
+      }, 980);
     }
 
     function speakCurrentWord() {
       unlockAudio();
-      speakChinese(`${currentWord.hanzi}，${currentWord.phrase}`);
+      if (currentEnemy.id === "boss" && bossPhrase) {
+        speakChinese(bossPhrase.text, { preserveMessage: false });
+        return;
+      }
+      speakWord(currentWord);
     }
 
     function getChineseVoice() {
@@ -2852,14 +5338,34 @@
       voicesReady = true;
     }
 
-    function speakChinese(text) {
+    function queueChineseSpeech(text, options = {}) {
+      if (!text) return;
+      const token = ++speechRequestToken;
+      pendingSpeechText = text;
+      setTimeout(() => {
+        if (token !== speechRequestToken) return;
+        if (options.shouldSpeak && !options.shouldSpeak()) return;
+        speakChinese(text, options);
+        if (pendingSpeechText === text) pendingSpeechText = "";
+      }, options.delay || 0);
+    }
+
+    function retryPendingSpeech() {
+      if (!pendingSpeechText) return;
+      const text = pendingSpeechText;
+      pendingSpeechText = "";
+      speakChinese(text, { preserveMessage: true });
+    }
+
+    function speakChinese(text, options = {}) {
+      if (!text) return false;
       if (!("speechSynthesis" in window)) {
-        messageEl.textContent = "This browser does not support speech. Try Edge or Chrome.";
-        return;
+        if (!options.preserveMessage) messageEl.textContent = "This browser does not support speech. Try Edge or Chrome.";
+        return false;
       }
 
       window.speechSynthesis.cancel();
-      window.speechSynthesis.resume();
+      window.speechSynthesis.resume?.();
       const utterance = new SpeechSynthesisUtterance(text);
       const chineseVoice = getChineseVoice();
       utterance.lang = "zh-CN";
@@ -2868,16 +5374,20 @@
       utterance.volume = 1;
       if (chineseVoice) {
         utterance.voice = chineseVoice;
-      } else if (voicesReady) {
-        messageEl.textContent = "No Chinese voice found. Install a Chinese voice in your browser or Windows speech settings.";
       }
       utterance.onerror = () => {
-        messageEl.textContent = "Speech was blocked or no Chinese voice is available. Click Speak once, then answer again.";
+        pendingSpeechText = text;
+        if (!options.preserveMessage) {
+          messageEl.textContent = "Speech was blocked or no Chinese voice is available. Click Speak once, then answer again.";
+        }
       };
       window.speechSynthesis.speak(utterance);
+      return true;
     }
 
     document.addEventListener("pointerdown", unlockAudio, { once: true });
+    document.addEventListener("pointerdown", () => setTimeout(retryPendingSpeech, 0));
+    window.addEventListener("resize", () => setTimeout(updatePhaserActors, 80));
     profileForm.addEventListener("submit", handleProfileSubmit);
 
     soundButton.addEventListener("click", () => {
@@ -2898,12 +5408,15 @@
     nextButton.addEventListener("click", () => {
       unlockAudio();
       playUiSound();
+      if (isPaused) return;
       if (lives <= 0) return;
       renderQuestion();
     });
+    pauseButton.addEventListener("click", togglePause);
     speakButton.addEventListener("click", speakCurrentWord);
     restartButton.addEventListener("click", restartGame);
     reviewButton.addEventListener("click", () => {
+      if (isPaused) return;
       if (lives <= 0) return;
       if (!reviewMode && getReviewWords().length === 0) {
         messageEl.textContent = "Review queue is empty. Keep practicing.";
@@ -2913,16 +5426,40 @@
       syncHud();
       renderQuestion();
     });
+    archiveButton.addEventListener("click", openArchives);
+    masteryButton.addEventListener("click", openMasteryRecords);
+    debugButton.addEventListener("click", openDebugMode);
+    enemyGalleryButton.addEventListener("click", openEnemyGallery);
     arsenalButton.addEventListener("click", openArsenal);
     switchProfileButton.addEventListener("click", () => {
       unlockAudio();
       playUiSound();
       closeArsenal();
+      closeArchives();
+      closeDebugMode();
+      closeMasteryRecords();
+      closeEnemyGallery();
       showProfileGate("Enter another player profile.");
     });
     closeArsenalButton.addEventListener("click", closeArsenal);
+    closeMasteryButton.addEventListener("click", closeMasteryRecords);
+    closeArchiveButton.addEventListener("click", closeArchives);
+    closeDebugButton.addEventListener("click", closeDebugMode);
+    closeEnemyGalleryButton.addEventListener("click", closeEnemyGallery);
     arsenal.addEventListener("click", (event) => {
       if (event.target === arsenal) closeArsenal();
+    });
+    archiveModal.addEventListener("click", (event) => {
+      if (event.target === archiveModal) closeArchives();
+    });
+    masteryModal.addEventListener("click", (event) => {
+      if (event.target === masteryModal) closeMasteryRecords();
+    });
+    debugModal.addEventListener("click", (event) => {
+      if (event.target === debugModal) closeDebugMode();
+    });
+    enemyGalleryModal.addEventListener("click", (event) => {
+      if (event.target === enemyGalleryModal) closeEnemyGallery();
     });
     shopGrid.addEventListener("click", (event) => {
       const button = event.target.closest("[data-item]");
@@ -2934,14 +5471,31 @@
       if (!button) return;
       choosePerk(button.dataset.perk);
     });
+    supplyOptions.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-hanzi]");
+      if (!button) return;
+      chooseSupplyAnswer(button);
+    });
+    debugGrid.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-debug-stage]");
+      if (!button) return;
+      startDebugBattle(Number(button.dataset.debugStage));
+    });
+    enemyGalleryList.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-enemy-id]");
+      if (!button) return;
+      renderEnemyGalleryPreview(button.dataset.enemyId);
+    });
 
-    absoluteDefenseAvailable = runUpgrades.absoluteDefense;
-    playerArmor = runUpgrades.armor;
+    absoluteDefenseAvailable = 0;
+    playerArmor = 0;
+    initPhaserEffects();
     warmUpVoices();
     if ("speechSynthesis" in window) {
       window.speechSynthesis.onvoiceschanged = warmUpVoices;
     }
     syncSoundButton();
+    syncPauseButton();
     syncHud();
     renderQuestion(currentWord);
     showProfileGate();
