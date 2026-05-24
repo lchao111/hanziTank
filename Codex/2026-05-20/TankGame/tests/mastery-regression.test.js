@@ -24,6 +24,18 @@ assert.match(source, /id="masteryButton"/, 'Mastery Records button should exist.
 assert.match(source, /id="masteryModal"/, 'Mastery Records modal should exist.');
 assert.match(source, /<script src="src\/core\/mastery-core\.js"><\/script>/, 'Mastery core should be loaded before game logic.');
 assert.match(source, /window\.HanziTankMastery/, 'Game logic should read mastery helpers from the core module.');
+assert.match(source, /<script src="src\/data\/enemies\.js"><\/script>/, 'Enemy data should be loaded before game logic.');
+assert.match(source, /window\.HanziTankEnemies/, 'Game logic should read enemy data from the enemy data module.');
+assert.match(source, /<script src="src\/data\/shop-items\.js"><\/script>/, 'Shop data should be loaded before game logic.');
+assert.match(source, /window\.HanziTankShop/, 'Game logic should read shop data from the shop data module.');
+assert.match(source, /<script src="src\/core\/storage-core\.js"><\/script>/, 'Storage core should be loaded before game logic.');
+assert.match(source, /window\.HanziTankStorage/, 'Game logic should read storage helpers from the storage core module.');
+assert.match(source, /<script src="src\/core\/combat-core\.js"><\/script>/, 'Combat core should be loaded before game logic.');
+assert.match(source, /window\.HanziTankCombat/, 'Game logic should read combat helpers from the combat core module.');
+assert.match(source, /<script src="src\/core\/learning-core\.js"><\/script>/, 'Learning core should be loaded before game logic.');
+assert.match(source, /window\.HanziTankLearning/, 'Game logic should read learning helpers from the learning core module.');
+assert.match(source, /<script src="src\/core\/question-core\.js"><\/script>/, 'Question core should be loaded before game logic.');
+assert.match(source, /window\.HanziTankQuestions/, 'Game logic should read question helpers from the question core module.');
 
 const getMasteredWords = bodyOf('getMasteredWords');
 assert.match(getMasteredWords, /playerState\.correctBank/, 'Mastered words should come from the persistent correctBank.');

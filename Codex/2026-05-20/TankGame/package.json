@@ -1,5 +1,5 @@
 {
   "scripts": {
-    "test": "node tests/speech-regression.test.js && node tests/pause-regression.test.js && node tests/mastery-core.test.js && node tests/mastery-regression.test.js"
+    "test": "node tests/speech-regression.test.js && node tests/pause-regression.test.js && node tests/gameover-regression.test.js && node tests/words-core.test.js && node tests/enemies-core.test.js && node tests/shop-core.test.js && node tests/storage-core.test.js && node tests/combat-core.test.js && node tests/learning-core.test.js && node tests/question-core.test.js && node tests/mastery-core.test.js && node tests/mastery-regression.test.js"
   }
 }

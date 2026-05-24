@@ -2781,246 +2781,62 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
+  <script src="src/data/grade-one-words.js"></script>
+  <script src="src/data/enemies.js"></script>
+  <script src="src/data/shop-items.js"></script>
+  <script src="src/core/storage-core.js"></script>
+  <script src="src/core/combat-core.js"></script>
+  <script src="src/core/learning-core.js"></script>
+  <script src="src/core/question-core.js"></script>
   <script src="src/core/mastery-core.js"></script>
   <script>
-    const gradeOneWordData = [
-      ["一", "one", ["一个", "一只"]], ["二", "two", ["二月", "二人"]], ["三", "three", ["三个", "三天"]], ["四", "four", ["四月", "四方"]], ["五", "five", ["五个", "五月"]],
-      ["六", "six", ["六天", "六月"]], ["七", "seven", ["七个", "七月"]], ["八", "eight", ["八只", "八方"]], ["九", "nine", ["九月", "九只"]], ["十", "ten", ["十个", "十天"]],
-      ["百", "hundred", ["一百", "百花"]], ["千", "thousand", ["千里", "千山"]], ["万", "ten thousand", ["万一", "千万"]], ["上", "up", ["上面", "上学"]], ["下", "down", ["下面", "下雨"]],
-      ["左", "left", ["左边", "左右"]], ["右", "right", ["右边", "左右"]], ["中", "middle", ["中间", "中国"]], ["大", "big", ["大门", "大小"]], ["小", "small", ["小鸟", "小草"]],
-      ["多", "many", ["多少", "很多"]], ["少", "few", ["多少", "少见"]], ["天", "sky", ["天空", "今天"]], ["地", "ground", ["土地", "大地"]], ["日", "sun", ["日出", "日月"]],
-      ["月", "moon", ["月亮", "月光"]], ["水", "water", ["喝水", "水田"]], ["火", "fire", ["火山", "大火"]], ["山", "mountain", ["高山", "山水"]], ["石", "stone", ["石头", "石子"]],
-      ["田", "field", ["田地", "水田"]], ["土", "soil", ["泥土", "土地"]], ["木", "wood", ["木头", "木门"]], ["禾", "grain", ["禾苗", "禾田"]], ["竹", "bamboo", ["竹子", "竹林"]],
-      ["花", "flower", ["花朵", "红花"]], ["草", "grass", ["草地", "草坪"]], ["林", "forest", ["树林", "竹林"]], ["云", "cloud", ["白云", "云朵"]], ["雨", "rain", ["下雨", "雨水"]],
-      ["风", "wind", ["大风", "风雨"]], ["雪", "snow", ["下雪", "雪花"]], ["人", "person", ["人们", "大人"]], ["你", "you", ["你好", "你们"]], ["我", "I", ["我们", "我的"]],
-      ["他", "he", ["他们", "他的"]], ["她", "she", ["她们", "她的"]], ["们", "plural people", ["我们", "他们"]], ["子", "child", ["孩子", "儿子"]], ["女", "female", ["女孩", "女儿"]],
-      ["儿", "child", ["儿子", "女儿"]], ["爸", "dad", ["爸爸", "爸妈"]], ["妈", "mom", ["妈妈", "爸妈"]], ["爷", "grandpa", ["爷爷", "大爷"]], ["奶", "grandma", ["奶奶", "牛奶"]],
-      ["哥", "older brother", ["哥哥", "大哥"]], ["弟", "younger brother", ["弟弟", "小弟"]], ["姐", "older sister", ["姐姐", "大姐"]], ["妹", "younger sister", ["妹妹", "小妹"]], ["口", "mouth", ["开口", "人口"]],
-      ["耳", "ear", ["耳朵", "木耳"]], ["目", "eye", ["目光", "耳目"]], ["手", "hand", ["小手", "手心"]], ["足", "foot", ["足球", "手足"]], ["头", "head", ["头发", "石头"]],
-      ["心", "heart", ["爱心", "中心"]], ["牙", "tooth", ["牙齿", "门牙"]], ["鸟", "bird", ["小鸟", "飞鸟"]], ["虫", "bug", ["小虫", "虫子"]], ["鱼", "fish", ["小鱼", "鱼水"]],
-      ["马", "horse", ["小马", "马上"]], ["牛", "cow", ["小牛", "牛奶"]], ["羊", "sheep", ["山羊", "小羊"]], ["犬", "dog", ["小犬", "犬牙"]], ["猫", "cat", ["小猫", "花猫"]],
-      ["车", "vehicle", ["汽车", "火车"]], ["门", "door", ["大门", "木门"]], ["书", "book", ["书本", "看书"]], ["本", "notebook", ["书本", "本子"]], ["笔", "pen", ["毛笔", "铅笔"]],
-      ["刀", "knife", ["小刀", "刀口"]], ["尺", "ruler", ["尺子", "直尺"]], ["包", "bag", ["书包", "包子"]], ["衣", "clothes", ["上衣", "衣服"]], ["鞋", "shoes", ["鞋子", "小鞋"]],
-      ["袜", "socks", ["袜子", "小袜"]], ["家", "home", ["回家", "大家"]], ["学", "learn", ["学习", "上学"]], ["校", "school", ["学校", "校门"]], ["老", "old", ["老师", "老人"]],
-      ["师", "teacher", ["老师", "师生"]], ["同", "same", ["同学", "同桌"]], ["友", "friend", ["朋友", "友好"]], ["东", "east", ["东西", "东方"]], ["西", "west", ["东西", "西方"]],
-      ["南", "south", ["南方", "东南"]], ["北", "north", ["北方", "东北"]], ["前", "front", ["前面", "以前"]], ["后", "back", ["后面", "以后"]], ["里", "inside", ["里面", "这里"]],
-      ["外", "outside", ["外面", "门外"]], ["来", "come", ["过来", "来到"]], ["去", "go", ["出去", "来去"]], ["出", "out", ["出去", "日出"]], ["入", "enter", ["入口", "出入"]],
-      ["开", "open", ["开门", "开心"]], ["关", "close", ["关门", "开关"]], ["坐", "sit", ["坐下", "坐车"]], ["立", "stand", ["立正", "站立"]], ["走", "walk", ["走路", "走开"]],
-      ["跑", "run", ["跑步", "快跑"]], ["跳", "jump", ["跳高", "跳水"]], ["飞", "fly", ["飞机", "飞鸟"]], ["看", "look", ["看见", "看书"]], ["见", "see", ["看见", "再见"]],
-      ["听", "listen", ["听见", "听说"]], ["说", "speak", ["说话", "听说"]], ["读", "read", ["读书", "朗读"]], ["写", "write", ["写字", "书写"]], ["画", "draw", ["画画", "图画"]],
-      ["唱", "sing", ["唱歌", "歌唱"]], ["吃", "eat", ["吃饭", "吃草"]], ["喝", "drink", ["喝水", "喝茶"]], ["笑", "smile", ["大笑", "笑话"]], ["哭", "cry", ["哭声", "哭了"]],
-      ["玩", "play", ["玩具", "好玩"]], ["睡", "sleep", ["睡觉", "午睡"]], ["早", "early", ["早上", "早安"]], ["晚", "late", ["晚上", "晚安"]], ["明", "bright", ["明天", "明月"]],
-      ["年", "year", ["今年", "新年"]], ["今", "now", ["今天", "今年"]], ["昨", "yesterday", ["昨天", "昨日"]], ["午", "noon", ["上午", "中午"]], ["春", "spring", ["春天", "春风"]],
-      ["夏", "summer", ["夏天", "夏日"]], ["秋", "autumn", ["秋天", "秋风"]], ["冬", "winter", ["冬天", "冬日"]], ["红", "red", ["红花", "红日"]], ["黄", "yellow", ["黄牛", "黄色"]],
-      ["蓝", "blue", ["蓝天", "蓝色"]], ["绿", "green", ["绿草", "绿色"]], ["白", "white", ["白云", "白天"]], ["黑", "black", ["黑夜", "黑色"]], ["金", "gold", ["金鱼", "金色"]],
-      ["有", "have", ["没有", "有用"]], ["无", "none", ["无心", "无声"]], ["是", "is", ["不是", "可是"]], ["不", "not", ["不是", "不要"]], ["的", "of", ["好的", "我的"]],
-      ["了", "done", ["好了", "来了"]], ["在", "at", ["正在", "在家"]], ["和", "and", ["和平", "和好"]], ["也", "also", ["也是", "也好"]], ["又", "again", ["又来", "又大"]]
-    ];
-
-    const words = gradeOneWordData.map(([hanzi, meaning, phrases]) => ({
-      hanzi,
-      meaning,
-      phrases,
-      phrase: phrases[0]
-    }));
-    const wordByHanzi = Object.fromEntries(words.map((word) => [word.hanzi, word]));
+    const { gradeOneWordData, createWords, createWordMap } = window.HanziTankWords;
+    const words = createWords(gradeOneWordData);
+    const wordByHanzi = createWordMap(words);
+    const { shopItems, isAmmoItem: isShopAmmoItem } = window.HanziTankShop;
 
     const todayKey = new Date().toLocaleDateString("en-CA");
-    const shopItems = [
-      {
-        id: "tank_sherman",
-        type: "tank",
-        typeLabel: "Tank",
-        name: "USA: M4 Sherman",
-        cost: 0,
-        maxLives: 3,
-        rewardBonus: 0,
-        bulletClass: "",
-        desc: "Classic American medium tank. Balanced starter vehicle."
-      },
-      {
-        id: "tank_tiger",
-        type: "tank",
-        typeLabel: "Tank",
-        name: "Germany: Tiger I",
-        cost: 80,
-        maxLives: 4,
-        rewardBonus: 1,
-        bulletClass: "",
-        desc: "Iconic German heavy tank. Max HP +1 and +1 coin per correct answer."
-      },
-      {
-        id: "tank_panzer4",
-        type: "tank",
-        typeLabel: "Tank",
-        name: "Germany: Panzer IV",
-        cost: 55,
-        maxLives: 3,
-        rewardBonus: 3,
-        bulletClass: "",
-        desc: "Reliable German medium tank. Lower armor, better coin bonus."
-      },
-      {
-        id: "tank_is2",
-        type: "tank",
-        typeLabel: "Tank",
-        name: "Soviet: IS-2",
-        cost: 160,
-        maxLives: 5,
-        rewardBonus: 2,
-        bulletClass: "",
-        desc: "Soviet heavy breakthrough tank. Max HP +2 and +2 coins per correct answer."
-      },
-      {
-        id: "tank_t34",
-        type: "tank",
-        typeLabel: "Tank",
-        name: "Soviet: T-34",
-        cost: 70,
-        maxLives: 4,
-        rewardBonus: 2,
-        bulletClass: "",
-        desc: "Sloped armor and fast attacks. Max HP +1 and +2 coins."
-      },
-      {
-        id: "tank_cromwell",
-        type: "tank",
-        typeLabel: "Tank",
-        name: "Britain: Cromwell",
-        cost: 65,
-        maxLives: 3,
-        rewardBonus: 4,
-        bulletClass: "",
-        desc: "Fast British cruiser tank. Best early coin bonus."
-      },
-      {
-        id: "tank_churchill",
-        type: "tank",
-        typeLabel: "Tank",
-        name: "Britain: Churchill",
-        cost: 130,
-        maxLives: 5,
-        rewardBonus: 1,
-        bulletClass: "",
-        desc: "Thick British infantry tank. Max HP +2."
-      },
-      {
-        id: "shell_ap",
-        type: "shell",
-        typeLabel: "Ammo",
-        name: "Armor-Piercing Shell",
-        cost: 45,
-        maxLives: 0,
-        rewardBonus: 0,
-        ammoPerPurchase: 3,
-        damageBonus: 1,
-        bulletClass: "ap-shell",
-        desc: "Consumable ammo. +1 attack for one shot. Buy 3 rounds."
-      },
-      {
-        id: "shell_he",
-        type: "shell",
-        typeLabel: "Ammo",
-        name: "High-Explosive Shell",
-        cost: 95,
-        maxLives: 0,
-        rewardBonus: 0,
-        ammoPerPurchase: 3,
-        damageBonus: 2,
-        bulletClass: "he-shell",
-        desc: "Consumable ammo. +2 attack for one shot and bigger explosion. Buy 3 rounds."
-      },
-      {
-        id: "weapon_cannon",
-        type: "weapon",
-        typeLabel: "Ammo",
-        name: "Long-Barrel Shot",
-        cost: 120,
-        maxLives: 0,
-        rewardBonus: 0,
-        ammoPerPurchase: 3,
-        damageBonus: 3,
-        bulletClass: "cannon-shell",
-        desc: "Consumable ammo. +3 attack for one shot. Buy 3 rounds."
-      }
-    ];
-
-    const levelTypes = [
-      {
-        id: "tank",
-        name: "Tank",
-        hp: 1,
-        damage: 1,
-        intro: "Enemy tank. Answer correctly once to destroy it."
-      },
-      {
-        id: "infantry",
-        name: "Infantry Squad",
-        hp: 2,
-        damage: 1,
-        intro: "Two rifle soldiers. Each hit from them deals 1 HP."
-      },
-      {
-        id: "armor",
-        name: "Armored Tank",
-        hp: 2,
-        damage: 1,
-        absoluteDefense: 1,
-        armor: 1,
-        intro: "Heavy armor with absolute defense and armor. Break defenses, then destroy it."
-      },
-      {
-        id: "heavyInfantry",
-        name: "Heavy Soldier",
-        hp: 2,
-        damage: 1,
-        intro: "Heavy soldier. It deals 1 HP damage and has 2 HP."
-      },
-      {
-        id: "truck",
-        name: "Self-Destruct Truck",
-        hp: 1,
-        damage: 1,
-        intro: "Self-destruct truck incoming. It attacks every 5 seconds."
-      },
-      {
-        id: "rpgInfantry",
-        name: "RPG Soldier",
-        hp: 1,
-        damage: 2,
-        intro: "Anti-tank RPG soldier. Its missile deals 2 HP damage."
-      },
-      {
-        id: "scout",
-        name: "Scout Car",
-        hp: 1,
-        damage: 2,
-        intro: "Fast scout car. It attacks every 5 seconds."
-      }
-    ];
-
-    const bossTemplate = {
-      id: "boss",
-      name: "Tank Dismantler",
-      hp: 1,
-      damage: 1,
-      armor: 5,
-      sprite: "assets/enemy-boss-dismantler.svg",
-      intro: "Boss battle. The Tank Dismantler swings a giant hammer. Listen to the word, then pick the two Hanzi in order."
-    };
-
-    const enemyPortraitDetails = {
-      tank: "Basic armored target. Clean silhouette for early stages.",
-      infantry: "Light infantry group with small profile and low damage.",
-      armor: "Armored tank with absolute defense and plating.",
-      heavyInfantry: "Heavy soldier with thicker armor and bigger stance.",
-      truck: "Closest Phaser-style version of the reference: rusted suicide truck, front spikes, explosive cargo, smoke, and hand-painted markings.",
-      rpgInfantry: "Anti-tank RPG soldier. Low HP but dangerous burst damage.",
-      scout: "Fast light vehicle that hits harder than a basic tank.",
-      boss: "Boss portrait for the Tank Dismantler hammer fight."
-    };
+    const {
+      levelTypes,
+      bossTemplate,
+      enemyPortraitDetails,
+      tankSpriteMap,
+      enemySpriteMap,
+      debugTargets
+    } = window.HanziTankEnemies;
 
     const enemyAttackInterval = 5;
+    const {
+      createDefaultState,
+      cloneDefaultState: cloneStateTemplate,
+      normalizeProfileName: normalizeStoredProfileName,
+      getProfileId: getStoredProfileId,
+      createSalt: createProfileSalt,
+      hashPassword: hashProfilePassword,
+      getStateKey: getStoredStateKey,
+      getProfiles: getStoredProfiles,
+      saveProfiles: saveStoredProfiles,
+      loadState: loadStoredState,
+      saveState: saveStoredState
+    } = window.HanziTankStorage;
+    const {
+      createEnemyForStage,
+      applyDamageToDefender,
+      applyPlayerDamage,
+      getShotDamage: getCombatShotDamage
+    } = window.HanziTankCombat;
+    const {
+      normalizeBankWord: normalizeLearningBankWord,
+      recordProfileWord: recordLearningProfileWord
+    } = window.HanziTankLearning;
+    const {
+      shuffleList,
+      getBossPhraseOptions: getQuestionBossPhraseOptions,
+      pickBossPhrase: pickQuestionBossPhrase,
+      getBossChoiceWords: getQuestionBossChoiceWords,
+      getWordWeight: getQuestionWordWeight,
+      pickWeightedWord: pickQuestionWeightedWord
+    } = window.HanziTankQuestions;
 
     const perks = [
       { id: "armor", name: "Extra Armor", desc: "Max HP +1 and repair 1 HP now.", apply: () => { runUpgrades.maxLives += 1; lives = Math.min(lives + 1, getMaxLives()); } },
@@ -3031,22 +2847,7 @@
       { id: "plating", name: "Armor Plating", desc: "Add 2 armor. Incoming damage removes armor before HP.", apply: () => { runUpgrades.armor += 2; playerArmor += 2; } }
     ];
 
-    const defaultState = {
-      coins: 0,
-      dailyDate: todayKey,
-      dailyScore: 0,
-      review: {},
-      correctBank: {},
-      wrongBank: {},
-      warArchive: [],
-      ammo: {},
-      owned: ["tank_sherman"],
-      equipped: {
-        tank: "tank_sherman",
-        shell: "",
-        weapon: ""
-      }
-    };
+    const defaultState = createDefaultState(todayKey);
 
     const scoreEl = document.querySelector("#score");
     const livesEl = document.querySelector("#lives");
@@ -3164,26 +2965,6 @@
     const profilePasswordInput = document.querySelector("#profilePasswordInput");
     const profileMessage = document.querySelector("#profileMessage");
 
-    const tankSpriteMap = {
-      tank_sherman: "assets/tank-sherman.svg",
-      tank_tiger: "assets/tank-tiger.svg",
-      tank_panzer4: "assets/tank-panzer4.svg",
-      tank_is2: "assets/tank-is2.svg",
-      tank_t34: "assets/tank-t34.svg",
-      tank_cromwell: "assets/tank-cromwell.svg",
-      tank_churchill: "assets/tank-churchill.svg"
-    };
-
-    const enemySpriteMap = {
-      tank: "assets/enemy-tank.svg",
-      armor: "assets/enemy-armor.svg",
-      truck: "assets/enemy-suicide-truck.svg",
-      scout: "assets/enemy-scout.svg",
-      infantry: "assets/enemy-infantry.svg",
-      heavyInfantry: "assets/enemy-heavy-infantry.svg",
-      rpgInfantry: "assets/enemy-rpg-infantry.svg"
-    };
-
     const {
       masteryGoal,
       rankSize,
@@ -3193,18 +2974,6 @@
       getMasteredEntries,
       countMasteredHanzi
     } = window.HanziTankMastery;
-
-    const debugTargets = [
-      { stage: 1, title: "Tank", desc: "Basic tank battle." },
-      { stage: 2, title: "Infantry Squad", desc: "Two rifle soldiers. 2 HP, 1 damage." },
-      { stage: 3, title: "Armored Tank", desc: "Absolute defense + armor test." },
-      { stage: 4, title: "Heavy Soldier", desc: "2 HP infantry unit." },
-      { stage: 5, title: "Tank Dismantler Boss", desc: "Boss intro, listening challenge, hammer attack." },
-      { stage: 6, title: "RPG Soldier", desc: "1 HP, 2 damage anti-tank unit." },
-      { stage: 7, title: "Scout Car", desc: "Fast light vehicle with 2 damage." },
-      { stage: 12, title: "Self-Destruct Truck", desc: "Self-destruct truck approach and crash attack." },
-      { stage: 10, title: "Boss Stage 10", desc: "Boss scaling and repeated boss flow." }
-    ];
 
     let activeProfileId = "";
     let activeProfileName = "";
@@ -3229,6 +2998,8 @@
     let pausedLockedState = false;
     let pausedMessage = "";
     let isPaused = false;
+    let isGameOver = false;
+    let isLevelCleared = false;
     let absoluteDefenseAvailable = 0;
     let playerArmor = 0;
     let supplyChallenge = [];
@@ -3587,87 +3358,43 @@
     }
 
     function cloneDefaultState() {
-      return {
-        ...defaultState,
-        review: {},
-        correctBank: {},
-        wrongBank: {},
-        warArchive: [],
-        ammo: {},
-        owned: [...defaultState.owned],
-        equipped: { ...defaultState.equipped }
-      };
+      return cloneStateTemplate(defaultState);
     }
 
     function getProfiles() {
-      try {
-        const profiles = JSON.parse(localStorage.getItem("hanziTankProfiles"));
-        return profiles && typeof profiles === "object" ? profiles : {};
-      } catch {
-        return {};
-      }
+      return getStoredProfiles(localStorage);
     }
 
     function saveProfiles(profiles) {
-      localStorage.setItem("hanziTankProfiles", JSON.stringify(profiles));
+      saveStoredProfiles(localStorage, profiles);
     }
 
     function normalizeProfileName(name) {
-      return name.trim().replace(/\s+/g, " ").slice(0, 24);
+      return normalizeStoredProfileName(name);
     }
 
     function getProfileId(name) {
-      return normalizeProfileName(name).toLowerCase();
+      return getStoredProfileId(name);
     }
 
     function createSalt() {
-      return `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
+      return createProfileSalt();
     }
 
     function hashPassword(password, salt) {
-      let hash = 2166136261;
-      const text = `${salt}:${password}`;
-      for (let index = 0; index < text.length; index += 1) {
-        hash ^= text.charCodeAt(index);
-        hash = Math.imul(hash, 16777619);
-      }
-      return (hash >>> 0).toString(16).padStart(8, "0");
+      return hashProfilePassword(password, salt);
     }
 
     function getStateKey(profileId = activeProfileId) {
-      return profileId ? `hanziTankState:${profileId}` : "hanziTankState";
+      return getStoredStateKey(profileId);
     }
 
     function loadState(profileId = activeProfileId) {
-      try {
-        const saved = JSON.parse(localStorage.getItem(getStateKey(profileId)));
-        const merged = {
-          ...defaultState,
-          ...saved,
-          equipped: { ...defaultState.equipped, ...(saved?.equipped || {}) },
-          review: saved?.review && typeof saved.review === "object" ? saved.review : {},
-          correctBank: saved?.correctBank && typeof saved.correctBank === "object" ? saved.correctBank : {},
-          wrongBank: saved?.wrongBank && typeof saved.wrongBank === "object" ? saved.wrongBank : {},
-          warArchive: Array.isArray(saved?.warArchive) ? saved.warArchive : [],
-          ammo: saved?.ammo && typeof saved.ammo === "object" ? saved.ammo : {},
-          owned: Array.isArray(saved?.owned) ? saved.owned : defaultState.owned
-        };
-        if (merged.dailyDate !== todayKey) {
-          merged.dailyDate = todayKey;
-          merged.dailyScore = 0;
-        }
-        if (!merged.owned.includes("tank_sherman")) {
-          merged.owned.push("tank_sherman");
-        }
-        return merged;
-      } catch {
-        return cloneDefaultState();
-      }
+      return loadStoredState(localStorage, profileId, defaultState, todayKey);
     }
 
     function saveState() {
-      if (!activeProfileId) return;
-      localStorage.setItem(getStateKey(), JSON.stringify(playerState));
+      saveStoredState(localStorage, activeProfileId, playerState);
     }
 
     function showProfileGate(message = "") {
@@ -3687,6 +3414,8 @@
     }
 
     function resetRunForProfile() {
+      isGameOver = false;
+      isLevelCleared = false;
       score = 0;
       runUpgrades = {
         maxLives: 0,
@@ -3768,7 +3497,7 @@
     }
 
     function isAmmoItem(item) {
-      return Boolean(item?.ammoPerPurchase);
+      return isShopAmmoItem(item);
     }
 
     function getAmmoCount(itemId) {
@@ -3808,23 +3537,11 @@
     }
 
     function getShotDamage(ammo) {
-      return getDamage() + (ammo?.damageBonus || 0);
+      return getCombatShotDamage(getDamage(), ammo);
     }
 
     function createEnemy(number) {
-      const template = number % 5 === 0 ? bossTemplate : levelTypes[(number - 1) % levelTypes.length];
-      const hpBonus = Math.floor((number - 1) / levelTypes.length);
-      const isBoss = template.id === "boss";
-      return {
-        ...template,
-        maxHp: template.hp + (isBoss ? 0 : hpBonus),
-        hp: template.hp + (isBoss ? 0 : hpBonus),
-        damage: template.damage || 1,
-        maxAbsoluteDefense: template.absoluteDefense || 0,
-        absoluteDefense: template.absoluteDefense || 0,
-        maxArmor: template.armor || 0,
-        armor: template.armor || 0
-      };
+      return createEnemyForStage(number, levelTypes, bossTemplate);
     }
 
     function getHealthPercent(current, max) {
@@ -3878,16 +3595,9 @@
     }
 
     function damageEnemy(amount) {
-      if ((currentEnemy.absoluteDefense || 0) > 0) {
-        currentEnemy.absoluteDefense -= 1;
-        return { absoluteBlocked: true, armorDamage: 0, hpDamage: 0, totalDamage: 0 };
-      }
-      const armorDamage = Math.min(currentEnemy.armor || 0, amount);
-      currentEnemy.armor = Math.max(0, (currentEnemy.armor || 0) - armorDamage);
-      const remainingDamage = amount - armorDamage;
-      const hpDamage = Math.min(currentEnemy.hp, remainingDamage);
-      currentEnemy.hp = Math.max(0, currentEnemy.hp - hpDamage);
-      return { absoluteBlocked: false, armorDamage, hpDamage, totalDamage: armorDamage + hpDamage };
+      const { defender, result } = applyDamageToDefender(currentEnemy, amount);
+      currentEnemy = defender;
+      return result;
     }
 
     function syncLevelHud() {
@@ -3935,13 +3645,17 @@
     }
 
     function startCountdown(seconds = enemyAttackInterval) {
-      if (isPaused) return;
+      if (isPaused || isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
       stopCountdown();
       countdown = Math.max(1, Math.min(enemyAttackInterval, seconds || enemyAttackInterval));
       syncLevelHud();
       enemyTank.classList.toggle("reloading", ["truck", "boss"].includes(currentEnemy.id));
       startPhaserEnemyApproach();
       countdownId = setInterval(() => {
+        if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) {
+          stopCountdown();
+          return;
+        }
         countdown -= 1;
         syncLevelHud();
         if (countdown <= 0) {
@@ -3952,6 +3666,7 @@
           if (result.absoluteBlocked) messageEl.textContent = "Absolute defense blocked the blast.";
           enemyFire(currentEnemy.damage || 1, result);
           setTimeout(() => {
+            if (isGameOver || isLevelCleared || currentEnemy.hp <= 0) return;
             if (lives <= 0) {
               showGameOver();
               return;
@@ -4008,18 +3723,17 @@
     }
 
     function takeDamage(amount) {
-      if (absoluteDefenseAvailable > 0) {
-        absoluteDefenseAvailable -= 1;
+      const { state, result } = applyPlayerDamage({ lives, armor: playerArmor, absoluteDefense: absoluteDefenseAvailable }, amount);
+      lives = state.lives;
+      playerArmor = state.armor;
+      absoluteDefenseAvailable = state.absoluteDefense;
+      if (result.absoluteBlocked) {
         messageEl.textContent = "Absolute defense blocked the hit.";
         syncHud();
-        return { absoluteBlocked: true, armorDamage: 0, hpDamage: 0, totalDamage: 0 };
+        return result;
       }
-      const armorDamage = Math.min(playerArmor, amount);
-      playerArmor = Math.max(0, playerArmor - armorDamage);
-      const hpDamage = Math.max(0, amount - armorDamage);
-      lives = Math.max(0, lives - hpDamage);
       syncHud();
-      return { absoluteBlocked: false, armorDamage, hpDamage, totalDamage: armorDamage + hpDamage };
+      return result;
     }
 
     function getReviewWords() {
@@ -4166,6 +3880,8 @@
     }
 
     function completeLevel() {
+      if (isLevelCleared) return;
+      isLevelCleared = true;
       clearPauseState();
       stopCountdown();
       locked = true;
@@ -4300,6 +4016,7 @@
       runUpgradeLog.push(perk.name);
       levelNumber += 1;
       currentEnemy = createEnemy(levelNumber);
+      isLevelCleared = false;
       warShopAvailable = false;
       closeArsenal();
       perkScreen.classList.remove("show");
@@ -4309,7 +4026,7 @@
     }
 
     function shuffle(list) {
-      return [...list].sort(() => Math.random() - 0.5);
+      return shuffleList(list);
     }
 
     function getWordPhrase(word) {
@@ -4332,28 +4049,11 @@
     }
 
     function normalizeBankWord(word) {
-      if (!word?.hanzi) return null;
-      return {
-        hanzi: word.hanzi,
-        meaning: word.meaning || "boss word",
-        phrase: word.phrase || getWordPhrase(word)
-      };
+      return normalizeLearningBankWord(word, word ? getWordPhrase(word) : "");
     }
 
     function recordProfileWord(bankName, word) {
-      const normalized = normalizeBankWord(word);
-      if (!normalized) return;
-      playerState[bankName] = playerState[bankName] && typeof playerState[bankName] === "object" ? playerState[bankName] : {};
-      const entry = playerState[bankName][normalized.hanzi] || {
-        ...normalized,
-        count: 0,
-        lastSeen: ""
-      };
-      entry.count += 1;
-      entry.meaning = normalized.meaning;
-      entry.phrase = normalized.phrase;
-      entry.lastSeen = new Date().toISOString();
-      playerState[bankName][normalized.hanzi] = entry;
+      recordLearningProfileWord(playerState, bankName, word, { fallbackPhrase: word ? getWordPhrase(word) : "" });
     }
 
     function recordCorrectBank(word) {
@@ -4376,54 +4076,25 @@
     }
 
     function getBossPhraseOptions(seenWords) {
-      const seenMap = new Set(seenWords.map((word) => word.hanzi));
-      const options = [];
-      seenWords.forEach((word) => {
-        (word.phrases || []).forEach((phrase) => {
-          const chars = [...phrase];
-          if (chars.length !== 2) return;
-          if (chars.every((char) => seenMap.has(char) && wordByHanzi[char])) {
-            options.push({ text: phrase, chars });
-          }
-        });
-      });
-      if (options.length > 0) return options;
-      const fallbackChars = seenWords.slice(0, 2).map((word) => word.hanzi);
-      return [{ text: fallbackChars.join(""), chars: fallbackChars }];
+      return getQuestionBossPhraseOptions(seenWords, wordByHanzi);
     }
 
     function pickBossPhrase() {
       const seenWords = getSeenWords();
-      const options = getBossPhraseOptions(seenWords);
-      return options[Math.floor(Math.random() * options.length)];
+      return pickQuestionBossPhrase(seenWords, wordByHanzi);
     }
 
     function getBossChoiceWords(phrase) {
       const seenWords = getSeenWords();
-      const phraseSet = new Set(phrase.chars);
-      const phraseWords = phrase.chars.map((char) => wordByHanzi[char]).filter(Boolean);
-      const distractors = shuffle(seenWords.filter((word) => !phraseSet.has(word.hanzi))).slice(0, 6 - phraseWords.length);
-      const filled = [...phraseWords, ...distractors];
-      if (filled.length < 6) {
-        filled.push(...shuffle(words.filter((word) => !filled.some((item) => item.hanzi === word.hanzi))).slice(0, 6 - filled.length));
-      }
-      return shuffle(filled).slice(0, 6);
+      return getQuestionBossChoiceWords(phrase, seenWords, words, wordByHanzi);
     }
 
     function getWordWeight(word) {
-      const correctCount = runWordCorrect[word.hanzi] || 0;
-      return correctCount >= 3 ? 0.2 : 1;
+      return getQuestionWordWeight(word, playerState.correctBank, runWordCorrect);
     }
 
     function pickWeightedWord(options) {
-      const totalWeight = options.reduce((total, word) => total + getWordWeight(word), 0);
-      if (totalWeight <= 0) return options[Math.floor(Math.random() * options.length)];
-      let roll = Math.random() * totalWeight;
-      for (const word of options) {
-        roll -= getWordWeight(word);
-        if (roll <= 0) return word;
-      }
-      return options[options.length - 1];
+      return pickQuestionWeightedWord(options, playerState.correctBank, runWordCorrect);
     }
 
     function pickWord() {
@@ -4434,6 +4105,7 @@
     }
 
     function renderQuestion(word = pickWord(), options = {}) {
+      if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
       if (currentEnemy.id === "boss") {
         renderBossQuestion(options);
         return;
@@ -4471,6 +4143,7 @@
     }
 
     function renderBossQuestion(options = {}) {
+      if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
       if (!options.preserveReload) stopCountdown();
       if (shownBossIntroStage !== levelNumber) {
         showBossIntro(() => renderBossQuestion(options));
@@ -4520,6 +4193,7 @@
       bossIntro.classList.add("show");
       bossIntro.setAttribute("aria-hidden", "false");
       setTimeout(() => {
+        if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
         if (token !== bossIntroToken) return;
         bossIntro.classList.remove("show");
         bossIntro.setAttribute("aria-hidden", "true");
@@ -4560,6 +4234,7 @@
         }
         fire(shotAmmo);
         setTimeout(() => {
+          if (isGameOver || isLevelCleared) return;
           const shotDamage = getShotDamage(shotAmmo);
           const damage = damageEnemy(shotDamage);
           if (damage.absoluteBlocked) {
@@ -4663,6 +4338,7 @@
       }
       fire(shotAmmo);
       setTimeout(() => {
+        if (isGameOver || isLevelCleared) return;
         const shotDamage = getShotDamage(shotAmmo);
         const damage = damageEnemy(shotDamage);
         if (damage.absoluteBlocked) {
@@ -5098,6 +4774,8 @@
 
     function startDebugBattle(stage) {
       clearPauseState();
+      isGameOver = false;
+      isLevelCleared = false;
       stopCountdown();
       hideProfileGate();
       closeDebugMode();
@@ -5160,6 +4838,8 @@
     }
 
     function showGameOver() {
+      if (isGameOver) return;
+      isGameOver = true;
       clearPauseState();
       stopCountdown();
       locked = true;
@@ -5194,6 +4874,7 @@
         armor: 0
       };
       currentEnemy = createEnemy(levelNumber);
+      isLevelCleared = false;
       absoluteDefenseAvailable = 0;
       playerArmor = 0;
       warShopAvailable = false;
@@ -5205,6 +4886,7 @@
       bossSelection = [];
       bossIntroToken += 1;
       lives = getMaxLives();
+      isGameOver = false;
       locked = false;
       reviewMode = false;
       syncHud();
@@ -5219,6 +4901,7 @@
     }
 
     function enemyFire(damage = 1, result = { hpDamage: damage }) {
+      if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
       if (currentEnemy.id === "boss") {
         bossHammerAttack(damage, result);
         return;
@@ -5237,11 +4920,13 @@
       playPhaserProjectile(enemyTank, playerTank, { fromX: 0.22, toX: 0.72, color: 0xff6b4a, width: 24, height: 10 });
 
       requestAnimationFrame(() => {
+        if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
         enemyTank.classList.add("fire");
         enemyBullet.classList.add("fly");
       });
 
       setTimeout(() => {
+        if (isGameOver || isLevelCleared) return;
         playHitSound();
         if (result.absoluteBlocked) {
           showDamage(playerTank, 0, { absolute: true });
@@ -5260,16 +4945,19 @@
     }
 
     function truckCrashAttack(damage = 1, result = { hpDamage: damage }) {
+      if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
       playTone(82, 0.28, { type: "sawtooth", endFrequency: 45, volume: 0.12 });
       enemyTank.classList.remove("reloading", "crash-attack");
       playerTank.classList.remove("hit");
       playerBurst.classList.remove("show");
       tweenEnemyAttackToBase(130, { angle: 3, inDuration: 520, outDuration: 360 });
       requestAnimationFrame(() => {
+        if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
         enemyTank.classList.add("crash-attack");
       });
 
       setTimeout(() => {
+        if (isGameOver || isLevelCleared) return;
         playExplosionSound();
         playPhaserExplosion(playerTank, "heavy");
         if (result.absoluteBlocked) {
@@ -5288,16 +4976,19 @@
     }
 
     function bossHammerAttack(damage = 1, result = { hpDamage: damage }) {
+      if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
       playTone(68, 0.24, { type: "sawtooth", endFrequency: 38, volume: 0.13 });
       enemyTank.classList.remove("reloading", "boss-slam");
       playerTank.classList.remove("hit");
       playerBurst.classList.remove("show");
       tweenEnemyAttackToBase(165, { angle: -9, inDuration: 620, outDuration: 430 });
       requestAnimationFrame(() => {
+        if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
         enemyTank.classList.add("boss-slam");
       });
 
       setTimeout(() => {
+        if (isGameOver || isLevelCleared) return;
         playExplosionSound();
         playPhaserExplosion(playerTank, "heavy");
         if (result.absoluteBlocked) {
