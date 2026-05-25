@@ -54,7 +54,7 @@
     {
       id: "tank-dismantler-boss-spritesheet",
       source: "User-provided Tank Breaker Robot reference, grid-cropped into Phaser frames",
-      license: "User-provided reference asset; store source at assets/source/tank-breaker-robot-reference.png",
+      license: "User-provided reference asset; store source at assets/source/tank-dismantler-level5-boss-reference.png",
       texture: "bossTankDismantler",
       spritesheetPath: "assets/sprites/enemies/tank-dismantler-spritesheet.png",
       frameWidth: 224,
@@ -71,12 +71,52 @@
       spritesheetPath: "assets/sprites/tanks/player-tank-spritesheet.png",
       frameWidth: 224,
       frameHeight: 144,
-      idleFrames: [0, 1, 2, 3],
-      fireFrames: [4, 5, 6, 7],
-      hitFrames: [8, 9, 10, 11],
-      weakFrames: [12, 13, 14, 15],
-      destroyedFrames: [16, 17, 18, 19],
+      idleFrames: [0, 1, 2, 3, 4, 5],
+      fireFrames: [6, 7, 8, 9, 10, 11],
+      heavyFireFrames: [12, 13, 14, 15, 16, 17],
+      hitFrames: [18, 19, 20, 21, 22, 23],
+      weakFrames: [18, 19, 20, 21, 22, 23],
+      destroyedFrames: [24, 25, 26, 27, 28, 29],
       fallbackSvg: "assets/tank-sherman.svg"
+    },
+    {
+      id: "regular-infantry-spritesheet",
+      source: "User-provided regular soldier spritesheet, green-screen removed into Phaser frames",
+      license: "User-provided reference asset; source file from Downloads/普通士兵.png",
+      texture: "regularInfantry",
+      spritesheetPath: "assets/sprites/enemies/regular-infantry-spritesheet.png",
+      frameWidth: 469,
+      frameHeight: 300,
+      walkFrames: [0, 1, 2, 3, 4, 5],
+      fireFrames: [6, 7, 8, 9, 10, 11],
+      hitFrames: [18, 19, 20, 21, 22, 23],
+      fallbackSvg: "assets/enemy-infantry.svg"
+    },
+    {
+      id: "regular-enemy-tank-spritesheet",
+      source: "User-provided regular enemy tank spritesheet, green-screen removed into Phaser frames",
+      license: "User-provided reference asset; source file from Downloads/普通敌方坦克.png",
+      texture: "regularEnemyTank",
+      spritesheetPath: "assets/sprites/enemies/regular-enemy-tank-spritesheet.png",
+      frameWidth: 469,
+      frameHeight: 300,
+      idleFrames: [0, 1, 2, 3, 4, 5],
+      fireFrames: [6, 7, 8, 9, 10, 11],
+      hitFrames: [18, 19, 20, 21, 22, 23],
+      fallbackSvg: "assets/enemy-armor.svg"
+    },
+    {
+      id: "grenadier-spritesheet",
+      source: "User-provided grenadier spritesheet, green-screen removed into Phaser frames",
+      license: "User-provided reference asset; source file from Downloads/榴弹兵.png",
+      texture: "grenadier",
+      spritesheetPath: "assets/sprites/enemies/grenadier-spritesheet.png",
+      frameWidth: 469,
+      frameHeight: 300,
+      walkFrames: [0, 1, 2, 3, 4, 5],
+      fireFrames: [6, 7, 8, 9, 10, 11],
+      hitFrames: [18, 19, 20, 21, 22, 23],
+      fallbackSvg: "assets/enemy-rpg-infantry.svg"
     }
   ];
 

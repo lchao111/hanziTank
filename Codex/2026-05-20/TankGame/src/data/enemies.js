@@ -13,11 +13,11 @@
     },
     {
       id: "infantry",
-      name: "Infantry Squad",
+      name: "Regular Soldier",
       hp: 2,
       damage: 1,
       attackInterval: 4,
-      intro: "Stage 2 drill. A harder Hanzi appears and the squad fires sooner."
+      intro: "Stage 2 drill. A regular soldier appears and fires sooner."
     },
     {
       id: "armor",
@@ -29,12 +29,12 @@
       intro: "Stage 3 drill. Break absolute defense and armor with steady answers."
     },
     {
-      id: "scout",
-      name: "Scout Car",
+      id: "grenadier",
+      name: "Grenadier",
       hp: 1,
       damage: 2,
       attackInterval: 3,
-      intro: "Stage 4 drill. A fast scout attacks quickly if you hesitate."
+      intro: "Stage 4 drill. A grenadier hits for 2 damage if you hesitate."
     },
     {
       id: "truck",
@@ -77,12 +77,12 @@
 
   const enemyPortraitDetails = {
     tank: "Basic armored target. Clean silhouette for early stages.",
-    infantry: "Light infantry group with small profile and low damage.",
+    infantry: "Regular soldier with rifle spritesheet and low damage.",
     armor: "Armored tank with absolute defense and plating.",
     heavyInfantry: "Heavy soldier with thicker armor and bigger stance.",
     truck: "Closest Phaser-style version of the reference: rusted suicide truck, front spikes, explosive cargo, smoke, and hand-painted markings.",
     rpgInfantry: "Anti-tank RPG soldier. Low HP but dangerous burst damage.",
-    scout: "Fast light vehicle that hits harder than a basic tank.",
+    grenadier: "Grenadier with explosives. Low HP but hits for 2 damage.",
     boss: "Boss portrait for the Tank Dismantler hammer fight."
   };
 
@@ -101,6 +101,7 @@
     armor: "assets/enemy-armor.svg",
     truck: "assets/enemy-suicide-truck.svg",
     scout: "assets/enemy-scout.svg",
+    grenadier: "assets/enemy-rpg-infantry.svg",
     infantry: "assets/enemy-infantry.svg",
     heavyInfantry: "assets/enemy-heavy-infantry.svg",
     rpgInfantry: "assets/enemy-rpg-infantry.svg"
@@ -108,9 +109,9 @@
 
   const debugTargets = [
     { stage: 1, title: "Tank", desc: "Basic tank battle." },
-    { stage: 2, title: "Infantry Squad", desc: "Harder Hanzi pressure. 2 HP, faster first injury risk." },
+    { stage: 2, title: "Regular Soldier", desc: "Regular soldier spritesheet. 2 HP, faster first injury risk." },
     { stage: 3, title: "Armored Tank", desc: "Absolute defense + armor test." },
-    { stage: 4, title: "Scout Car", desc: "Fast enemy pressure. 1 HP, 2 damage, shorter attack timer." },
+    { stage: 4, title: "Grenadier", desc: "Grenadier spritesheet. 1 HP, 2 damage, shorter attack timer." },
     { stage: 5, title: "Tank Dismantler Boss", desc: "Boss intro, listening challenge, hammer attack." },
     { stage: 6, title: "RPG Soldier", desc: "1 HP, 2 damage anti-tank unit." },
     { stage: 7, title: "Scout Car", desc: "Fast light vehicle with 2 damage." },

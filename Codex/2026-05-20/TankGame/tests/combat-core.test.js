@@ -10,6 +10,7 @@ assert.strictEqual(stage1.attackInterval, 5);
 
 const stage2 = combat.createEnemyForStage(2, enemies.levelTypes, enemies.bossTemplate);
 assert.strictEqual(stage2.id, 'infantry');
+assert.strictEqual(stage2.name, 'Regular Soldier');
 assert.strictEqual(stage2.attackInterval, 4, 'Stage 2 should create first-injury pressure with a shorter timer.');
 
 const stage3 = combat.createEnemyForStage(3, enemies.levelTypes, enemies.bossTemplate);
@@ -17,7 +18,8 @@ assert.strictEqual(stage3.id, 'armor');
 assert.strictEqual(stage3.absoluteDefense, 1, 'Stage 3 should be the shield tutorial enemy.');
 
 const stage4 = combat.createEnemyForStage(4, enemies.levelTypes, enemies.bossTemplate);
-assert.strictEqual(stage4.id, 'scout');
+assert.strictEqual(stage4.id, 'grenadier');
+assert.strictEqual(stage4.damage, 2, 'Stage 4 grenadier should deal 2 damage.');
 assert.strictEqual(stage4.attackInterval, 3, 'Stage 4 should be the fast enemy.');
 
 const stage8 = combat.createEnemyForStage(8, enemies.levelTypes, enemies.bossTemplate);

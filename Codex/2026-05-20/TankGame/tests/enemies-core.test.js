@@ -6,7 +6,7 @@ assert.deepStrictEqual(enemies.levelTypes.map((enemy) => enemy.id), [
   'tank',
   'infantry',
   'armor',
-  'scout',
+  'grenadier',
   'truck',
   'rpgInfantry',
   'heavyInfantry'
@@ -23,22 +23,28 @@ assert.match(enemies.bossTemplate.intro, /Listen to one Hanzi/, 'Boss intro shou
 
 assert.match(enemies.levelTypes[0].intro, /Stage 1 drill/, 'Stage 1 should introduce basic matching feedback.');
 assert.match(enemies.levelTypes[1].intro, /Stage 2 drill/, 'Stage 2 should introduce harder Hanzi pressure.');
+assert.strictEqual(enemies.levelTypes[1].name, 'Regular Soldier', 'Stage 2 should use the regular soldier enemy.');
 assert.strictEqual(enemies.levelTypes[1].attackInterval, 4, 'Stage 2 pressure enemy should attack sooner than the baseline timer.');
 assert.match(enemies.levelTypes[2].intro, /Stage 3 drill/, 'Stage 3 should introduce defense breaking.');
 assert.strictEqual(enemies.levelTypes[2].absoluteDefense, 1, 'Stage 3 should include shield mechanics.');
-assert.match(enemies.levelTypes[3].intro, /Stage 4 drill/, 'Stage 4 should introduce fast enemy pressure.');
-assert.strictEqual(enemies.levelTypes[3].id, 'scout', 'Stage 4 should be the fast scout enemy.');
-assert.strictEqual(enemies.levelTypes[3].attackInterval, 3, 'Stage 4 scout should use a shorter attack timer.');
+assert.match(enemies.levelTypes[3].intro, /Stage 4 drill/, 'Stage 4 should introduce grenadier pressure.');
+assert.strictEqual(enemies.levelTypes[3].id, 'grenadier', 'Stage 4 should be the grenadier enemy.');
+assert.strictEqual(enemies.levelTypes[3].damage, 2, 'Stage 4 grenadier should deal 2 damage.');
+assert.strictEqual(enemies.levelTypes[3].attackInterval, 3, 'Stage 4 grenadier should use a shorter attack timer.');
 
 assert.strictEqual(enemies.levelTypes.find((enemy) => enemy.id === 'heavyInfantry').attackStyle, 'melee');
 assert.strictEqual(enemies.levelTypes.find((enemy) => enemy.id === 'truck').attackStyle, 'melee');
 
 assert.strictEqual(enemies.enemySpriteMap.truck, 'assets/enemy-suicide-truck.svg');
+assert.strictEqual(enemies.enemySpriteMap.infantry, 'assets/enemy-infantry.svg');
+assert.strictEqual(enemies.enemySpriteMap.grenadier, 'assets/enemy-rpg-infantry.svg');
 assert.strictEqual(enemies.enemySpriteMap.rpgInfantry, 'assets/enemy-rpg-infantry.svg');
 assert.strictEqual(enemies.tankSpriteMap.tank_sherman, 'assets/tank-sherman.svg');
 assert.strictEqual(enemies.enemyPortraitDetails.boss, 'Boss portrait for the Tank Dismantler hammer fight.');
 
 assert.ok(enemies.debugTargets.some((target) => target.stage === 5 && target.title.includes('Boss')), 'Debug targets should include a boss battle.');
+assert.ok(enemies.debugTargets.some((target) => target.stage === 2 && target.title === 'Regular Soldier'), 'Debug targets should name the regular soldier stage.');
+assert.ok(enemies.debugTargets.some((target) => target.stage === 4 && target.title === 'Grenadier'), 'Debug targets should name the grenadier stage.');
 assert.ok(enemies.debugTargets.some((target) => target.stage === 12 && target.title === 'Self-Destruct Truck'), 'Debug targets should include the self-destruct truck.');
 
 console.log('enemies core tests passed');

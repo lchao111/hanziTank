@@ -21,7 +21,7 @@ This file is the first place to read after context loss. It records the current 
 - Speech: Web Speech API via `speechSynthesis`.
 - Hanzi word speech now tries local `assets/audio/hanzi/uXXXX.mp3` clips first. Randomly generated normal and Stage 5 Boss questions probe the offline MP3 in the background; missing or unplayable clips are queued in browser `localStorage` under `hanziTankAudioDownloadQueue` and can be generated with `tools/generate-hanzi-audio.mjs --download-queue=path/to/queue.json`.
 - The visible footer build tag is driven by `appVersion` in `index.html`; bump it on each behavior change so browser validation can be matched against the tested code.
-- The first five encounters now form an explicit learning arc: stage 1 one-shot tank, stage 2 harder Hanzi pressure with a shorter injury timer, stage 3 shield/armor enemy, stage 4 fast scout, then the stage 5 single-Hanzi listening Boss. Correct-answer feedback calls out new Hanzi, review cleanup, practice count, and distance to the next rank.
+- The first five encounters now form an explicit learning arc: stage 1 one-shot tank, stage 2 Regular Soldier spritesheet enemy with a shorter injury timer, stage 3 regular enemy tank spritesheet with shield/armor mechanics, stage 4 Grenadier spritesheet enemy that deals 2 damage, then the stage 5 single-Hanzi listening Boss. Correct-answer feedback calls out new Hanzi, review cleanup, practice count, and distance to the next rank.
 
 ## Important Commands
 
@@ -222,6 +222,10 @@ Asset sourcing plan:
 - Tank Dismantler Boss now has a Phaser spritesheet path: `assets/sprites/enemies/tank-dismantler-spritesheet.png`, loaded as `bossTankDismantler` with `frameWidth: 224` and `frameHeight: 224`. Frames `0-5` are the walking loop and frames `6-11` are the hammer attack.
 - To rebuild the Boss spritesheet from the user-provided reference image, save the source as `assets/source/tank-breaker-robot-reference.png`, then run `./tools/crop-dismantler-spritesheet.ps1`. The script crops the 2x6 reference grid and removes the white background for Phaser.
 - Player tank battle art now uses `assets/sprites/tanks/player-tank-spritesheet.png`, loaded as `playerTankBattle` with `frameWidth: 224` and `frameHeight: 144`. Rows are idle (`0-5`), fire (`6-11`), heavy fire (`12-17`), hit/weak smoking (`18-23`), and destroyed/burning (`24-29`). The DOM tank SVG stays as fallback if the Phaser texture is unavailable.
+- Stage 2 Regular Soldier art now uses `assets/sprites/enemies/regular-infantry-spritesheet.png`, loaded as `regularInfantry` with `frameWidth: 469` and `frameHeight: 300`. Frames `0-5` are walk/idle, `6-11` are rifle firing, and `18-23` are hit frames. The DOM infantry SVG stays as fallback.
+- Stage 3 regular enemy tank art now uses `assets/sprites/enemies/regular-enemy-tank-spritesheet.png`, loaded as `regularEnemyTank` with `frameWidth: 469` and `frameHeight: 300`. Frames `0-5` are idle, `6-11` are cannon firing, and `18-23` are hit frames. The DOM armor SVG stays as fallback.
+- Stage 4 Grenadier art now uses `assets/sprites/enemies/grenadier-spritesheet.png`, loaded as `grenadier` with `frameWidth: 469` and `frameHeight: 300`. Frames `0-5` are walk/idle, `6-11` are grenade throw/fire, and `18-23` are hit frames. The DOM RPG infantry SVG stays as fallback.
+- Enemy side-view spritesheets should face the left-side player in battle. If source art faces right, set `setFlipX(true)` in the Phaser actor builder/updater and cover it with regression tests.
 
 Next recommended feature slice:
 

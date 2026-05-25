@@ -354,6 +354,14 @@
       opacity: 0;
     }
 
+    .enemy-infantry.phaser-infantry-active .tank-sprite {
+      opacity: 0;
+    }
+
+    .enemy-armor.phaser-enemy-tank-active .tank-sprite {
+      opacity: 0;
+    }
+
     .tank.player.phaser-player-active .tank-sprite {
       opacity: 0;
     }
@@ -3139,7 +3147,7 @@
   <script src="src/core/question-core.js"></script>
   <script src="src/core/mastery-core.js"></script>
   <script>
-    const appVersion = "2026.05.25.10";
+    const appVersion = "2026.05.25.14";
     const { gradeOneWordData, createWords, createWordMap } = window.HanziTankWords;
     const words = createWords(gradeOneWordData);
     const wordByHanzi = createWordMap(words);
@@ -3399,6 +3407,12 @@
     let phaserPlayerTextureReady = false;
     let phaserBossDismantler = null;
     let phaserBossTextureReady = false;
+    let phaserRegularInfantry = null;
+    let phaserRegularInfantryTextureReady = false;
+    let phaserRegularEnemyTank = null;
+    let phaserRegularEnemyTankTextureReady = false;
+    let phaserGrenadier = null;
+    let phaserGrenadierTextureReady = false;
     let enemyGalleryGame = null;
     let enemyGalleryScene = null;
     let enemyGallerySprite = null;
@@ -3436,6 +3450,18 @@
               frameWidth: 224,
               frameHeight: 224
             });
+            this.load.spritesheet("regularInfantry", "assets/sprites/enemies/regular-infantry-spritesheet.png?v=20260525", {
+              frameWidth: 469,
+              frameHeight: 300
+            });
+            this.load.spritesheet("regularEnemyTank", "assets/sprites/enemies/regular-enemy-tank-spritesheet.png?v=20260525", {
+              frameWidth: 469,
+              frameHeight: 300
+            });
+            this.load.spritesheet("grenadier", "assets/sprites/enemies/grenadier-spritesheet.png?v=20260525", {
+              frameWidth: 469,
+              frameHeight: 300
+            });
           },
           create() {
             phaserEffects = this;
@@ -3445,6 +3471,9 @@
             phaserEnemyTurretSprite = this.add.image(0, 0, "kenney:enemyTurret").setOrigin(0.5, 0.5).setDepth(12).setAngle(-90);
             buildPhaserPlayerTank(this);
             buildPhaserBossDismantler(this);
+            buildPhaserRegularInfantry(this);
+            buildPhaserRegularEnemyTank(this);
+            buildPhaserGrenadier(this);
             phaserPlayerSprite.setVisible(false);
             phaserEnemySprite.setVisible(false);
             phaserPlayerTurretSprite.setVisible(false);
@@ -3490,6 +3519,9 @@
       phaserEnemyTurretSprite?.setAngle(-90).setFlipX(false);
       updatePhaserPlayerTank();
       updatePhaserBossDismantler();
+      updatePhaserRegularInfantry();
+      updatePhaserRegularEnemyTank();
+      updatePhaserGrenadier();
     }
 
     function buildPhaserPlayerTank(scene) {
@@ -3592,9 +3624,162 @@
       });
     }
 
+    function buildPhaserRegularInfantry(scene) {
+      if (phaserRegularInfantry) return;
+      const infantryTexture = scene.textures.get("regularInfantry");
+      phaserRegularInfantryTextureReady = scene.textures.exists("regularInfantry") && infantryTexture?.key === "regularInfantry" && (infantryTexture.source?.[0]?.width || 0) >= 2814;
+      if (!phaserRegularInfantryTextureReady) return;
+      scene.anims.create({
+        key: "regular-infantry-walk",
+        frames: scene.anims.generateFrameNumbers("regularInfantry", { start: 0, end: 5 }),
+        frameRate: 8,
+        repeat: -1
+      });
+      scene.anims.create({
+        key: "regular-infantry-fire",
+        frames: scene.anims.generateFrameNumbers("regularInfantry", { start: 6, end: 11 }),
+        frameRate: 10,
+        repeat: 0
+      });
+      scene.anims.create({
+        key: "regular-infantry-hit",
+        frames: scene.anims.generateFrameNumbers("regularInfantry", { start: 18, end: 23 }),
+        frameRate: 10,
+        repeat: 0
+      });
+      phaserRegularInfantry = scene.add.sprite(0, 0, "regularInfantry", 0)
+        .setOrigin(0.5, 0.78)
+        .setDepth(13)
+        .setFlipX(true)
+        .setVisible(false);
+    }
+
+    function updatePhaserRegularInfantry() {
+      const active = Boolean(phaserRegularInfantryTextureReady && phaserRegularInfantry && currentEnemy.id === "infantry" && !enemyTank.classList.contains("fragmented") && !isGameOver);
+      if (phaserRegularInfantry) phaserRegularInfantry.setVisible(active);
+      enemyTank.classList.toggle("phaser-infantry-active", active);
+      if (!active || !phaserRegularInfantry) return;
+      const rect = enemyTank.getBoundingClientRect();
+      const point = getBattlefieldPoint(enemyTank, 0.5, 0.63);
+      phaserRegularInfantry.setPosition(point.x, point.y);
+      phaserRegularInfantry.setDisplaySize(rect.width * 1.18, rect.height * 1.42);
+      phaserRegularInfantry.setFlipX(true);
+      phaserRegularInfantry.setAlpha(1);
+      if (phaserRegularInfantry.anims.currentAnim?.key !== "regular-infantry-fire" && phaserRegularInfantry.anims.currentAnim?.key !== "regular-infantry-hit") {
+        playPhaserRegularInfantryIdle();
+      }
+    }
+
+    function playPhaserRegularInfantryIdle() {
+      if (!phaserRegularInfantry?.visible) return;
+      if (phaserRegularInfantry.anims.currentAnim?.key === "regular-infantry-walk" && phaserRegularInfantry.anims.isPlaying) return;
+      phaserRegularInfantry.play("regular-infantry-walk", true);
+    }
+
+    function playPhaserRegularInfantryState(stateName) {
+      if (!phaserRegularInfantry?.visible) return;
+      phaserRegularInfantry.play(`regular-infantry-${stateName}`, true);
+      phaserRegularInfantry.once(`animationcomplete-regular-infantry-${stateName}`, () => {
+        if (currentEnemy.id === "infantry" && !isGameOver && !isLevelCleared && currentEnemy.hp > 0) playPhaserRegularInfantryIdle();
+      });
+    }
+
+    function buildPhaserRegularEnemyTank(scene) {
+      if (phaserRegularEnemyTank) return;
+      const tankTexture = scene.textures.get("regularEnemyTank");
+      phaserRegularEnemyTankTextureReady = scene.textures.exists("regularEnemyTank") && tankTexture?.key === "regularEnemyTank" && (tankTexture.source?.[0]?.width || 0) >= 2814;
+      if (!phaserRegularEnemyTankTextureReady) return;
+      scene.anims.create({ key: "regular-enemy-tank-idle", frames: scene.anims.generateFrameNumbers("regularEnemyTank", { start: 0, end: 5 }), frameRate: 8, repeat: -1 });
+      scene.anims.create({ key: "regular-enemy-tank-fire", frames: scene.anims.generateFrameNumbers("regularEnemyTank", { start: 6, end: 11 }), frameRate: 10, repeat: 0 });
+      scene.anims.create({ key: "regular-enemy-tank-hit", frames: scene.anims.generateFrameNumbers("regularEnemyTank", { start: 18, end: 23 }), frameRate: 10, repeat: 0 });
+      phaserRegularEnemyTank = scene.add.sprite(0, 0, "regularEnemyTank", 0)
+        .setOrigin(0.5, 0.72)
+        .setDepth(13)
+        .setFlipX(true)
+        .setVisible(false);
+    }
+
+    function updatePhaserRegularEnemyTank() {
+      const active = Boolean(phaserRegularEnemyTankTextureReady && phaserRegularEnemyTank && currentEnemy.id === "armor" && !enemyTank.classList.contains("fragmented") && !isGameOver);
+      if (phaserRegularEnemyTank) phaserRegularEnemyTank.setVisible(active);
+      enemyTank.classList.toggle("phaser-enemy-tank-active", active);
+      if (!active || !phaserRegularEnemyTank) return;
+      const rect = enemyTank.getBoundingClientRect();
+      const point = getBattlefieldPoint(enemyTank, 0.5, 0.56);
+      phaserRegularEnemyTank.setPosition(point.x, point.y);
+      phaserRegularEnemyTank.setDisplaySize(rect.width * 1.32, rect.height * 0.92);
+      phaserRegularEnemyTank.setFlipX(true);
+      phaserRegularEnemyTank.setAlpha(1);
+      if (phaserRegularEnemyTank.anims.currentAnim?.key !== "regular-enemy-tank-fire" && phaserRegularEnemyTank.anims.currentAnim?.key !== "regular-enemy-tank-hit") {
+        playPhaserRegularEnemyTankIdle();
+      }
+    }
+
+    function playPhaserRegularEnemyTankIdle() {
+      if (!phaserRegularEnemyTank?.visible) return;
+      if (phaserRegularEnemyTank.anims.currentAnim?.key === "regular-enemy-tank-idle" && phaserRegularEnemyTank.anims.isPlaying) return;
+      phaserRegularEnemyTank.play("regular-enemy-tank-idle", true);
+    }
+
+    function playPhaserRegularEnemyTankState(stateName) {
+      if (!phaserRegularEnemyTank?.visible) return;
+      phaserRegularEnemyTank.play(`regular-enemy-tank-${stateName}`, true);
+      phaserRegularEnemyTank.once(`animationcomplete-regular-enemy-tank-${stateName}`, () => {
+        if (currentEnemy.id === "armor" && !isGameOver && !isLevelCleared && currentEnemy.hp > 0) playPhaserRegularEnemyTankIdle();
+      });
+    }
+
+    function buildPhaserGrenadier(scene) {
+      if (phaserGrenadier) return;
+      const grenadierTexture = scene.textures.get("grenadier");
+      phaserGrenadierTextureReady = scene.textures.exists("grenadier") && grenadierTexture?.key === "grenadier" && (grenadierTexture.source?.[0]?.width || 0) >= 2814;
+      if (!phaserGrenadierTextureReady) return;
+      scene.anims.create({ key: "grenadier-walk", frames: scene.anims.generateFrameNumbers("grenadier", { start: 0, end: 5 }), frameRate: 8, repeat: -1 });
+      scene.anims.create({ key: "grenadier-fire", frames: scene.anims.generateFrameNumbers("grenadier", { start: 6, end: 11 }), frameRate: 10, repeat: 0 });
+      scene.anims.create({ key: "grenadier-hit", frames: scene.anims.generateFrameNumbers("grenadier", { start: 18, end: 23 }), frameRate: 10, repeat: 0 });
+      phaserGrenadier = scene.add.sprite(0, 0, "grenadier", 0)
+        .setOrigin(0.5, 0.78)
+        .setDepth(13)
+        .setFlipX(true)
+        .setVisible(false);
+    }
+
+    function updatePhaserGrenadier() {
+      const active = Boolean(phaserGrenadierTextureReady && phaserGrenadier && currentEnemy.id === "grenadier" && !enemyTank.classList.contains("fragmented") && !isGameOver);
+      if (phaserGrenadier) phaserGrenadier.setVisible(active);
+      enemyTank.classList.toggle("phaser-grenadier-active", active);
+      if (!active || !phaserGrenadier) return;
+      const rect = enemyTank.getBoundingClientRect();
+      const point = getBattlefieldPoint(enemyTank, 0.5, 0.63);
+      phaserGrenadier.setPosition(point.x, point.y);
+      phaserGrenadier.setDisplaySize(rect.width * 1.2, rect.height * 1.42);
+      phaserGrenadier.setFlipX(true);
+      phaserGrenadier.setAlpha(1);
+      if (phaserGrenadier.anims.currentAnim?.key !== "grenadier-fire" && phaserGrenadier.anims.currentAnim?.key !== "grenadier-hit") {
+        playPhaserGrenadierIdle();
+      }
+    }
+
+    function playPhaserGrenadierIdle() {
+      if (!phaserGrenadier?.visible) return;
+      if (phaserGrenadier.anims.currentAnim?.key === "grenadier-walk" && phaserGrenadier.anims.isPlaying) return;
+      phaserGrenadier.play("grenadier-walk", true);
+    }
+
+    function playPhaserGrenadierState(stateName) {
+      if (!phaserGrenadier?.visible) return;
+      phaserGrenadier.play(`grenadier-${stateName}`, true);
+      phaserGrenadier.once(`animationcomplete-grenadier-${stateName}`, () => {
+        if (currentEnemy.id === "grenadier" && !isGameOver && !isLevelCleared && currentEnemy.hp > 0) playPhaserGrenadierIdle();
+      });
+    }
+
     function stopPhaserEnemyApproach(resetPosition = true) {
       if (phaserEffects && phaserEnemySprite) phaserEffects.tweens.killTweensOf(phaserEnemySprite);
       if (phaserEffects && phaserEnemyTurretSprite) phaserEffects.tweens.killTweensOf(phaserEnemyTurretSprite);
+      if (phaserEffects && phaserRegularInfantry) phaserEffects.tweens.killTweensOf(phaserRegularInfantry);
+      if (phaserEffects && phaserRegularEnemyTank) phaserEffects.tweens.killTweensOf(phaserRegularEnemyTank);
+      if (phaserEffects && phaserGrenadier) phaserEffects.tweens.killTweensOf(phaserGrenadier);
       if (phaserEnemyReloadTween) {
         phaserEnemyReloadTween.stop();
         phaserEnemyReloadTween = null;
@@ -4364,6 +4549,8 @@
       damage.textContent = options.miss ? "MISS" : options.absolute ? "ABS" : `-${amount}`;
       targetTank.appendChild(damage);
       damage.addEventListener("animationend", () => damage.remove(), { once: true });
+      if (targetTank === enemyTank && currentEnemy.id === "armor") playPhaserRegularEnemyTankState("hit");
+      if (targetTank === enemyTank && currentEnemy.id === "grenadier") playPhaserGrenadierState("hit");
       playPhaserImpact(targetTank, options.absolute ? "absolute" : options.armor ? "armor" : "hit");
       if (options.absolute || options.armor) {
         playDefenseEffect(targetTank, options.absolute ? "absolute" : "armor");
@@ -4623,10 +4810,13 @@
       enemyTank.classList.toggle("enemy-truck", currentEnemy.id === "truck");
       enemyTank.classList.toggle("enemy-scout", currentEnemy.id === "scout");
       enemyTank.classList.toggle("enemy-armor", currentEnemy.id === "armor" || currentEnemy.id === "boss");
-      enemyTank.classList.toggle("enemy-infantry", ["infantry", "heavyInfantry", "rpgInfantry"].includes(currentEnemy.id));
+      enemyTank.classList.toggle("enemy-infantry", ["infantry", "grenadier", "heavyInfantry", "rpgInfantry"].includes(currentEnemy.id));
       enemyTank.classList.toggle("enemy-heavy-infantry", currentEnemy.id === "heavyInfantry");
       enemyTank.classList.toggle("enemy-rpg-infantry", currentEnemy.id === "rpgInfantry");
       enemyTank.classList.toggle("enemy-boss", currentEnemy.id === "boss");
+      enemyTank.classList.toggle("enemy-regular-infantry", currentEnemy.id === "infantry");
+      enemyTank.classList.toggle("enemy-regular-tank", currentEnemy.id === "armor");
+      enemyTank.classList.toggle("enemy-grenadier", currentEnemy.id === "grenadier");
       enemyTank.classList.toggle("enemy-melee", currentEnemy.attackStyle === "melee" && !["boss", "truck"].includes(currentEnemy.id));
       updatePhaserActors();
       wordCountEl.textContent = `${getRankProgressText()} · Review ${getReviewCount()}`;
@@ -5957,6 +6147,9 @@
         return;
       }
       playCannonSound();
+      if (currentEnemy.id === "infantry") playPhaserRegularInfantryState("fire");
+      if (currentEnemy.id === "armor") playPhaserRegularEnemyTankState("fire");
+      if (currentEnemy.id === "grenadier") playPhaserGrenadierState("fire");
       enemyTank.classList.remove("fire");
       playerTank.classList.remove("hit");
       enemyBullet.classList.remove("fly");

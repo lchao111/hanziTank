@@ -83,6 +83,10 @@ assert.match(initPhaserEffects, /frameWidth: 224[\s\S]*frameHeight: 144/, 'Playe
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("bossTankDismantler"/, 'Phaser should preload the Tank Dismantler boss spritesheet.');
 assert.match(initPhaserEffects, /frameWidth: 224/, 'Tank Dismantler spritesheet should use fixed frame width.');
 assert.match(initPhaserEffects, /frameHeight: 224/, 'Tank Dismantler spritesheet should use fixed frame height.');
+assert.match(initPhaserEffects, /this\.load\.spritesheet\("regularInfantry"/, 'Phaser should preload the regular soldier spritesheet.');
+assert.match(initPhaserEffects, /frameWidth: 469[\s\S]*frameHeight: 300/, 'Regular soldier spritesheet should use fixed frame dimensions.');
+assert.match(initPhaserEffects, /this\.load\.spritesheet\("regularEnemyTank"/, 'Phaser should preload the regular enemy tank spritesheet.');
+assert.match(initPhaserEffects, /this\.load\.spritesheet\("grenadier"/, 'Phaser should preload the grenadier spritesheet.');
 assert.match(initPhaserEffects, /phaserPlayerSprite = this\.add\.sprite/, 'Player actor should be a Phaser sprite so it can play animations.');
 assert.match(initPhaserEffects, /phaserPlayerTurretSprite = this\.add\.image/, 'Phaser should create a player turret actor.');
 assert.match(initPhaserEffects, /phaserPlayerSprite\.setVisible\(false\)/, 'Kenney actor trial should stay hidden until a full top-down scene migration is ready.');
@@ -94,6 +98,9 @@ assert.match(updatePhaserActors, /fitPhaserSprite\(phaserEnemyTurretSprite/, 'En
 assert.match(updatePhaserActors, /updatePhaserPlayerTank\(\)/, 'Phaser player tank spritesheet should stay aligned with the DOM player slot.');
 assert.match(updatePhaserActors, /setAngle\(phaserPlayerTextureReady \? 0/, 'Side-view player spritesheet should not inherit top-down actor rotation.');
 assert.match(updatePhaserActors, /updatePhaserBossDismantler\(\)/, 'Phaser boss container should stay aligned with the DOM enemy slot.');
+assert.match(updatePhaserActors, /updatePhaserRegularInfantry\(\)/, 'Regular soldier spritesheet should stay aligned with the DOM enemy slot.');
+assert.match(updatePhaserActors, /updatePhaserRegularEnemyTank\(\)/, 'Regular enemy tank spritesheet should stay aligned with the DOM enemy slot.');
+assert.match(updatePhaserActors, /updatePhaserGrenadier\(\)/, 'Grenadier spritesheet should stay aligned with the DOM enemy slot.');
 
 const playerBuilder = bodyOf('buildPhaserPlayerTank');
 assert.match(playerBuilder, /scene\.textures\.exists\("playerTankBattle"\)/, 'Player tank builder should verify that the spritesheet loaded.');
@@ -150,9 +157,68 @@ const bossSlam = bodyOf('playPhaserBossSlam');
 assert.match(bossSlam, /play\("tank-dismantler-attack", true\)/, 'Boss slam should play the attack spritesheet animation.');
 assert.match(bossSlam, /animationcomplete-tank-dismantler-attack/, 'Boss should return to walking after the attack animation completes.');
 
+const infantryBuilder = bodyOf('buildPhaserRegularInfantry');
+assert.match(infantryBuilder, /scene\.textures\.exists\("regularInfantry"\)/, 'Regular soldier builder should verify that the spritesheet loaded.');
+assert.match(infantryBuilder, /key: "regular-infantry-walk"/, 'Regular soldier should define a walk animation.');
+assert.match(infantryBuilder, /generateFrameNumbers\("regularInfantry", \{ start: 0, end: 5 \}\)/, 'Regular soldier walk should use row 1 frames.');
+assert.match(infantryBuilder, /key: "regular-infantry-fire"/, 'Regular soldier should define a firing animation.');
+assert.match(infantryBuilder, /generateFrameNumbers\("regularInfantry", \{ start: 6, end: 11 \}\)/, 'Regular soldier fire should use row 2 frames.');
+assert.match(infantryBuilder, /key: "regular-infantry-hit"/, 'Regular soldier should define a hit animation.');
+assert.match(infantryBuilder, /setFlipX\(true\)/, 'Regular soldier source art faces right and must be flipped to face the player on the left.');
+
+const infantryUpdater = bodyOf('updatePhaserRegularInfantry');
+assert.match(infantryUpdater, /currentEnemy\.id === "infantry"/, 'Regular soldier spritesheet should only appear for stage 2 infantry.');
+assert.match(infantryUpdater, /phaser-infantry-active/, 'DOM infantry fallback should hide only while the Phaser soldier is active.');
+assert.match(infantryUpdater, /setDisplaySize\(rect\.width \* 1\.18, rect\.height \* 1\.42\)/, 'Regular soldier spritesheet should scale from the enemy DOM slot.');
+assert.match(infantryUpdater, /phaserRegularInfantry\.setFlipX\(true\)/, 'Regular soldier orientation should stay flipped toward the left-side player after resize and updates.');
+
+const infantryState = bodyOf('playPhaserRegularInfantryState');
+assert.match(infantryState, /regular-infantry-\$\{stateName\}/, 'Regular soldier animation helper should play named states.');
+
+const enemyTankBuilder = bodyOf('buildPhaserRegularEnemyTank');
+assert.match(enemyTankBuilder, /scene\.textures\.exists\("regularEnemyTank"\)/, 'Regular enemy tank builder should verify that the spritesheet loaded.');
+assert.match(enemyTankBuilder, /key: "regular-enemy-tank-idle"/, 'Regular enemy tank should define an idle animation.');
+assert.match(enemyTankBuilder, /generateFrameNumbers\("regularEnemyTank", \{ start: 0, end: 5 \}\)/, 'Regular enemy tank idle should use row 1 frames.');
+assert.match(enemyTankBuilder, /key: "regular-enemy-tank-fire"/, 'Regular enemy tank should define a fire animation.');
+assert.match(enemyTankBuilder, /generateFrameNumbers\("regularEnemyTank", \{ start: 6, end: 11 \}\)/, 'Regular enemy tank fire should use row 2 frames.');
+assert.match(enemyTankBuilder, /setFlipX\(true\)/, 'Regular enemy tank source art faces right and must be flipped to face the player on the left.');
+
+const enemyTankUpdater = bodyOf('updatePhaserRegularEnemyTank');
+assert.match(enemyTankUpdater, /currentEnemy\.id === "armor"/, 'Regular enemy tank spritesheet should appear for stage 3 armor enemy.');
+assert.match(enemyTankUpdater, /phaser-enemy-tank-active/, 'DOM armor fallback should hide only while the Phaser tank is active.');
+assert.match(enemyTankUpdater, /setDisplaySize\(rect\.width \* 1\.32, rect\.height \* 0\.92\)/, 'Regular enemy tank spritesheet should scale from the enemy DOM slot.');
+assert.match(enemyTankUpdater, /phaserRegularEnemyTank\.setFlipX\(true\)/, 'Regular enemy tank orientation should stay flipped toward the left-side player after resize and updates.');
+
+const enemyTankState = bodyOf('playPhaserRegularEnemyTankState');
+assert.match(enemyTankState, /regular-enemy-tank-\$\{stateName\}/, 'Regular enemy tank animation helper should play named states.');
+
+const grenadierBuilder = bodyOf('buildPhaserGrenadier');
+assert.match(grenadierBuilder, /scene\.textures\.exists\("grenadier"\)/, 'Grenadier builder should verify that the spritesheet loaded.');
+assert.match(grenadierBuilder, /key: "grenadier-walk"/, 'Grenadier should define a walk animation.');
+assert.match(grenadierBuilder, /generateFrameNumbers\("grenadier", \{ start: 0, end: 5 \}\)/, 'Grenadier walk should use row 1 frames.');
+assert.match(grenadierBuilder, /key: "grenadier-fire"/, 'Grenadier should define a throw/fire animation.');
+assert.match(grenadierBuilder, /generateFrameNumbers\("grenadier", \{ start: 6, end: 11 \}\)/, 'Grenadier fire should use row 2 frames.');
+assert.match(grenadierBuilder, /setFlipX\(true\)/, 'Grenadier source art faces right and must be flipped to face the player on the left.');
+
+const grenadierUpdater = bodyOf('updatePhaserGrenadier');
+assert.match(grenadierUpdater, /currentEnemy\.id === "grenadier"/, 'Grenadier spritesheet should appear for stage 4 grenadier enemy.');
+assert.match(grenadierUpdater, /phaser-grenadier-active/, 'DOM grenadier fallback should hide only while the Phaser grenadier is active.');
+assert.match(grenadierUpdater, /setDisplaySize\(rect\.width \* 1\.2, rect\.height \* 1\.42\)/, 'Grenadier spritesheet should scale from the enemy DOM slot.');
+assert.match(grenadierUpdater, /phaserGrenadier\.setFlipX\(true\)/, 'Grenadier orientation should stay flipped toward the left-side player after resize and updates.');
+
+const grenadierState = bodyOf('playPhaserGrenadierState');
+assert.match(grenadierState, /grenadier-\$\{stateName\}/, 'Grenadier animation helper should play named states.');
+
+const showDamage = bodyOf('showDamage');
+assert.match(showDamage, /targetTank === enemyTank && currentEnemy\.id === "armor"/, 'Stage 3 regular tank should play hit animation when damaged.');
+assert.match(showDamage, /targetTank === enemyTank && currentEnemy\.id === "grenadier"/, 'Stage 4 grenadier should play hit animation when damaged.');
+
 const enemyFire = bodyOf('enemyFire');
 assert.match(enemyFire, /playPhaserTargetingLine\(enemyTank, playerTank/, 'Enemy fire should show a Phaser targeting line before impact.');
 assert.match(enemyFire, /if \(currentEnemy\.attackStyle === "melee"\)/, 'Melee enemies should route through melee strike attacks.');
+assert.match(enemyFire, /if \(currentEnemy\.id === "infantry"\) playPhaserRegularInfantryState\("fire"\)/, 'Regular soldier should play its firing animation when attacking.');
+assert.match(enemyFire, /if \(currentEnemy\.id === "armor"\) playPhaserRegularEnemyTankState\("fire"\)/, 'Regular enemy tank should play its firing animation when attacking.');
+assert.match(enemyFire, /if \(currentEnemy\.id === "grenadier"\) playPhaserGrenadierState\("fire"\)/, 'Grenadier should play its throw/fire animation when attacking.');
 
 const enemyApproach = bodyOf('startPhaserEnemyApproach');
 assert.match(enemyApproach, /currentEnemy\.attackStyle !== "melee"/, 'Only melee enemies should approach during reload.');
