@@ -14,6 +14,8 @@ This file is the first place to read after context loss. It records the current 
 - Browser launch: open `index.html` directly with a `file:///` URL.
 - Game engine: Phaser 3.80.1 loaded from CDN.
 - Phaser currently handles effects/projectile/gallery previews; DOM still owns most primary UI and tank/enemy body sprites.
+- Battle VFX has been upgraded toward Phaser-native effects: camera shake/flash, enemy targeting lines, projectile muzzle flashes, projectile trails, impact glints, shockwaves, fire cores, sparks/debris, and smoke puffs are generated with Phaser primitives rather than texture assets.
+- Tank destruction now uses Phaser armor debris particles and smoke. The DOM tank body receives `fragmented` and fades out instead of relying on a destroyed texture.
 - Storage: browser `localStorage`.
 - Sound: Web Audio API procedural effects.
 - Speech: Web Speech API via `speechSynthesis`.
@@ -120,6 +122,7 @@ Speech:
 
 - Boss questions show `??`; they must auto-pronounce the target phrase.
 - Boss speech must use `queueChineseSpeech(..., { preserveMessage: true, shouldSpeak })`.
+- `queueChineseSpeech` stores a structured queued request and retries while browser voices are delayed. `warmUpVoices()` flushes queued speech once voices are ready.
 - Do not overwrite the Boss prompt with missing-voice warnings before attempting speech.
 - Speak button must replay the current Boss phrase.
 
@@ -135,6 +138,7 @@ Enemy Reload / Hit Stun:
 - Pausing should freeze, not reset, reload.
 - Game Over is terminal until restart/debug/profile reset; after defeat, enemy reload and enemy firing must not restart.
 - Enemy defeat is terminal until the next stage starts; after enemy HP reaches 0, enemy reload and enemy firing must not restart.
+- Melee enemies use `attackStyle: "melee"` and `approachDistance` metadata. During reload they gradually move toward the player, then attack near the player and retreat. The visible DOM enemy must also approach, not only hidden Phaser actors. Visible melee approach distances use responsive `clamp(...vw...)` values instead of fixed pixels so large screens still show close-range pressure.
 
 Defense:
 
@@ -145,6 +149,11 @@ Ammo:
 
 - Special ammo is consumable.
 - AP, HE, and cannon ammo add one-shot damage bonuses.
+- Ammo now supports build archetypes through `doctrine` metadata: Defense, Magic, Agility, Recovery, Violent Attack, and Tactics.
+- Smoke Shell and Flash Flare Shell both add smoke cover; the next enemy attack must miss and consumes one smoke cover charge.
+- Repair Capsule repairs 1 HP on hit.
+- Armor Plate Round adds 1 armor on hit.
+- Arcane Spark Shell is the first Magic ammo and adds +1 damage with a distinct projectile style.
 
 ## Current Refactor Status
 
@@ -162,7 +171,7 @@ Completed refactor slices:
 Still mostly in `index.html`:
 
 - DOM rendering and CSS.
-- Phaser effects and gallery scene wiring.
+- Phaser effects and gallery scene wiring. Phaser effects should stay primitive/tween/camera based unless a full Phaser scene migration is planned.
 - Audio and speech wrappers.
 - Profile form UI wiring.
 - Shop modal UI wiring.
@@ -174,6 +183,42 @@ Still mostly in `index.html`:
 ## Near-Term Plan
 
 The code is now refactored enough to start new feature work safely.
+
+Phaser migration note:
+
+- The immediate direction is not to rewrite the whole game into Phaser Editor in one jump.
+- Keep migrating the highest-impact game feel first: explosions, hit effects, screen shake, projectiles, enemy approach, and eventually actor movement.
+- Projectiles should feel like Phaser VFX: muzzle flash, trail puffs, projectile glow, and impact glint rather than a lone DOM bullet.
+- Enemy attacks should show Phaser targeting/wind-up feedback before the projectile impact.
+- Destroyed tanks should look like Phaser particles/debris flying apart, not like a static destroyed sprite.
+- Validate Phaser effects in-browser by checking scene display-list growth and camera shake/flash effects, because WebGL pixel reads may return zero without preserveDrawingBuffer.
+
+Asset sourcing plan:
+
+- For Phaser actor migration, prefer real 2D game sprites over generated SVG art.
+- Primary sources to search:
+  - Itch.io: search `Top down Tank Sprite`, `WW2 tank sprites`, `top down vehicle pack`.
+  - OpenGameArt.org: search `Tank`, `top down tank`, `orthographic vehicle`.
+- Preferred asset traits:
+  - Top-down or orthographic view.
+  - Hull and turret separated when possible.
+  - Destruction animation frames included when possible.
+  - Muzzle flash / projectile / impact frames included when possible.
+  - Transparent PNG spritesheets or Phaser-ready texture atlases.
+  - Clear license compatible with this project.
+- Proposed future asset folders:
+  - `assets/sprites/tanks/`
+  - `assets/sprites/enemies/`
+  - `assets/sprites/effects/`
+  - `assets/atlases/`
+  - `assets/licenses/`
+- Do not replace all SVGs at once. Import one tank pack first, wire one player tank and one enemy tank, validate, then continue.
+- Keep current SVGs as fallback until Phaser sprite actors are stable.
+- Imported trial pack: Kenney Top-down Tanks Redux from OpenGameArt.org, CC0. License stored at `assets/licenses/kenney_topdownTanksRedux_LICENSE.txt`.
+- Kenney green/red hull/turret sprites are imported and preloadable, but they are not currently active as battlefield actors because the tiny top-down pixel sprites do not fit the current side-view battlefield scale. Current DOM SVG bodies remain visible as fallback until a full top-down actor scene is implemented.
+- Tank Dismantler Boss now has a Phaser spritesheet path: `assets/sprites/enemies/tank-dismantler-spritesheet.png`, loaded as `bossTankDismantler` with `frameWidth: 224` and `frameHeight: 224`. Frames `0-5` are the walking loop and frames `6-11` are the hammer attack.
+- To rebuild the Boss spritesheet from the user-provided reference image, save the source as `assets/source/tank-breaker-robot-reference.png`, then run `./tools/crop-dismantler-spritesheet.ps1`. The script crops the 2x6 reference grid and removes the white background for Phaser.
+- Player tank battle art now uses `assets/sprites/tanks/player-tank-spritesheet.png`, loaded as `playerTankBattle` with `frameWidth: 224` and `frameHeight: 144`. Rows are idle (`0-3`), fire (`4-7`), hit (`8-11`), weak (`12-15`), and destroyed (`16-19`). The DOM tank SVG stays as fallback if the Phaser texture is unavailable.
 
 Next recommended feature slice:
 

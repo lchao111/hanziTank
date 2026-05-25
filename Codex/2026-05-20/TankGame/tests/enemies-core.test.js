@@ -15,7 +15,12 @@ assert.deepStrictEqual(enemies.levelTypes.map((enemy) => enemy.id), [
 assert.strictEqual(enemies.bossTemplate.id, 'boss');
 assert.strictEqual(enemies.bossTemplate.name, 'Tank Dismantler');
 assert.strictEqual(enemies.bossTemplate.armor, 5);
+assert.strictEqual(enemies.bossTemplate.attackStyle, 'melee');
+assert.strictEqual(enemies.bossTemplate.approachDistance, 150);
 assert.strictEqual(enemies.bossTemplate.sprite, 'assets/enemy-boss-dismantler.svg');
+
+assert.strictEqual(enemies.levelTypes.find((enemy) => enemy.id === 'heavyInfantry').attackStyle, 'melee');
+assert.strictEqual(enemies.levelTypes.find((enemy) => enemy.id === 'truck').attackStyle, 'melee');
 
 assert.strictEqual(enemies.enemySpriteMap.truck, 'assets/enemy-suicide-truck.svg');
 assert.strictEqual(enemies.enemySpriteMap.rpgInfantry, 'assets/enemy-rpg-infantry.svg');

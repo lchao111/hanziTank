@@ -134,6 +134,11 @@ Do not break these rules without explicit product decision:
 - DOM tank/enemy bodies remain the reliable primary display path for now.
 - When adding Phaser-rendered sprites or canvases, validate in the browser.
 - For SVG assets in Phaser, use `load.svg`, not `load.image`.
+- Future tank/equipment/ammo art should come from Phaser-friendly sprite packs where possible.
+- Prefer top-down or orthographic 2D assets from Itch.io or OpenGameArt.org.
+- Prefer packs with separated hull/turret, destruction frames, muzzle flashes, projectile frames, and transparent PNG spritesheets/atlases.
+- Store third-party asset license notes under `assets/licenses/` before using assets in-game.
+- Do not bulk-replace all art in one commit. Import and validate one pack or one actor category at a time.
 
 ## 10. Speech Guidelines
 

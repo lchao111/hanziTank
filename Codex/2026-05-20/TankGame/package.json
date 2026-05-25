@@ -1,5 +1,8 @@
 {
   "scripts": {
-    "test": "node tests/speech-regression.test.js && node tests/pause-regression.test.js && node tests/gameover-regression.test.js && node tests/words-core.test.js && node tests/enemies-core.test.js && node tests/shop-core.test.js && node tests/storage-core.test.js && node tests/combat-core.test.js && node tests/learning-core.test.js && node tests/question-core.test.js && node tests/mastery-core.test.js && node tests/mastery-regression.test.js"
+    "test": "node tests/speech-regression.test.js && node tests/pause-regression.test.js && node tests/gameover-regression.test.js && node tests/perk-ui-regression.test.js && node tests/war-prep-ui-regression.test.js && node tests/phaser-vfx-regression.test.js && node tests/ammo-regression.test.js && node tests/asset-manifest.test.js && node tests/hanzi-audio-manifest.test.js && node tests/words-core.test.js && node tests/enemies-core.test.js && node tests/shop-core.test.js && node tests/storage-core.test.js && node tests/combat-core.test.js && node tests/learning-core.test.js && node tests/question-core.test.js && node tests/mastery-core.test.js && node tests/mastery-regression.test.js",
+    "utilities:generate-hanzi-audio": "node tools/generate-hanzi-audio.mjs",
+    "utilities:replace-hanzi-audio": "node tools/generate-hanzi-audio.mjs --overwrite",
+    "utilities:migrate-hanzi-audio-names": "node tools/migrate-hanzi-audio-codepoint.mjs"
   }
 }

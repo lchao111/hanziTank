@@ -32,6 +32,8 @@
       name: "Heavy Soldier",
       hp: 2,
       damage: 1,
+      attackStyle: "melee",
+      approachDistance: 92,
       intro: "Heavy soldier. It deals 1 HP damage and has 2 HP."
     },
     {
@@ -39,6 +41,8 @@
       name: "Self-Destruct Truck",
       hp: 1,
       damage: 1,
+      attackStyle: "melee",
+      approachDistance: 120,
       intro: "Self-destruct truck incoming. It attacks every 5 seconds."
     },
     {
@@ -63,6 +67,8 @@
     hp: 1,
     damage: 1,
     armor: 5,
+    attackStyle: "melee",
+    approachDistance: 150,
     sprite: "assets/enemy-boss-dismantler.svg",
     intro: "Boss battle. The Tank Dismantler swings a giant hammer. Listen to the word, then pick the two Hanzi in order."
   };

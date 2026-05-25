@@ -1,0 +1,30 @@
+const assert = require('assert');
+const assets = require('../src/data/asset-manifest.js');
+
+assert.ok(assets.assetSourceGuidelines.preferredSources.includes('Itch.io'));
+assert.ok(assets.assetSourceGuidelines.preferredSources.includes('OpenGameArt.org'));
+assert.ok(assets.assetSourceGuidelines.preferredSearches.includes('Top down Tank Sprite'));
+assert.strictEqual(assets.assetSourceGuidelines.requiredLicenseNoteFolder, 'assets/licenses/');
+assert.strictEqual(assets.plannedAssetFolders.tankSprites, 'assets/sprites/tanks/');
+assert.strictEqual(assets.plannedAssetFolders.effectSprites, 'assets/sprites/effects/');
+assert.strictEqual(assets.plannedAssetFolders.licenses, 'assets/licenses/');
+assert.ok(Object.prototype.hasOwnProperty.call(assets.spriteActorSchema, 'hullTexture'));
+assert.ok(Object.prototype.hasOwnProperty.call(assets.spriteActorSchema, 'turretTexture'));
+assert.ok(Object.prototype.hasOwnProperty.call(assets.spriteActorSchema, 'fallbackSvg'));
+assert.strictEqual(assets.importedSpriteTrials.length, 4);
+assert.strictEqual(assets.importedSpriteTrials[0].license.includes('CC0'), true);
+assert.strictEqual(assets.importedSpriteTrials[0].hullTexture, 'kenney:playerHull');
+assert.strictEqual(assets.importedSpriteTrials[1].turretTexture, 'kenney:enemyTurret');
+assert.strictEqual(assets.importedSpriteTrials[2].texture, 'bossTankDismantler');
+assert.strictEqual(assets.importedSpriteTrials[2].spritesheetPath, 'assets/sprites/enemies/tank-dismantler-spritesheet.png');
+assert.deepStrictEqual(assets.importedSpriteTrials[2].walkFrames, [0, 1, 2, 3, 4, 5]);
+assert.deepStrictEqual(assets.importedSpriteTrials[2].attackFrames, [6, 7, 8, 9, 10, 11]);
+assert.strictEqual(assets.importedSpriteTrials[3].texture, 'playerTankBattle');
+assert.strictEqual(assets.importedSpriteTrials[3].spritesheetPath, 'assets/sprites/tanks/player-tank-spritesheet.png');
+assert.deepStrictEqual(assets.importedSpriteTrials[3].idleFrames, [0, 1, 2, 3]);
+assert.deepStrictEqual(assets.importedSpriteTrials[3].fireFrames, [4, 5, 6, 7]);
+assert.deepStrictEqual(assets.importedSpriteTrials[3].hitFrames, [8, 9, 10, 11]);
+assert.deepStrictEqual(assets.importedSpriteTrials[3].weakFrames, [12, 13, 14, 15]);
+assert.deepStrictEqual(assets.importedSpriteTrials[3].destroyedFrames, [16, 17, 18, 19]);
+
+console.log('asset manifest tests passed');

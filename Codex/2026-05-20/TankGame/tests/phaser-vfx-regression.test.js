@@ -98,7 +98,6 @@ assert.match(updatePhaserActors, /updatePhaserBossDismantler\(\)/, 'Phaser boss 
 const playerBuilder = bodyOf('buildPhaserPlayerTank');
 assert.match(playerBuilder, /scene\.textures\.exists\("playerTankBattle"\)/, 'Player tank builder should verify that the spritesheet loaded.');
 assert.match(playerBuilder, /key: "player-tank-idle"/, 'Player tank should define an idle animation.');
-assert.match(playerBuilder, /frameRate: 8/, 'Player idle animation should be fast enough to show moving treads.');
 assert.match(playerBuilder, /start: 0, end: 3/, 'Player idle animation should use row 1.');
 assert.match(playerBuilder, /key: "player-tank-fire"/, 'Player tank should define a fire animation.');
 assert.match(playerBuilder, /start: 4, end: 7/, 'Player fire animation should use row 2.');
@@ -111,30 +110,7 @@ assert.match(playerBuilder, /start: 16, end: 19/, 'Player destroyed animation sh
 
 const playerUpdater = bodyOf('updatePhaserPlayerTank');
 assert.match(playerUpdater, /phaser-player-active/, 'DOM player fallback should hide only while the Phaser player tank is active.');
-assert.match(playerUpdater, /tankWidth = rect\.width \* 1\.18/, 'Player spritesheet should be slightly larger for clearer animation.');
-assert.match(playerUpdater, /phaserPlayerTrackBelt/, 'Player tank should align an animated Phaser track belt.');
-
-const trackBuilder = bodyOf('buildPhaserPlayerTrackBelt');
-assert.match(trackBuilder, /generateTexture\("playerTrackMotion"/, 'Player tank should generate a reusable moving track texture.');
-assert.match(trackBuilder, /scene\.add\.tileSprite/, 'Player track belt should use a tileSprite so the tread texture can scroll.');
-
-const trackMotion = bodyOf('updatePhaserPlayerTrackMotion');
-assert.match(trackMotion, /tilePositionX -= 2\.2/, 'Player track belt should visibly scroll while active.');
-
-const completeLevel = bodyOf('completeLevel');
-assert.match(completeLevel, /playStageAdvance\(\(\) =>/, 'Stage clear should play a side-scrolling advance before showing rewards.');
-
-const stageAdvance = bodyOf('playStageAdvance');
-assert.match(stageAdvance, /battlefieldEl\.classList\.add\("stage-advance"\)/, 'Stage advance should scroll the battlefield background.');
-assert.match(stageAdvance, /playerTank\.classList\.add\("stage-advance"\)/, 'Stage advance should move the player tank DOM fallback.');
-assert.match(stageAdvance, /phaserEffects\.tweens\.add/, 'Stage advance should move the Phaser player tank with a tween.');
-assert.match(stageAdvance, /playPhaserPlayerState\("idle", true\)/, 'Stage advance should keep the tank driving animation active.');
-assert.match(source, /@keyframes stage-background-drive/, 'Stage advance should define a scrolling battlefield keyframe.');
-assert.match(source, /@keyframes player-stage-drive/, 'Stage advance should define a player drive keyframe fallback.');
-
-const cancelStageAdvance = bodyOf('cancelStageAdvance');
-assert.match(cancelStageAdvance, /stageAdvanceToken \+= 1/, 'Stage advance cancellation should invalidate pending callbacks.');
-assert.match(cancelStageAdvance, /classList\.remove\("stage-advance"\)/, 'Stage advance cancellation should clear visual classes.');
+assert.match(playerUpdater, /setDisplaySize\(rect\.width \* 1\.08/, 'Player spritesheet should scale from the player DOM slot.');
 
 const playerState = bodyOf('getPlayerTankPhaserState');
 assert.match(playerState, /return "destroyed"/, 'Player state should include destroyed.');

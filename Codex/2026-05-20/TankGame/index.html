@@ -120,18 +120,6 @@
       animation: battlefield-shake 300ms ease;
     }
 
-    .battlefield.stage-advance {
-      animation: stage-background-drive 1500ms cubic-bezier(.2,.72,.24,1) both;
-    }
-
-    .battlefield.stage-advance::before {
-      animation: stage-trenches-drive 520ms linear infinite;
-    }
-
-    .battlefield.stage-advance .ground {
-      animation: stage-ground-drive 420ms linear infinite;
-    }
-
     .phaser-layer {
       position: absolute;
       z-index: 3;
@@ -221,22 +209,14 @@
       position: absolute;
       z-index: 2;
       bottom: 54px;
-      width: min(35vw, 232px);
-      min-width: 160px;
+      width: min(32vw, 210px);
+      min-width: 148px;
       aspect-ratio: 1.5;
       transition: transform 160ms ease;
     }
 
     .tank.player {
       left: clamp(14px, 7vw, 90px);
-    }
-
-    .tank.player.stage-advance {
-      animation: player-stage-drive 1500ms cubic-bezier(.2,.72,.24,1) both;
-    }
-
-    .tank.player.stage-advance .unit-hud {
-      opacity: 0;
     }
 
     .tank.enemy {
@@ -2522,36 +2502,6 @@
       72% { transform: translate(3px, 2px); }
     }
 
-    @keyframes stage-background-drive {
-      0% {
-        background-position: 0 0, center bottom, 0 0;
-        filter: saturate(1) brightness(1);
-      }
-      45% {
-        filter: saturate(1.05) brightness(1.05);
-      }
-      100% {
-        background-position: 0 0, calc(50% - 28vw) bottom, 0 0;
-        filter: saturate(1) brightness(1);
-      }
-    }
-
-    @keyframes stage-trenches-drive {
-      0% { background-position: 0 0, 0 0; }
-      100% { background-position: -120px 0, -180px 0; }
-    }
-
-    @keyframes stage-ground-drive {
-      0% { background-position: 0 0, 0 0, 0 0, 0 0; }
-      100% { background-position: -120px 0, -220px 0, -90px 0, 0 0; }
-    }
-
-    @keyframes player-stage-drive {
-      0% { transform: translateX(0) translateY(0); }
-      18% { transform: translateX(clamp(32px, 8vw, 90px)) translateY(-2px); }
-      100% { transform: translateX(clamp(240px, 42vw, 560px)) translateY(0); }
-    }
-
     @keyframes boss-hammer-slam {
       0% {
         transform: scaleX(-1) translateX(clamp(300px, 44vw, 760px)) translateY(0) rotate(0deg) scale(1.12);
@@ -3357,7 +3307,6 @@
     let bossSelection = [];
     let shownBossIntroStage = 0;
     let bossIntroToken = 0;
-    let stageAdvanceToken = 0;
     let voicesReady = false;
     let audioContext = null;
     let soundEnabled = localStorage.getItem("hanziTankSound") !== "off";
@@ -3370,7 +3319,6 @@
     let phaserEnemySprite = null;
     let phaserPlayerTurretSprite = null;
     let phaserEnemyTurretSprite = null;
-    let phaserPlayerTrackBelt = null;
     let phaserPlayerKey = "";
     let phaserEnemyKey = "";
     let phaserEnemyReloadTween = null;
@@ -3417,7 +3365,6 @@
           },
           create() {
             phaserEffects = this;
-            this.events.on("update", updatePhaserPlayerTrackMotion);
             phaserPlayerSprite = this.add.sprite(0, 0, "tank:tank_sherman").setOrigin(0.5, 0.5).setDepth(10);
             phaserEnemySprite = this.add.image(0, 0, "enemy:tank").setOrigin(0.5, 0.5).setDepth(10).setFlipX(true);
             phaserPlayerTurretSprite = this.add.image(0, 0, "kenney:playerTurret").setOrigin(0.5, 0.5).setDepth(12).setAngle(90);
@@ -3473,32 +3420,16 @@
 
     function buildPhaserPlayerTank(scene) {
       const playerTexture = scene.textures.get("playerTankBattle");
-      phaserPlayerTextureReady = scene.textures.exists("playerTankBattle") && playerTexture?.key === "playerTankBattle" && (playerTexture.source?.[0]?.width || 0) >= 896;
+      phaserPlayerTextureReady = scene.textures.exists("playerTankBattle") && playerTexture?.key === "playerTankBattle" && (playerTexture.source?.[0]?.width || 0) >= 1344;
       if (!phaserPlayerTextureReady) return;
-      scene.anims.create({ key: "player-tank-idle", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 0, end: 3 }), frameRate: 8, repeat: -1 });
-      scene.anims.create({ key: "player-tank-fire", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 4, end: 7 }), frameRate: 12, repeat: 0 });
-      scene.anims.create({ key: "player-tank-hit", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 8, end: 11 }), frameRate: 12, repeat: 0 });
-      scene.anims.create({ key: "player-tank-weak", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 12, end: 15 }), frameRate: 7, repeat: -1 });
-      scene.anims.create({ key: "player-tank-destroyed", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 16, end: 19 }), frameRate: 7, repeat: 0 });
+      scene.anims.create({ key: "player-tank-idle", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 0, end: 5 }), frameRate: 8, repeat: -1 });
+      scene.anims.create({ key: "player-tank-fire", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 6, end: 11 }), frameRate: 12, repeat: 0 });
+      scene.anims.create({ key: "player-tank-heavy-fire", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 12, end: 17 }), frameRate: 12, repeat: 0 });
+      scene.anims.create({ key: "player-tank-hit", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 12, end: 17 }), frameRate: 12, repeat: 0 });
+      scene.anims.create({ key: "player-tank-weak", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 0, end: 5 }), frameRate: 6, repeat: -1 });
+      scene.anims.create({ key: "player-tank-destroyed", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 17, end: 17 }), frameRate: 1, repeat: 0 });
       phaserPlayerSprite.setTexture("playerTankBattle", 0).setOrigin(0.5, 0.72).setDepth(14).setAngle(0).setFlipX(false);
-      buildPhaserPlayerTrackBelt(scene);
       phaserPlayerTurretSprite?.setVisible(false);
-    }
-
-    function buildPhaserPlayerTrackBelt(scene) {
-      if (!scene.textures.exists("playerTrackMotion")) {
-        const graphics = scene.make.graphics({ x: 0, y: 0, add: false });
-        graphics.fillStyle(0x141710, 0.1).fillRect(0, 0, 40, 10);
-        graphics.fillStyle(0xe8d88b, 0.52);
-        for (let x = -12; x < 44; x += 12) graphics.fillRect(x, 1, 5, 8);
-        graphics.generateTexture("playerTrackMotion", 40, 10);
-        graphics.destroy();
-      }
-      phaserPlayerTrackBelt = scene.add.tileSprite(0, 0, 40, 10, "playerTrackMotion")
-        .setOrigin(0.5, 0.5)
-        .setDepth(15)
-        .setAlpha(0.42)
-        .setVisible(false);
     }
 
     function getPlayerTankPhaserState() {
@@ -3510,25 +3441,11 @@
     function updatePhaserPlayerTank() {
       const active = Boolean(phaserPlayerTextureReady && phaserPlayerSprite && (!playerTank.classList.contains("fragmented") || playerTank.classList.contains("destroyed")));
       playerTank.classList.toggle("phaser-player-active", active);
-      if (phaserPlayerTrackBelt) phaserPlayerTrackBelt.setVisible(active && !playerTank.classList.contains("destroyed"));
       if (!active) return;
       const rect = playerTank.getBoundingClientRect();
       const point = getBattlefieldPoint(playerTank, 0.5, 0.86);
-      const tankWidth = rect.width * 1.18;
-      const tankHeight = tankWidth * (144 / 224);
-      phaserPlayerSprite.setVisible(true).setPosition(point.x, point.y).setDisplaySize(tankWidth, tankHeight).setAlpha(playerTank.classList.contains("destroyed") ? 0.78 : 1);
-      if (phaserPlayerTrackBelt) {
-        phaserPlayerTrackBelt
-          .setPosition(point.x - tankWidth * 0.06, point.y + tankHeight * 0.08)
-          .setSize(tankWidth * 0.76, tankHeight * 0.11)
-          .setDisplaySize(tankWidth * 0.76, tankHeight * 0.11);
-      }
+      phaserPlayerSprite.setVisible(true).setPosition(point.x, point.y).setDisplaySize(rect.width * 1.18, rect.width * 1.18 * (144 / 224)).setAlpha(playerTank.classList.contains("destroyed") ? 0.78 : 1);
       playPhaserPlayerState(getPlayerTankPhaserState());
-    }
-
-    function updatePhaserPlayerTrackMotion() {
-      if (!phaserPlayerTrackBelt?.visible || isPaused || isGameOver) return;
-      phaserPlayerTrackBelt.tilePositionX -= 2.2;
     }
 
     function playPhaserPlayerState(stateName, force = false) {
@@ -3536,7 +3453,7 @@
       const key = `player-tank-${stateName}`;
       if (!force && phaserPlayerSprite.anims.currentAnim?.key === key && phaserPlayerSprite.anims.isPlaying) return;
       phaserPlayerSprite.play(key, true);
-      if (["fire", "hit"].includes(stateName)) {
+      if (["fire", "heavy-fire", "hit"].includes(stateName)) {
         phaserPlayerSprite.once(`animationcomplete-${key}`, () => playPhaserPlayerState(getPlayerTankPhaserState(), true));
       }
     }
@@ -4096,7 +4013,6 @@
     }
 
     function showProfileGate(message = "") {
-      cancelStageAdvance();
       stopCountdown();
       locked = true;
       profileGate.classList.remove("hidden");
@@ -4113,7 +4029,6 @@
     }
 
     function resetRunForProfile() {
-      cancelStageAdvance();
       isGameOver = false;
       isLevelCleared = false;
       score = 0;
@@ -4712,57 +4627,13 @@
       messageEl.textContent = `Stage ${levelNumber} clear! Earned ${bonus} bonus coins.`;
       warShopAvailable = true;
       syncHud();
-      playStageAdvance(() => {
+      setTimeout(() => {
         if (levelNumber % 5 === 0) {
           showSupplyChallenge();
           return;
         }
         showPerkChoices();
-      });
-    }
-
-    function cancelStageAdvance() {
-      stageAdvanceToken += 1;
-      battlefieldEl.classList.remove("stage-advance");
-      playerTank.classList.remove("stage-advance");
-      if (phaserEffects && phaserPlayerSprite) phaserEffects.tweens.killTweensOf(phaserPlayerSprite);
-      if (phaserEffects && phaserPlayerTrackBelt) phaserEffects.tweens.killTweensOf(phaserPlayerTrackBelt);
-    }
-
-    function playStageAdvance(onDone) {
-      const token = ++stageAdvanceToken;
-      const duration = 1500;
-      let finished = false;
-      battlefieldEl.classList.remove("stage-advance");
-      playerTank.classList.remove("stage-advance");
-      void battlefieldEl.offsetWidth;
-      battlefieldEl.classList.add("stage-advance");
-      playerTank.classList.add("stage-advance");
-      messageEl.textContent = `Stage ${levelNumber} clear! Rolling to the next battlefield.`;
-
-      const finish = () => {
-        if (finished || token !== stageAdvanceToken) return;
-        finished = true;
-        battlefieldEl.classList.remove("stage-advance");
-        playerTank.classList.remove("stage-advance");
-        updatePhaserActors();
-        onDone();
-      };
-
-      if (phaserEffects && phaserPlayerSprite?.visible) {
-        const travel = Math.max(240, Math.min(560, battlefieldEl.clientWidth * 0.48));
-        const targets = [phaserPlayerSprite, phaserPlayerTrackBelt].filter(Boolean);
-        phaserEffects.tweens.killTweensOf(targets);
-        playPhaserPlayerState("idle", true);
-        phaserEffects.tweens.add({
-          targets,
-          x: `+=${travel}`,
-          duration,
-          ease: "Sine.easeInOut",
-          onComplete: finish
-        });
-      }
-      setTimeout(finish, duration + 80);
+      }, 500);
     }
 
     function showSupplyChallenge() {
@@ -5241,7 +5112,7 @@
       bullet.classList.remove("fly", "ap-shell", "he-shell", "cannon-shell", "smoke-shell", "repair-shell", "armor-shell", "arcane-shell", "flash-shell");
       burst.classList.remove("show", "he-burst");
       const playerStartX = phaserPlayerSprite?.x || 0;
-      playPhaserPlayerState("fire", true);
+      playPhaserPlayerState(ammo?.id === "shell_he" ? "heavy-fire" : "fire", true);
       tweenPhaserSprite(phaserPlayerSprite, { x: playerStartX + 10, yoyo: true }, 150);
       tweenPhaserSprite(phaserPlayerTurretSprite, { x: playerStartX + 10, yoyo: true }, 150);
       playPhaserProjectile(playerTank, enemyTank, {
@@ -5654,7 +5525,6 @@
     }
 
     function startDebugBattle(stage) {
-      cancelStageAdvance();
       clearPauseState();
       isGameOver = false;
       isLevelCleared = false;
@@ -5724,7 +5594,6 @@
 
     function showGameOver() {
       if (isGameOver) return;
-      cancelStageAdvance();
       isGameOver = true;
       clearPauseState();
       stopCountdown();
@@ -5750,7 +5619,6 @@
     function restartGame() {
       unlockAudio();
       playUiSound();
-      cancelStageAdvance();
       clearPauseState();
       stopCountdown();
       score = 0;
