@@ -98,23 +98,28 @@ assert.match(updatePhaserActors, /updatePhaserBossDismantler\(\)/, 'Phaser boss 
 const playerBuilder = bodyOf('buildPhaserPlayerTank');
 assert.match(playerBuilder, /scene\.textures\.exists\("playerTankBattle"\)/, 'Player tank builder should verify that the spritesheet loaded.');
 assert.match(playerBuilder, /key: "player-tank-idle"/, 'Player tank should define an idle animation.');
-assert.match(playerBuilder, /start: 0, end: 3/, 'Player idle animation should use row 1.');
+assert.match(playerBuilder, /start: 0, end: 5/, 'Player idle animation should use row 1.');
 assert.match(playerBuilder, /key: "player-tank-fire"/, 'Player tank should define a fire animation.');
-assert.match(playerBuilder, /start: 4, end: 7/, 'Player fire animation should use row 2.');
+assert.match(playerBuilder, /start: 6, end: 11/, 'Player fire animation should use row 2.');
+assert.match(playerBuilder, /key: "player-tank-heavy-fire"/, 'Player tank should define a heavy fire animation.');
 assert.match(playerBuilder, /key: "player-tank-hit"/, 'Player tank should define a hit animation.');
-assert.match(playerBuilder, /start: 8, end: 11/, 'Player hit animation should use row 3.');
+assert.match(playerBuilder, /start: 18, end: 23/, 'Player hit animation should use the smoking row.');
 assert.match(playerBuilder, /key: "player-tank-weak"/, 'Player tank should define a weak animation.');
-assert.match(playerBuilder, /start: 12, end: 15/, 'Player weak animation should use row 4.');
+assert.match(playerBuilder, /start: 18, end: 23/, 'Player weak animation should use row 4.');
 assert.match(playerBuilder, /key: "player-tank-destroyed"/, 'Player tank should define a destroyed animation.');
-assert.match(playerBuilder, /start: 16, end: 19/, 'Player destroyed animation should use row 5.');
+assert.match(playerBuilder, /start: 24, end: 29/, 'Player destroyed animation should use row 5.');
 
 const playerUpdater = bodyOf('updatePhaserPlayerTank');
 assert.match(playerUpdater, /phaser-player-active/, 'DOM player fallback should hide only while the Phaser player tank is active.');
-assert.match(playerUpdater, /setDisplaySize\(rect\.width \* 1\.08/, 'Player spritesheet should scale from the player DOM slot.');
+assert.match(playerUpdater, /setDisplaySize\(rect\.width \* 1\.18/, 'Player spritesheet should scale from the player DOM slot.');
 
 const playerState = bodyOf('getPlayerTankPhaserState');
 assert.match(playerState, /return "destroyed"/, 'Player state should include destroyed.');
+assert.match(playerState, /isPlayerTankWeak\(\)/, 'Player state should use the low-HP weak predicate.');
 assert.match(playerState, /return "weak"/, 'Player state should include weak.');
+
+const playerWeak = bodyOf('isPlayerTankWeak');
+assert.match(playerWeak, /lives > 0 && lives <= 1/, 'Player weak state should only trigger when the tank has 1 HP left.');
 
 const playerStatePlayer = bodyOf('playPhaserPlayerState');
 assert.match(playerStatePlayer, /player-tank-\$\{stateName\}/, 'Player animation helper should play named player tank states.');
@@ -128,6 +133,7 @@ assert.match(bossBuilder, /generateFrameNumbers\("bossTankDismantler", \{ start:
 assert.match(bossBuilder, /key: "tank-dismantler-attack"/, 'Boss should define an attack spritesheet animation.');
 assert.match(bossBuilder, /generateFrameNumbers\("bossTankDismantler", \{ start: 6, end: 11 \}\)/, 'Boss attack animation should use the second row of frames.');
 assert.match(bossBuilder, /scene\.add\.sprite\(0, 0, "bossTankDismantler", 0\)/, 'Boss should render as a Phaser spritesheet sprite.');
+assert.match(bossBuilder, /setFlipX\(true\)/, 'Boss spritesheet should be mirrored to face the player from the enemy side.');
 
 const bossUpdater = bodyOf('updatePhaserBossDismantler');
 assert.match(bossUpdater, /currentEnemy\.id === "boss"/, 'Boss container should only appear for boss enemies.');
@@ -135,6 +141,7 @@ assert.match(bossUpdater, /phaserBossTextureReady && phaserBossDismantler/, 'Bos
 assert.match(bossUpdater, /if \(phaserBossDismantler\) phaserBossDismantler\.setVisible\(active\)/, 'Boss container visibility should be lifecycle-driven.');
 assert.match(bossUpdater, /enemyTank\.classList\.toggle\("phaser-boss-active", active\)/, 'DOM fallback sprite should hide only while the Phaser boss is active.');
 assert.match(bossUpdater, /setDisplaySize\(size, size\)/, 'Boss spritesheet should be scaled to the battlefield slot.');
+assert.match(bossUpdater, /phaserBossDismantler\.setFlipX\(true\)/, 'Boss orientation should stay mirrored after resize and position updates.');
 
 const bossIdle = bodyOf('startPhaserBossIdle');
 assert.match(bossIdle, /play\("tank-dismantler-walk", true\)/, 'Boss idle should play the walking spritesheet animation.');
@@ -149,10 +156,13 @@ assert.match(enemyFire, /if \(currentEnemy\.attackStyle === "melee"\)/, 'Melee e
 
 const enemyApproach = bodyOf('startPhaserEnemyApproach');
 assert.match(enemyApproach, /currentEnemy\.attackStyle !== "melee"/, 'Only melee enemies should approach during reload.');
-assert.match(enemyApproach, /currentEnemy\.approachDistance/, 'Melee approach should use per-enemy distance metadata.');
-assert.match(enemyApproach, /enemyPoint\.x - playerPoint\.x - desiredGap/, 'Phaser melee approach should derive distance from actual player/enemy positions.');
+assert.match(enemyApproach, /getEnemyApproachDistance\(\)/, 'Phaser melee approach should use the shared actual-distance helper.');
+const enemyApproachDistance = bodyOf('getEnemyApproachDistance');
+assert.match(enemyApproachDistance, /currentEnemy\.approachDistance/, 'Melee approach should use per-enemy distance metadata.');
+assert.match(enemyApproachDistance, /enemyPoint\.x - playerPoint\.x - desiredGap/, 'Phaser melee approach should derive distance from actual player/enemy positions.');
 assert.match(source, /@keyframes boss-menace-approach[\s\S]*translateX\(clamp\(300px, 44vw, 760px\)\)/, 'Visible Boss reload approach should use viewport-relative distance.');
 assert.match(source, /@keyframes boss-hammer-slam[\s\S]*0%[\s\S]*translateX\(clamp\(300px, 44vw, 760px\)\)/, 'Boss slam should start from its viewport-relative close reload position.');
+assert.match(source, /@keyframes boss-attack-approach[\s\S]*translateX\(clamp\(300px, 44vw, 760px\)\)/, 'Boss attack should explicitly approach before the hammer swing.');
 assert.match(source, /@keyframes melee-menace-approach[\s\S]*translateX\(clamp\(220px, 34vw, 620px\)\)/, 'Generic melee enemies should use viewport-relative approach distance.');
 assert.match(source, /@keyframes melee-strike-attack[\s\S]*translateX\(clamp\(220px, 34vw, 620px\)\)/, 'Generic melee strike should start from close reload position.');
 
@@ -162,13 +172,23 @@ assert.match(meleeStrike, /playPhaserImpact\(playerTank/, 'Melee attack should u
 assert.match(meleeStrike, /enemyTank\.classList\.add\("melee-strike"\)/, 'Generic melee attack should add a visible DOM strike class.');
 
 const fireFunction = bodyOf('fire');
-assert.match(fireFunction, /playPhaserPlayerState\("fire", true\)/, 'Player fire should trigger the Phaser fire animation.');
+assert.match(fireFunction, /playPhaserPlayerState\(ammo\?\.id === "shell_he" \? "heavy-fire" : "fire", true\)/, 'Player fire should trigger the Phaser fire animation.');
 
 const gameOverFunction = bodyOf('showGameOver');
 assert.match(gameOverFunction, /playPhaserPlayerState\("destroyed", true\)/, 'Game over should trigger the Phaser destroyed animation.');
 
 const bossHammer = bodyOf('bossHammerAttack');
 assert.match(bossHammer, /playPhaserBossSlam\(\)/, 'Boss hammer attack should trigger the assembled Phaser boss slam.');
+assert.match(bossHammer, /const approachDuration = 520/, 'Boss hammer should have an explicit approach phase before swinging.');
+assert.match(bossHammer, /const impactTime = 1040/, 'Boss hammer impact should happen after approach plus swing wind-up.');
+assert.match(bossHammer, /const cleanupTime = 1640/, 'Boss hammer cleanup should wait for retreat after impact.');
+assert.match(bossHammer, /stopPhaserEnemyApproach\(true\)/, 'Boss hammer should reset stale approach tweens before the attack sequence.');
+assert.match(bossHammer, /tweenEnemyAttackToBase\(getEnemyApproachDistance\(\), \{ angle: -9, inDuration: impactTime, outDuration: 520 \}\)/, 'Boss Phaser movement should approach until the impact and retreat afterward.');
+assert.match(bossHammer, /enemyTank\.classList\.add\("boss-attack-approach"\)/, 'Boss DOM attack should visibly approach before swinging.');
+assert.match(bossHammer, /enemyTank\.classList\.remove\("boss-attack-approach"\);\s*enemyTank\.classList\.add\("boss-slam"\)/, 'Boss DOM attack should switch from approach to slam.');
+assert.match(bossHammer, /\}, impactTime\)/, 'Boss damage should land at the scripted axe impact timing.');
+assert.match(source, /\.tank\.enemy\.boss-slam \{\s*animation: boss-hammer-slam 1120ms/, 'Boss DOM slam animation duration should match the post-approach swing window.');
+assert.match(source, /\.tank\.enemy\.boss-attack-approach \{\s*animation: boss-attack-approach 520ms/, 'Boss DOM approach duration should match the scripted approach phase.');
 
 assert.match(source, /playPhaserDestruction\(enemyTank, \{ heavy: currentEnemy\.id === "boss", direction: -1 \}\)/, 'Enemy death should use Phaser destruction.');
 assert.match(source, /playPhaserDestruction\(playerTank, \{ heavy: true, direction: 1 \}\)/, 'Player defeat should use Phaser destruction.');

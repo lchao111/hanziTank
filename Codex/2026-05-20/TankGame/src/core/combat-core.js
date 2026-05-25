@@ -16,7 +16,8 @@
       maxAbsoluteDefense: template.absoluteDefense || 0,
       absoluteDefense: template.absoluteDefense || 0,
       maxArmor: template.armor || 0,
-      armor: template.armor || 0
+      armor: template.armor || 0,
+      attackInterval: template.attackInterval || 5
     };
   }
 

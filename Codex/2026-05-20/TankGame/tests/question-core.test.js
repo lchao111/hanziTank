@@ -10,21 +10,27 @@ assert.deepStrictEqual(questions.shuffleList(null), [], 'Shuffle should tolerate
 
 const seenWords = ['一', '百', '千', '万', '左', '右'].map((hanzi) => wordByHanzi[hanzi]);
 const options = questions.getBossPhraseOptions(seenWords, wordByHanzi);
-assert.ok(options.some((option) => option.text === '一百'), 'Boss options should include phrases composed from seen Hanzi.');
-assert.ok(options.some((option) => option.text === '千万'), 'Boss options should include multi-character learned phrases.');
-assert.ok(options.every((option) => option.chars.length === 2), 'Boss options should stay two-character phrases.');
+assert.ok(options.some((option) => option.text === '一'), 'Boss options should include single learned Hanzi.');
+assert.ok(options.some((option) => option.text === '右'), 'Boss options should include each seen Hanzi as a target.');
+assert.ok(options.every((option) => option.chars.length === 1), 'Boss options should stay single-Hanzi prompts.');
+assert.ok(options.every((option) => option.word?.hanzi === option.text), 'Boss options should keep the target word for learning records.');
+assert.strictEqual(options.find((option) => option.text === '左').speechText, '左', 'Boss audio should speak only the target Hanzi.');
+const lookOptions = questions.getBossPhraseOptions(['看', '见'].map((hanzi) => wordByHanzi[hanzi]), wordByHanzi);
+assert.strictEqual(lookOptions.find((option) => option.text === '看').speechText, '看', 'Boss audio should not include a word hint.');
 
 const fallbackOptions = questions.getBossPhraseOptions([{ hanzi: '甲' }, { hanzi: '乙' }], {});
-assert.deepStrictEqual(fallbackOptions, [{ text: '甲乙', chars: ['甲', '乙'] }]);
+assert.deepStrictEqual(fallbackOptions, [
+	{ text: '甲', speechText: '甲', chars: ['甲'], word: { hanzi: '甲' } },
+	{ text: '乙', speechText: '乙', chars: ['乙'], word: { hanzi: '乙' } }
+]);
 assert.deepStrictEqual(questions.getBossPhraseOptions([], {}), []);
 
 const pickedPhrase = questions.pickBossPhrase(seenWords, wordByHanzi, () => 0);
 assert.deepStrictEqual(pickedPhrase, options[0]);
 
-const bossChoices = questions.getBossChoiceWords({ text: '左右', chars: ['左', '右'] }, seenWords, words, wordByHanzi, () => 0);
+const bossChoices = questions.getBossChoiceWords({ text: '左', chars: ['左'], word: wordByHanzi['左'] }, seenWords, words, wordByHanzi, () => 0);
 assert.strictEqual(bossChoices.length, 6);
 assert.ok(bossChoices.some((word) => word.hanzi === '左'));
-assert.ok(bossChoices.some((word) => word.hanzi === '右'));
 assert.strictEqual(new Set(bossChoices.map((word) => word.hanzi)).size, bossChoices.length, 'Boss choices should not contain duplicates.');
 
 assert.strictEqual(questions.getCorrectBankCount({ 一: { count: 5 } }, '一'), 5);

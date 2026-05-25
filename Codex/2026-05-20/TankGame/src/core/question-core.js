@@ -16,20 +16,15 @@
   function getBossPhraseOptions(seenWords, wordByHanzi) {
     const safeSeenWords = Array.isArray(seenWords) ? seenWords : [];
     const wordMap = wordByHanzi && typeof wordByHanzi === "object" ? wordByHanzi : {};
-    const seenMap = new Set(safeSeenWords.map((word) => word.hanzi));
-    const options = [];
-    safeSeenWords.forEach((word) => {
-      (word.phrases || []).forEach((phrase) => {
-        const chars = [...phrase];
-        if (chars.length !== 2) return;
-        if (chars.every((char) => seenMap.has(char) && wordMap[char])) {
-          options.push({ text: phrase, chars });
-        }
+    const seenMap = new Set(safeSeenWords.map((word) => word?.hanzi).filter(Boolean));
+    const options = safeSeenWords
+      .filter((word) => word?.hanzi)
+      .map((word) => {
+        const bankWord = wordMap[word.hanzi] || word;
+        return { text: bankWord.hanzi, speechText: bankWord.hanzi, chars: [bankWord.hanzi], word: bankWord };
       });
-    });
     if (options.length > 0) return options;
-    const fallbackChars = safeSeenWords.slice(0, 2).map((word) => word.hanzi).filter(Boolean);
-    return fallbackChars.length > 0 ? [{ text: fallbackChars.join(""), chars: fallbackChars }] : [];
+    return [];
   }
 
   function pickBossPhrase(seenWords, wordByHanzi, random = Math.random) {

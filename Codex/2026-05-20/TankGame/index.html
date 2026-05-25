@@ -241,7 +241,11 @@
     }
 
     .tank.enemy.boss-slam {
-      animation: boss-hammer-slam 1180ms cubic-bezier(.18,.82,.2,1) forwards;
+      animation: boss-hammer-slam 1120ms cubic-bezier(.18,.82,.2,1) forwards;
+    }
+
+    .tank.enemy.boss-attack-approach {
+      animation: boss-attack-approach 520ms cubic-bezier(.18,.82,.2,1) forwards;
     }
 
     .tank.player.destroyed {
@@ -536,6 +540,30 @@
 
     .enemy .defense-effect {
       transform: scaleX(-1);
+    }
+
+    .tank.player.absolute-shield-active::before,
+    .tank.player.absolute-shield-active::after {
+      content: "";
+      position: absolute;
+      z-index: 4;
+      pointer-events: none;
+      border-radius: 50%;
+    }
+
+    .tank.player.absolute-shield-active::before {
+      inset: -20% -16% -8%;
+      border: 4px solid rgba(125, 211, 252, 0.74);
+      background: radial-gradient(ellipse at center, rgba(219, 234, 254, 0.14) 0 54%, rgba(56, 189, 248, 0.18) 55% 63%, transparent 65%);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.55), inset 0 0 20px rgba(147, 197, 253, 0.42);
+      animation: absolute-shield-idle 1800ms ease-in-out infinite;
+    }
+
+    .tank.player.absolute-shield-active::after {
+      inset: -16% -12% -4%;
+      background: conic-gradient(from 24deg, transparent 0 12%, rgba(224, 242, 254, 0.7) 12% 15%, transparent 15% 38%, rgba(56, 189, 248, 0.56) 38% 41%, transparent 41% 100%);
+      opacity: 0.82;
+      animation: absolute-shield-scan 2300ms linear infinite;
     }
 
     .absolute-effect {
@@ -1039,8 +1067,8 @@
     }
 
     .bullet.he-shell {
-      width: 34px;
-      height: 18px;
+      width: 48px;
+      height: 22px;
       border: 2px solid #6d2c12;
       border-radius: 60% 42% 42% 60%;
       background:
@@ -2506,17 +2534,28 @@
       0% {
         transform: scaleX(-1) translateX(clamp(300px, 44vw, 760px)) translateY(0) rotate(0deg) scale(1.12);
       }
-      28% {
+      24% {
         transform: scaleX(-1) translateX(clamp(330px, 48vw, 820px)) translateY(-7px) rotate(-5deg) scale(1.14);
       }
-      58% {
+      46% {
         transform: scaleX(-1) translateX(clamp(360px, 54vw, 900px)) translateY(10px) rotate(11deg) scale(1.18);
       }
-      72% {
+      64% {
         transform: scaleX(-1) translateX(clamp(340px, 50vw, 840px)) translateY(0) rotate(-3deg) scale(1.14);
       }
       100% {
         transform: scaleX(-1) translateX(0) translateY(0) rotate(0deg);
+      }
+    }
+
+    @keyframes boss-attack-approach {
+      0% {
+        transform: scaleX(-1) translateX(0) scale(1);
+        filter: drop-shadow(0 12px 12px rgba(10, 6, 5, 0.4));
+      }
+      100% {
+        transform: scaleX(-1) translateX(clamp(300px, 44vw, 760px)) scale(1.12);
+        filter: drop-shadow(0 18px 18px rgba(10, 6, 5, 0.62));
       }
     }
 
@@ -2618,6 +2657,26 @@
       100% {
         opacity: 0;
         transform: scale(1.28);
+      }
+    }
+
+    @keyframes absolute-shield-idle {
+      0%, 100% {
+        opacity: 0.72;
+        transform: scale(0.98);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.03);
+      }
+    }
+
+    @keyframes absolute-shield-scan {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
       }
     }
 
@@ -2927,6 +2986,7 @@
       <button class="primary" id="enemyGalleryButton" type="button">Enemy Gallery</button>
       <button class="primary" id="switchProfileButton" type="button">Switch Player</button>
       <span class="level" id="wordCount">Loading word bank</span>
+      <span class="level" id="appVersion">Build loading</span>
     </footer>
 
     <div class="arsenal" id="arsenal" aria-hidden="true">
@@ -3072,12 +3132,14 @@
   <script src="src/data/enemies.js"></script>
   <script src="src/data/shop-items.js"></script>
   <script src="src/data/asset-manifest.js"></script>
+  <script src="src/data/hanzi-audio-manifest.js"></script>
   <script src="src/core/storage-core.js"></script>
   <script src="src/core/combat-core.js"></script>
   <script src="src/core/learning-core.js"></script>
   <script src="src/core/question-core.js"></script>
   <script src="src/core/mastery-core.js"></script>
   <script>
+    const appVersion = "2026.05.25.10";
     const { gradeOneWordData, createWords, createWordMap } = window.HanziTankWords;
     const words = createWords(gradeOneWordData);
     const wordByHanzi = createWordMap(words);
@@ -3094,6 +3156,12 @@
     } = window.HanziTankEnemies;
 
     const enemyAttackInterval = 5;
+    const stageOpeningHanzi = {
+      1: "一",
+      2: "看",
+      3: "上",
+      4: "跑"
+    };
     const {
       createDefaultState,
       cloneDefaultState: cloneStateTemplate,
@@ -3249,6 +3317,7 @@
     const dailyScoreEl = document.querySelector("#dailyScore");
     const loadoutEl = document.querySelector("#loadout");
     const wordCountEl = document.querySelector("#wordCount");
+    const appVersionEl = document.querySelector("#appVersion");
     const playerNameDisplay = document.querySelector("#playerNameDisplay");
     const switchProfileButton = document.querySelector("#switchProfileButton");
     const profileGate = document.querySelector("#profileGate");
@@ -3304,15 +3373,20 @@
     let runWordCorrect = {};
     let runSeenWords = {};
     let bossPhrase = null;
-    let bossSelection = [];
     let shownBossIntroStage = 0;
     let bossIntroToken = 0;
+    let stageAdvanceTimeoutId = 0;
     let voicesReady = false;
     let audioContext = null;
     let soundEnabled = localStorage.getItem("hanziTankSound") !== "off";
     let speechRequestToken = 0;
     let pendingSpeechText = "";
     let queuedSpeechRequest = null;
+    const hanziAudioDownloadQueueKey = "hanziTankAudioDownloadQueue";
+    const hanziAudioProbeQueue = new Set();
+    const customVoiceLines = {
+      hanzi: window.HanziTankAudio?.hanziVoiceLines || { "一": "assets/audio/hanzi/u4e00.mp3" }
+    };
     let phaserGame = null;
     let phaserEffects = null;
     let phaserPlayerSprite = null;
@@ -3354,11 +3428,11 @@
             this.load.image("kenney:playerTurret", "assets/sprites/tanks/kenney/tankGreen_barrel1.png");
             this.load.image("kenney:enemyHull", "assets/sprites/tanks/kenney/tankBody_red.png");
             this.load.image("kenney:enemyTurret", "assets/sprites/tanks/kenney/tankRed_barrel1.png");
-            this.load.spritesheet("playerTankBattle", "assets/sprites/tanks/player-tank-spritesheet.png?v=20260524", {
+            this.load.spritesheet("playerTankBattle", "assets/sprites/tanks/player-tank-spritesheet.png?v=20260525", {
               frameWidth: 224,
               frameHeight: 144
             });
-            this.load.spritesheet("bossTankDismantler", "assets/sprites/enemies/tank-dismantler-spritesheet.png?v=20260524", {
+            this.load.spritesheet("bossTankDismantler", "assets/sprites/enemies/tank-dismantler-spritesheet.png?v=20260525", {
               frameWidth: 224,
               frameHeight: 224
             });
@@ -3425,17 +3499,21 @@
       scene.anims.create({ key: "player-tank-idle", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 0, end: 5 }), frameRate: 8, repeat: -1 });
       scene.anims.create({ key: "player-tank-fire", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 6, end: 11 }), frameRate: 12, repeat: 0 });
       scene.anims.create({ key: "player-tank-heavy-fire", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 12, end: 17 }), frameRate: 12, repeat: 0 });
-      scene.anims.create({ key: "player-tank-hit", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 12, end: 17 }), frameRate: 12, repeat: 0 });
-      scene.anims.create({ key: "player-tank-weak", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 0, end: 5 }), frameRate: 6, repeat: -1 });
-      scene.anims.create({ key: "player-tank-destroyed", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 17, end: 17 }), frameRate: 1, repeat: 0 });
+      scene.anims.create({ key: "player-tank-hit", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 18, end: 23 }), frameRate: 12, repeat: 0 });
+      scene.anims.create({ key: "player-tank-weak", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 18, end: 23 }), frameRate: 6, repeat: -1 });
+      scene.anims.create({ key: "player-tank-destroyed", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 24, end: 29 }), frameRate: 8, repeat: 0 });
       phaserPlayerSprite.setTexture("playerTankBattle", 0).setOrigin(0.5, 0.72).setDepth(14).setAngle(0).setFlipX(false);
       phaserPlayerTurretSprite?.setVisible(false);
     }
 
     function getPlayerTankPhaserState() {
       if (playerTank.classList.contains("destroyed") || lives <= 0 || isGameOver) return "destroyed";
-      if (lives <= Math.max(1, Math.ceil(getMaxLives() * 0.34))) return "weak";
+      if (isPlayerTankWeak()) return "weak";
       return "idle";
+    }
+
+    function isPlayerTankWeak() {
+      return lives > 0 && lives <= 1;
     }
 
     function updatePhaserPlayerTank() {
@@ -3478,6 +3556,7 @@
       phaserBossDismantler = scene.add.sprite(0, 0, "bossTankDismantler", 0)
         .setOrigin(0.5, 0.86)
         .setDepth(16)
+        .setFlipX(true)
         .setVisible(false);
     }
 
@@ -3494,6 +3573,7 @@
       const size = Math.max(210, Math.min(360, rect.width * 1.28));
       phaserBossDismantler.setPosition(point.x, point.y);
       phaserBossDismantler.setDisplaySize(size, size);
+      phaserBossDismantler.setFlipX(true);
       phaserBossDismantler.setAlpha(1);
       if (phaserBossDismantler.anims.currentAnim?.key !== "tank-dismantler-attack") startPhaserBossIdle();
     }
@@ -3525,10 +3605,7 @@
     function startPhaserEnemyApproach() {
       if (!phaserEffects || !phaserEnemySprite || currentEnemy.attackStyle !== "melee") return;
       stopPhaserEnemyApproach(true);
-      const playerPoint = getBattlefieldPoint(playerTank, 0.68, 0.54);
-      const enemyPoint = getBattlefieldPoint(enemyTank, 0.5, 0.54);
-      const desiredGap = Math.max(52, Math.min(120, battlefieldEl.clientWidth * 0.07));
-      const distance = Math.max(currentEnemy.approachDistance || 96, enemyPoint.x - playerPoint.x - desiredGap);
+      const distance = getEnemyApproachDistance();
       const actor = currentEnemy.id === "boss" && phaserBossDismantler?.visible ? phaserBossDismantler : phaserEnemySprite;
       phaserEnemyReloadTween = phaserEffects.tweens.add({
         targets: (actor === phaserBossDismantler ? [phaserBossDismantler] : [phaserEnemySprite, phaserEnemyTurretSprite]).filter(Boolean),
@@ -3541,6 +3618,13 @@
           phaserEnemyReloadTween = null;
         }
       });
+    }
+
+    function getEnemyApproachDistance() {
+      const playerPoint = getBattlefieldPoint(playerTank, 0.68, 0.54);
+      const enemyPoint = getBattlefieldPoint(enemyTank, 0.5, 0.54);
+      const desiredGap = Math.max(52, Math.min(120, battlefieldEl.clientWidth * 0.07));
+      return Math.max(currentEnemy.approachDistance || 96, enemyPoint.x - playerPoint.x - desiredGap);
     }
 
     function tweenEnemyAttackToBase(distance, windup = {}) {
@@ -4029,6 +4113,7 @@
     }
 
     function resetRunForProfile() {
+      cancelStageAdvance();
       isGameOver = false;
       isLevelCleared = false;
       score = 0;
@@ -4052,13 +4137,12 @@
       runWordCorrect = {};
       runSeenWords = {};
       bossPhrase = null;
-      bossSelection = [];
       bossIntroToken += 1;
       lives = getMaxLives();
       reviewMode = false;
       locked = false;
       syncHud();
-      renderQuestion(words[0]);
+      renderStageOpeningQuestion();
     }
 
     function enterProfile(profileId, profile) {
@@ -4161,6 +4245,11 @@
       return true;
     }
 
+    function announceHighExplosiveReady() {
+      unlockAudio();
+      queueChineseSpeech("高爆弹，装填完毕", { preserveMessage: true, autoRetry: true, delay: 40 });
+    }
+
     function getEquippedItems() {
       return Object.values(playerState.equipped)
         .map(getItem)
@@ -4256,12 +4345,17 @@
     }
 
     function syncReloadBar() {
+      const attackInterval = getEnemyAttackInterval();
       const isReloading = countdownId > 0 || (isPaused && pausedCountdownWasActive && countdown > 0);
-      const elapsed = isReloading ? enemyAttackInterval - Math.max(countdown, 0) : 0;
-      const progress = isReloading ? getHealthPercent(elapsed, enemyAttackInterval) : 0;
+      const elapsed = isReloading ? attackInterval - Math.max(countdown, 0) : 0;
+      const progress = isReloading ? getHealthPercent(elapsed, attackInterval) : 0;
       enemyReloadFill.style.width = `${progress}%`;
       enemyReloadFill.classList.toggle("ready", progress >= 100);
-      enemyReloadText.textContent = isPaused && countdown > 0 ? `Paused ${countdown}s` : countdown > 0 ? `${countdown}s` : `${enemyAttackInterval}s`;
+      enemyReloadText.textContent = isPaused && countdown > 0 ? `Paused ${countdown}s` : countdown > 0 ? `${countdown}s` : `${attackInterval}s`;
+    }
+
+    function getEnemyAttackInterval() {
+      return Math.max(1, Number(currentEnemy.attackInterval || enemyAttackInterval));
     }
 
     function showDamage(targetTank, amount, options = {}) {
@@ -4333,10 +4427,11 @@
       syncPauseButton();
     }
 
-    function startCountdown(seconds = enemyAttackInterval) {
+    function startCountdown(seconds = getEnemyAttackInterval()) {
       if (isPaused || isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
       stopCountdown();
-      countdown = Math.max(1, Math.min(enemyAttackInterval, seconds || enemyAttackInterval));
+      const attackInterval = getEnemyAttackInterval();
+      countdown = Math.max(1, Math.min(attackInterval, seconds || attackInterval));
       syncLevelHud();
       enemyTank.classList.toggle("reloading", currentEnemy.attackStyle === "melee");
       startPhaserEnemyApproach();
@@ -4434,6 +4529,50 @@
       return Object.values(playerState.review).reduce((total, count) => total + count, 0);
     }
 
+    function getMasteryCount() {
+      return countMasteredHanzi(playerState.correctBank);
+    }
+
+    function getRankProgressText(masteredCount = getMasteryCount()) {
+      const currentRank = getRankForMastery(masteredCount);
+      const nextRank = getNextRank(masteredCount);
+      if (!nextRank) return `Rank ${currentRank.zh} · ${currentRank.name} · ${masteredCount}/${masteryGoal} Hanzi`;
+      return `Rank ${currentRank.zh} · ${currentRank.name} · ${masteredCount}/${nextRank.min} Hanzi · ${nextRank.min - masteredCount} to ${nextRank.zh}`;
+    }
+
+    function getCorrectLearningFeedback(word, wasNew, options = {}) {
+      const entry = playerState.correctBank?.[word?.hanzi];
+      const masteredCount = getMasteryCount();
+      const nextRank = getNextRank(masteredCount);
+      const rankText = nextRank ? `${nextRank.min - masteredCount} Hanzi to ${nextRank.zh}` : "Highest rank reached";
+      if (options.reviewCleared) return `Review cleared: ${word.hanzi}. ${rankText}.`;
+      if (wasNew) return `New Hanzi archived: ${word.hanzi}. ${rankText}.`;
+      return `Practice x${entry?.count || 1}: ${word.hanzi}. ${rankText}.`;
+    }
+
+    function playLearningFeedbackSound(wasNew, reviewCleared) {
+      if (reviewCleared) {
+        playTone(659, 0.08, { type: "triangle", volume: 0.04 });
+        setTimeout(() => playTone(988, 0.11, { type: "triangle", volume: 0.04 }), 80);
+        return;
+      }
+      if (wasNew) {
+        playTone(587, 0.08, { type: "triangle", volume: 0.04 });
+        setTimeout(() => playTone(880, 0.12, { type: "triangle", volume: 0.04 }), 90);
+      }
+    }
+
+    function getStageOpeningWord(stage = levelNumber) {
+      const scriptedWord = wordByHanzi[stageOpeningHanzi[stage]];
+      if (!scriptedWord) return null;
+      const correctCount = Math.max(0, Number(playerState.correctBank?.[scriptedWord.hanzi]?.count || 0));
+      return correctCount > 0 ? null : scriptedWord;
+    }
+
+    function renderStageOpeningQuestion(stage = levelNumber) {
+      renderQuestion(getStageOpeningWord(stage) || pickWord());
+    }
+
     function recordWordDamage(word, damage) {
       if (!word || damage <= 0) return;
       const entry = runWordDamage[word.hanzi] || {
@@ -4456,6 +4595,7 @@
       syncHealthBar(playerHealthFill, lives, getMaxLives());
       syncDefenseBar(playerAbsoluteRow, playerAbsoluteFill, playerAbsoluteText, absoluteDefenseAvailable, runUpgrades.absoluteDefense);
       syncDefenseBar(playerArmorRow, playerArmorFill, playerArmorText, playerArmor, runUpgrades.armor);
+      playerTank.classList.toggle("absolute-shield-active", absoluteDefenseAvailable > 0);
       coinsEl.textContent = playerState.coins;
       shopCoins.textContent = playerState.coins;
       inlineShopCoins.textContent = playerState.coins;
@@ -4489,7 +4629,8 @@
       enemyTank.classList.toggle("enemy-boss", currentEnemy.id === "boss");
       enemyTank.classList.toggle("enemy-melee", currentEnemy.attackStyle === "melee" && !["boss", "truck"].includes(currentEnemy.id));
       updatePhaserActors();
-      wordCountEl.textContent = `Grade 1 word bank: ${words.length} Hanzi · Review queue ${getReviewCount()}`;
+      wordCountEl.textContent = `${getRankProgressText()} · Review ${getReviewCount()}`;
+      appVersionEl.textContent = `Build ${appVersion}`;
       reviewButton.textContent = reviewMode ? "Exit Review" : `Review Misses (${getReviewWords().length})`;
       arsenalButton.classList.toggle("show", warShopAvailable);
       syncLevelHud();
@@ -4577,6 +4718,7 @@
         if (actionType === "equip") {
           if (!equipAmmo(item.id)) return;
           playSuccessSound();
+          if (item.id === "shell_he") announceHighExplosiveReady();
           saveState();
           renderShop();
           return;
@@ -4627,13 +4769,20 @@
       messageEl.textContent = `Stage ${levelNumber} clear! Earned ${bonus} bonus coins.`;
       warShopAvailable = true;
       syncHud();
-      setTimeout(() => {
+      stageAdvanceTimeoutId = setTimeout(() => {
+        stageAdvanceTimeoutId = 0;
         if (levelNumber % 5 === 0) {
           showSupplyChallenge();
           return;
         }
         showPerkChoices();
       }, 500);
+    }
+
+    function cancelStageAdvance() {
+      if (!stageAdvanceTimeoutId) return;
+      clearTimeout(stageAdvanceTimeoutId);
+      stageAdvanceTimeoutId = 0;
     }
 
     function showSupplyChallenge() {
@@ -4759,7 +4908,7 @@
       perkScreen.classList.remove("show");
       perkScreen.setAttribute("aria-hidden", "true");
       syncHud();
-      renderQuestion();
+      renderStageOpeningQuestion();
     }
 
     function shuffle(list) {
@@ -4775,9 +4924,133 @@
       return `${word.hanzi}，${getWordPhrase(word)}`;
     }
 
+    function getHanziAudioFileName(hanzi) {
+      if (!hanzi) return "";
+      if (window.HanziTankAudio?.getHanziAudioFile) return window.HanziTankAudio.getHanziAudioFile(hanzi);
+      return Array.from(hanzi).map((char) => `u${char.codePointAt(0).toString(16)}`).join("-") + ".mp3";
+    }
+
+    function getHanziVoiceLine(word) {
+      if (!word?.hanzi) return "";
+      return customVoiceLines.hanzi[word.hanzi] || `assets/audio/hanzi/${getHanziAudioFileName(word.hanzi)}`;
+    }
+
+    function readHanziAudioDownloadQueue() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(hanziAudioDownloadQueueKey) || "[]");
+        return Array.isArray(parsed) ? parsed.filter((item) => item && item.hanzi) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function writeHanziAudioDownloadQueue(queue) {
+      try {
+        localStorage.setItem(hanziAudioDownloadQueueKey, JSON.stringify(queue));
+      } catch {
+        // If storage is unavailable, gameplay should still fall back to TTS.
+      }
+    }
+
+    function queueMissingHanziAudio(word, reason = "missing-offline-audio", textOverride = "", fileOverride = "") {
+      if (!word?.hanzi) return;
+      const now = new Date().toISOString();
+      const file = fileOverride || getHanziAudioFileName(word.hanzi);
+      const text = textOverride || getSpokenWordText(word);
+      const queue = readHanziAudioDownloadQueue();
+      const existing = queue.find((item) => item.hanzi === word.hanzi && item.file === file);
+      if (existing) {
+        existing.text = existing.text || text;
+        existing.file = existing.file || file;
+        existing.path = existing.path || `assets/audio/hanzi/${file}`;
+        existing.reason = reason;
+        existing.lastQueuedAt = now;
+        existing.attempts = (existing.attempts || 0) + 1;
+      } else {
+        queue.push({
+          hanzi: word.hanzi,
+          text,
+          file,
+          path: `assets/audio/hanzi/${file}`,
+          reason,
+          firstQueuedAt: now,
+          lastQueuedAt: now,
+          attempts: 1
+        });
+      }
+      writeHanziAudioDownloadQueue(queue);
+    }
+
+    function queueHanziAudioBackgroundDownload(word, textOverride = "", reason = "background-tts-download", srcOverride = "", fileOverride = "") {
+      if (!word?.hanzi) return;
+      const src = srcOverride || getHanziVoiceLine(word);
+      const probeKey = `${word.hanzi}:${src}`;
+      if (hanziAudioProbeQueue.has(probeKey)) return;
+      hanziAudioProbeQueue.add(probeKey);
+      if (!src) {
+        queueMissingHanziAudio(word, reason, textOverride, fileOverride);
+        return;
+      }
+      const audio = new Audio(src);
+      let settled = false;
+      const finish = () => { settled = true; };
+      audio.preload = "metadata";
+      audio.onloadeddata = finish;
+      audio.oncanplaythrough = finish;
+      audio.onerror = () => {
+        if (settled) return;
+        settled = true;
+        queueMissingHanziAudio(word, reason, textOverride, fileOverride);
+      };
+      audio.load();
+    }
+
+    function playCustomVoiceLine(src, options = {}, fallback, onMissing) {
+      if (!src) {
+        onMissing?.();
+        fallback?.();
+        return false;
+      }
+      const audio = new Audio(src);
+      let settled = false;
+      const useFallback = () => {
+        if (settled) return;
+        settled = true;
+        onMissing?.();
+        fallback?.();
+      };
+      audio.volume = options.volume ?? 1;
+      audio.onended = () => options.onEnd?.();
+      audio.onerror = useFallback;
+      const playback = audio.play();
+      options.onStart?.();
+      if (playback?.catch) playback.catch(useFallback);
+      return true;
+    }
+
     function speakWord(word) {
       if (!word) return;
-      queueChineseSpeech(getSpokenWordText(word), { preserveMessage: true, autoRetry: true, delay: 80 });
+      const speechOptions = { preserveMessage: true, autoRetry: true, delay: 80 };
+      const speakFallback = () => queueChineseSpeech(getSpokenWordText(word), speechOptions);
+      playCustomVoiceLine(
+        getHanziVoiceLine(word),
+        speechOptions,
+        speakFallback,
+        () => queueMissingHanziAudio(word)
+      );
+    }
+
+    function speakBossPhrase(phrase, options = {}) {
+      if (!phrase) return false;
+      const word = phrase.word || wordByHanzi[phrase.text];
+      const speechText = getBossSpeechText(phrase);
+      if (!word) return queueChineseSpeech(speechText, options);
+      return playCustomVoiceLine(
+        getHanziVoiceLine(word),
+        options,
+        () => queueChineseSpeech(speechText, options),
+        () => queueMissingHanziAudio(word, "background-tts-download", speechText)
+      );
     }
 
     function recordCorrectWord(word) {
@@ -4826,6 +5099,12 @@
       return getQuestionBossChoiceWords(phrase, seenWords, words, wordByHanzi);
     }
 
+    function getBossSpeechText(phrase) {
+      if (!phrase) return "";
+      if (phrase.speechText) return phrase.speechText;
+      return phrase.text || "";
+    }
+
     function getWordWeight(word) {
       return getQuestionWordWeight(word, playerState.correctBank, runWordCorrect);
     }
@@ -4850,6 +5129,7 @@
       enemyTank.classList.remove("fragmented");
       if (!options.preserveReload) stopCountdown();
       currentWord = word;
+      queueHanziAudioBackgroundDownload(word, getSpokenWordText(word));
       locked = false;
       if (isPaused) {
         pausedLockedState = false;
@@ -4894,7 +5174,8 @@
         locked = true;
       }
       bossPhrase = pickBossPhrase();
-      bossSelection = [];
+      const bossWord = bossPhrase.word || wordByHanzi[bossPhrase.text];
+      queueHanziAudioBackgroundDownload(bossWord, getBossSpeechText(bossPhrase));
       gameOver.classList.remove("show");
       gameOver.setAttribute("aria-hidden", "true");
       perkScreen.classList.remove("show");
@@ -4902,7 +5183,7 @@
       supplyScreen.classList.remove("show");
       supplyScreen.setAttribute("aria-hidden", "true");
       questionWordEl.textContent = "??";
-      messageEl.textContent = "Boss battle: listen to the word, then pick the two Hanzi in order.";
+      messageEl.textContent = "Boss battle: listen to one Hanzi, then pick the matching character.";
       choicesEl.innerHTML = "";
       getBossChoiceWords(bossPhrase).forEach((word) => {
         const button = document.createElement("button");
@@ -4914,7 +5195,7 @@
         choicesEl.appendChild(button);
       });
       const phraseToSpeak = bossPhrase;
-      queueChineseSpeech(phraseToSpeak.text, {
+      speakBossPhrase(phraseToSpeak, {
         delay: 180,
         preserveMessage: true,
         autoRetry: true,
@@ -4946,6 +5227,8 @@
       locked = true;
 
       if (answer.hanzi === currentWord.hanzi) {
+        const wasNew = !playerState.correctBank?.[currentWord.hanzi];
+        let reviewCleared = false;
         button.classList.add("right");
         recordCorrectWord(currentWord);
         recordCorrectBank(currentWord);
@@ -4959,14 +5242,13 @@
           playerState.review[currentWord.hanzi] -= 1;
           if (playerState.review[currentWord.hanzi] <= 0) {
             delete playerState.review[currentWord.hanzi];
-            messageEl.textContent = "Correct! Removed from review.";
+            reviewCleared = true;
           }
         }
         saveState();
         syncHud();
-        if (!messageEl.textContent.includes("Removed from review")) {
-          messageEl.textContent = `Correct! +${reward} coins. Fire!`;
-        }
+        playLearningFeedbackSound(wasNew, reviewCleared);
+        messageEl.textContent = `Correct! +${reward} coins. ${getCorrectLearningFeedback(currentWord, wasNew, { reviewCleared })} Fire!`;
         const shotAmmo = consumeSpecialAmmo();
         if (shotAmmo) {
           saveState();
@@ -5041,26 +5323,22 @@
     function chooseBossAnswer(button) {
       if (locked || isPaused || !bossPhrase) return;
       button.disabled = true;
-      button.classList.add("right");
-      bossSelection.push(button.dataset.hanzi);
-      messageEl.textContent = `Selected: ${bossSelection.join(" ")}`;
-      if (bossSelection.length < 2) return;
-
       locked = true;
-      const correct = bossSelection.join("") === bossPhrase.text;
+      const targetWord = bossPhrase.word || wordByHanzi[bossPhrase.text] || { hanzi: bossPhrase.text, meaning: "boss word", phrase: bossPhrase.text };
+      const correct = button.dataset.hanzi === bossPhrase.text;
       if (!correct) {
         stopCountdown({ preserveEnemyPosition: true });
         [...choicesEl.querySelectorAll(".choice")].forEach((choice) => choice.classList.remove("right"));
         button.classList.add("wrong");
         playMissSound();
-        const phraseRecord = { hanzi: bossPhrase.text, meaning: "boss word", phrase: bossPhrase.text };
-        bossPhrase.chars.forEach((char) => recordWrongBank(wordByHanzi[char] || { hanzi: char, meaning: "boss word", phrase: bossPhrase.text }));
+        recordWrongBank(targetWord);
+        playerState.review[targetWord.hanzi] = Math.min((playerState.review[targetWord.hanzi] || 0) + 2, 6);
         const damage = currentEnemy.damage || 1;
         const smokeMissed = consumeSmokeCover();
         const result = smokeMissed ? createMissResult() : takeDamage(damage);
-        recordWordDamage(phraseRecord, result.hpDamage + result.armorDamage);
+        recordWordDamage(targetWord, result.hpDamage + result.armorDamage);
         saveState();
-        messageEl.textContent = smokeMissed ? `Wrong sequence. Boss word was ${bossPhrase.text}. Smoke cover made the attack miss.` : `Wrong sequence. Boss word was ${bossPhrase.text}.`;
+        messageEl.textContent = smokeMissed ? `Wrong Hanzi. Boss called ${bossPhrase.text}. Smoke cover made the attack miss.` : `Wrong Hanzi. Boss called ${bossPhrase.text}. Added to review.`;
         enemyFire(damage, result);
         setTimeout(() => {
           if (lives <= 0) {
@@ -5072,12 +5350,15 @@
         return;
       }
 
-      bossPhrase.chars.forEach((char) => recordCorrectWord(wordByHanzi[char]));
-      bossPhrase.chars.forEach((char) => recordCorrectBank(wordByHanzi[char] || { hanzi: char, meaning: "boss word", phrase: bossPhrase.text }));
+      const wasNew = !playerState.correctBank?.[targetWord.hanzi];
+      button.classList.add("right");
+      recordCorrectWord(targetWord);
+      recordCorrectBank(targetWord);
       saveState();
-      queueChineseSpeech(bossPhrase.text, { preserveMessage: true, autoRetry: true, delay: 80 });
+      speakBossPhrase(bossPhrase, { preserveMessage: true, autoRetry: true, delay: 80 });
       playSuccessSound();
-      messageEl.textContent = "Correct boss word. Fire!";
+      playLearningFeedbackSound(wasNew, false);
+      messageEl.textContent = `Correct Hanzi. ${getCorrectLearningFeedback(targetWord, wasNew)} Fire!`;
       const shotAmmo = consumeSpecialAmmo();
       if (shotAmmo) {
         saveState();
@@ -5525,6 +5806,7 @@
     }
 
     function startDebugBattle(stage) {
+      cancelStageAdvance();
       clearPauseState();
       isGameOver = false;
       isLevelCleared = false;
@@ -5553,7 +5835,7 @@
       shownBossIntroStage = 0;
       runSeenWords = Object.fromEntries(words.slice(0, Math.max(20, Math.min(words.length, stage * 3))).map((word) => [word.hanzi, word]));
       syncHud();
-      renderQuestion(words[0]);
+      renderStageOpeningQuestion(stage);
     }
 
     function saveWarArchive(summary) {
@@ -5598,7 +5880,7 @@
       clearPauseState();
       stopCountdown();
       locked = true;
-      enemyTank.classList.remove("reloading", "fire", "boss-slam", "crash-attack");
+      enemyTank.classList.remove("reloading", "fire", "boss-slam", "boss-attack-approach", "crash-attack");
       enemyBullet.classList.remove("fly");
       playerTank.classList.remove("hit", "fire");
       playerTank.classList.add("destroyed", "fragmented");
@@ -5619,6 +5901,7 @@
     function restartGame() {
       unlockAudio();
       playUiSound();
+      cancelStageAdvance();
       clearPauseState();
       stopCountdown();
       score = 0;
@@ -5641,7 +5924,6 @@
       runWordCorrect = {};
       runSeenWords = {};
       bossPhrase = null;
-      bossSelection = [];
       bossIntroToken += 1;
       lives = getMaxLives();
       isGameOver = false;
@@ -5657,7 +5939,7 @@
       burst.classList.remove("show", "he-burst");
       playerBurst.classList.remove("show");
       updatePhaserActors();
-      renderQuestion(words[0]);
+      renderStageOpeningQuestion();
     }
 
     function enemyFire(damage = 1, result = { hpDamage: damage }) {
@@ -5785,15 +6067,27 @@
     function bossHammerAttack(damage = 1, result = { hpDamage: damage }) {
       if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
       playTone(68, 0.24, { type: "sawtooth", endFrequency: 38, volume: 0.13 });
-      enemyTank.classList.remove("reloading", "boss-slam");
+      const approachDuration = 520;
+      const impactTime = 1040;
+      const cleanupTime = 1640;
+      enemyTank.classList.remove("reloading", "boss-slam", "boss-attack-approach");
       playerTank.classList.remove("hit");
       playerBurst.classList.remove("show");
-      tweenEnemyAttackToBase(165, { angle: -9, inDuration: 620, outDuration: 430 });
-      playPhaserBossSlam();
+      stopPhaserEnemyApproach(true);
+      tweenEnemyAttackToBase(getEnemyApproachDistance(), { angle: -9, inDuration: impactTime, outDuration: 520 });
       requestAnimationFrame(() => {
         if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
-        enemyTank.classList.add("boss-slam");
+        enemyTank.classList.add("boss-attack-approach");
       });
+      setTimeout(() => {
+        if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
+        enemyTank.classList.remove("boss-attack-approach");
+        enemyTank.classList.add("boss-slam");
+      }, approachDuration);
+      setTimeout(() => {
+        if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
+        playPhaserBossSlam();
+      }, approachDuration + 80);
 
       setTimeout(() => {
         if (isGameOver || isLevelCleared) return;
@@ -5809,18 +6103,18 @@
         playerBurst.classList.add("show");
         playerTank.classList.add("hit");
         playPhaserPlayerState("hit", true);
-      }, 620);
+      }, impactTime);
 
       setTimeout(() => {
-        enemyTank.classList.remove("boss-slam");
+        enemyTank.classList.remove("boss-slam", "boss-attack-approach", "reloading");
         if (!playerTank.classList.contains("destroyed")) playerTank.classList.remove("hit");
-      }, 980);
+      }, cleanupTime);
     }
 
     function speakCurrentWord() {
       unlockAudio();
       if (currentEnemy.id === "boss" && bossPhrase) {
-        speakChinese(bossPhrase.text, { preserveMessage: false });
+        speakBossPhrase(bossPhrase, { preserveMessage: false });
         return;
       }
       speakWord(currentWord);
@@ -6033,7 +6327,7 @@
     syncSoundButton();
     syncPauseButton();
     syncHud();
-    renderQuestion(currentWord);
+    renderStageOpeningQuestion();
     showProfileGate();
   </script>
 </body>

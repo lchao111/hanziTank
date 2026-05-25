@@ -23,7 +23,10 @@ function bodyOf(functionName) {
 
 const renderBossQuestion = bodyOf('renderBossQuestion');
 assert.match(renderBossQuestion, /questionWordEl\.textContent\s*=\s*"\?\?"/, 'Boss question should hide the answer and rely on audio.');
-assert.match(renderBossQuestion, /queueChineseSpeech\(phraseToSpeak\.text/, 'Boss question must queue pronunciation every time it renders.');
+assert.match(renderBossQuestion, /listen to one Hanzi/, 'Boss prompt should ask for a single Hanzi.');
+assert.match(renderBossQuestion, /const bossWord = bossPhrase\.word \|\| wordByHanzi\[bossPhrase\.text\]/, 'Boss question should resolve the single target Hanzi word.');
+assert.match(renderBossQuestion, /queueHanziAudioBackgroundDownload\(bossWord, getBossSpeechText\(bossPhrase\)\)/, 'Boss question should enqueue missing offline Hanzi audio as soon as it is generated.');
+assert.match(renderBossQuestion, /speakBossPhrase\(phraseToSpeak/, 'Boss question must play the single-Hanzi pronunciation every time it renders.');
 assert.match(renderBossQuestion, /preserveMessage:\s*true/, 'Boss auto-pronunciation must not overwrite the question prompt.');
 assert.match(renderBossQuestion, /autoRetry:\s*true/, 'Boss auto-pronunciation should retry across delayed voice readiness.');
 assert.match(renderBossQuestion, /currentEnemy\.id\s*===\s*"boss"/, 'Boss speech should only run while still in a boss question.');
@@ -32,7 +35,66 @@ assert.match(renderBossQuestion, /!locked/, 'Boss speech should only fire after 
 
 const speakCurrentWord = bodyOf('speakCurrentWord');
 assert.match(speakCurrentWord, /currentEnemy\.id\s*===\s*"boss"\s*&&\s*bossPhrase/, 'Speak button must detect boss questions.');
-assert.match(speakCurrentWord, /speakChinese\(bossPhrase\.text/, 'Speak button must repeat the current boss phrase.');
+assert.match(speakCurrentWord, /speakBossPhrase\(bossPhrase/, 'Speak button must repeat the current boss Hanzi.');
+assert.match(speakCurrentWord, /speakWord\(currentWord\)/, 'Speak button must use the normal word speech path outside Boss questions.');
+
+const getBossSpeechText = bodyOf('getBossSpeechText');
+assert.match(getBossSpeechText, /phrase\.speechText/, 'Boss speech should prefer the prompt-specific speech text.');
+assert.doesNotMatch(getBossSpeechText, /getSpokenWordText\(word\)/, 'Boss speech should not fall back to word-context audio.');
+assert.match(getBossSpeechText, /phrase\.text/, 'Boss speech should fall back to the single target Hanzi.');
+
+const chooseBossAnswer = bodyOf('chooseBossAnswer');
+assert.match(chooseBossAnswer, /const correct = button\.dataset\.hanzi === bossPhrase\.text/, 'Boss answer should be a single matching Hanzi click.');
+assert.doesNotMatch(chooseBossAnswer, /bossSelection\.length < 2/, 'Boss answer should not require a two-character sequence.');
+assert.match(chooseBossAnswer, /playerState\.review\[targetWord\.hanzi\]/, 'Wrong Boss Hanzi should enter the review queue.');
+assert.match(chooseBossAnswer, /recordCorrectWord\(targetWord\)/, 'Correct Boss Hanzi should count as learned practice.');
+assert.match(chooseBossAnswer, /getCorrectLearningFeedback\(targetWord, wasNew\)/, 'Correct Boss Hanzi should show learning and rank feedback.');
+assert.match(chooseBossAnswer, /speakBossPhrase\(bossPhrase/, 'Correct Boss Hanzi feedback should repeat the single Hanzi.');
+
+assert.match(source, /<script src="src\/data\/hanzi-audio-manifest\.js"><\/script>/, 'Browser should load the Hanzi audio manifest before game orchestration.');
+assert.match(source, /hanzi: window\.HanziTankAudio\?\.hanziVoiceLines \|\| \{ "一": "assets\/audio\/hanzi\/u4e00\.mp3" \}/, 'Word speech should use the generated Hanzi audio manifest with a fallback for 一.');
+assert.match(source, /hanziAudioDownloadQueueKey\s*=\s*"hanziTankAudioDownloadQueue"/, 'Missing Hanzi audio should use a stable browser queue key.');
+
+const getHanziAudioFileName = bodyOf('getHanziAudioFileName');
+assert.match(getHanziAudioFileName, /window\.HanziTankAudio\?\.getHanziAudioFile/, 'Audio file naming should prefer the shared manifest helper.');
+assert.match(getHanziAudioFileName, /codePointAt\(0\)\.toString\(16\)/, 'Audio file naming should fall back to Unicode codepoint filenames.');
+
+const getHanziVoiceLine = bodyOf('getHanziVoiceLine');
+assert.match(getHanziVoiceLine, /customVoiceLines\.hanzi\[word\.hanzi\]/, 'Word speech should use manifest-routed Hanzi recordings first.');
+assert.match(getHanziVoiceLine, /assets\/audio\/hanzi\/\$\{getHanziAudioFileName\(word\.hanzi\)\}/, 'Word speech should derive a predictable MP3 path when the manifest has no entry yet.');
+
+const queueMissingHanziAudio = bodyOf('queueMissingHanziAudio');
+assert.match(queueMissingHanziAudio, /readHanziAudioDownloadQueue\(\)/, 'Missing Hanzi audio should merge with the existing download queue.');
+assert.match(queueMissingHanziAudio, /textOverride \|\| getSpokenWordText\(word\)/, 'Queued Hanzi audio should include the spoken prompt text needed by the generator.');
+assert.match(queueMissingHanziAudio, /assets\/audio\/hanzi\/\$\{file\}/, 'Queued Hanzi audio should include the target offline MP3 path.');
+assert.match(queueMissingHanziAudio, /attempts:\s*1/, 'New download queue entries should track first failure count.');
+assert.match(queueMissingHanziAudio, /existing\.attempts = \(existing\.attempts \|\| 0\) \+ 1/, 'Repeated missing audio should update, not duplicate, queue entries.');
+
+const playCustomVoiceLine = bodyOf('playCustomVoiceLine');
+assert.match(playCustomVoiceLine, /new Audio\(src\)/, 'Custom voice lines should use browser audio playback.');
+assert.match(playCustomVoiceLine, /audio\.onerror = useFallback/, 'Custom voice lines should fallback if the recording fails to load.');
+assert.match(playCustomVoiceLine, /playback\.catch/, 'Custom voice lines should fallback if browser playback is blocked.');
+assert.match(playCustomVoiceLine, /onMissing\?\.\(\)/, 'Custom voice line failures should report missing audio to the download queue.');
+
+const queueHanziAudioBackgroundDownload = bodyOf('queueHanziAudioBackgroundDownload');
+assert.match(queueHanziAudioBackgroundDownload, /new Audio\(src\)/, 'Generated questions should probe offline audio availability in the background.');
+assert.match(queueHanziAudioBackgroundDownload, /audio\.onerror = \(\) =>/, 'Background audio probes should detect missing MP3 files.');
+assert.match(queueHanziAudioBackgroundDownload, /queueMissingHanziAudio\(word, reason, textOverride, fileOverride\)/, 'Background audio probes should enqueue missing clips for TTS generation.');
+
+const renderQuestion = bodyOf('renderQuestion');
+assert.match(renderQuestion, /queueHanziAudioBackgroundDownload\(word, getSpokenWordText\(word\)\)/, 'Random normal questions should enqueue missing offline audio when rendered.');
+
+const speakBossPhrase = bodyOf('speakBossPhrase');
+assert.match(speakBossPhrase, /playCustomVoiceLine\(/, 'Boss speech should try offline Hanzi MP3 before browser TTS.');
+assert.match(speakBossPhrase, /getHanziVoiceLine\(word\)/, 'Boss speech should use the regular Hanzi MP3 path.');
+assert.match(speakBossPhrase, /queueMissingHanziAudio\(word, "background-tts-download", speechText\)/, 'Boss speech should enqueue missing regular Hanzi clips for background TTS.');
+assert.match(speakBossPhrase, /queueChineseSpeech\(speechText, options\)/, 'Boss speech should temporarily fallback to browser TTS after queueing missing audio.');
+
+const speakWord = bodyOf('speakWord');
+assert.match(speakWord, /const speechOptions = \{ preserveMessage:\s*true, autoRetry:\s*true, delay:\s*80 \}/, 'Word speech should preserve prompts and retry TTS fallback.');
+assert.match(speakWord, /getHanziVoiceLine\(word\)/, 'Word speech should try offline Hanzi MP3 first.');
+assert.match(speakWord, /queueMissingHanziAudio\(word\)/, 'Missing custom Hanzi recordings should be added to the download queue.');
+assert.match(speakWord, /queueChineseSpeech\(getSpokenWordText\(word\), speechOptions\)/, 'Custom Hanzi recording failures should fallback to the normal word TTS queue.');
 
 const queueChineseSpeech = bodyOf('queueChineseSpeech');
 assert.match(queueChineseSpeech, /pendingSpeechText\s*=\s*text/, 'Queued speech should be remembered for retry.');
@@ -49,88 +111,17 @@ const retryPendingSpeech = bodyOf('retryPendingSpeech');
 assert.match(retryPendingSpeech, /if \(queuedSpeechRequest\)/, 'User interaction should flush queued speech first.');
 assert.match(retryPendingSpeech, /speakChinese\(text, \{ preserveMessage:\s*true \}\)/, 'Pending speech retry should not overwrite gameplay prompts.');
 
-const announceHighExplosiveReady = bodyOf('announceHighExplosiveReady');
-assert.match(announceHighExplosiveReady, /unlockAudio\(\)/, 'Equipping high-explosive ammo should unlock audio during the user click.');
-assert.match(announceHighExplosiveReady, /if \(options\.playLoadSound !== false\) playHighExplosiveLoadSound\(\)/, 'Equipping high-explosive ammo should play a loading sound unless a debug voice-only test disables it.');
-assert.match(announceHighExplosiveReady, /const speakFallback = \(\) =>/, 'High-explosive ready speech should define a TTS fallback for missing custom recordings.');
-assert.match(announceHighExplosiveReady, /speakChinese\("高爆弹，装填完毕", speechOptions\)/, 'High-explosive ready fallback should speak immediately during the user click.');
-assert.match(announceHighExplosiveReady, /rate: 0\.58, pitch: 0\.48, voiceStyle: "military"/, 'High-explosive ready speech should use a lower male military-style voice shape.');
-assert.match(announceHighExplosiveReady, /delete speechOptions\.playLoadSound/, 'Speech-only debug options should not leak into SpeechSynthesis options.');
-assert.match(announceHighExplosiveReady, /queueChineseSpeech\("高爆弹，装填完毕", \{ \.\.\.speechOptions, delay: 40 \}\)/, 'High-explosive ready speech should still queue a fallback if direct speech fails.');
-assert.match(announceHighExplosiveReady, /playCustomVoiceLine\(customVoiceLines\.highExplosiveReady, speechOptions, speakFallback\)/, 'High-explosive ready speech should prefer the custom recorded voice line.');
-assert.doesNotMatch(source, /announceHighExplosiveFire/, 'High-explosive firing should not trigger a launch voice line.');
-assert.doesNotMatch(source, /queueChineseSpeech\("发射"/, 'The removed firing voice line should not be queued.');
-
-const playCustomVoiceLine = bodyOf('playCustomVoiceLine');
-assert.match(playCustomVoiceLine, /new Audio\(src\)/, 'Custom voice lines should use browser audio playback.');
-assert.match(playCustomVoiceLine, /audio\.onerror = \(\) =>/, 'Custom voice lines should fallback if the recording fails to load.');
-assert.match(playCustomVoiceLine, /playback\.catch/, 'Custom voice lines should fallback if browser playback is blocked.');
-
-assert.match(source, /highExplosiveReady: "assets\/audio\/high-explosive-ready\.mp3"/, 'High-explosive ready should look for the custom recording in assets/audio.');
-assert.match(source, /<script src="src\/data\/hanzi-audio-manifest\.js"><\/script>/, 'Browser should load the Hanzi audio manifest before game orchestration.');
-assert.match(source, /hanzi: window\.HanziTankAudio\?\.hanziVoiceLines \|\| \{ "一": "assets\/audio\/hanzi\/u4e00\.mp3" \}/, 'Word speech should use the generated Hanzi audio manifest with a fallback for 一.');
-
-const speakWord = bodyOf('speakWord');
-assert.match(speakWord, /const customVoiceLine = customVoiceLines\.hanzi\[word\.hanzi\]/, 'Word speech should check for custom Hanzi recordings.');
-assert.match(speakWord, /playCustomVoiceLine\(customVoiceLine, speechOptions, speakFallback\)/, 'Custom Hanzi recordings should play before TTS fallback.');
-assert.match(speakWord, /queueChineseSpeech\(getSpokenWordText\(word\), \{ \.\.\.speechOptions, delay: 80 \}\)/, 'Custom Hanzi recording failures should fallback to the normal word TTS queue.');
-
-const playHighExplosiveLoadSound = bodyOf('playHighExplosiveLoadSound');
-assert.match(playHighExplosiveLoadSound, /playNoise\(0\.09/, 'High-explosive load cue should include a short mechanical noise.');
-assert.match(playHighExplosiveLoadSound, /playTone\(154/, 'High-explosive load cue should include a low command-like tone.');
-
-const getSpeechDebugStatus = bodyOf('getSpeechDebugStatus');
-assert.match(getSpeechDebugStatus, /speechSynthesis/, 'Debug speech status should inspect Web Speech availability.');
-assert.match(getSpeechDebugStatus, /Chinese \$\{chineseVoices\.length\}/, 'Debug speech status should report Chinese voice count.');
-assert.match(getSpeechDebugStatus, /getChineseVoice\(\{ voiceStyle: "military" \}\)/, 'Debug speech status should show the military voice selection.');
-assert.match(getSpeechDebugStatus, /military \$\{militaryName\}/, 'Debug speech status should name the selected military voice.');
-
-const getDebugSpeechOptions = bodyOf('getDebugSpeechOptions');
-assert.match(getDebugSpeechOptions, /onStart: \(\) => setDebugSpeechStatus\(`Playing: \$\{label\}\.\`\)/, 'Debug speech tests should report when speech starts.');
-assert.match(getDebugSpeechOptions, /onError: \(\) => setDebugSpeechStatus/, 'Debug speech tests should report speech errors.');
-
-const testDebugSpeech = bodyOf('testDebugSpeech');
-assert.match(testDebugSpeech, /announceHighExplosiveReady\(getDebugSpeechOptions\("高爆装填", \{ playLoadSound: false \}\)\)/, 'Debug high-explosive speech test should be voice-only and avoid the loading sound effect.');
-assert.match(testDebugSpeech, /speakChinese\("坦克，前进", getDebugSpeechOptions\("Boss 短语"/, 'Debug speech tests should include a Boss-style phrase.');
-assert.match(testDebugSpeech, /const customVoiceLine = customVoiceLines\.hanzi\[word\.hanzi\]/, 'Debug current Hanzi speech test should use custom recordings when available.');
-assert.match(testDebugSpeech, /playCustomVoiceLine\(customVoiceLine, getDebugSpeechOptions\(`当前汉字 \$\{word\.hanzi\}`\)/, 'Debug current Hanzi speech test should play custom Hanzi recordings before TTS.');
-assert.match(testDebugSpeech, /speakChinese\(getSpokenWordText\(word\), getDebugSpeechOptions\("当前汉字"\)\)/, 'Debug current Hanzi speech test should fallback to normal TTS.');
-assert.match(testDebugSpeech, /speakChinese\("语音测试", getDebugSpeechOptions\("普通中文"/, 'Debug speech tests should include direct plain Chinese speech.');
-
-const openDebugMode = bodyOf('openDebugMode');
-assert.match(openDebugMode, /debugOpenedFromProfileGate = !profileGate\.classList\.contains\("hidden"\)/, 'Debug Mode should remember whether it was opened from the login screen.');
-assert.match(openDebugMode, /if \(debugOpenedFromProfileGate\) hideProfileGate\(\)/, 'Debug Mode should hide the login screen while open.');
-
-const closeDebugMode = bodyOf('closeDebugMode');
-assert.match(closeDebugMode, /shouldReturnToProfileGate = debugOpenedFromProfileGate && !options\.keepProfileHidden/, 'Closing Debug Mode should know when to return to login.');
-assert.match(closeDebugMode, /profileGate\.classList\.remove\("hidden"\)/, 'Closing Debug Mode from login should restore the login screen.');
-
 const speakChinese = bodyOf('speakChinese');
 assert.match(speakChinese, /utterance\.lang\s*=\s*"zh-CN"/, 'Chinese speech must request zh-CN pronunciation.');
-assert.match(speakChinese, /utterance\.rate\s*=\s*options\.rate \|\| 0\.75/, 'Chinese speech should allow specialized voice-line rate overrides.');
-assert.match(speakChinese, /utterance\.pitch\s*=\s*options\.pitch \|\| 1/, 'Chinese speech should allow specialized voice-line pitch overrides.');
-assert.match(speakChinese, /getChineseVoice\(options\)/, 'Chinese speech should pass voice style preferences into voice selection.');
-assert.match(speakChinese, /utterance\.onstart = \(\) => options\.onStart\?\.\(\)/, 'Chinese speech should expose start callbacks for Debug Mode.');
-assert.match(speakChinese, /utterance\.onend = \(\) => options\.onEnd\?\.\(\)/, 'Chinese speech should expose end callbacks for Debug Mode.');
+assert.match(speakChinese, /utterance\.rate\s*=\s*0\.75/, 'Chinese speech should use the normal learning speech rate.');
 assert.match(speakChinese, /pendingSpeechText\s*=\s*text/, 'Speech errors should preserve text for retry.');
-assert.match(speakChinese, /options\.onError\?\.\(event\)/, 'Chinese speech should expose error callbacks for Debug Mode.');
 assert.match(speakChinese, /options\.autoRetry/, 'Speech errors should support one automatic retry.');
 assert.match(speakChinese, /return true/, 'Successful speech requests should report success.');
-assert.doesNotMatch(speakChinese, /No Chinese voice found/, 'Missing named Chinese voices should not overwrite gameplay prompts before speech is attempted.');
 
 const getChineseVoice = bodyOf('getChineseVoice');
-assert.match(getChineseVoice, /options\.voiceStyle === "military"/, 'Chinese voice selection should support a military voice style.');
-assert.match(getChineseVoice, /yunxi\|yunjian\|yunyang\|kangkang\|male\|男/i, 'Military voice style should prefer common Chinese male voice names.');
-assert.match(getChineseVoice, /!\/xiaoxiao\|xiaoyi\|xiaobei\|xiaoni\|female\|女\/i\.test\(voice\.name\)/, 'Military voice style should avoid common feminine voice names when possible.');
+assert.match(getChineseVoice, /voice\.lang\.toLowerCase\(\) === "zh-cn"/, 'Chinese voice selection should prefer exact zh-CN voices.');
+assert.match(getChineseVoice, /startsWith\("zh"\)/, 'Chinese voice selection should fall back to any Chinese voice.');
 
 assert.match(source, /document\.addEventListener\("pointerdown", \(\) => setTimeout\(retryPendingSpeech, 0\)\)/, 'User interaction should retry pending speech.');
-assert.match(source, /id="debugSpeechStatus"/, 'Debug Mode should show browser speech status.');
-assert.match(source, /<button class="profile-debug" id="debugButton" type="button">Debug Mode<\/button>/, 'Debug Mode entry should live on the login screen.');
-assert.doesNotMatch(source, /<button class="primary" id="debugButton" type="button">Debug Mode<\/button>/, 'Debug Mode entry should not remain in the in-game controls.');
-assert.match(source, /data-debug-speech="plain"/, 'Debug Mode should include a plain Chinese speech test.');
-assert.match(source, /data-debug-speech="word"/, 'Debug Mode should include a current Hanzi speech test.');
-assert.match(source, /data-debug-speech="boss"/, 'Debug Mode should include a Boss phrase speech test.');
-assert.match(source, /data-debug-speech="he"/, 'Debug Mode should include a high-explosive loading speech test.');
-assert.match(source, /debugSpeechGrid\.addEventListener\("click"/, 'Debug speech buttons should be wired to click handling.');
 
 console.log('speech regression tests passed');

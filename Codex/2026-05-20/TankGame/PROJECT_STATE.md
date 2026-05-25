@@ -19,6 +19,9 @@ This file is the first place to read after context loss. It records the current 
 - Storage: browser `localStorage`.
 - Sound: Web Audio API procedural effects.
 - Speech: Web Speech API via `speechSynthesis`.
+- Hanzi word speech now tries local `assets/audio/hanzi/uXXXX.mp3` clips first. Randomly generated normal and Stage 5 Boss questions probe the offline MP3 in the background; missing or unplayable clips are queued in browser `localStorage` under `hanziTankAudioDownloadQueue` and can be generated with `tools/generate-hanzi-audio.mjs --download-queue=path/to/queue.json`.
+- The visible footer build tag is driven by `appVersion` in `index.html`; bump it on each behavior change so browser validation can be matched against the tested code.
+- The first five encounters now form an explicit learning arc: stage 1 one-shot tank, stage 2 harder Hanzi pressure with a shorter injury timer, stage 3 shield/armor enemy, stage 4 fast scout, then the stage 5 single-Hanzi listening Boss. Correct-answer feedback calls out new Hanzi, review cleanup, practice count, and distance to the next rank.
 
 ## Important Commands
 
@@ -120,11 +123,11 @@ Question selection:
 
 Speech:
 
-- Boss questions show `??`; they must auto-pronounce the target phrase.
+- Boss questions show `??`; they must auto-pronounce one target Hanzi for a single-click matching challenge.
 - Boss speech must use `queueChineseSpeech(..., { preserveMessage: true, shouldSpeak })`.
 - `queueChineseSpeech` stores a structured queued request and retries while browser voices are delayed. `warmUpVoices()` flushes queued speech once voices are ready.
 - Do not overwrite the Boss prompt with missing-voice warnings before attempting speech.
-- Speak button must replay the current Boss phrase.
+- Speak button must replay the current Boss Hanzi.
 
 Pause:
 
@@ -218,7 +221,7 @@ Asset sourcing plan:
 - Kenney green/red hull/turret sprites are imported and preloadable, but they are not currently active as battlefield actors because the tiny top-down pixel sprites do not fit the current side-view battlefield scale. Current DOM SVG bodies remain visible as fallback until a full top-down actor scene is implemented.
 - Tank Dismantler Boss now has a Phaser spritesheet path: `assets/sprites/enemies/tank-dismantler-spritesheet.png`, loaded as `bossTankDismantler` with `frameWidth: 224` and `frameHeight: 224`. Frames `0-5` are the walking loop and frames `6-11` are the hammer attack.
 - To rebuild the Boss spritesheet from the user-provided reference image, save the source as `assets/source/tank-breaker-robot-reference.png`, then run `./tools/crop-dismantler-spritesheet.ps1`. The script crops the 2x6 reference grid and removes the white background for Phaser.
-- Player tank battle art now uses `assets/sprites/tanks/player-tank-spritesheet.png`, loaded as `playerTankBattle` with `frameWidth: 224` and `frameHeight: 144`. Rows are idle (`0-3`), fire (`4-7`), hit (`8-11`), weak (`12-15`), and destroyed (`16-19`). The DOM tank SVG stays as fallback if the Phaser texture is unavailable.
+- Player tank battle art now uses `assets/sprites/tanks/player-tank-spritesheet.png`, loaded as `playerTankBattle` with `frameWidth: 224` and `frameHeight: 144`. Rows are idle (`0-5`), fire (`6-11`), heavy fire (`12-17`), hit/weak smoking (`18-23`), and destroyed/burning (`24-29`). The DOM tank SVG stays as fallback if the Phaser texture is unavailable.
 
 Next recommended feature slice:
 

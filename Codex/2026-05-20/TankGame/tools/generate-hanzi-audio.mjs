@@ -17,6 +17,8 @@ const startAtArg = process.argv.find((arg) => arg.startsWith('--start-at='));
 const startAt = Number.parseInt(process.env.HANZI_AUDIO_START_AT || startAtArg?.split('=')[1] || '1', 10);
 const concurrencyArg = process.argv.find((arg) => arg.startsWith('--concurrency='));
 const concurrency = Math.max(1, Number.parseInt(process.env.HANZI_AUDIO_CONCURRENCY || concurrencyArg?.split('=')[1] || '4', 10));
+const queueArg = process.argv.find((arg) => arg.startsWith('--download-queue='));
+const queuePath = process.env.HANZI_AUDIO_DOWNLOAD_QUEUE || queueArg?.split('=')[1] || '';
 
 async function exists(filePath) {
   try {
@@ -66,10 +68,26 @@ function runEdgeTts(item, targetPath) {
   });
 }
 
+async function readDownloadQueueItems() {
+  if (!queuePath) return [];
+  const absoluteQueuePath = path.resolve(projectRoot, queuePath);
+  const rawQueue = await fs.readFile(absoluteQueuePath, 'utf8');
+  const parsedQueue = JSON.parse(rawQueue);
+  if (!Array.isArray(parsedQueue)) throw new Error(`Download queue must be a JSON array: ${path.relative(projectRoot, absoluteQueuePath)}`);
+  return parsedQueue
+    .filter((item) => item && item.hanzi && item.text)
+    .map((item) => ({
+      hanzi: item.hanzi,
+      text: item.text,
+      file: item.file || manifest.getHanziAudioFile(item.hanzi)
+    }));
+}
+
 await fs.mkdir(outputDir, { recursive: true });
 
 const itemsToGenerate = [];
-for (const [index, item] of manifest.hanziAudioPrompts.entries()) {
+const sourceItems = queuePath ? await readDownloadQueueItems() : manifest.hanziAudioPrompts;
+for (const [index, item] of sourceItems.entries()) {
   const position = index + 1;
   if (position < startAt) continue;
   const targetPath = path.join(outputDir, item.file);
@@ -81,12 +99,14 @@ for (const [index, item] of manifest.hanziAudioPrompts.entries()) {
 }
 
 if (itemsToGenerate.length === 0) {
-  console.log('All Hanzi audio files already exist. Set HANZI_AUDIO_OVERWRITE=1 or pass --overwrite to replace them.');
+  console.log(queuePath
+    ? 'All queued Hanzi audio files already exist. Set HANZI_AUDIO_OVERWRITE=1 or pass --overwrite to replace them.'
+    : 'All Hanzi audio files already exist. Set HANZI_AUDIO_OVERWRITE=1 or pass --overwrite to replace them.');
   process.exit(0);
 }
 
 console.log(`Using Edge TTS voice ${voice} (rate ${rate}, pitch ${pitch}, volume ${volume})`);
-console.log(`${overwrite ? 'Replacing' : 'Generating'} ${itemsToGenerate.length} Hanzi MP3 file${itemsToGenerate.length === 1 ? '' : 's'} with concurrency ${concurrency}...`);
+console.log(`${overwrite ? 'Replacing' : 'Generating'} ${itemsToGenerate.length} Hanzi MP3 file${itemsToGenerate.length === 1 ? '' : 's'}${queuePath ? ' from download queue' : ''} with concurrency ${concurrency}...`);
 
 let written = 0;
 let nextIndex = 0;
@@ -95,10 +115,11 @@ async function generateNext() {
   while (nextIndex < itemsToGenerate.length) {
     const { item, targetPath, position } = itemsToGenerate[nextIndex];
     nextIndex += 1;
+    await fs.mkdir(path.dirname(targetPath), { recursive: true });
     await runEdgeTts(item, targetPath);
     const stats = await fs.stat(targetPath);
     written += 1;
-    console.log(`wrote ${position}/${manifest.hanziAudioPrompts.length} ${item.hanzi} -> ${path.relative(projectRoot, targetPath)} (${stats.size} bytes)`);
+    console.log(`wrote ${position}/${sourceItems.length} ${item.hanzi} -> ${path.relative(projectRoot, targetPath)} (${stats.size} bytes)`);
   }
 }
 

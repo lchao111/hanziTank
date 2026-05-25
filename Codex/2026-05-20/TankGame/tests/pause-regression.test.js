@@ -30,9 +30,9 @@ assert.doesNotMatch(pauseCountdown, /countdown\s*=\s*0/, 'Pausing must preserve 
 assert.match(pauseCountdown, /stopPhaserEnemyApproach\(false\)/, 'Pausing should freeze enemy approach without snapping back.');
 
 const startCountdown = bodyOf('startCountdown');
-assert.match(source, /function startCountdown\(seconds = enemyAttackInterval\)/, 'Countdown should accept a remaining-seconds resume value.');
+assert.match(source, /function startCountdown\(seconds = getEnemyAttackInterval\(\)\)/, 'Countdown should accept a remaining-seconds resume value and default to the active enemy interval.');
 assert.match(startCountdown, /if \(isPaused \|\| isGameOver \|\| isLevelCleared \|\| lives <= 0 \|\| currentEnemy\.hp <= 0\) return/, 'Countdown should not start while paused, after defeat, or after enemy defeat.');
-assert.match(startCountdown, /countdown\s*=\s*Math\.max\(1, Math\.min\(enemyAttackInterval, seconds \|\| enemyAttackInterval\)\)/, 'Countdown should resume from supplied remaining seconds.');
+assert.match(startCountdown, /countdown\s*=\s*Math\.max\(1, Math\.min\(attackInterval, seconds \|\| attackInterval\)\)/, 'Countdown should resume from supplied remaining seconds.');
 
 const pauseGame = bodyOf('pauseGame');
 assert.match(pauseGame, /pausedLockedState\s*=\s*locked/, 'Pause should remember whether the question was locked.');

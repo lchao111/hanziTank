@@ -43,7 +43,7 @@ const showGameOver = bodyOf('showGameOver');
 assert.match(showGameOver, /if \(isGameOver\) return/, 'Game over should be idempotent.');
 assert.match(showGameOver, /isGameOver = true/, 'Game over should set terminal state before cleanup.');
 assert.match(showGameOver, /stopCountdown\(\)/, 'Game over should stop reload countdown.');
-assert.match(showGameOver, /enemyTank\.classList\.remove\("reloading", "fire", "boss-slam", "crash-attack"\)/, 'Game over should clear enemy attack/reload classes.');
+assert.match(showGameOver, /enemyTank\.classList\.remove\("reloading", "fire", "boss-slam", "boss-attack-approach", "crash-attack"\)/, 'Game over should clear enemy attack/reload classes.');
 
 const restartGame = bodyOf('restartGame');
 assert.match(restartGame, /cancelStageAdvance\(\)/, 'Restart should cancel any stage-clear advance animation.');

@@ -9,14 +9,15 @@
       name: "Tank",
       hp: 1,
       damage: 1,
-      intro: "Enemy tank. Answer correctly once to destroy it."
+      intro: "Stage 1 drill. Match one Hanzi meaning to fire."
     },
     {
       id: "infantry",
       name: "Infantry Squad",
       hp: 2,
       damage: 1,
-      intro: "Two rifle soldiers. Each hit from them deals 1 HP."
+      attackInterval: 4,
+      intro: "Stage 2 drill. A harder Hanzi appears and the squad fires sooner."
     },
     {
       id: "armor",
@@ -25,16 +26,15 @@
       damage: 1,
       absoluteDefense: 1,
       armor: 1,
-      intro: "Heavy armor with absolute defense and armor. Break defenses, then destroy it."
+      intro: "Stage 3 drill. Break absolute defense and armor with steady answers."
     },
     {
-      id: "heavyInfantry",
-      name: "Heavy Soldier",
-      hp: 2,
-      damage: 1,
-      attackStyle: "melee",
-      approachDistance: 92,
-      intro: "Heavy soldier. It deals 1 HP damage and has 2 HP."
+      id: "scout",
+      name: "Scout Car",
+      hp: 1,
+      damage: 2,
+      attackInterval: 3,
+      intro: "Stage 4 drill. A fast scout attacks quickly if you hesitate."
     },
     {
       id: "truck",
@@ -53,11 +53,13 @@
       intro: "Anti-tank RPG soldier. Its missile deals 2 HP damage."
     },
     {
-      id: "scout",
-      name: "Scout Car",
-      hp: 1,
-      damage: 2,
-      intro: "Fast scout car. It attacks every 5 seconds."
+      id: "heavyInfantry",
+      name: "Heavy Soldier",
+      hp: 2,
+      damage: 1,
+      attackStyle: "melee",
+      approachDistance: 92,
+      intro: "Heavy soldier. It closes in while you answer."
     }
   ];
 
@@ -70,7 +72,7 @@
     attackStyle: "melee",
     approachDistance: 150,
     sprite: "assets/enemy-boss-dismantler.svg",
-    intro: "Boss battle. The Tank Dismantler swings a giant hammer. Listen to the word, then pick the two Hanzi in order."
+    intro: "Stage 5 Boss. Listen to one Hanzi, find it, then fire before the hammer lands."
   };
 
   const enemyPortraitDetails = {
@@ -106,9 +108,9 @@
 
   const debugTargets = [
     { stage: 1, title: "Tank", desc: "Basic tank battle." },
-    { stage: 2, title: "Infantry Squad", desc: "Two rifle soldiers. 2 HP, 1 damage." },
+    { stage: 2, title: "Infantry Squad", desc: "Harder Hanzi pressure. 2 HP, faster first injury risk." },
     { stage: 3, title: "Armored Tank", desc: "Absolute defense + armor test." },
-    { stage: 4, title: "Heavy Soldier", desc: "2 HP infantry unit." },
+    { stage: 4, title: "Scout Car", desc: "Fast enemy pressure. 1 HP, 2 damage, shorter attack timer." },
     { stage: 5, title: "Tank Dismantler Boss", desc: "Boss intro, listening challenge, hammer attack." },
     { stage: 6, title: "RPG Soldier", desc: "1 HP, 2 damage anti-tank unit." },
     { stage: 7, title: "Scout Car", desc: "Fast light vehicle with 2 damage." },
