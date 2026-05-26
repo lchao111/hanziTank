@@ -117,6 +117,65 @@
       fireFrames: [6, 7, 8, 9, 10, 11],
       hitFrames: [18, 19, 20, 21, 22, 23],
       fallbackSvg: "assets/enemy-rpg-infantry.svg"
+    },
+    {
+      id: "burned-trees-spritesheet",
+      source: "User-provided Gemini burned tree reference, green-screen removed into Phaser prop frames",
+      license: "User-provided reference asset; source file from Downloads/Gemini_Generated_Image_8ghsnv8ghsnv8ghs.png",
+      texture: "burnedTrees",
+      spritesheetPath: "assets/sprites/environment/burned-trees-spritesheet.png",
+      frameWidth: 704,
+      frameHeight: 1536,
+      propFrames: [0, 1, 2, 3]
+    },
+    {
+      id: "ruined-houses-spritesheet",
+      source: "User-provided Gemini burned houses sheet, green-screen removed into Phaser prop frames",
+      license: "User-provided reference asset; source file from Downloads/Gemini_Generated_Image_7h7d9n7h7d9n7h7d.png",
+      texture: "ruinedHouses",
+      spritesheetPath: "assets/sprites/environment/ruined-houses-spritesheet.png",
+      frameWidth: 938,
+      frameHeight: 768,
+      propFrames: [0, 1, 2, 3, 4]
+    },
+    {
+      id: "trench-strips-spritesheet",
+      source: "User-provided Gemini trench and sandbag strips, green-screen removed into Phaser prop frames",
+      license: "User-provided reference asset; source file from Downloads/Gemini_Generated_Image_hwzxzhwzxzhwzxzh.png",
+      texture: "trenchStrips",
+      spritesheetPath: "assets/sprites/environment/trench-strips-spritesheet.png",
+      frameWidth: 2816,
+      frameHeight: 512,
+      propFrames: [0, 1, 2]
+    },
+    {
+      id: "crater-tracks-spritesheet",
+      source: "User-provided Gemini craters and muddy tracks sheet, green-screen removed into Phaser prop frames",
+      license: "User-provided reference asset; source file from Downloads/Gemini_Generated_Image_o6kd99o6kd99o6kd.png",
+      texture: "craterTracks",
+      spritesheetPath: "assets/sprites/environment/crater-tracks-spritesheet.png",
+      frameWidth: 938,
+      frameHeight: 768,
+      propFrames: [0, 1, 2, 3, 4, 5]
+    },
+    {
+      id: "forest-clusters-spritesheet",
+      source: "User-provided Gemini forest cluster sheet, white background removed into Phaser prop frames",
+      license: "User-provided reference asset; source file from Downloads/Gemini_Generated_Image_ij3iccij3iccij3i.png",
+      texture: "forestClusters",
+      spritesheetPath: "assets/sprites/environment/forest-clusters-spritesheet.png",
+      frameWidth: 1408,
+      frameHeight: 768,
+      propFrames: [0, 1, 2, 3]
+    },
+    {
+      id: "cohesive-battlefield-background",
+      source: "User-provided Gemini cohesive battlefield background with built-in roads, ruins, trees, wrecks, and lane space",
+      license: "User-provided reference asset; source file from Downloads/Gemini_Generated_Image_y11swmy11swmy11s.png",
+      texture: "css:battlefield-background",
+      imagePath: "assets/sprites/environment/battlefield-background.png",
+      width: 2752,
+      height: 1536
     }
   ];
 

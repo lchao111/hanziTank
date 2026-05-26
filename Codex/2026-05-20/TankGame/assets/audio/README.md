@@ -23,6 +23,7 @@ Optional overrides:
 - `EDGE_TTS_PITCH` - pitch adjustment, defaults to `+0Hz`.
 - `EDGE_TTS_VOLUME` - volume adjustment, defaults to `+0%`.
 - `HANZI_AUDIO_OVERWRITE=1` or `npm run utilities:replace-hanzi-audio` - replace existing clips instead of only filling missing clips.
+- `npm run utilities:replace-grade-one-hanzi-audio` - replace only the Grade 1 word bank clips with local Edge TTS MP3 files.
 - `HANZI_AUDIO_DOWNLOAD_QUEUE=path/to/queue.json` or `node tools/generate-hanzi-audio.mjs --download-queue=path/to/queue.json` - generate only Hanzi captured from the browser-side missing-audio queue.
 
 Generated Hanzi clips use Unicode codepoint file names such as `u4e00.mp3` for `一`. This avoids pinyin collisions from homophones and polyphonic characters. The default generator skips any file that already exists; the replace script rewrites the whole batch so gameplay can use local MP3 files instead of runtime TTS.

@@ -3,6 +3,7 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import manifest from '../src/data/hanzi-audio-manifest.js';
+import wordsCore from '../src/data/grade-one-words.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, '..');
@@ -19,6 +20,7 @@ const concurrencyArg = process.argv.find((arg) => arg.startsWith('--concurrency=
 const concurrency = Math.max(1, Number.parseInt(process.env.HANZI_AUDIO_CONCURRENCY || concurrencyArg?.split('=')[1] || '4', 10));
 const queueArg = process.argv.find((arg) => arg.startsWith('--download-queue='));
 const queuePath = process.env.HANZI_AUDIO_DOWNLOAD_QUEUE || queueArg?.split('=')[1] || '';
+const gradeOneOnly = process.env.HANZI_AUDIO_GRADE_ONE_ONLY === '1' || process.argv.includes('--grade-one-only');
 
 async function exists(filePath) {
   try {
@@ -86,7 +88,12 @@ async function readDownloadQueueItems() {
 await fs.mkdir(outputDir, { recursive: true });
 
 const itemsToGenerate = [];
-const sourceItems = queuePath ? await readDownloadQueueItems() : manifest.hanziAudioPrompts;
+const gradeOneHanzi = new Set(wordsCore.gradeOneWordData.map(([hanzi]) => hanzi));
+const sourceItems = queuePath
+  ? await readDownloadQueueItems()
+  : gradeOneOnly
+    ? manifest.hanziAudioPrompts.filter((item) => gradeOneHanzi.has(item.hanzi))
+    : manifest.hanziAudioPrompts;
 for (const [index, item] of sourceItems.entries()) {
   const position = index + 1;
   if (position < startAt) continue;
@@ -106,7 +113,7 @@ if (itemsToGenerate.length === 0) {
 }
 
 console.log(`Using Edge TTS voice ${voice} (rate ${rate}, pitch ${pitch}, volume ${volume})`);
-console.log(`${overwrite ? 'Replacing' : 'Generating'} ${itemsToGenerate.length} Hanzi MP3 file${itemsToGenerate.length === 1 ? '' : 's'}${queuePath ? ' from download queue' : ''} with concurrency ${concurrency}...`);
+console.log(`${overwrite ? 'Replacing' : 'Generating'} ${itemsToGenerate.length} Hanzi MP3 file${itemsToGenerate.length === 1 ? '' : 's'}${queuePath ? ' from download queue' : gradeOneOnly ? ' for Grade 1' : ''} with concurrency ${concurrency}...`);
 
 let written = 0;
 let nextIndex = 0;

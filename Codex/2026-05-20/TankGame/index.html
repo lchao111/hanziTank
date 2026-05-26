@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Hanzi Tank</title>
+  <title>Hanzi Tank - Multi Lane</title>
   <style>
     :root {
       color-scheme: light;
@@ -109,9 +109,8 @@
       min-height: 520px;
       overflow: hidden;
       background:
-        linear-gradient(rgba(42, 43, 39, 0.1), rgba(44, 35, 28, 0.16)),
-        url("assets/ww2-battlefield.png"),
-        linear-gradient(var(--war-sky) 0 44%, var(--war-haze) 44% 55%, #746550 55% 67%, #4a3c2f 67% 100%);
+        url("assets/sprites/environment/battlefield-background.png?v=20260525") center center / cover no-repeat,
+        linear-gradient(#90988d 0 42%, #c3b79c 42% 54%, #806f56 54% 68%, #4d3e31 68% 100%);
       background-size: cover;
       background-position: center bottom;
     }
@@ -147,62 +146,19 @@
     }
 
     .sun {
-      position: absolute;
-      z-index: 1;
-      top: 44px;
-      right: 62px;
-      width: 98px;
-      height: 98px;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle, rgba(238, 220, 163, 0.26) 0 28%, transparent 29%),
-        radial-gradient(circle, rgba(56, 54, 48, 0.28), transparent 66%);
-      box-shadow: none;
-      filter: blur(1px);
-      opacity: 0.28;
+      display: none;
     }
 
     .ground {
-      position: absolute;
-      z-index: 1;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 118px;
-      background:
-        radial-gradient(ellipse at 22% 34%, rgba(40, 34, 28, 0.28) 0 54px, transparent 56px),
-        radial-gradient(ellipse at 72% 58%, rgba(37, 31, 26, 0.34) 0 72px, transparent 74px),
-        repeating-linear-gradient(10deg, rgba(255,255,255,0.035) 0 7px, transparent 7px 20px),
-        linear-gradient(rgba(81, 65, 50, 0.18), rgba(41, 34, 28, 0.32));
-      border-top: 6px solid rgba(48, 40, 32, 0.26);
-      box-shadow: inset 0 16px 22px rgba(35, 29, 24, 0.18);
+      display: none;
     }
 
     .battlefield::before {
-      content: "";
-      position: absolute;
-      z-index: 1;
-      left: 0;
-      right: 0;
-      bottom: 94px;
-      height: 90px;
-      background:
-        repeating-linear-gradient(92deg, transparent 0 36px, rgba(33, 27, 22, 0.32) 36px 44px, transparent 44px 76px),
-        linear-gradient(transparent 0 38%, rgba(58, 47, 37, 0.84) 39% 52%, transparent 53% 100%);
-      opacity: 0.9;
-      pointer-events: none;
+      display: none;
     }
 
     .battlefield::after {
-      content: "";
-      position: absolute;
-      z-index: 1;
-      inset: 0;
-      background:
-        radial-gradient(ellipse at 10% 86%, rgba(35, 29, 24, 0.36) 0 90px, transparent 92px),
-        radial-gradient(ellipse at 90% 78%, rgba(35, 29, 24, 0.28) 0 110px, transparent 112px),
-        linear-gradient(rgba(36, 37, 33, 0.12), rgba(44, 35, 28, 0.22));
-      pointer-events: none;
+      display: none;
     }
 
     .tank {
@@ -219,9 +175,270 @@
       left: clamp(14px, 7vw, 90px);
     }
 
+    .battlefield.multi-lane-mode .tank.player {
+      z-index: 5;
+      top: var(--player-lane-top, 50%);
+      bottom: auto;
+      width: min(24vw, 158px);
+      min-width: 112px;
+      transform: translateY(-50%);
+    }
+
+    .battlefield.multi-lane-mode .tank.player.fire {
+      transform: translateY(-50%) translateX(10px);
+    }
+
+    .battlefield.multi-lane-mode .tank.player.hit {
+      animation: shake 340ms ease;
+    }
+
     .tank.enemy {
       right: clamp(14px, 7vw, 90px);
       transform: scaleX(-1);
+    }
+
+    .battlefield.multi-lane-mode > .tank.enemy,
+    .battlefield.multi-lane-mode > .bullet,
+    .battlefield.multi-lane-mode > .enemy-bullet,
+    .battlefield.multi-lane-mode > .burst,
+    .battlefield.multi-lane-mode > .player-burst {
+      display: none;
+    }
+
+    .lane-layer {
+      position: absolute;
+      z-index: 2;
+      inset: 72px 0 118px;
+      display: none;
+      pointer-events: none;
+    }
+
+    .battlefield.multi-lane-mode .lane-layer {
+      display: block;
+    }
+
+    .lane-track {
+      position: absolute;
+      z-index: 1;
+      left: 0;
+      right: 0;
+      top: var(--lane-top, 50%);
+      height: clamp(58px, 10vh, 84px);
+      border-top: 1px solid rgba(255, 248, 223, 0.12);
+      border-bottom: 1px solid rgba(20, 15, 10, 0.34);
+      background:
+        radial-gradient(ellipse at 50% 50%, rgba(118, 96, 70, 0.16) 0 44%, transparent 70%),
+        linear-gradient(90deg, rgba(42, 34, 27, 0.18), rgba(126, 103, 76, 0.12) 48%, rgba(42, 34, 27, 0.18));
+      box-shadow:
+        inset 0 1px 0 rgba(255, 243, 205, 0.08),
+        inset 0 -8px 12px rgba(22, 17, 13, 0.1);
+      transform: translateY(-50%);
+      opacity: 0.74;
+      pointer-events: none;
+    }
+
+    .battlefield.training-mode .lane-track {
+      height: clamp(42px, 7.1vh, 58px);
+      background:
+        radial-gradient(ellipse at 50% 50%, rgba(177, 139, 76, 0.14) 0 46%, transparent 72%),
+        linear-gradient(90deg, rgba(77, 62, 43, 0.16), rgba(154, 122, 73, 0.1) 52%, rgba(62, 50, 36, 0.16));
+      opacity: 0.72;
+    }
+
+    .lane-track::before,
+    .lane-track::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      pointer-events: none;
+    }
+
+    .lane-track::before {
+      top: 50%;
+      height: 1px;
+      border-top: 1px solid rgba(255, 238, 176, 0.18);
+      background: none;
+      transform: translateY(-50%);
+      opacity: 1;
+    }
+
+    .battlefield.training-mode .lane-track::before {
+      height: 2px;
+      border-top: 2px dashed rgba(255, 223, 124, 0.3);
+      background: none;
+      opacity: 1;
+    }
+
+    .lane-track::after {
+      top: 50%;
+      border-top: 1px dashed rgba(255, 248, 223, 0.1);
+      transform: translateY(-50%);
+    }
+
+    .lane-track.active {
+      border-top-color: rgba(255, 215, 119, 0.82);
+      border-bottom-color: rgba(255, 215, 119, 0.72);
+      background:
+        radial-gradient(ellipse at 50% 50%, rgba(255, 215, 119, 0.14) 0 46%, transparent 72%),
+        linear-gradient(90deg, rgba(96, 76, 38, 0.28), rgba(255, 215, 119, 0.13) 50%, rgba(96, 76, 38, 0.28));
+      box-shadow:
+        inset 0 2px 0 rgba(255, 230, 147, 0.52),
+        inset 0 -2px 0 rgba(255, 230, 147, 0.34),
+        0 0 22px rgba(255, 215, 119, 0.16);
+      opacity: 1;
+    }
+
+    .lane-track.learned {
+      border-top-color: rgba(80, 190, 112, 0.68);
+      border-bottom-color: rgba(34, 133, 76, 0.62);
+      background:
+        radial-gradient(ellipse at 50% 50%, rgba(74, 222, 128, 0.12) 0 46%, transparent 72%),
+        linear-gradient(90deg, rgba(22, 101, 52, 0.22), rgba(74, 222, 128, 0.1) 52%, rgba(22, 101, 52, 0.22));
+      opacity: 0.82;
+    }
+
+    .lane-question-tag {
+      position: absolute;
+      z-index: 6;
+      left: 50%;
+      top: var(--lane-top, 50%);
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border: 3px solid rgba(47, 111, 47, 0.92);
+      border-radius: 8px;
+      background: rgba(245, 255, 230, 0.95);
+      color: #163b1b;
+      font-size: 25px;
+      font-weight: 900;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 5px 12px rgba(19, 24, 22, 0.28);
+      pointer-events: none;
+    }
+
+    .lane-question-tag.active {
+      border-color: #b98424;
+      background: #fff2c4;
+      color: #3d2d1d;
+    }
+
+    .lane-enemy {
+      position: absolute;
+      z-index: 4;
+      left: var(--enemy-left, 70%);
+      top: var(--lane-top, 50%);
+      width: min(22vw, 150px);
+      min-width: 106px;
+      aspect-ratio: 1.5;
+      transform: translate(-50%, -50%) scaleX(-1);
+      pointer-events: none;
+    }
+
+    .lane-enemy.active {
+      filter: drop-shadow(0 0 14px rgba(255, 215, 119, 0.72));
+    }
+
+    .lane-enemy.hit {
+      animation: shake 340ms ease;
+    }
+
+    .lane-enemy.defeated {
+      opacity: 0.28;
+      filter: grayscale(1) brightness(0.65);
+    }
+
+    .lane-enemy.inactive,
+    .lane-question-tag.inactive {
+      display: none;
+    }
+
+    .lane-track.inactive {
+      opacity: 0.42;
+    }
+
+    .lane-enemy .unit-hud {
+      top: -28px;
+      transform: translateX(-50%) scaleX(-1);
+    }
+
+    .lane-enemy.active .health-label {
+      color: #fff2c4;
+    }
+
+    .lane-enemy .tank-sprite {
+      transform: none;
+    }
+
+    .lane-enemy.phaser-lane-infantry-active .tank-sprite {
+      opacity: 0;
+    }
+
+    .lane-controls {
+      position: absolute;
+      z-index: 6;
+      left: clamp(12px, 2vw, 24px);
+      top: 50%;
+      display: none;
+      gap: 8px;
+      transform: translateY(-50%);
+    }
+
+    .battlefield.multi-lane-mode .lane-controls {
+      display: grid;
+    }
+
+    .lane-move-button {
+      width: 44px;
+      height: 44px;
+      border: 3px solid #715332;
+      border-radius: 8px;
+      background: #ffd777;
+      color: #3d2d1d;
+      font-size: 24px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 5px 10px rgba(19, 24, 22, 0.22);
+    }
+
+    .lane-move-button:disabled {
+      opacity: 0.46;
+      cursor: default;
+    }
+
+    .lane-projectile {
+      position: absolute;
+      z-index: 5;
+      left: var(--from-x, 20%);
+      top: var(--from-y, 50%);
+      width: 24px;
+      height: 11px;
+      border-radius: 999px;
+      background: var(--projectile-color, var(--gold));
+      box-shadow: 0 0 16px var(--projectile-glow, rgba(243, 178, 60, 0.78));
+      transform: translate(-50%, -50%);
+      animation: lane-shot 520ms ease-in forwards;
+      pointer-events: none;
+    }
+
+    .lane-projectile.enemy-shot {
+      background: #ff6b4a;
+      box-shadow: 0 0 16px rgba(255, 107, 74, 0.82);
+    }
+
+    .lane-impact {
+      position: absolute;
+      z-index: 5;
+      left: var(--impact-x, 70%);
+      top: var(--impact-y, 50%);
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff8c4 0 18%, #ffc247 19% 43%, #ff643d 44% 66%, transparent 67%);
+      transform: translate(-50%, -50%) scale(0);
+      animation: lane-impact-pop 420ms ease-out forwards;
+      pointer-events: none;
     }
 
     .tank.fire {
@@ -1181,6 +1398,42 @@
       box-shadow: 0 8px 20px rgba(46, 65, 83, 0.14);
     }
 
+    .choice.reveal {
+      outline: 5px solid rgba(34, 197, 94, 0.36);
+      background: #d7ffe0;
+    }
+
+    .lane-enemy.training-target .tank-sprite {
+      opacity: 0;
+    }
+
+    .lane-dummy {
+      position: absolute;
+      z-index: 2;
+      left: 50%;
+      top: 50%;
+      width: 58%;
+      height: 82%;
+      transform: translate(-50%, -50%) scaleX(-1);
+      filter: drop-shadow(0 8px 6px rgba(16, 12, 8, 0.3));
+      display: none;
+    }
+
+    .lane-enemy.training-target .lane-dummy {
+      display: block;
+    }
+
+    .lane-enemy.phaser-target-dummy-active .lane-dummy {
+      display: none;
+    }
+
+    .lane-dummy .dummy-head,
+    .lane-dummy .dummy-body,
+    .lane-dummy .dummy-arm,
+    .lane-dummy .dummy-leg {
+      border-width: 2px;
+    }
+
     .question {
       display: flex;
       align-items: center;
@@ -1249,6 +1502,204 @@
       font-size: 14px;
       font-weight: 800;
       color: #36506a;
+    }
+
+    .training-camp {
+      position: absolute;
+      z-index: 7;
+      inset: 0;
+      display: none;
+      grid-template-columns: minmax(180px, 0.7fr) minmax(320px, 1fr);
+      gap: 18px;
+      align-items: center;
+      padding: clamp(88px, 12vh, 128px) clamp(18px, 5vw, 72px) 132px;
+      background: linear-gradient(rgba(31, 27, 22, 0.14), rgba(31, 27, 22, 0.22));
+    }
+
+    .training-camp.show {
+      display: grid;
+    }
+
+    .training-yard {
+      display: grid;
+      place-items: center;
+      min-height: 260px;
+    }
+
+    .target-dummy {
+      position: relative;
+      width: min(26vw, 190px);
+      min-width: 128px;
+      height: min(34vw, 250px);
+      min-height: 184px;
+      filter: drop-shadow(0 14px 10px rgba(16, 12, 8, 0.36));
+    }
+
+    .target-dummy.hit {
+      animation: shake 260ms ease;
+    }
+
+    .dummy-head,
+    .dummy-body,
+    .dummy-arm,
+    .dummy-leg {
+      position: absolute;
+      border: 3px solid #3b2718;
+      background: #b87943;
+      box-shadow: inset 0 0 0 3px rgba(255, 238, 181, 0.16);
+    }
+
+    .dummy-head {
+      left: 50%;
+      top: 0;
+      width: 44%;
+      aspect-ratio: 0.82;
+      border-radius: 38% 38% 24% 24%;
+      transform: translateX(-50%) rotate(-3deg);
+    }
+
+    .dummy-body {
+      left: 50%;
+      top: 29%;
+      width: 50%;
+      height: 44%;
+      border-radius: 8px;
+      transform: translateX(-50%);
+    }
+
+    .dummy-body::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 52%;
+      aspect-ratio: 1;
+      border: 4px solid #5a321d;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: inset 0 0 0 10px rgba(255, 245, 190, 0.42);
+    }
+
+    .dummy-arm.left { left: 12%; top: 34%; width: 30%; height: 12%; border-radius: 999px; transform: rotate(18deg); }
+    .dummy-arm.right { right: 12%; top: 34%; width: 30%; height: 12%; border-radius: 999px; transform: rotate(-18deg); }
+    .dummy-leg.left { left: 34%; bottom: 0; width: 11%; height: 31%; border-radius: 999px; }
+    .dummy-leg.right { right: 34%; bottom: 0; width: 11%; height: 31%; border-radius: 999px; }
+
+    .training-panel {
+      max-width: 760px;
+      padding: 14px;
+      border: 2px solid var(--panel-border);
+      border-radius: 8px;
+      background: rgba(255, 253, 247, 0.96);
+      box-shadow: 0 10px 24px rgba(20, 14, 10, 0.22);
+    }
+
+    .training-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 10px;
+      color: #243447;
+      font-weight: 900;
+    }
+
+    .training-word {
+      display: inline-grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      border: 3px solid #2f6f2f;
+      border-radius: 8px;
+      background: #f5ffe6;
+      color: #163b1b;
+      font-size: 40px;
+      line-height: 1;
+    }
+
+    .training-options {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .training-choice {
+      min-height: 44px;
+      padding: 6px 8px;
+      border: 2px solid #24566f;
+      border-radius: 8px;
+      background: #e9f8ff;
+      color: #163246;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .training-choice.right {
+      border-color: #2f7d3a;
+      background: #ddffd8;
+    }
+
+    .training-choice.wrong {
+      border-color: #aa2222;
+      background: #ffe1df;
+      animation: shake 280ms ease;
+    }
+
+    .training-choice.reveal {
+      outline: 5px solid rgba(34, 197, 94, 0.36);
+      background: #d7ffe0;
+    }
+
+    .training-progress {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .training-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 28px;
+      padding: 4px 8px;
+      border: 2px solid #715332;
+      border-radius: 8px;
+      background: #fff2c4;
+      color: #3d2d1d;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .training-chip.learned {
+      border-color: #2f7d3a;
+      background: #ddffd8;
+    }
+
+    .training-message {
+      min-height: 22px;
+      margin-top: 10px;
+      color: #36506a;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .training-start {
+      display: none;
+      width: 100%;
+      min-height: 46px;
+      margin-top: 10px;
+      border: 3px solid #715332;
+      border-radius: 8px;
+      background: #ffd777;
+      color: #3d2d1d;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .training-start.show {
+      display: block;
     }
 
     .game-over {
@@ -2415,7 +2866,8 @@
       font-weight: 900;
     }
 
-    .profile-field input {
+    .profile-field input,
+    .profile-field select {
       min-height: 44px;
       width: 100%;
       padding: 8px 10px;
@@ -2424,6 +2876,11 @@
       background: #fffdf7;
       color: #1f2937;
       font-weight: 800;
+    }
+
+    .profile-field select:disabled {
+      color: #7b6f63;
+      background: #efe6d5;
     }
 
     .profile-actions {
@@ -2478,6 +2935,37 @@
       100% {
         opacity: 0;
         transform: translateX(calc(-100vw + min(32vw, 210px) * 1.45 + clamp(14px, 7vw, 90px) * 2));
+      }
+    }
+
+    @keyframes lane-shot {
+      0% {
+        opacity: 1;
+        left: var(--from-x, 20%);
+        top: var(--from-y, 50%);
+      }
+      88% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        left: var(--to-x, 74%);
+        top: var(--to-y, 50%);
+      }
+    }
+
+    @keyframes lane-impact-pop {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2);
+      }
+      42% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.35);
       }
     }
 
@@ -2845,7 +3333,7 @@
         <h1>Hanzi Tank</h1>
         <div class="subtitle">Pick the correct meaning to fire your tank.<span class="player-badge" id="playerNameDisplay"></span></div>
       </div>
-      <div class="stat level-stat">Stage <span id="levelNumber">1</span> · <span id="enemyName">Tank</span> · Armor <span id="enemyHp">1</span><span id="timerText"></span></div>
+      <div class="stat level-stat">Stage <span id="levelNumber">1</span> · <span id="enemyName">Tank</span> · <span id="enemyMetricLabel">Armor</span> <span id="enemyHp">1</span><span id="timerText"></span></div>
       <div class="stat">Score <span id="score">0</span></div>
       <div class="stat">HP <span id="lives">3</span></div>
       <div class="stat coin-stat">Coins <span id="coins">0</span></div>
@@ -2854,6 +3342,11 @@
     <section class="battlefield" aria-live="polite">
       <div class="sun" aria-hidden="true"></div>
       <div class="phaser-layer" id="phaserLayer" aria-hidden="true"></div>
+      <div class="lane-layer" id="laneLayer" aria-hidden="true"></div>
+      <div class="lane-controls" id="laneControls" aria-label="Move between lanes">
+        <button class="lane-move-button" id="laneUpButton" type="button" aria-label="Move tank up">↑</button>
+        <button class="lane-move-button" id="laneDownButton" type="button" aria-label="Move tank down">↓</button>
+      </div>
       <div class="tank player" id="playerTank" aria-hidden="true">
         <div class="unit-hud">
           <div class="health-label"><span id="playerHealthName">Commander</span><span id="playerHpText">3/3</span></div>
@@ -2893,6 +3386,33 @@
       <div class="burst" id="burst" aria-hidden="true"></div>
       <div class="player-burst" id="playerBurst" aria-hidden="true"></div>
       <div class="ground" aria-hidden="true"></div>
+
+      <section class="training-camp" id="trainingCamp" aria-hidden="true" aria-label="Training camp">
+        <div class="training-yard">
+          <div class="target-dummy" id="targetDummy" aria-hidden="true">
+            <div class="dummy-head"></div>
+            <div class="dummy-arm left"></div>
+            <div class="dummy-arm right"></div>
+            <div class="dummy-body"></div>
+            <div class="dummy-leg left"></div>
+            <div class="dummy-leg right"></div>
+          </div>
+        </div>
+        <div class="training-panel">
+          <div class="training-head">
+            <span>Training Camp</span>
+            <span>Hit each Hanzi twice</span>
+          </div>
+          <div class="question">
+            <span>Meaning of</span>
+            <span class="training-word" id="trainingWord">一</span>
+          </div>
+          <div class="training-options" id="trainingOptions"></div>
+          <div class="training-progress" id="trainingProgress"></div>
+          <div class="training-message" id="trainingMessage">Choose the correct meaning.</div>
+          <button class="training-start" id="trainingStartButton" type="button">Start Battle</button>
+        </div>
+      </section>
 
       <div class="prompt">
         <div class="question">
@@ -3121,6 +3641,10 @@
       <div class="profile-title" id="profileTitle">Player Profile</div>
       <div class="profile-copy">Enter your player name and password. A new name creates a protected profile.</div>
       <label class="profile-field">
+        Saved players
+        <select id="profileSelect" name="savedPlayer" autocomplete="username"></select>
+      </label>
+      <label class="profile-field">
         Player name
         <input id="profileNameInput" name="playerName" type="text" maxlength="24" required autocomplete="username">
       </label>
@@ -3218,10 +3742,14 @@
     const coinsEl = document.querySelector("#coins");
     const levelNumberEl = document.querySelector("#levelNumber");
     const enemyNameEl = document.querySelector("#enemyName");
+    const enemyMetricLabel = document.querySelector("#enemyMetricLabel");
     const enemyHpEl = document.querySelector("#enemyHp");
     const timerTextEl = document.querySelector("#timerText");
     const battlefieldEl = document.querySelector(".battlefield");
     const phaserLayer = document.querySelector("#phaserLayer");
+    const laneLayer = document.querySelector("#laneLayer");
+    const laneUpButton = document.querySelector("#laneUpButton");
+    const laneDownButton = document.querySelector("#laneDownButton");
     const questionWordEl = document.querySelector("#questionWord");
     const choicesEl = document.querySelector("#choices");
     const messageEl = document.querySelector("#message");
@@ -3253,6 +3781,13 @@
     const enemyBullet = document.querySelector("#enemyBullet");
     const burst = document.querySelector("#burst");
     const playerBurst = document.querySelector("#playerBurst");
+    const trainingCamp = document.querySelector("#trainingCamp");
+    const targetDummy = document.querySelector("#targetDummy");
+    const trainingWordEl = document.querySelector("#trainingWord");
+    const trainingOptions = document.querySelector("#trainingOptions");
+    const trainingProgress = document.querySelector("#trainingProgress");
+    const trainingMessage = document.querySelector("#trainingMessage");
+    const trainingStartButton = document.querySelector("#trainingStartButton");
     const gameOver = document.querySelector("#gameOver");
     const summaryText = document.querySelector("#summaryText");
     const summaryScore = document.querySelector("#summaryScore");
@@ -3330,6 +3865,7 @@
     const switchProfileButton = document.querySelector("#switchProfileButton");
     const profileGate = document.querySelector("#profileGate");
     const profileForm = document.querySelector("#profileForm");
+    const profileSelect = document.querySelector("#profileSelect");
     const profileNameInput = document.querySelector("#profileNameInput");
     const profilePasswordInput = document.querySelector("#profilePasswordInput");
     const profileMessage = document.querySelector("#profileMessage");
@@ -3361,6 +3897,16 @@
     let reviewMode = false;
     let levelNumber = 1;
     let currentEnemy = createEnemy(levelNumber);
+    let battleWordPool = [];
+    let trainingWords = [];
+    let trainingHits = {};
+    let trainingActive = false;
+    let trainingLocked = false;
+    let trainedStage = 0;
+    let currentTrainingWord = null;
+    let laneStates = [];
+    let activeLaneIndex = 0;
+    let laneAdvanceId = 0;
     let countdown = 0;
     let countdownId = 0;
     let pausedCountdownWasActive = false;
@@ -3409,6 +3955,16 @@
     let phaserBossTextureReady = false;
     let phaserRegularInfantry = null;
     let phaserRegularInfantryTextureReady = false;
+    let phaserLaneInfantrySprites = [];
+    let phaserTargetDummyTextureReady = false;
+    let phaserTargetDummySprites = [];
+    let phaserBurnedTreeTextureReady = false;
+    let phaserBurnedTreeSprites = [];
+    let phaserEnvironmentTextureReady = false;
+    let phaserRuinSprites = [];
+    let phaserTrenchSprites = [];
+    let phaserCraterSprites = [];
+    let phaserForestSprites = [];
     let phaserRegularEnemyTank = null;
     let phaserRegularEnemyTankTextureReady = false;
     let phaserGrenadier = null;
@@ -3454,6 +4010,30 @@
               frameWidth: 469,
               frameHeight: 300
             });
+            this.load.spritesheet("targetDummy", "assets/sprites/enemies/target-dummy-spritesheet.png?v=20260525", {
+              frameWidth: 469,
+              frameHeight: 300
+            });
+            this.load.spritesheet("burnedTrees", "assets/sprites/environment/burned-trees-spritesheet.png?v=20260525", {
+              frameWidth: 704,
+              frameHeight: 1536
+            });
+            this.load.spritesheet("ruinedHouses", "assets/sprites/environment/ruined-houses-spritesheet.png?v=20260525", {
+              frameWidth: 938,
+              frameHeight: 768
+            });
+            this.load.spritesheet("trenchStrips", "assets/sprites/environment/trench-strips-spritesheet.png?v=20260525", {
+              frameWidth: 2816,
+              frameHeight: 512
+            });
+            this.load.spritesheet("craterTracks", "assets/sprites/environment/crater-tracks-spritesheet.png?v=20260525", {
+              frameWidth: 938,
+              frameHeight: 768
+            });
+            this.load.spritesheet("forestClusters", "assets/sprites/environment/forest-clusters-spritesheet.png?v=20260525", {
+              frameWidth: 1408,
+              frameHeight: 768
+            });
             this.load.spritesheet("regularEnemyTank", "assets/sprites/enemies/regular-enemy-tank-spritesheet.png?v=20260525", {
               frameWidth: 469,
               frameHeight: 300
@@ -3472,6 +4052,10 @@
             buildPhaserPlayerTank(this);
             buildPhaserBossDismantler(this);
             buildPhaserRegularInfantry(this);
+            buildPhaserLaneInfantry(this);
+            buildPhaserTargetDummies(this);
+            buildPhaserBurnedTrees(this);
+            buildPhaserEnvironmentScenery(this);
             buildPhaserRegularEnemyTank(this);
             buildPhaserGrenadier(this);
             phaserPlayerSprite.setVisible(false);
@@ -3506,22 +4090,147 @@
     function updatePhaserActors() {
       if (!phaserEffects || !phaserPlayerSprite || !phaserEnemySprite) return;
       fitPhaserSprite(phaserPlayerSprite, playerTank, playerTank.classList.contains("destroyed") ? 0.38 : 0.46);
-      fitPhaserSprite(phaserEnemySprite, enemyTank, currentEnemy.id === "boss" ? 0.52 : 0.46);
       fitPhaserSprite(phaserPlayerTurretSprite, playerTank, playerTank.classList.contains("destroyed") ? 0.38 : 0.46);
-      fitPhaserSprite(phaserEnemyTurretSprite, enemyTank, currentEnemy.id === "boss" ? 0.52 : 0.46);
       phaserPlayerSprite.setAlpha(playerTank.classList.contains("destroyed") ? 0.42 : 1);
       phaserPlayerTurretSprite?.setAlpha(playerTank.classList.contains("destroyed") ? 0.24 : 1);
-      phaserEnemySprite.setAlpha(enemyTank.classList.contains("fragmented") ? 0 : 1);
-      phaserEnemyTurretSprite?.setAlpha(enemyTank.classList.contains("fragmented") ? 0 : 1);
       phaserPlayerSprite.setAngle(phaserPlayerTextureReady ? 0 : playerTank.classList.contains("destroyed") ? 82 : 90);
       phaserPlayerTurretSprite?.setAngle(playerTank.classList.contains("destroyed") ? 82 : 90);
+      updatePhaserPlayerTank();
+      hidePhaserBattlefieldScenery();
+      if (isMultiLaneStage()) {
+        hideSingleEnemyPhaserActors();
+        updatePhaserLaneInfantry();
+        return;
+      }
+      hidePhaserLaneInfantry();
+      fitPhaserSprite(phaserEnemySprite, enemyTank, currentEnemy.id === "boss" ? 0.52 : 0.46);
+      fitPhaserSprite(phaserEnemyTurretSprite, enemyTank, currentEnemy.id === "boss" ? 0.52 : 0.46);
+      phaserEnemySprite.setAlpha(enemyTank.classList.contains("fragmented") ? 0 : 1);
+      phaserEnemyTurretSprite?.setAlpha(enemyTank.classList.contains("fragmented") ? 0 : 1);
       phaserEnemySprite.setAngle(currentEnemy.id === "boss" ? -90 : -90).setFlipX(false);
       phaserEnemyTurretSprite?.setAngle(-90).setFlipX(false);
-      updatePhaserPlayerTank();
       updatePhaserBossDismantler();
       updatePhaserRegularInfantry();
       updatePhaserRegularEnemyTank();
       updatePhaserGrenadier();
+    }
+
+    function hideSingleEnemyPhaserActors() {
+      phaserEnemySprite?.setVisible(false);
+      phaserEnemyTurretSprite?.setVisible(false);
+      phaserBossDismantler?.setVisible(false);
+      phaserRegularInfantry?.setVisible(false);
+      phaserRegularEnemyTank?.setVisible(false);
+      phaserGrenadier?.setVisible(false);
+      hidePhaserTargetDummies();
+      hidePhaserLaneInfantry();
+      enemyTank.classList.remove("phaser-boss-active", "phaser-infantry-active", "phaser-enemy-tank-active", "phaser-grenadier-active");
+    }
+
+    function buildPhaserBurnedTrees(scene) {
+      const treeTexture = scene.textures.get("burnedTrees");
+      phaserBurnedTreeTextureReady = scene.textures.exists("burnedTrees") && treeTexture?.key === "burnedTrees" && (treeTexture.source?.[0]?.width || 0) >= 2816;
+      if (!phaserBurnedTreeTextureReady || phaserBurnedTreeSprites.length > 0) return;
+      const frames = [0, 1, 2, 3, 0, 2];
+      phaserBurnedTreeSprites = frames.map((frame) => scene.add.image(0, 0, "burnedTrees", frame)
+        .setOrigin(0.5, 1)
+        .setDepth(2)
+        .setAlpha(0.86)
+        .setVisible(false));
+    }
+
+    function updatePhaserBurnedTrees() {
+      if (!phaserBurnedTreeTextureReady || phaserBurnedTreeSprites.length === 0 || !phaserLayer) return;
+      const width = Math.max(1, phaserLayer.clientWidth || battlefieldEl.clientWidth || 800);
+      const height = Math.max(1, phaserLayer.clientHeight || battlefieldEl.clientHeight || 520);
+      const placements = [
+        { x: 0.08, y: 0.72, h: 180, alpha: 0.78, flip: false },
+        { x: 0.22, y: 0.92, h: 255, alpha: 0.88, flip: true },
+        { x: 0.54, y: 0.68, h: 165, alpha: 0.68, flip: false },
+        { x: 0.83, y: 0.82, h: 230, alpha: 0.82, flip: true },
+        { x: 0.36, y: 0.58, h: 140, alpha: 0.56, flip: false },
+        { x: 0.94, y: 0.96, h: 210, alpha: 0.78, flip: false }
+      ];
+      phaserBurnedTreeSprites.forEach((sprite, index) => {
+        const placement = placements[index];
+        if (!placement) {
+          sprite.setVisible(false);
+          return;
+        }
+        const displayHeight = Math.max(90, Math.min(height * 0.42, placement.h));
+        sprite
+          .setVisible(true)
+          .setPosition(width * placement.x, height * placement.y)
+          .setDisplaySize(displayHeight * (704 / 1536), displayHeight)
+          .setAlpha(placement.alpha)
+          .setFlipX(placement.flip);
+      });
+    }
+
+    function buildPhaserEnvironmentScenery(scene) {
+      phaserEnvironmentTextureReady = ["ruinedHouses", "trenchStrips", "craterTracks", "forestClusters"].every((key) => scene.textures.exists(key));
+      if (!phaserEnvironmentTextureReady || phaserRuinSprites.length > 0) return;
+      phaserRuinSprites = [0, 1, 2, 3, 4].map((frame) => scene.add.image(0, 0, "ruinedHouses", frame).setOrigin(0.5, 1).setDepth(1.2).setVisible(false));
+      phaserTrenchSprites = [0, 1, 2].map((frame) => scene.add.image(0, 0, "trenchStrips", frame).setOrigin(0.5, 0.5).setDepth(1.4).setVisible(false));
+      phaserCraterSprites = [0, 1, 2, 3, 4, 5].map((frame) => scene.add.image(0, 0, "craterTracks", frame).setOrigin(0.5, 0.5).setDepth(1.6).setVisible(false));
+      phaserForestSprites = [0, 1, 2, 3].map((frame) => scene.add.image(0, 0, "forestClusters", frame).setOrigin(0.5, 1).setDepth(0.8).setVisible(false));
+    }
+
+    function positionScenerySprites(sprites, placements, width, height, aspect) {
+      sprites.forEach((sprite, index) => {
+        const placement = placements[index];
+        if (!placement) {
+          sprite.setVisible(false);
+          return;
+        }
+        const displayHeight = Math.max(24, Math.min(height * (placement.maxScale || 0.42), placement.h));
+        sprite
+          .setVisible(true)
+          .setPosition(width * placement.x, height * placement.y)
+          .setDisplaySize(displayHeight * aspect, displayHeight)
+          .setAlpha(placement.alpha ?? 0.6)
+          .setFlipX(Boolean(placement.flip));
+      });
+    }
+
+    function updatePhaserEnvironmentScenery() {
+      if (!phaserEnvironmentTextureReady || !phaserLayer) return;
+      const width = Math.max(1, phaserLayer.clientWidth || battlefieldEl.clientWidth || 800);
+      const height = Math.max(1, phaserLayer.clientHeight || battlefieldEl.clientHeight || 520);
+      positionScenerySprites(phaserForestSprites, [
+        { x: 0.14, y: 0.55, h: 130, alpha: 0.52, maxScale: 0.22 },
+        { x: 0.58, y: 0.52, h: 118, alpha: 0.46, flip: true, maxScale: 0.2 },
+        { x: 0.86, y: 0.56, h: 110, alpha: 0.42, maxScale: 0.18 },
+        { x: 0.38, y: 0.48, h: 90, alpha: 0.34, flip: true, maxScale: 0.16 }
+      ], width, height, 1408 / 768);
+      positionScenerySprites(phaserRuinSprites, [
+        { x: 0.1, y: 0.88, h: 150, alpha: 0.64, maxScale: 0.24 },
+        { x: 0.78, y: 0.74, h: 125, alpha: 0.54, flip: true, maxScale: 0.2 },
+        { x: 0.93, y: 0.96, h: 128, alpha: 0.58, maxScale: 0.2 },
+        { x: 0.28, y: 0.64, h: 92, alpha: 0.38, flip: true, maxScale: 0.15 },
+        { x: 0.66, y: 0.9, h: 118, alpha: 0.52, maxScale: 0.19 }
+      ], width, height, 938 / 768);
+      positionScenerySprites(phaserTrenchSprites, [
+        { x: 0.42, y: 0.34, h: 46, alpha: 0.22, maxScale: 0.08 },
+        { x: 0.52, y: 0.52, h: 54, alpha: 0.24, flip: true, maxScale: 0.09 },
+        { x: 0.46, y: 0.7, h: 58, alpha: 0.2, maxScale: 0.1 }
+      ], width, height, 2816 / 512);
+      positionScenerySprites(phaserCraterSprites, [
+        { x: 0.28, y: 0.76, h: 70, alpha: 0.36, maxScale: 0.12 },
+        { x: 0.49, y: 0.79, h: 62, alpha: 0.32, maxScale: 0.1 },
+        { x: 0.72, y: 0.62, h: 58, alpha: 0.26, maxScale: 0.09 },
+        { x: 0.84, y: 0.92, h: 76, alpha: 0.34, maxScale: 0.12 },
+        { x: 0.18, y: 0.56, h: 52, alpha: 0.24, maxScale: 0.08 },
+        { x: 0.61, y: 0.43, h: 48, alpha: 0.2, maxScale: 0.08 }
+      ], width, height, 938 / 768);
+    }
+
+    function hidePhaserBattlefieldScenery() {
+      phaserBurnedTreeSprites.forEach((sprite) => sprite.setVisible(false));
+      phaserRuinSprites.forEach((sprite) => sprite.setVisible(false));
+      phaserTrenchSprites.forEach((sprite) => sprite.setVisible(false));
+      phaserCraterSprites.forEach((sprite) => sprite.setVisible(false));
+      phaserForestSprites.forEach((sprite) => sprite.setVisible(false));
     }
 
     function buildPhaserPlayerTank(scene) {
@@ -3548,12 +4257,25 @@
       return lives > 0 && lives <= 1;
     }
 
+    function getPhaserPlayerPoint(rect) {
+      if (!isMultiLaneStage()) return getBattlefieldPoint(playerTank, 0.5, 0.86);
+      const fieldRect = battlefieldEl.getBoundingClientRect();
+      const laneTop = getLaneTop(activeLaneIndex, laneStates.length || (trainingActive ? getTrainingLaneCount() : getLaneCount())) / 100;
+      const laneAreaTop = 72;
+      const laneAreaBottom = 118;
+      const laneAreaHeight = Math.max(1, fieldRect.height - laneAreaTop - laneAreaBottom);
+      return {
+        x: playerTank.getBoundingClientRect().left - fieldRect.left + rect.width * 0.5,
+        y: laneAreaTop + laneAreaHeight * laneTop + rect.height * 0.36
+      };
+    }
+
     function updatePhaserPlayerTank() {
       const active = Boolean(phaserPlayerTextureReady && phaserPlayerSprite && (!playerTank.classList.contains("fragmented") || playerTank.classList.contains("destroyed")));
       playerTank.classList.toggle("phaser-player-active", active);
       if (!active) return;
       const rect = playerTank.getBoundingClientRect();
-      const point = getBattlefieldPoint(playerTank, 0.5, 0.86);
+      const point = getPhaserPlayerPoint(rect);
       phaserPlayerSprite.setVisible(true).setPosition(point.x, point.y).setDisplaySize(rect.width * 1.18, rect.width * 1.18 * (144 / 224)).setAlpha(playerTank.classList.contains("destroyed") ? 0.78 : 1);
       playPhaserPlayerState(getPlayerTankPhaserState());
     }
@@ -3682,6 +4404,130 @@
       phaserRegularInfantry.once(`animationcomplete-regular-infantry-${stateName}`, () => {
         if (currentEnemy.id === "infantry" && !isGameOver && !isLevelCleared && currentEnemy.hp > 0) playPhaserRegularInfantryIdle();
       });
+    }
+
+    function buildPhaserLaneInfantry(scene) {
+      if (!phaserRegularInfantryTextureReady || phaserLaneInfantrySprites.length > 0) return;
+      phaserLaneInfantrySprites = Array.from({ length: 3 }, () => scene.add.sprite(0, 0, "regularInfantry", 0)
+        .setOrigin(0.5, 0.78)
+        .setDepth(13)
+        .setFlipX(true)
+        .setVisible(false));
+    }
+
+    function hidePhaserLaneInfantry() {
+      phaserLaneInfantrySprites.forEach((sprite) => sprite.setVisible(false));
+      laneStates.forEach((lane) => lane.element?.classList.remove("phaser-lane-infantry-active"));
+    }
+
+    function updatePhaserLaneInfantry() {
+      if (!phaserRegularInfantryTextureReady || phaserLaneInfantrySprites.length === 0) {
+        laneStates.forEach((lane) => lane.element?.classList.remove("phaser-lane-infantry-active"));
+        return;
+      }
+      phaserLaneInfantrySprites.forEach((sprite, index) => {
+        const lane = laneStates[index];
+        const active = Boolean(isMultiLaneStage() && !trainingActive && isLaneLive(lane) && lane.element && !isGameOver);
+        sprite.setVisible(active);
+        lane?.element?.classList.toggle("phaser-lane-infantry-active", active);
+        if (!active || !lane?.element) return;
+        const rect = lane.element.getBoundingClientRect();
+        const point = getBattlefieldPoint(lane.element, 0.5, 0.72);
+        sprite.setPosition(point.x, point.y);
+        sprite.setDisplaySize(rect.width * 1.18, rect.height * 1.42);
+        sprite.setFlipX(true);
+        sprite.setAlpha(1);
+        if (sprite.anims.currentAnim?.key !== "regular-infantry-fire") {
+          playPhaserLaneInfantryState(index, "walk", { force: sprite.anims.currentAnim?.key === "regular-infantry-hit" });
+        }
+      });
+      if (trainingActive) updatePhaserTargetDummies();
+    }
+
+    function playPhaserLaneInfantryState(laneIndex, stateName, options = {}) {
+      const sprite = phaserLaneInfantrySprites[laneIndex];
+      const lane = laneStates[laneIndex];
+      if (!sprite?.visible || !isLaneLive(lane)) return;
+      const key = `regular-infantry-${stateName}`;
+      if (!options.force && stateName === "walk" && sprite.anims.currentAnim?.key === key && sprite.anims.isPlaying) return;
+      sprite.play(key, true);
+      if (["fire", "hit"].includes(stateName)) {
+        sprite.once(`animationcomplete-${key}`, () => {
+          if (isLaneLive(laneStates[laneIndex]) && !isGameOver && !isLevelCleared) playPhaserLaneInfantryState(laneIndex, "walk");
+        });
+      }
+    }
+
+    function buildPhaserTargetDummies(scene) {
+      const dummyTexture = scene.textures.get("targetDummy");
+      phaserTargetDummyTextureReady = scene.textures.exists("targetDummy") && dummyTexture?.key === "targetDummy" && (dummyTexture.source?.[0]?.width || 0) >= 2814;
+      if (!phaserTargetDummyTextureReady || phaserTargetDummySprites.length > 0) return;
+      scene.anims.create({ key: "target-dummy-idle", frames: scene.anims.generateFrameNumbers("targetDummy", { start: 0, end: 5 }), frameRate: 6, repeat: -1 });
+      scene.anims.create({ key: "target-dummy-laugh", frames: scene.anims.generateFrameNumbers("targetDummy", { start: 6, end: 11 }), frameRate: 8, repeat: -1 });
+      scene.anims.create({ key: "target-dummy-miss", frames: scene.anims.generateFrameNumbers("targetDummy", { start: 12, end: 17 }), frameRate: 8, repeat: 0 });
+      scene.anims.create({ key: "target-dummy-sad", frames: scene.anims.generateFrameNumbers("targetDummy", { start: 18, end: 23 }), frameRate: 8, repeat: 0 });
+      scene.anims.create({ key: "target-dummy-destroyed", frames: scene.anims.generateFrameNumbers("targetDummy", { start: 24, end: 29 }), frameRate: 8, repeat: 0 });
+      phaserTargetDummySprites = Array.from({ length: 5 }, () => scene.add.sprite(0, 0, "targetDummy", 0)
+        .setOrigin(0.5, 0.78)
+        .setDepth(13)
+        .setFlipX(true)
+        .setVisible(false));
+    }
+
+    function hidePhaserTargetDummies() {
+      phaserTargetDummySprites.forEach((sprite) => sprite.setVisible(false));
+      laneStates.forEach((lane) => lane.element?.classList.remove("phaser-target-dummy-active"));
+    }
+
+    function updatePhaserTargetDummies() {
+      if (!phaserTargetDummyTextureReady || phaserTargetDummySprites.length === 0) {
+        laneStates.forEach((lane) => lane.element?.classList.remove("phaser-target-dummy-active"));
+        return;
+      }
+      phaserTargetDummySprites.forEach((sprite, index) => {
+        const lane = laneStates[index];
+        const active = Boolean(trainingActive && lane?.active && lane?.training && lane.word && lane.element && !isGameOver);
+        sprite.setVisible(active);
+        lane?.element?.classList.toggle("phaser-target-dummy-active", active);
+        if (!active || !lane?.element) return;
+        const rect = lane.element.getBoundingClientRect();
+        const point = getBattlefieldPoint(lane.element, 0.5, 0.8);
+        sprite.setPosition(point.x, point.y);
+        sprite.setDisplaySize(rect.width * 2.25, rect.height * 1.46);
+        sprite.setFlipX(true);
+        sprite.setAlpha(1);
+        if (isTrainingLaneLearned(lane)) {
+          holdPhaserTargetDummyDestroyed(index);
+        } else if (!["target-dummy-miss", "target-dummy-sad", "target-dummy-destroyed"].includes(sprite.anims.currentAnim?.key)) {
+          playPhaserTargetDummyState(index, "idle");
+        }
+      });
+    }
+
+    function playPhaserTargetDummyState(laneIndex, stateName, options = {}) {
+      const sprite = phaserTargetDummySprites[laneIndex];
+      const lane = laneStates[laneIndex];
+      if (!sprite?.visible || !lane?.active || !lane.training) return;
+      const key = `target-dummy-${stateName}`;
+      if (!options.force && stateName === "idle" && sprite.anims.currentAnim?.key === key && sprite.anims.isPlaying) return;
+      sprite.play(key, true);
+      if (["miss", "sad", "destroyed"].includes(stateName) && !options.hold) {
+        sprite.once(`animationcomplete-${key}`, () => {
+          if (isTrainingLaneSelectable(laneStates[laneIndex]) && trainingActive) playPhaserTargetDummyState(laneIndex, "idle", { force: true });
+        });
+      }
+    }
+
+    function holdPhaserTargetDummyDestroyed(laneIndex) {
+      const sprite = phaserTargetDummySprites[laneIndex];
+      const lane = laneStates[laneIndex];
+      if (!sprite?.visible || !lane?.active || !lane.training) return;
+      const animationKey = "target-dummy-destroyed";
+      const isAlreadyHeld = sprite.anims.currentAnim?.key === animationKey && !sprite.anims.isPlaying;
+      if (!isAlreadyHeld) {
+        sprite.stop();
+        sprite.setTexture("targetDummy", 29);
+      }
     }
 
     function buildPhaserRegularEnemyTank(scene) {
@@ -4253,6 +5099,35 @@
       saveStoredProfiles(localStorage, profiles);
     }
 
+    function getProfileEntries() {
+      return Object.entries(getProfiles())
+        .filter(([profileId, profile]) => profileId && profile?.name)
+        .sort(([, firstProfile], [, secondProfile]) => {
+          const firstDate = firstProfile.lastLoginAt || firstProfile.createdAt || "";
+          const secondDate = secondProfile.lastLoginAt || secondProfile.createdAt || "";
+          if (firstDate !== secondDate) return secondDate.localeCompare(firstDate);
+          return firstProfile.name.localeCompare(secondProfile.name);
+        });
+    }
+
+    function renderProfileSelect(selectedName = "") {
+      const entries = getProfileEntries();
+      profileSelect.replaceChildren();
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = entries.length ? "Choose a saved player..." : "No saved players yet";
+      profileSelect.appendChild(placeholder);
+      entries.forEach(([profileId, profile]) => {
+        const option = document.createElement("option");
+        option.value = profileId;
+        option.textContent = profile.name;
+        profileSelect.appendChild(option);
+      });
+      profileSelect.disabled = entries.length === 0;
+      const selectedId = getProfileId(selectedName);
+      profileSelect.value = entries.some(([profileId]) => profileId === selectedId) ? selectedId : "";
+    }
+
     function normalizeProfileName(name) {
       return normalizeStoredProfileName(name);
     }
@@ -4288,6 +5163,7 @@
       profileMessage.textContent = message;
       profilePasswordInput.value = "";
       profileNameInput.value = activeProfileName || localStorage.getItem("hanziTankLastProfile") || "";
+      renderProfileSelect(profileNameInput.value);
       setTimeout(() => {
         (profileNameInput.value ? profilePasswordInput : profileNameInput).focus();
       }, 0);
@@ -4311,6 +5187,9 @@
       };
       levelNumber = 1;
       currentEnemy = createEnemy(levelNumber);
+      laneStates = [];
+      activeLaneIndex = 0;
+      stopLaneAdvance();
       enemyTank.classList.remove("fragmented");
       playerTank.classList.remove("fragmented", "destroyed");
       absoluteDefenseAvailable = 0;
@@ -4321,6 +5200,13 @@
       runWordDamage = {};
       runWordCorrect = {};
       runSeenWords = {};
+      battleWordPool = [];
+      trainingWords = [];
+      trainingHits = {};
+      trainingActive = false;
+      trainingLocked = false;
+      trainedStage = 0;
+      currentTrainingWord = null;
       bossPhrase = null;
       bossIntroToken += 1;
       lives = getMaxLives();
@@ -4334,6 +5220,9 @@
       activeProfileId = profileId;
       activeProfileName = profile.name;
       localStorage.setItem("hanziTankLastProfile", profile.name);
+      const profiles = getProfiles();
+      profiles[profileId] = { ...profile, lastLoginAt: new Date().toISOString() };
+      saveProfiles(profiles);
       playerState = loadState(profileId);
       playerNameDisplay.textContent = profile.name;
       playerHealthName.textContent = profile.name;
@@ -4377,6 +5266,15 @@
         return;
       }
       enterProfile(profileId, profile);
+    }
+
+    function handleProfileSelectChange() {
+      const profiles = getProfiles();
+      const profile = profiles[profileSelect.value];
+      if (!profile) return;
+      profileNameInput.value = profile.name;
+      profileMessage.textContent = "";
+      profilePasswordInput.focus();
     }
 
     function getItem(id) {
@@ -4507,6 +5405,420 @@
       return createEnemyForStage(number, levelTypes, bossTemplate);
     }
 
+    function isBossStage(stage = levelNumber) {
+      return stage > 0 && stage % 5 === 0;
+    }
+
+    function isMultiLaneStage(stage = levelNumber) {
+      return stage >= 1 && !isBossStage(stage);
+    }
+
+    function getLaneCount(stage = levelNumber) {
+      if (!isMultiLaneStage(stage)) return 1;
+      return 3;
+    }
+
+    function getTrainingLaneCount() {
+      return 5;
+    }
+
+    function getActiveLaneCount(stage = levelNumber) {
+      if (!isMultiLaneStage(stage)) return 1;
+      return Math.min(3, Math.max(1, stage));
+    }
+
+    function getActiveLaneIndexes(stage = levelNumber) {
+      const activeCount = getActiveLaneCount(stage);
+      if (activeCount === 1) return [1];
+      if (activeCount === 2) return [0, 2];
+      return [0, 1, 2];
+    }
+
+    function getTrainingLaneIndexes() {
+      return [0, 1, 2, 3, 4];
+    }
+
+    function isLaneLive(lane) {
+      return Boolean(lane?.active && !lane.defeated && lane.enemy && lane.enemy.hp > 0);
+    }
+
+    function isTrainingLaneLearned(lane) {
+      return Boolean(lane?.training && lane.word && (trainingHits[lane.word.hanzi] || 0) >= 2);
+    }
+
+    function isTrainingLaneSelectable(lane) {
+      return Boolean(lane?.active && lane.training && lane.word && !isTrainingLaneLearned(lane));
+    }
+
+    function normalizeLaneEnemy(enemy) {
+      return {
+        ...enemy,
+        id: "infantry",
+        name: "Regular Soldier",
+        hp: 1,
+        maxHp: 1,
+        armor: 0,
+        maxArmor: 0,
+        absoluteDefense: 0,
+        maxAbsoluteDefense: 0,
+        damage: 1,
+        attackInterval: Math.max(5, Number(enemy.attackInterval || enemyAttackInterval))
+      };
+    }
+
+    function getLaneTop(index, count = getLaneCount()) {
+      if (count <= 1) return 50;
+      const topPadding = count >= 5 ? 12 : 16;
+      const bottomPadding = count >= 5 ? 88 : 84;
+      return topPadding + ((bottomPadding - topPadding) * index) / (count - 1);
+    }
+
+    function getLaneEnemyLeft(progress) {
+      return 82 - Math.max(0, Math.min(100, progress)) * 0.5;
+    }
+
+    function getBattleWordSource() {
+      if (reviewMode && getReviewWords().length > 0) return getReviewWords();
+      return battleWordPool.length > 0 ? battleWordPool : words;
+    }
+
+    function pickLaneWord(excludedHanzi = new Set()) {
+      const source = getBattleWordSource();
+      const options = source.filter((word) => word.hanzi !== currentWord.hanzi && !excludedHanzi.has(word.hanzi));
+      if (options.length === 0) return pickWord();
+      return pickWeightedWord(options);
+    }
+
+    function createLaneStates(stage = levelNumber) {
+      const count = getLaneCount(stage);
+      const activeIndexes = new Set(getActiveLaneIndexes(stage));
+      const used = new Set();
+      let enemyStageCursor = stage;
+      laneStates = Array.from({ length: count }, (_, index) => {
+        const active = activeIndexes.has(index);
+        while (isBossStage(enemyStageCursor)) enemyStageCursor += 1;
+        const enemy = active ? normalizeLaneEnemy(createEnemy(enemyStageCursor)) : null;
+        if (active) enemyStageCursor += 1;
+        const word = active ? pickLaneWord(used) : null;
+        if (word) used.add(word.hanzi);
+        return {
+          id: `lane-${index}`,
+          active,
+          enemy,
+          word,
+          progress: Math.max(0, index * 7 - stage),
+          defeated: false,
+          element: null,
+          healthFill: null,
+          hpText: null,
+          tag: null,
+          track: null
+        };
+      });
+      activeLaneIndex = getActiveLaneIndexes(stage)[0] || 0;
+      currentEnemy = getActiveLane()?.enemy || currentEnemy;
+      currentWord = getActiveLane()?.word || currentWord;
+    }
+
+    function createTrainingLaneStates(stage = levelNumber) {
+      const count = getTrainingLaneCount();
+      const activeIndexes = new Set(getTrainingLaneIndexes());
+      const wordsByHanzi = new Map(trainingWords.map((word) => [word.hanzi, word]));
+      laneStates = Array.from({ length: count }, (_, index) => {
+        const previousWord = laneStates[index]?.word;
+        const word = activeIndexes.has(index)
+          ? previousWord && wordsByHanzi.has(previousWord.hanzi)
+            ? wordsByHanzi.get(previousWord.hanzi)
+            : trainingWords[index] || null
+          : null;
+        const active = Boolean(word);
+        return {
+          id: `training-lane-${index}`,
+          active,
+          training: true,
+          enemy: active ? { id: "dummy", name: "Target Dummy", hp: 1, maxHp: 1, damage: 0, attackInterval: 999 } : null,
+          word,
+          progress: Math.max(0, index * 7 - stage),
+          defeated: false,
+          element: null,
+          healthFill: null,
+          hpText: null,
+          tag: null,
+          track: null
+        };
+      });
+      const liveIndexes = laneStates.map((lane, index) => isTrainingLaneSelectable(lane) ? index : -1).filter((index) => index >= 0);
+      activeLaneIndex = liveIndexes.includes(activeLaneIndex) ? activeLaneIndex : liveIndexes[Math.floor(liveIndexes.length / 2)] || 0;
+      currentTrainingWord = getActiveLane()?.word || null;
+      currentWord = currentTrainingWord || currentWord;
+    }
+
+    function getActiveLane() {
+      return laneStates[activeLaneIndex] || null;
+    }
+
+    function syncActiveLaneGlobals() {
+      const lane = getActiveLane();
+      if (!isLaneLive(lane)) return;
+      currentEnemy = lane.enemy;
+      currentWord = lane.word;
+    }
+
+    function updatePlayerLanePosition() {
+      const count = laneStates.length || (trainingActive ? getTrainingLaneCount() : getLaneCount());
+      playerTank.style.setProperty("--player-lane-top", `${getLaneTop(activeLaneIndex, count)}%`);
+      const liveIndexes = laneStates.map((lane, index) => trainingActive ? isTrainingLaneSelectable(lane) ? index : -1 : isLaneLive(lane) ? index : -1).filter((index) => index >= 0);
+      laneUpButton.disabled = !isMultiLaneStage() || liveIndexes.every((index) => index >= activeLaneIndex);
+      laneDownButton.disabled = !isMultiLaneStage() || liveIndexes.every((index) => index <= activeLaneIndex);
+      updatePhaserActors();
+    }
+
+    function createLaneEnemyElement(lane, index, count) {
+      const track = document.createElement("div");
+      track.className = "lane-track";
+      track.style.setProperty("--lane-top", `${getLaneTop(index, count)}%`);
+      laneLayer.appendChild(track);
+
+      const tag = document.createElement("div");
+      tag.className = "lane-question-tag";
+      tag.style.setProperty("--lane-top", `${getLaneTop(index, count)}%`);
+      tag.textContent = lane.word?.hanzi || "";
+      laneLayer.appendChild(tag);
+
+      const enemyEl = document.createElement("div");
+      enemyEl.className = "lane-enemy";
+      enemyEl.style.setProperty("--lane-top", `${getLaneTop(index, count)}%`);
+      enemyEl.innerHTML = `
+        <div class="unit-hud">
+          <div class="health-label"><span class="lane-enemy-name"></span><span class="lane-enemy-hp"></span></div>
+          <div class="health-bar"><div class="health-fill"></div></div>
+        </div>
+        <div class="lane-dummy" aria-hidden="true">
+          <div class="dummy-head"></div>
+          <div class="dummy-arm left"></div>
+          <div class="dummy-arm right"></div>
+          <div class="dummy-body"></div>
+          <div class="dummy-leg left"></div>
+          <div class="dummy-leg right"></div>
+        </div>
+        <img class="tank-sprite" alt="">
+      `;
+      laneLayer.appendChild(enemyEl);
+      lane.element = enemyEl;
+      lane.healthFill = enemyEl.querySelector(".health-fill");
+      lane.hpText = enemyEl.querySelector(".lane-enemy-hp");
+      lane.tag = tag;
+      lane.track = track;
+      return enemyEl;
+    }
+
+    function renderLaneLayer() {
+      laneLayer.innerHTML = "";
+      if (!isMultiLaneStage() && !trainingActive) {
+        battlefieldEl.classList.remove("multi-lane-mode");
+        playerTank.style.removeProperty("--player-lane-top");
+        return;
+      }
+      battlefieldEl.classList.add("multi-lane-mode");
+      if (!trainingActive && laneStates.length !== getLaneCount()) createLaneStates();
+      const count = laneStates.length;
+      laneStates.forEach((lane, index) => createLaneEnemyElement(lane, index, count));
+      updatePlayerLanePosition();
+      syncLaneHud();
+    }
+
+    function syncLaneHud() {
+      if (!isMultiLaneStage()) return;
+      laneStates.forEach((lane, index) => {
+        if (!lane.element) return;
+        const active = index === activeLaneIndex && (trainingActive ? isTrainingLaneSelectable(lane) : isLaneLive(lane));
+        lane.element.classList.toggle("active", active);
+        lane.element.classList.toggle("inactive", !lane.active);
+        lane.element.classList.toggle("training-target", Boolean(lane.training));
+        lane.element.classList.toggle("defeated", lane.active && (lane.defeated || lane.enemy.hp <= 0 || isTrainingLaneLearned(lane)));
+        lane.element.style.setProperty("--enemy-left", `${getLaneEnemyLeft(lane.progress)}%`);
+        lane.tag?.classList.toggle("active", active);
+        lane.tag?.classList.toggle("inactive", !lane.active);
+        lane.track?.classList.toggle("active", active);
+        lane.track?.classList.toggle("inactive", !lane.active);
+        lane.track?.classList.toggle("learned", isTrainingLaneLearned(lane) || Boolean(lane.defeated));
+        lane.tag.textContent = !lane.active ? "" : lane.defeated || isTrainingLaneLearned(lane) ? "✓" : lane.word.hanzi;
+        lane.element.querySelector(".lane-enemy-name").textContent = lane.enemy?.name || "";
+        const trainingHitsForLane = lane.training && lane.word ? Math.min(2, trainingHits[lane.word.hanzi] || 0) : 0;
+        lane.hpText.textContent = lane.training && lane.word ? `${trainingHitsForLane}/2` : lane.enemy ? `${Math.max(0, lane.enemy.hp)}/${lane.enemy.maxHp}` : "";
+        syncHealthBar(lane.healthFill, lane.training ? trainingHitsForLane : lane.enemy?.hp || 0, lane.training ? 2 : lane.enemy?.maxHp || 1);
+        const sprite = lane.element.querySelector(".tank-sprite");
+        sprite.src = lane.enemy ? (enemySpriteMap[lane.enemy.id] || enemySpriteMap.infantry || enemySpriteMap.tank) : "";
+      });
+      updatePlayerLanePosition();
+      syncActiveLaneGlobals();
+      updatePhaserLaneInfantry();
+      updatePhaserTargetDummies();
+    }
+
+    function stopLaneAdvance() {
+      if (!laneAdvanceId) return;
+      clearInterval(laneAdvanceId);
+      laneAdvanceId = 0;
+    }
+
+    function startLaneAdvance() {
+      if (!isMultiLaneStage() || laneAdvanceId || isPaused || isGameOver || isLevelCleared || lives <= 0) return;
+      laneAdvanceId = setInterval(() => {
+        if (!isMultiLaneStage() || isPaused || isGameOver || isLevelCleared || lives <= 0) {
+          stopLaneAdvance();
+          return;
+        }
+        laneStates.forEach((lane) => {
+          if (!isLaneLive(lane)) return;
+          const interval = Math.max(3, Number(lane.enemy.attackInterval || enemyAttackInterval) + 2);
+          lane.progress += 100 / (interval * 2);
+          if (lane.progress >= 100) attackFromLane(lane);
+        });
+        syncLaneHud();
+      }, 500);
+    }
+
+    function attackFromLane(lane) {
+      if (!isLaneLive(lane)) return;
+      lane.progress = 0;
+      const smokeMissed = consumeSmokeCover();
+      const damage = lane.enemy.damage || 1;
+      const result = smokeMissed ? createMissResult() : takeDamage(damage);
+      messageEl.textContent = smokeMissed ? `${lane.enemy.name} attack missed in smoke.` : `${lane.enemy.name} reached the line. Lose ${result.totalDamage || damage} HP.`;
+      laneEnemyAttack(lane, damage, result);
+      if (lives <= 0) showGameOver();
+    }
+
+    function moveLane(delta) {
+      if (!isMultiLaneStage() || (!trainingActive && locked) || (trainingActive && trainingLocked) || isPaused || lives <= 0) return;
+      const liveIndexes = laneStates.map((lane, index) => trainingActive ? isTrainingLaneSelectable(lane) ? index : -1 : isLaneLive(lane) ? index : -1).filter((index) => index >= 0);
+      const currentPosition = liveIndexes.indexOf(activeLaneIndex);
+      const nextIndex = liveIndexes[Math.max(0, Math.min(liveIndexes.length - 1, currentPosition + delta))];
+      if (nextIndex === activeLaneIndex) return;
+      activeLaneIndex = nextIndex;
+      playUiSound();
+      if (trainingActive) {
+        currentTrainingWord = getActiveLane()?.word || null;
+        renderTrainingQuestion();
+        return;
+      }
+      renderMultiLaneQuestion({ preserveAdvance: true });
+    }
+
+    function getBattlefieldPercentPoint(element, xRatio = 0.5, yRatio = 0.5) {
+      const fieldRect = battlefieldEl.getBoundingClientRect();
+      const rect = element.getBoundingClientRect();
+      return {
+        x: ((rect.left - fieldRect.left + rect.width * xRatio) / fieldRect.width) * 100,
+        y: ((rect.top - fieldRect.top + rect.height * yRatio) / fieldRect.height) * 100
+      };
+    }
+
+    function playLaneProjectile(fromEl, toEl, options = {}) {
+      const fromPoint = getBattlefieldPercentPoint(fromEl, options.fromX ?? 0.78, options.fromY ?? 0.5);
+      const toPoint = getBattlefieldPercentPoint(toEl, options.toX ?? 0.5, options.toY ?? 0.5);
+      const projectile = document.createElement("div");
+      projectile.className = `lane-projectile${options.enemy ? " enemy-shot" : ""}`;
+      projectile.style.setProperty("--from-x", `${fromPoint.x}%`);
+      projectile.style.setProperty("--from-y", `${fromPoint.y}%`);
+      projectile.style.setProperty("--to-x", `${toPoint.x}%`);
+      projectile.style.setProperty("--to-y", `${toPoint.y}%`);
+      if (options.color) {
+        projectile.style.setProperty("--projectile-color", options.color);
+        projectile.style.setProperty("--projectile-glow", options.glow || options.color);
+      }
+      battlefieldEl.appendChild(projectile);
+      projectile.addEventListener("animationend", () => projectile.remove(), { once: true });
+      setTimeout(() => playLaneImpact(toEl, options.impact || "normal"), 500);
+    }
+
+    function playLaneImpact(targetEl, type = "normal") {
+      const point = getBattlefieldPercentPoint(targetEl, 0.5, 0.5);
+      const impact = document.createElement("div");
+      impact.className = "lane-impact";
+      impact.style.setProperty("--impact-x", `${point.x}%`);
+      impact.style.setProperty("--impact-y", `${point.y}%`);
+      if (type === "heavy") {
+        impact.style.width = "108px";
+        impact.style.height = "108px";
+      }
+      battlefieldEl.appendChild(impact);
+      impact.addEventListener("animationend", () => impact.remove(), { once: true });
+    }
+
+    function shootLaneTarget(lane, ammo = null) {
+      if (!lane?.element) return;
+      playCannonSound();
+      playerTank.classList.remove("fire");
+      lane.element.classList.remove("hit");
+      const playerStartX = phaserPlayerSprite?.x || 0;
+      playPhaserPlayerState(ammo?.id === "shell_he" ? "heavy-fire" : "fire", true);
+      tweenPhaserSprite(phaserPlayerSprite, { x: playerStartX + 10, yoyo: true }, 150);
+      requestAnimationFrame(() => playerTank.classList.add("fire"));
+      playLaneProjectile(playerTank, lane.element, {
+        color: ammo?.projectileColor || (ammo?.id === "shell_he" ? "#ff7a2f" : ammo?.id === "weapon_cannon" ? "#dbeafe" : ammo?.id === "shell_ap" ? "#fff2a1" : "#f3b23c"),
+        glow: ammo?.id === "shell_he" ? "rgba(255, 111, 61, 0.9)" : undefined,
+        impact: ammo?.id === "shell_he" ? "heavy" : "normal"
+      });
+      setTimeout(() => {
+        playExplosionSound();
+        lane.element.classList.add("hit");
+        flashPhaserLaneInfantry(laneStates.indexOf(lane));
+      }, 520);
+      setTimeout(() => {
+        playerTank.classList.remove("fire");
+        lane.element?.classList.remove("hit");
+      }, 900);
+    }
+
+    function flashPhaserLaneInfantry(laneIndex) {
+      const sprite = phaserLaneInfantrySprites[laneIndex];
+      const lane = laneStates[laneIndex];
+      if (!sprite?.visible || !lane?.active) return;
+      playPhaserLaneInfantryState(laneIndex, "walk", { force: true });
+      if (!phaserEffects) return;
+      phaserEffects.tweens.killTweensOf(sprite);
+      phaserEffects.tweens.add({
+        targets: sprite,
+        alpha: 0.35,
+        duration: 70,
+        yoyo: true,
+        repeat: 2,
+        onComplete: () => {
+          if (isLaneLive(laneStates[laneIndex])) playPhaserLaneInfantryState(laneIndex, "walk", { force: true });
+        }
+      });
+    }
+
+    function laneEnemyAttack(lane, damage = 1, result = { hpDamage: damage }) {
+      if (!lane?.element || !isLaneLive(lane) || isGameOver || isLevelCleared || lives <= 0) return;
+      playCannonSound();
+      lane.element.classList.remove("fire");
+      playerTank.classList.remove("hit");
+      playerBurst.classList.remove("show");
+      playLaneProjectile(lane.element, playerTank, { enemy: true, fromX: 0.24, toX: 0.72, color: "#ff6b4a" });
+      playPhaserLaneInfantryState(laneStates.indexOf(lane), "fire");
+      requestAnimationFrame(() => lane.element.classList.add("fire"));
+      setTimeout(() => {
+        if (isGameOver || isLevelCleared) return;
+        playHitSound();
+        if (result.missed) {
+          showDamage(playerTank, 0, { miss: true });
+        } else if (result.absoluteBlocked) {
+          showDamage(playerTank, 0, { absolute: true });
+        } else {
+          showDamage(playerTank, result.totalDamage || damage, { armor: result.armorDamage > 0 });
+        }
+        playerTank.classList.add("hit");
+        shakeBattlefield();
+      }, 520);
+      setTimeout(() => {
+        lane.element?.classList.remove("fire");
+        if (!playerTank.classList.contains("destroyed")) playerTank.classList.remove("hit");
+      }, 900);
+    }
+
     function getHealthPercent(current, max) {
       if (!max) return 0;
       return Math.max(0, Math.min(100, (current / max) * 100));
@@ -4571,8 +5883,29 @@
     }
 
     function syncLevelHud() {
+      if (trainingActive) {
+        const remainingTargets = laneStates.filter(isLaneLive).length || getTrainingLaneCount();
+        levelNumberEl.textContent = levelNumber;
+        enemyNameEl.textContent = "Training Camp";
+        enemyMetricLabel.textContent = "Targets";
+        enemyHealthName.textContent = activeProfileName || "Commander";
+        enemyHpEl.textContent = remainingTargets;
+        timerTextEl.textContent = " · practice";
+        return;
+      }
+      if (isMultiLaneStage()) {
+        const remainingLanes = laneStates.filter(isLaneLive).length || getActiveLaneCount();
+        levelNumberEl.textContent = levelNumber;
+        enemyNameEl.textContent = `${getLaneCount()}-Lane Push`;
+        enemyMetricLabel.textContent = "Lanes";
+        enemyHealthName.textContent = activeProfileName || "Commander";
+        enemyHpEl.textContent = remainingLanes;
+        timerTextEl.textContent = isPaused ? " · Paused" : " · advancing";
+        return;
+      }
       levelNumberEl.textContent = levelNumber;
       enemyNameEl.textContent = currentEnemy.name;
+      enemyMetricLabel.textContent = "Armor";
       enemyHealthName.textContent = currentEnemy.name;
       enemyHpEl.textContent = currentEnemy.hp;
       enemyHpText.textContent = `${currentEnemy.hp}/${currentEnemy.maxHp}`;
@@ -4584,6 +5917,7 @@
     }
 
     function pauseCountdown() {
+      stopLaneAdvance();
       pausedCountdownWasActive = countdownId > 0;
       if (countdownId) {
         clearInterval(countdownId);
@@ -4595,6 +5929,7 @@
     }
 
     function stopCountdown(options = {}) {
+      stopLaneAdvance();
       if (countdownId) {
         clearInterval(countdownId);
         countdownId = 0;
@@ -4615,6 +5950,11 @@
     }
 
     function startCountdown(seconds = getEnemyAttackInterval()) {
+      if (trainingActive) return;
+      if (isMultiLaneStage()) {
+        startLaneAdvance();
+        return;
+      }
       if (isPaused || isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
       stopCountdown();
       const attackInterval = getEnemyAttackInterval();
@@ -4681,6 +6021,7 @@
       messageEl.textContent = pausedMessage || "Choose the correct meaning.";
       syncPauseButton();
       syncLevelHud();
+      if (isMultiLaneStage() && !locked && lives > 0) startLaneAdvance();
       if (shouldResumeCountdown) startCountdown(countdown);
     }
 
@@ -4757,7 +6098,174 @@
     }
 
     function renderStageOpeningQuestion(stage = levelNumber) {
+      // Battle entry still falls back through renderQuestion(getStageOpeningWord(stage) || pickWord()) after training.
+      if (trainedStage !== stage) {
+        startTrainingCamp(stage);
+        return;
+      }
+      beginBattleStage(stage);
+    }
+
+    function beginBattleStage(stage = levelNumber) {
+      trainingCamp.classList.remove("show");
+      trainingCamp.setAttribute("aria-hidden", "true");
+      battlefieldEl.classList.remove("training-mode");
+      trainingActive = false;
+      if (isMultiLaneStage(stage)) {
+        createLaneStates(stage);
+        renderLaneLayer();
+        renderMultiLaneQuestion();
+        return;
+      }
+      stopLaneAdvance();
+      laneStates = [];
+      activeLaneIndex = 0;
+      renderLaneLayer();
       renderQuestion(getStageOpeningWord(stage) || pickWord());
+    }
+
+    function startTrainingCamp(stage = levelNumber) {
+      cancelStageAdvance();
+      stopCountdown();
+      clearPauseState();
+      trainingActive = true;
+      trainingLocked = false;
+      locked = true;
+      isLevelCleared = false;
+      battleWordPool = selectTrainingWords(stage);
+      trainingWords = [...battleWordPool];
+      trainingHits = Object.fromEntries(trainingWords.map((word) => [word.hanzi, 0]));
+      currentTrainingWord = null;
+      createTrainingLaneStates(stage);
+      renderLaneLayer();
+      gameOver.classList.remove("show");
+      gameOver.setAttribute("aria-hidden", "true");
+      perkScreen.classList.remove("show");
+      perkScreen.setAttribute("aria-hidden", "true");
+      supplyScreen.classList.remove("show");
+      supplyScreen.setAttribute("aria-hidden", "true");
+      trainingCamp.classList.remove("show");
+      trainingCamp.setAttribute("aria-hidden", "true");
+      battlefieldEl.classList.add("training-mode");
+      messageEl.textContent = `Training camp for Stage ${stage}. Learn 5 Hanzi before battle.`;
+      renderTrainingQuestion();
+      syncHud();
+    }
+
+    function selectTrainingWords(stage = levelNumber) {
+      const picked = [];
+      const scripted = getStageOpeningWord(stage);
+      if (scripted) picked.push(scripted);
+      const candidates = shuffle(words.filter((word) => !picked.some((item) => item.hanzi === word.hanzi)));
+      while (picked.length < 5 && candidates.length > 0) picked.push(candidates.shift());
+      return picked;
+    }
+
+    function getTrainingRemainingWords() {
+      return trainingWords.filter((word) => (trainingHits[word.hanzi] || 0) < 2);
+    }
+
+    function pickTrainingWord() {
+      const remaining = getTrainingRemainingWords();
+      if (remaining.length === 0) return null;
+      if (!currentTrainingWord || (trainingHits[currentTrainingWord.hanzi] || 0) >= 2) return remaining[0];
+      return currentTrainingWord;
+    }
+
+    function renderTrainingProgress() {
+      trainingProgress.innerHTML = "";
+      trainingWords.forEach((word) => {
+        const hits = Math.min(2, trainingHits[word.hanzi] || 0);
+        const chip = document.createElement("span");
+        chip.className = `training-chip${hits >= 2 ? " learned" : ""}`;
+        chip.textContent = `${word.hanzi} ${hits}/2`;
+        trainingProgress.appendChild(chip);
+      });
+    }
+
+    function renderTrainingQuestion() {
+      createTrainingLaneStates(levelNumber);
+      renderLaneLayer();
+      const word = pickTrainingWord();
+      currentTrainingWord = word;
+      renderTrainingProgress();
+      trainingOptions.innerHTML = "";
+      choicesEl.innerHTML = "";
+      trainingStartButton.classList.remove("show");
+      if (!word) {
+        trainingLocked = true;
+        questionWordEl.textContent = "✓";
+        messageEl.textContent = "Training complete. Start the battle.";
+        const startButton = document.createElement("button");
+        startButton.type = "button";
+        startButton.className = "choice right";
+        startButton.textContent = "Start Battle";
+        startButton.addEventListener("click", finishTrainingAndStartBattle);
+        choicesEl.appendChild(startButton);
+        startButton.focus();
+        return;
+      }
+      trainingLocked = false;
+      questionWordEl.textContent = word.hanzi;
+      messageEl.textContent = `Training Camp: hit the target dummy twice. ${word.hanzi} (${Math.min(2, trainingHits[word.hanzi] || 0)}/2).`;
+      queueHanziAudioBackgroundDownload(word, getSpokenWordText(word));
+      const wrongChoices = shuffle(words.filter((item) => item.hanzi !== word.hanzi)).slice(0, 3);
+      const answers = shuffle([word, ...wrongChoices]);
+      answers.forEach((answer) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "choice";
+        button.textContent = answer.meaning;
+        button.dataset.hanzi = answer.hanzi;
+        button.addEventListener("click", () => chooseTrainingAnswer(button, answer));
+        choicesEl.appendChild(button);
+      });
+      choicesEl.querySelector("button")?.focus();
+    }
+
+    function chooseTrainingAnswer(button, answer) {
+      if (!trainingActive || trainingLocked || !currentTrainingWord) return;
+      unlockAudio();
+      trainingLocked = true;
+      const correct = answer.hanzi === currentTrainingWord.hanzi;
+      if (!correct) {
+        button.classList.add("wrong");
+        const correctButton = [...choicesEl.querySelectorAll(".choice")].find((choice) => choice.dataset.hanzi === currentTrainingWord.hanzi);
+        correctButton?.classList.add("reveal");
+        playPhaserTargetDummyState(activeLaneIndex, "miss", { force: true });
+        playMissSound();
+        messageEl.textContent = `Correct answer: ${currentTrainingWord.meaning}. Try this Hanzi again.`;
+        setTimeout(renderTrainingQuestion, 900);
+        return;
+      }
+
+      button.classList.add("right");
+      const lane = getActiveLane();
+      shootLaneTarget(lane, null);
+      playSuccessSound();
+      speakWord(currentTrainingWord);
+      trainingHits[currentTrainingWord.hanzi] = Math.min(2, (trainingHits[currentTrainingWord.hanzi] || 0) + 1);
+      if (trainingHits[currentTrainingWord.hanzi] >= 2) {
+        playPhaserTargetDummyState(activeLaneIndex, "destroyed", { force: true, hold: true });
+        recordCorrectBank(currentTrainingWord);
+        recordCorrectWord(currentTrainingWord);
+        saveState();
+        messageEl.textContent = `${currentTrainingWord.hanzi} learned. Removed from this training loop.`;
+        currentTrainingWord = null;
+      } else {
+        messageEl.textContent = `Hit confirmed. ${currentTrainingWord.hanzi} needs one more hit.`;
+      }
+      renderTrainingProgress();
+      setTimeout(renderTrainingQuestion, 900);
+    }
+
+    function finishTrainingAndStartBattle() {
+      if (getTrainingRemainingWords().length > 0) return;
+      trainedStage = levelNumber;
+      markSeenWords(battleWordPool);
+      trainingActive = false;
+      locked = false;
+      beginBattleStage(levelNumber);
     }
 
     function recordWordDamage(word, damage) {
@@ -4949,6 +6457,7 @@
       isLevelCleared = true;
       clearPauseState();
       stopCountdown();
+      stopLaneAdvance();
       locked = true;
       playSuccessSound();
       const bonus = 12 + levelNumber * 2;
@@ -5271,6 +6780,7 @@
     }
 
     function getSeenWords() {
+      if (battleWordPool.length > 0) return battleWordPool;
       const seen = Object.values(runSeenWords);
       return seen.length >= 6 ? seen : words.slice(0, 12);
     }
@@ -5304,13 +6814,18 @@
     }
 
     function pickWord() {
-      const source = reviewMode && getReviewWords().length > 0 ? getReviewWords() : words;
+      const source = getBattleWordSource();
       const options = source.filter((word) => word.hanzi !== currentWord.hanzi);
       if (options.length === 0) return source[0] || words[0];
       return pickWeightedWord(options);
     }
 
     function renderQuestion(word = pickWord(), options = {}) {
+      if (trainingActive) return;
+      if (isMultiLaneStage()) {
+        renderMultiLaneQuestion(options);
+        return;
+      }
       if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
       if (currentEnemy.id === "boss") {
         renderBossQuestion(options);
@@ -5348,6 +6863,56 @@
         choicesEl.appendChild(button);
       });
       if (!options.preserveReload) startCountdown();
+    }
+
+    function renderMultiLaneQuestion(options = {}) {
+      if (!isMultiLaneStage() || isGameOver || isLevelCleared || lives <= 0) return;
+      if (!laneStates.length) createLaneStates();
+      renderLaneLayer();
+      syncActiveLaneGlobals();
+      const lane = getActiveLane();
+      if (!isLaneLive(lane)) {
+        const nextLaneIndex = laneStates.findIndex(isLaneLive);
+        if (nextLaneIndex === -1) {
+          completeLevel();
+          return;
+        }
+        activeLaneIndex = nextLaneIndex;
+        syncActiveLaneGlobals();
+      }
+      const activeLane = getActiveLane();
+      currentWord = activeLane.word;
+      currentEnemy = activeLane.enemy;
+      queueHanziAudioBackgroundDownload(currentWord, getSpokenWordText(currentWord));
+      locked = false;
+      if (isPaused) {
+        pausedLockedState = false;
+        locked = true;
+      }
+      gameOver.classList.remove("show");
+      gameOver.setAttribute("aria-hidden", "true");
+      perkScreen.classList.remove("show");
+      perkScreen.setAttribute("aria-hidden", "true");
+      supplyScreen.classList.remove("show");
+      supplyScreen.setAttribute("aria-hidden", "true");
+      questionWordEl.textContent = currentWord.hanzi;
+      messageEl.textContent = `${reviewMode ? "Review: " : ""}Lane ${activeLaneIndex + 1}: ${currentEnemy.name} advancing. Move lanes, answer, then fire.`;
+      choicesEl.innerHTML = "";
+
+      const wrongChoices = shuffle(words.filter((item) => item.hanzi !== currentWord.hanzi)).slice(0, 3);
+      const answers = shuffle([currentWord, ...wrongChoices]);
+      markSeenWords(answers);
+
+      answers.forEach((answer) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "choice";
+        button.textContent = answer.meaning;
+        button.addEventListener("click", () => chooseMultiLaneAnswer(button, answer));
+        choicesEl.appendChild(button);
+      });
+      syncHud();
+      if (!options.preserveAdvance) startLaneAdvance();
     }
 
     function renderBossQuestion(options = {}) {
@@ -5508,6 +7073,113 @@
         locked = false;
         startCountdown();
       }, 950);
+    }
+
+    function chooseMultiLaneAnswer(button, answer) {
+      if (locked || isPaused) return;
+      const lane = getActiveLane();
+      if (!isLaneLive(lane)) return;
+      locked = true;
+      syncActiveLaneGlobals();
+
+      if (answer.hanzi === currentWord.hanzi) {
+        const wasNew = !playerState.correctBank?.[currentWord.hanzi];
+        let reviewCleared = false;
+        button.classList.add("right");
+        recordCorrectWord(currentWord);
+        recordCorrectBank(currentWord);
+        playSuccessSound();
+        speakWord(currentWord);
+        const reward = getReward();
+        score += reward;
+        playerState.coins += reward;
+        playerState.dailyScore += reward;
+        if (reviewMode && playerState.review[currentWord.hanzi]) {
+          playerState.review[currentWord.hanzi] -= 1;
+          if (playerState.review[currentWord.hanzi] <= 0) {
+            delete playerState.review[currentWord.hanzi];
+            reviewCleared = true;
+          }
+        }
+        saveState();
+        syncHud();
+        playLearningFeedbackSound(wasNew, reviewCleared);
+        messageEl.textContent = `Lane ${activeLaneIndex + 1} correct! +${reward} coins. ${getCorrectLearningFeedback(currentWord, wasNew, { reviewCleared })} Fire!`;
+        const shotAmmo = consumeSpecialAmmo();
+        if (shotAmmo) {
+          saveState();
+          messageEl.textContent += ` ${shotAmmo.name} used (${getAmmoCount(shotAmmo.id)} left).`;
+        }
+        shootLaneTarget(lane, shotAmmo);
+        setTimeout(() => {
+          if (isGameOver || isLevelCleared) return;
+          const shotDamage = getShotDamage(shotAmmo);
+          const { defender, result } = applyDamageToDefender(lane.enemy, shotDamage);
+          lane.enemy = defender;
+          currentEnemy = defender;
+          if (result.absoluteBlocked) {
+            showDamage(lane.element, 0, { absolute: true });
+          } else {
+            showDamage(lane.element, result.totalDamage || shotDamage, { armor: result.armorDamage > 0 });
+          }
+          const ammoEffectText = applyAmmoHitEffects(shotAmmo);
+          if (ammoEffectText) messageEl.textContent += ` ${ammoEffectText}`;
+          if (lane.enemy.hp <= 0) {
+            lane.defeated = true;
+            lane.progress = 100;
+            playLaneImpact(lane.element, "heavy");
+            messageEl.textContent = `Lane ${activeLaneIndex + 1} secured. Pick the next lane.`;
+          } else {
+            lane.progress = Math.max(0, lane.progress - 18);
+            messageEl.textContent = lane.enemy.absoluteDefense > 0
+              ? `${lane.enemy.name} absolute defense has ${lane.enemy.absoluteDefense} left. Keep attacking.`
+              : lane.enemy.armor > 0
+                ? `${lane.enemy.name} armor has ${lane.enemy.armor} left. Keep attacking.`
+                : `${lane.enemy.name} has ${lane.enemy.hp} armor left. Keep attacking.`;
+          }
+          syncLaneHud();
+          syncHud();
+          if (laneStates.every((candidate) => !candidate.active || candidate.defeated || candidate.enemy.hp <= 0)) {
+            completeLevel();
+            return;
+          }
+          if (reviewMode && getReviewWords().length === 0) {
+            reviewMode = false;
+            syncHud();
+            messageEl.textContent = "Review queue cleared! Back to normal practice.";
+          }
+          const nextLane = laneStates.findIndex(isLaneLive);
+          if (lane.defeated && nextLane >= 0) activeLaneIndex = nextLane;
+          renderMultiLaneQuestion({ preserveAdvance: true });
+        }, 900);
+        return;
+      }
+
+      button.classList.add("wrong");
+      playMissSound();
+      recordWrongBank(currentWord);
+      playerState.review[currentWord.hanzi] = Math.min((playerState.review[currentWord.hanzi] || 0) + 2, 6);
+      saveState();
+      lane.progress = Math.min(100, lane.progress + 26);
+      recordWordDamage(currentWord, lane.enemy.damage || 1);
+      syncLaneHud();
+      syncHud();
+      messageEl.textContent = `${currentWord.hanzi} was added to review. Lane ${activeLaneIndex + 1} enemy pushed forward.`;
+      if (lane.progress >= 100) attackFromLane(lane);
+      setTimeout(() => {
+        button.classList.remove("wrong");
+        if (lives <= 0) {
+          showGameOver();
+          return;
+        }
+        if (isPaused) {
+          pausedLockedState = false;
+          locked = true;
+          return;
+        }
+        locked = false;
+        startLaneAdvance();
+      }, 650);
     }
 
     function chooseBossAnswer(button) {
@@ -6015,6 +7687,16 @@
       score = 0;
       levelNumber = stage;
       currentEnemy = createEnemy(levelNumber);
+      laneStates = [];
+      activeLaneIndex = 0;
+      stopLaneAdvance();
+      battleWordPool = [];
+      trainingWords = [];
+      trainingHits = {};
+      trainingActive = false;
+      trainingLocked = false;
+      trainedStage = 0;
+      currentTrainingWord = null;
       enemyTank.classList.remove("fragmented");
       playerTank.classList.remove("fragmented", "destroyed");
       smokeCoverCharges = 0;
@@ -6104,6 +7786,9 @@
         armor: 0
       };
       currentEnemy = createEnemy(levelNumber);
+      laneStates = [];
+      activeLaneIndex = 0;
+      stopLaneAdvance();
       isLevelCleared = false;
       absoluteDefenseAvailable = 0;
       playerArmor = 0;
@@ -6113,6 +7798,13 @@
       runWordDamage = {};
       runWordCorrect = {};
       runSeenWords = {};
+      battleWordPool = [];
+      trainingWords = [];
+      trainingHits = {};
+      trainingActive = false;
+      trainingLocked = false;
+      trainedStage = 0;
+      currentTrainingWord = null;
       bossPhrase = null;
       bossIntroToken += 1;
       lives = getMaxLives();
@@ -6124,6 +7816,7 @@
       playerTank.classList.remove("fragmented");
       enemyTank.classList.remove("hit", "fire");
       enemyTank.classList.remove("fragmented");
+      renderLaneLayer();
       bullet.classList.remove("fly", "ap-shell", "he-shell", "cannon-shell", "smoke-shell", "repair-shell", "armor-shell", "arcane-shell", "flash-shell");
       enemyBullet.classList.remove("fly");
       burst.classList.remove("show", "he-burst");
@@ -6405,7 +8098,23 @@
     document.addEventListener("pointerdown", unlockAudio, { once: true });
     document.addEventListener("pointerdown", () => setTimeout(retryPendingSpeech, 0));
     window.addEventListener("resize", () => setTimeout(updatePhaserActors, 80));
+    document.addEventListener("keydown", (event) => {
+      if (!isMultiLaneStage() || profileGate.classList.contains("hidden") === false) return;
+      if (event.key === "ArrowUp" || event.key.toLowerCase() === "w") {
+        event.preventDefault();
+        moveLane(-1);
+      }
+      if (event.key === "ArrowDown" || event.key.toLowerCase() === "s") {
+        event.preventDefault();
+        moveLane(1);
+      }
+    });
     profileForm.addEventListener("submit", handleProfileSubmit);
+    profileSelect.addEventListener("change", handleProfileSelectChange);
+    profileNameInput.addEventListener("input", () => renderProfileSelect(profileNameInput.value));
+    laneUpButton.addEventListener("click", () => moveLane(-1));
+    laneDownButton.addEventListener("click", () => moveLane(1));
+    trainingStartButton.addEventListener("click", finishTrainingAndStartBattle);
 
     soundButton.addEventListener("click", () => {
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
