@@ -5,9 +5,6 @@ on:
     branches:
       - main
       - "release/**"
-    paths:
-      - "Codex/2026-05-20/TankGame/**"
-      - ".github/workflows/hanzitank-pages.yml"
   workflow_dispatch:
 
 permissions:
@@ -63,4 +60,5 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
 
