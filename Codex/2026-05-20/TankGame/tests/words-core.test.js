@@ -7,12 +7,15 @@ assert.deepStrictEqual(wordsCore.gradeOneWordData[wordsCore.gradeOneWordData.len
 
 const words = wordsCore.createWords();
 assert.strictEqual(words.length, 155);
-assert.deepStrictEqual(words[0], { hanzi: '一', meaning: 'one', phrases: ['一个', '一只'], phrase: '一个' });
+assert.deepStrictEqual(words[0], { hanzi: '一', meaning: 'one', phrases: ['一个', '一只', '第一', '一天', '一年'], phrase: '一个' });
 
 const wordMap = wordsCore.createWordMap(words);
 assert.strictEqual(wordMap['喝'].meaning, 'drink');
-assert.deepStrictEqual(wordMap['喝'].phrases, ['喝水', '喝茶']);
+assert.deepStrictEqual(wordMap['喝'].phrases, ['喝水', '喝茶', '喝奶', '喝汤', '喝开水']);
+assert.ok(wordMap['天'].phrases.includes('蓝天'));
+assert.ok(wordMap['天'].phrases.includes('星期天'));
 assert.strictEqual(wordMap['又'].phrase, '又来');
+assert.ok(words.every((word) => word.phrases.length >= 4), 'Every Grade 1 Hanzi should have at least four phrase options.');
 
 const uniqueHanzi = new Set(words.map((word) => word.hanzi));
 assert.strictEqual(uniqueHanzi.size, words.length, 'Hanzi entries should be unique.');

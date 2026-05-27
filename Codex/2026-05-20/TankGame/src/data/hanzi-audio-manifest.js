@@ -1,8 +1,10 @@
 (function (root, factory) {
-  const api = factory();
+  const wordsCore = root.HanziTankWords || (typeof require === "function" ? require("./grade-one-words.js") : null);
+  const api = factory(wordsCore);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.HanziTankAudio = api;
-})(typeof globalThis !== "undefined" ? globalThis : this, function () {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (wordsCore) {
+  if (!wordsCore?.createWords) throw new Error("HanziTankWords must load before HanziTankAudio.");
   const rawHanziAudioList = `
 一，一个，第一
 二，二月，二十
@@ -467,6 +469,15 @@
       .join("-") + ".mp3";
   }
 
+  function getHanziAudioBaseName(hanzi) {
+    return getHanziAudioFile(hanzi).replace(/\.mp3$/, "");
+  }
+
+  function getHanziPhraseAudioFile(hanzi, phraseIndex = 0) {
+    const position = Math.max(1, Number(phraseIndex) + 1);
+    return `${getHanziAudioBaseName(hanzi)}-p${String(position).padStart(2, "0")}.mp3`;
+  }
+
   function parseHanziAudioList(rawList) {
     const seen = new Set();
     const duplicates = [];
@@ -487,19 +498,44 @@
   }
 
   const parsed = parseHanziAudioList(rawHanziAudioList);
-  const hanziAudioPrompts = parsed.prompts;
+  const legacyHanziAudioPrompts = parsed.prompts;
   const duplicateHanziAudioPrompts = parsed.duplicates;
 
+  function createHanziAudioPrompts(words = wordsCore.createWords()) {
+    return words.flatMap((word) => {
+      const phrases = Array.isArray(word.phrases) && word.phrases.length > 0 ? word.phrases : [word.phrase].filter(Boolean);
+      return phrases.map((phrase, phraseIndex) => ({
+        hanzi: word.hanzi,
+        phrase,
+        phraseIndex,
+        text: `${word.hanzi}，${phrase}`,
+        file: getHanziPhraseAudioFile(word.hanzi, phraseIndex),
+        legacyFile: phraseIndex === 0 ? getHanziAudioFile(word.hanzi) : ""
+      }));
+    });
+  }
+
+  const hanziAudioPrompts = createHanziAudioPrompts();
+
+  const hanziPhraseVoiceLines = wordsCore.createWords().reduce((lines, word) => {
+    lines[word.hanzi] = word.phrases.map((phrase, phraseIndex) => `assets/audio/hanzi/${getHanziPhraseAudioFile(word.hanzi, phraseIndex)}`);
+    return lines;
+  }, {});
+
   const hanziVoiceLines = Object.fromEntries(
-    hanziAudioPrompts.map((item) => [item.hanzi, `assets/audio/hanzi/${item.file}`])
+    Object.entries(hanziPhraseVoiceLines).map(([hanzi, files]) => [hanzi, files[0]])
   );
 
   return {
     rawHanziAudioList,
+    legacyHanziAudioPrompts,
     hanziAudioPrompts,
     duplicateHanziAudioPrompts,
     hanziVoiceLines,
+    hanziPhraseVoiceLines,
     getHanziAudioFile,
+    getHanziPhraseAudioFile,
+    createHanziAudioPrompts,
     parseHanziAudioList
   };
 });

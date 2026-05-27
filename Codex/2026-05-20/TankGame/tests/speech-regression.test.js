@@ -49,17 +49,20 @@ assert.doesNotMatch(chooseBossAnswer, /bossSelection\.length < 2/, 'Boss answer 
 assert.match(chooseBossAnswer, /playerState\.review\[targetWord\.hanzi\]/, 'Wrong Boss Hanzi should enter the review queue.');
 assert.match(chooseBossAnswer, /recordCorrectWord\(targetWord\)/, 'Correct Boss Hanzi should count as learned practice.');
 assert.match(chooseBossAnswer, /getCorrectLearningFeedback\(targetWord, wasNew\)/, 'Correct Boss Hanzi should show learning and rank feedback.');
-assert.match(chooseBossAnswer, /speakBossPhrase\(bossPhrase/, 'Correct Boss Hanzi feedback should repeat the single Hanzi.');
+assert.doesNotMatch(chooseBossAnswer, /speakBossPhrase\(bossPhrase/, 'Boss answer feedback should not repeat the Hanzi after selection.');
 
 assert.match(source, /<script src="src\/data\/hanzi-audio-manifest\.js"><\/script>/, 'Browser should load the Hanzi audio manifest before game orchestration.');
-assert.match(source, /hanzi: window\.HanziTankAudio\?\.hanziVoiceLines \|\| \{ "一": "assets\/audio\/hanzi\/u4e00\.mp3" \}/, 'Word speech should use the generated Hanzi audio manifest with a fallback for 一.');
+assert.match(source, /hanzi: window\.HanziTankAudio\?\.hanziVoiceLines \|\| \{ "一": "assets\/audio\/hanzi\/u4e00-p01\.mp3" \}/, 'Word speech should use the generated Hanzi audio manifest with a fallback for 一.');
+assert.match(source, /phrases: window\.HanziTankAudio\?\.hanziPhraseVoiceLines/, 'Word speech should support phrase-specific generated Hanzi audio clips.');
 assert.match(source, /hanziAudioDownloadQueueKey\s*=\s*"hanziTankAudioDownloadQueue"/, 'Missing Hanzi audio should use a stable browser queue key.');
 
 const getHanziAudioFileName = bodyOf('getHanziAudioFileName');
-assert.match(getHanziAudioFileName, /window\.HanziTankAudio\?\.getHanziAudioFile/, 'Audio file naming should prefer the shared manifest helper.');
+assert.match(getHanziAudioFileName, /window\.HanziTankAudio\?\.getHanziPhraseAudioFile/, 'Audio file naming should prefer the shared phrase-specific manifest helper.');
+assert.match(getHanziAudioFileName, /window\.HanziTankAudio\?\.getHanziAudioFile/, 'Audio file naming should keep the legacy manifest helper as a fallback.');
 assert.match(getHanziAudioFileName, /codePointAt\(0\)\.toString\(16\)/, 'Audio file naming should fall back to Unicode codepoint filenames.');
 
 const getHanziVoiceLine = bodyOf('getHanziVoiceLine');
+assert.match(getHanziVoiceLine, /customVoiceLines\.phrases\[word\.hanzi\]/, 'Word speech should use phrase-specific manifest recordings first.');
 assert.match(getHanziVoiceLine, /customVoiceLines\.hanzi\[word\.hanzi\]/, 'Word speech should use manifest-routed Hanzi recordings first.');
 assert.match(getHanziVoiceLine, /assets\/audio\/hanzi\/\$\{getHanziAudioFileName\(word\.hanzi\)\}/, 'Word speech should derive a predictable MP3 path when the manifest has no entry yet.');
 

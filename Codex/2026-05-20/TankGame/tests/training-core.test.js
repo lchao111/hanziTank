@@ -1,5 +1,25 @@
 const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
 const training = require('../src/core/training-core.js');
+
+const source = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+function bodyOf(functionName) {
+  const start = source.indexOf(`function ${functionName}`);
+  assert.notStrictEqual(start, -1, `Missing function ${functionName}`);
+  const parametersEnd = source.indexOf(') {', start);
+  assert.notStrictEqual(parametersEnd, -1, `Could not find body start for function ${functionName}`);
+  const braceStart = source.indexOf('{', parametersEnd);
+  let depth = 0;
+  for (let index = braceStart; index < source.length; index += 1) {
+    const char = source[index];
+    if (char === '{') depth += 1;
+    if (char === '}') depth -= 1;
+    if (depth === 0) return source.slice(braceStart + 1, index);
+  }
+  throw new Error(`Could not parse function ${functionName}`);
+}
 
 const words = [
   { hanzi: '一', meaning: 'one' },
@@ -72,5 +92,11 @@ assert.strictEqual(combatLanes[1].enemy, null);
 assert.strictEqual(combatLanes[2].word.hanzi, '二');
 assert.ok(training.isLaneLive(combatLanes[0]));
 assert.ok(!training.isLaneLive(combatLanes[1]));
+
+const renderTrainingQuestion = bodyOf('renderTrainingQuestion');
+assert.match(renderTrainingQuestion, /if \(!word\) \{[\s\S]*startButton\.textContent = "Start Battle";[\s\S]*startButton\.addEventListener\("click", finishTrainingAndStartBattle\)/, 'Completed training should show a manual Start Battle button.');
+assert.match(renderTrainingQuestion, /if \(!word\) \{[\s\S]*setQuestionPrompt\("Training Complete"\)/, 'Completed training should replace the normal Meaning-of prompt instead of showing Meaning of checkmark.');
+assert.doesNotMatch(renderTrainingQuestion, /questionWordEl\.textContent = "✓"/, 'Completed training should not display a checkmark in the question word slot.');
+assert.doesNotMatch(renderTrainingQuestion, /if \(!word\) \{[\s\S]*trainingLocked = true;\s*finishTrainingAndStartBattle\(\);/, 'Completed training should not auto-start battle before the player clicks Start Battle.');
 
 console.log('training core tests passed');

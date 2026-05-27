@@ -1,3 +1,3 @@
 # Copilot Instructions
 
-- Do not play an audible completion sound when an agent completes a task in this project.
+- When an agent completes a task in this project, use the completion hook to say "任务完成" with TTS.

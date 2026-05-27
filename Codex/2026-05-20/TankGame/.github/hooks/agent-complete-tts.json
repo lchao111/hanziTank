@@ -1,0 +1,15 @@
+{
+  "name": "agent-complete-tts",
+  "description": "Say a short TTS message when an agent task completes.",
+  "triggers": ["agent.completed", "task.completed", "task_complete"],
+  "command": "powershell",
+  "args": [
+    "-NoProfile",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    "tools/say-agent-task-complete.ps1",
+    "-Message",
+    "任务完成"
+  ]
+}

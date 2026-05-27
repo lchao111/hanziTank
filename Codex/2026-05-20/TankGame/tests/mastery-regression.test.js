@@ -91,7 +91,8 @@ assert.match(source, /function startCountdown\(seconds = getEnemyAttackInterval\
 assert.match(startCountdown, /Math\.min\(attackInterval, seconds \|\| attackInterval\)/, 'Countdown should clamp to the active enemy interval.');
 
 const syncHud = bodyOf('syncHud');
-assert.match(syncHud, /wordCountEl\.textContent = `\$\{getRankProgressText\(\)\} · Review \$\{getReviewCount\(\)\}`/, 'Footer status should keep rank progress and review count visible.');
+assert.match(syncHud, /wordCountEl\.textContent = getRankProgressText\(\)/, 'Footer status should keep rank progress visible.');
+assert.doesNotMatch(source, /id="reviewButton"|Review Misses|Exit Review/, 'Review Misses controls should not be visible in the battle toolbar.');
 assert.match(syncHud, /appVersionEl\.textContent = `Build \$\{appVersion\}`/, 'Footer status should show the current build version.');
 
 const getProfileBestRecord = bodyOf('getProfileBestRecord');

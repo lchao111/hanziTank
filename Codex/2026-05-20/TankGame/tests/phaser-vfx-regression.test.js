@@ -73,6 +73,11 @@ const projectile = bodyOf('playPhaserProjectile');
 assert.match(projectile, /addPhaserMuzzleFlash\(/, 'Projectile should trigger muzzle flash.');
 assert.match(projectile, /addPhaserProjectileTrail\(/, 'Projectile should trigger trail effects.');
 assert.match(projectile, /addPhaserImpactGlint\(/, 'Projectile should trigger impact glint.');
+assert.match(projectile, /options\.onImpact\?\.\(\)/, 'Projectile impact callbacks should run only after the projectile reaches the target.');
+
+const fire = bodyOf('fire');
+assert.match(fire, /duration: projectileDuration,[\s\S]*onImpact: explodeOnImpact/, 'Player shell explosions should be tied to projectile impact completion.');
+assert.doesNotMatch(fire, /setTimeout\(\(\) => \{[\s\S]*playPhaserExplosion\(enemyTank/, 'Player shell explosions should not use a fixed early timeout.');
 
 const initPhaserEffects = bodyOf('initPhaserEffects');
 assert.match(initPhaserEffects, /this\.load\.image\("kenney:playerHull"/, 'Phaser should preload Kenney player hull PNG.');

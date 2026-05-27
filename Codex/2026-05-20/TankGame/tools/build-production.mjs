@@ -121,8 +121,8 @@ async function build() {
   );
 
   productionHtml = productionHtml.replace(
-    "<title>Hanzi Tank - Multi Lane</title>",
-    `<title>Hanzi Tank - Multi Lane</title>\n  <meta name="application-name" content="Hanzi Tank">\n  <meta name="hanzi-tank-build" content="${jsHash}">`
+    "<title>汉字Tank - Multi Lane</title>",
+    `<title>汉字Tank - Multi Lane</title>\n  <meta name="application-name" content="汉字Tank">\n  <meta name="hanzi-tank-build" content="${jsHash}">`
   );
 
   await rm(outputDir, { recursive: true, force: true });
@@ -143,3 +143,4 @@ build().catch((error) => {
   console.error(error instanceof Error ? error.message : error);
   process.exitCode = 1;
 });
+
