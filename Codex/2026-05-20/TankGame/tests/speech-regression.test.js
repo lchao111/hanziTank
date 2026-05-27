@@ -33,10 +33,10 @@ assert.match(renderBossQuestion, /currentEnemy\.id\s*===\s*"boss"/, 'Boss speech
 assert.match(renderBossQuestion, /bossPhrase\s*===\s*phraseToSpeak/, 'Boss speech should not pronounce stale phrases after rerenders.');
 assert.match(renderBossQuestion, /!locked/, 'Boss speech should only fire after the question is selectable.');
 
-const speakCurrentWord = bodyOf('speakCurrentWord');
-assert.match(speakCurrentWord, /currentEnemy\.id\s*===\s*"boss"\s*&&\s*bossPhrase/, 'Speak button must detect boss questions.');
-assert.match(speakCurrentWord, /speakBossPhrase\(bossPhrase/, 'Speak button must repeat the current boss Hanzi.');
-assert.match(speakCurrentWord, /speakWord\(currentWord\)/, 'Speak button must use the normal word speech path outside Boss questions.');
+assert.doesNotMatch(source, /id="speakButton"/, 'The manual Speak control should stay out of the battle toolbar.');
+assert.doesNotMatch(source, /id="nextButton"/, 'The manual Next Word control should stay out of the battle toolbar.');
+assert.doesNotMatch(source, />Next Word</, 'The battle toolbar should not show the removed Next Word label.');
+assert.doesNotMatch(source, /Click Speak/, 'Speech fallback copy should not refer to a removed Speak button.');
 
 const getBossSpeechText = bodyOf('getBossSpeechText');
 assert.match(getBossSpeechText, /phrase\.speechText/, 'Boss speech should prefer the prompt-specific speech text.');

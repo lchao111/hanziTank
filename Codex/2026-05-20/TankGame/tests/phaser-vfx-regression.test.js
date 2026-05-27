@@ -92,6 +92,58 @@ assert.match(initPhaserEffects, /phaserPlayerTurretSprite = this\.add\.image/, '
 assert.match(initPhaserEffects, /phaserPlayerSprite\.setVisible\(false\)/, 'Kenney actor trial should stay hidden until a full top-down scene migration is ready.');
 assert.doesNotMatch(source, /kenney-actors-ready/, 'Kenney trial sprites should not hide DOM battle sprites yet.');
 
+const initEnemyGalleryPhaser = bodyOf('initEnemyGalleryPhaser');
+assert.match(initEnemyGalleryPhaser, /this\.load\.spritesheet\(`gallerySheet:\$\{key\}`/, 'Enemy Gallery should preload animated spritesheets instead of static SVG portraits.');
+assert.match(initEnemyGalleryPhaser, /enemyGallerySprite = this\.add\.sprite/, 'Enemy Gallery preview actor should be a Phaser sprite so it can animate.');
+assert.doesNotMatch(initEnemyGalleryPhaser, /this\.load\.svg\(`gallery:/, 'Enemy Gallery should not regress to static SVG gallery textures.');
+assert.doesNotMatch(initEnemyGalleryPhaser, /enemyGallerySprite = this\.add\.image/, 'Enemy Gallery preview should not regress to a static image actor.');
+
+const galleryAnimations = bodyOf('createEnemyGalleryAnimations');
+assert.match(galleryAnimations, /Object\.entries\(enemyGalleryAnimationMap\)/, 'Enemy Gallery should define an animation for each gallery enemy id.');
+assert.match(galleryAnimations, /generateFrameNumbers\(`gallerySheet:\$\{config\.sheet\}`/, 'Enemy Gallery animations should use the configured spritesheet frames.');
+assert.match(galleryAnimations, /gallery-\$\{id\}-attack/, 'Enemy Gallery should define a one-shot attack animation for each enemy id.');
+assert.match(galleryAnimations, /start: config\.attackStart, end: config\.attackEnd/, 'Enemy Gallery attack animations should use configured attack frame ranges.');
+assert.match(source, /tank:\s*\{ sheet: "enemyTank"/, 'Basic tank gallery item should use the enemy tank spritesheet.');
+assert.match(source, /tank:\s*\{[^}]*attackStart: 4, attackEnd: 7/, 'Basic tank gallery attack preview should use the enemy tank fire row.');
+assert.match(source, /infantry:\s*\{ sheet: "regularInfantry"/, 'Regular soldier gallery item should use the regular infantry spritesheet.');
+assert.match(source, /infantry:\s*\{[^}]*attackStart: 6, attackEnd: 11/, 'Regular soldier gallery attack preview should use its firing row.');
+assert.match(source, /grenadier:\s*\{ sheet: "grenadier"/, 'Grenadier gallery item should use the grenadier spritesheet.');
+assert.match(source, /boss:\s*\{ sheet: "bossTankDismantler"/, 'Boss gallery item should use the Tank Dismantler spritesheet.');
+assert.match(source, /boss:\s*\{[^}]*attackStart: 6, attackEnd: 11/, 'Boss gallery attack preview should use the Tank Dismantler attack row.');
+assert.match(source, /id="enemyGalleryAttackButton"/, 'Enemy Gallery should expose an Attack Preview button for children to trigger attacks.');
+
+const renderEnemyGalleryPreview = bodyOf('renderEnemyGalleryPreview');
+assert.match(renderEnemyGalleryPreview, /playEnemyGalleryAnimation\(item\)/, 'Enemy Gallery selections should play the selected unit animation.');
+assert.match(renderEnemyGalleryPreview, /enemyGalleryFallback\.style\.display = "none"/, 'Enemy Gallery should hide the static fallback while an animated preview is available.');
+
+const playEnemyGalleryAnimation = bodyOf('playEnemyGalleryAnimation');
+assert.match(playEnemyGalleryAnimation, /enemyGallerySprite\.setTexture\(textureKey/, 'Enemy Gallery animation should switch the preview texture when kids click a different unit.');
+assert.match(playEnemyGalleryAnimation, /startEnemyGalleryFrameLoop\(item, stateName, options\)/, 'Enemy Gallery animation should use the explicit frame loop so previews visibly advance.');
+assert.match(playEnemyGalleryAnimation, /stateName === "attack" \? config\.attackStart : config\.start/, 'Enemy Gallery should start attack previews on the configured attack row.');
+
+const galleryFrameLoop = bodyOf('startEnemyGalleryFrameLoop');
+assert.match(galleryFrameLoop, /updateEnemyGallerySheetPreview\(item, stateName, range\)/, 'Enemy Gallery should update the visible spritesheet preview when an animation starts.');
+assert.match(galleryFrameLoop, /window\.setInterval/, 'Enemy Gallery animation should explicitly advance frames over time.');
+assert.match(galleryFrameLoop, /enemyGallerySprite\.setFrame\(frame\)/, 'Enemy Gallery animation should update the Phaser sprite frame directly.');
+assert.match(galleryFrameLoop, /options\.onComplete\?\.\(\)/, 'Enemy Gallery one-shot attack previews should support completion callbacks.');
+
+const sheetPreview = bodyOf('updateEnemyGallerySheetPreview');
+assert.match(sheetPreview, /backgroundImage = `url\("\$\{sheet\.url\}"\)`/, 'Enemy Gallery should render the selected unit from its spritesheet image.');
+assert.match(sheetPreview, /enemyGallerySheetPreview\.style\.animation = "none"/, 'Enemy Gallery visible spritesheet preview should be driven by the JS frame loop.');
+
+const sheetFrameSetter = bodyOf('setEnemyGallerySheetFrame');
+assert.match(sheetFrameSetter, /const column = frame % sheet\.columns/, 'Enemy Gallery visible spritesheet preview should calculate the frame column.');
+assert.match(sheetFrameSetter, /const row = Math\.floor\(frame \/ sheet\.columns\)/, 'Enemy Gallery visible spritesheet preview should calculate the frame row.');
+assert.match(sheetFrameSetter, /backgroundPosition = `\$\{-column \* sheet\.frameWidth\}px \$\{-row \* sheet\.frameHeight\}px`/, 'Enemy Gallery visible spritesheet preview should update background position for each frame.');
+assert.match(source, /@keyframes enemy-gallery-sheet-play/, 'Enemy Gallery should define CSS keyframes for visible spritesheet playback.');
+assert.match(source, /id="enemyGallerySheetPreview"/, 'Enemy Gallery should include a visible spritesheet preview layer over the Phaser backdrop.');
+
+const galleryAttackPreview = bodyOf('playEnemyGalleryAttackPreview');
+assert.match(galleryAttackPreview, /playEnemyGalleryAnimation\(item, "attack"/, 'Attack Preview button should play the selected unit attack animation.');
+assert.match(galleryAttackPreview, /onComplete:/, 'Attack Preview should wait for the one-shot attack frame loop to finish.');
+assert.match(galleryAttackPreview, /playEnemyGalleryAnimation\(item, "idle"\)/, 'Attack Preview should return the selected unit to idle after attacking.');
+assert.match(source, /enemyGalleryAttackButton\.addEventListener\("click", playEnemyGalleryAttackPreview\)/, 'Enemy Gallery Attack Preview button should be wired to the attack preview handler.');
+
 const updatePhaserActors = bodyOf('updatePhaserActors');
 assert.match(updatePhaserActors, /fitPhaserSprite\(phaserPlayerTurretSprite/, 'Player turret should stay aligned with hull.');
 assert.match(updatePhaserActors, /fitPhaserSprite\(phaserEnemyTurretSprite/, 'Enemy turret should stay aligned with hull.');

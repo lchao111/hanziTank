@@ -2,11 +2,15 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Hanzi Tank - Multi Lane</title>
   <style>
     :root {
       color-scheme: light;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
       --sky: #84d2ff;
       --grass: #4ea44f;
       --dirt: #84614a;
@@ -33,6 +37,8 @@
     body {
       margin: 0;
       min-height: 100vh;
+      min-height: 100dvh;
+      height: 100dvh;
       font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", Arial, sans-serif;
       color: var(--ink);
       background: linear-gradient(#6f766f 0 54%, #42362b 54% 100%);
@@ -46,8 +52,11 @@
 
     .game {
       min-height: 100vh;
+      min-height: 100dvh;
+      height: 100dvh;
       display: grid;
       grid-template-rows: auto 1fr auto;
+      overflow: hidden;
     }
 
     .topbar {
@@ -55,7 +64,7 @@
       grid-template-columns: 1fr auto auto auto auto;
       gap: 12px;
       align-items: center;
-      padding: 12px clamp(12px, 3vw, 28px);
+      padding: calc(10px + var(--safe-top)) calc(clamp(12px, 3vw, 28px) + var(--safe-right)) 10px calc(clamp(12px, 3vw, 28px) + var(--safe-left));
       background: rgba(238, 229, 207, 0.94);
       border-bottom: 2px solid rgba(62, 50, 39, 0.32);
     }
@@ -92,6 +101,7 @@
       background: #fffaf0;
       text-align: center;
       font-weight: 700;
+      line-height: 1.15;
     }
 
     .coin-stat {
@@ -106,7 +116,8 @@
 
     .battlefield {
       position: relative;
-      min-height: 520px;
+      min-height: 0;
+      height: 100%;
       overflow: hidden;
       background:
         url("assets/sprites/environment/battlefield-background.png?v=20260525") center center / cover no-repeat,
@@ -164,9 +175,8 @@
     .tank {
       position: absolute;
       z-index: 2;
-      bottom: 54px;
-      width: min(32vw, 210px);
-      min-width: 148px;
+      bottom: clamp(34px, 8vh, 54px);
+      width: clamp(118px, 24vw, 210px);
       aspect-ratio: 1.5;
       transition: transform 160ms ease;
     }
@@ -179,8 +189,7 @@
       z-index: 5;
       top: var(--player-lane-top, 50%);
       bottom: auto;
-      width: min(24vw, 158px);
-      min-width: 112px;
+      width: clamp(86px, 17vw, 158px);
       transform: translateY(-50%);
     }
 
@@ -208,7 +217,7 @@
     .lane-layer {
       position: absolute;
       z-index: 2;
-      inset: 72px 0 118px;
+      inset: clamp(54px, 14%, 72px) 0 clamp(76px, 20%, 118px);
       display: none;
       pointer-events: none;
     }
@@ -223,7 +232,7 @@
       left: 0;
       right: 0;
       top: var(--lane-top, 50%);
-      height: clamp(58px, 10vh, 84px);
+      height: clamp(42px, 10vh, 84px);
       border-top: 1px solid rgba(255, 248, 223, 0.12);
       border-bottom: 1px solid rgba(20, 15, 10, 0.34);
       background:
@@ -329,8 +338,7 @@
       z-index: 4;
       left: var(--enemy-left, 70%);
       top: var(--lane-top, 50%);
-      width: min(22vw, 150px);
-      min-width: 106px;
+      width: clamp(78px, 16vw, 150px);
       aspect-ratio: 1.5;
       transform: translate(-50%, -50%) scaleX(-1);
       pointer-events: none;
@@ -1081,7 +1089,7 @@
     }
 
     .tank.tank-churchill {
-      width: min(34vw, 225px);
+      width: clamp(124px, 26vw, 225px);
     }
 
     .tank.tank-churchill .body {
@@ -1137,7 +1145,7 @@
     }
 
     .tank.enemy-armor {
-      width: min(35vw, 230px);
+      width: clamp(126px, 27vw, 230px);
     }
 
     .tank.enemy-armor .body {
@@ -1172,8 +1180,7 @@
     }
 
     .tank.enemy-scout {
-      width: min(26vw, 170px);
-      min-width: 124px;
+      width: clamp(100px, 20vw, 170px);
     }
 
     .tank.enemy-scout .body {
@@ -1188,25 +1195,21 @@
     }
 
     .tank.enemy-infantry {
-      width: min(30vw, 190px);
-      min-width: 132px;
-      bottom: 44px;
+      width: clamp(106px, 22vw, 190px);
+      bottom: clamp(30px, 7vh, 44px);
     }
 
     .tank.enemy-heavy-infantry {
-      width: min(28vw, 178px);
-      min-width: 126px;
+      width: clamp(102px, 21vw, 178px);
     }
 
     .tank.enemy-rpg-infantry {
-      width: min(31vw, 198px);
-      min-width: 138px;
+      width: clamp(108px, 23vw, 198px);
     }
 
     .tank.enemy-boss {
-      width: min(42vw, 285px);
-      min-width: 208px;
-      bottom: 34px;
+      width: clamp(150px, 34vw, 285px);
+      bottom: clamp(24px, 6vh, 34px);
     }
 
     .bullet {
@@ -1388,7 +1391,7 @@
       width: min(760px, calc(100vw - 20px));
       transform: translateX(-50%);
       display: grid;
-      grid-template-columns: auto 1fr;
+      grid-template-columns: auto 1fr auto;
       gap: 8px 12px;
       align-items: center;
       padding: 8px 10px;
@@ -1444,6 +1447,7 @@
       font-size: clamp(15px, 2vw, 18px);
       font-weight: 900;
       white-space: nowrap;
+      min-width: 0;
     }
 
     .big-word {
@@ -1465,6 +1469,24 @@
       gap: 7px;
     }
 
+    .skip-training-button {
+      display: none;
+      min-height: 38px;
+      padding: 4px 10px;
+      border: 2px solid #715332;
+      border-radius: 8px;
+      background: #ffd777;
+      color: #3d2d1d;
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .battlefield.training-mode .skip-training-button {
+      display: inline-block;
+    }
+
     .choice {
       min-height: 38px;
       padding: 4px 8px;
@@ -1475,12 +1497,20 @@
       font-size: 17px;
       font-weight: 800;
       cursor: pointer;
+      line-height: 1.15;
     }
 
     .choice:hover,
     .choice:focus-visible {
       outline: 4px solid rgba(38, 103, 216, 0.22);
       background: #d9f1ff;
+    }
+
+    .choice.selected-choice {
+      outline: 5px solid rgba(255, 215, 119, 0.72);
+      border-color: #b98424;
+      background: #fff2c4;
+      box-shadow: 0 0 0 3px rgba(61, 45, 29, 0.14);
     }
 
     .choice.wrong {
@@ -1504,12 +1534,76 @@
       color: #36506a;
     }
 
+    .phase-banner {
+      position: absolute;
+      z-index: 10;
+      left: 50%;
+      top: 50%;
+      display: none;
+      min-width: min(420px, calc(100vw - 48px));
+      padding: 16px 22px;
+      border: 4px solid #2b2520;
+      border-radius: 8px;
+      background: rgba(255, 247, 230, 0.96);
+      color: #223326;
+      font-weight: 900;
+      line-height: 1.05;
+      text-align: center;
+      transform: translate(-50%, -50%) scale(0.96);
+      box-shadow: 0 18px 40px rgba(10, 8, 6, 0.34);
+      pointer-events: none;
+      letter-spacing: 0;
+    }
+
+    .phase-banner-main {
+      display: block;
+      font-size: clamp(30px, 6vw, 58px);
+      line-height: 1;
+    }
+
+    .phase-banner-sub {
+      display: block;
+      margin-top: 8px;
+      color: rgba(34, 51, 38, 0.78);
+      font-size: clamp(13px, 2.2vw, 20px);
+      line-height: 1.15;
+      font-weight: 900;
+    }
+
+    .phase-banner.show {
+      display: block;
+      animation: phase-banner-pop 1200ms ease forwards;
+    }
+
+    .phase-banner.training {
+      border-color: #2f6f2f;
+      background: rgba(245, 255, 230, 0.96);
+      color: #163b1b;
+    }
+
+    .phase-banner.battle {
+      border-color: #715332;
+      background: rgba(255, 215, 119, 0.96);
+      color: #3d2d1d;
+    }
+
+    .phase-banner.battle .phase-banner-sub {
+      color: rgba(61, 45, 29, 0.76);
+    }
+
+    @keyframes phase-banner-pop {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.86); }
+      14% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      72% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1.03); }
+    }
+
     .training-camp {
       position: absolute;
       z-index: 7;
       inset: 0;
       display: none;
-      grid-template-columns: minmax(180px, 0.7fr) minmax(320px, 1fr);
+      grid-template-columns: minmax(160px, 0.7fr) minmax(280px, 1fr);
       gap: 18px;
       align-items: center;
       padding: clamp(88px, 12vh, 128px) clamp(18px, 5vw, 72px) 132px;
@@ -1586,6 +1680,7 @@
     .dummy-leg.right { right: 34%; bottom: 0; width: 11%; height: 31%; border-radius: 999px; }
 
     .training-panel {
+      min-width: 0;
       max-width: 760px;
       padding: 14px;
       border: 2px solid var(--panel-border);
@@ -1765,7 +1860,7 @@
 
     .boss-card {
       display: grid;
-      grid-template-columns: minmax(160px, 260px) minmax(180px, 320px);
+      grid-template-columns: minmax(120px, 260px) minmax(160px, 320px);
       gap: 18px;
       align-items: center;
       width: min(720px, calc(100vw - 28px));
@@ -1802,7 +1897,7 @@
 
     .perk-panel {
       width: min(1080px, calc(100vw - 28px));
-      max-height: calc(100vh - 36px);
+      max-height: calc(100dvh - 36px);
       overflow: auto;
       padding: 18px;
       border: 3px solid #2b2520;
@@ -1834,7 +1929,7 @@
 
     .stage-clear-layout {
       display: grid;
-      grid-template-columns: minmax(280px, 0.82fr) minmax(360px, 1.18fr);
+      grid-template-columns: minmax(240px, 0.82fr) minmax(320px, 1.18fr);
       gap: 14px;
       align-items: start;
     }
@@ -2356,7 +2451,7 @@
 
     .arsenal-panel {
       width: min(920px, calc(100vw - 24px));
-      max-height: calc(100vh - 32px);
+      max-height: calc(100dvh - 32px);
       overflow: auto;
       border: 3px solid #2b2520;
       border-radius: 8px;
@@ -2366,7 +2461,7 @@
 
     .archive-panel {
       width: min(920px, calc(100vw - 24px));
-      max-height: calc(100vh - 32px);
+      max-height: calc(100dvh - 32px);
       overflow: auto;
       border: 3px solid #2b2520;
       border-radius: 8px;
@@ -2375,7 +2470,7 @@
     }
 
     .enemy-gallery-panel {
-      width: min(1240px, calc(100vw - 24px));
+      width: min(1480px, calc(100vw - 16px));
     }
 
     .arsenal-head {
@@ -2575,13 +2670,13 @@
 
     .enemy-gallery-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(230px, 280px);
+      grid-template-columns: minmax(0, 1fr) minmax(210px, 240px);
       gap: 14px;
     }
 
     .enemy-preview-stage {
       position: relative;
-      min-height: min(520px, calc(100vh - 210px));
+      min-height: min(720px, calc(100dvh - 145px));
       overflow: hidden;
       border: 2px solid #2b2520;
       border-radius: 8px;
@@ -2612,11 +2707,30 @@
       filter: drop-shadow(0 20px 16px rgba(0, 0, 0, 0.55));
     }
 
+    .enemy-gallery-sheet-preview {
+      position: absolute;
+      left: 50%;
+      top: 55%;
+      display: none;
+      background-repeat: no-repeat;
+      image-rendering: auto;
+      transform: translate(-50%, -50%) scale(var(--gallery-preview-scale, 1));
+      transform-origin: center;
+      filter: drop-shadow(0 20px 16px rgba(0, 0, 0, 0.55));
+      z-index: 1;
+    }
+
+    @keyframes enemy-gallery-sheet-play {
+      from { background-position-x: 0; }
+      to { background-position-x: var(--gallery-preview-end-x); }
+    }
+
     .enemy-gallery-info {
       position: absolute;
       left: 12px;
       right: 12px;
       bottom: 12px;
+      z-index: 2;
       display: grid;
       gap: 4px;
       padding: 12px 14px;
@@ -2638,10 +2752,35 @@
       line-height: 1.35;
     }
 
+    .enemy-gallery-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .enemy-gallery-action {
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 2px solid #ffd166;
+      border-radius: 8px;
+      background: #ffd76f;
+      color: #2f281f;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .enemy-gallery-action:focus-visible {
+      outline: 3px solid #f59e0b;
+      outline-offset: 2px;
+    }
+
     .enemy-gallery-list {
       display: grid;
       gap: 8px;
-      max-height: min(520px, calc(100vh - 210px));
+      max-height: min(720px, calc(100dvh - 145px));
       overflow: auto;
       padding-right: 4px;
     }
@@ -2786,7 +2925,7 @@
       align-items: center;
       justify-content: center;
       gap: 12px;
-      padding: 12px;
+      padding: 10px calc(12px + var(--safe-right)) calc(10px + var(--safe-bottom)) calc(12px + var(--safe-left));
       background: #fffaf0;
       border-top: 2px solid rgba(132, 97, 74, 0.25);
     }
@@ -2824,6 +2963,7 @@
       display: grid;
       place-items: center;
       padding: 18px;
+      overflow: auto;
       background:
         linear-gradient(rgba(19, 24, 22, 0.72), rgba(19, 24, 22, 0.78)),
         url("assets/ww2-battlefield.png") center bottom / cover;
@@ -3216,18 +3356,71 @@
       }
     }
 
+    @media (max-width: 900px) {
+      .topbar {
+        grid-template-columns: minmax(0, 1fr) repeat(4, minmax(72px, auto));
+        gap: 8px;
+      }
+
+      .stat {
+        min-width: 0;
+        padding: 7px 8px;
+        font-size: 14px;
+      }
+
+      .subtitle {
+        font-size: 13px;
+      }
+
+      .training-camp {
+        grid-template-columns: 1fr;
+        align-content: center;
+        gap: 12px;
+        padding: clamp(78px, 12vh, 112px) clamp(12px, 4vw, 32px) clamp(96px, 18vh, 128px);
+      }
+
+      .training-yard {
+        min-height: 0;
+      }
+
+      .target-dummy {
+        width: clamp(96px, 18vw, 160px);
+        min-width: 0;
+        height: clamp(138px, 24vw, 212px);
+        min-height: 0;
+      }
+
+      .stage-clear-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .inline-war-prep .shop-grid {
+        max-height: 270px;
+      }
+    }
+
     @media (max-width: 650px) {
       body {
-        overflow: auto;
+        overflow: hidden;
       }
 
       .game {
-        min-height: 100svh;
+        min-height: 100dvh;
       }
 
       .topbar {
-        grid-template-columns: 1fr 76px 76px;
-        gap: 8px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+        padding-top: calc(7px + var(--safe-top));
+        padding-bottom: 7px;
+      }
+
+      .brand {
+        grid-column: 1 / -1;
+      }
+
+      h1 {
+        font-size: clamp(20px, 7vw, 28px);
       }
 
       .subtitle {
@@ -3235,38 +3428,65 @@
       }
 
       .stat {
-        min-width: 0;
-        padding: 7px 6px;
-        font-size: 14px;
+        padding: 6px 5px;
+        border-width: 2px;
+        font-size: clamp(12px, 3.4vw, 14px);
       }
 
+      .level-stat,
       .coin-stat {
-        grid-column: 2 / 4;
-      }
-
-      .level-stat {
-        grid-column: 1 / 4;
+        grid-column: span 2;
       }
 
       .battlefield {
-        min-height: 510px;
+        min-height: 0;
+      }
+
+      .lane-layer {
+        inset: clamp(48px, 13%, 64px) 0 clamp(62px, 17%, 92px);
+      }
+
+      .lane-track {
+        height: clamp(34px, 9vh, 58px);
+      }
+
+      .lane-question-tag {
+        width: 32px;
+        height: 32px;
+        border-width: 2px;
+        font-size: 21px;
+      }
+
+      .lane-controls {
+        left: 8px;
+        gap: 6px;
+      }
+
+      .lane-move-button {
+        width: 38px;
+        height: 38px;
+        border-width: 2px;
+        font-size: 21px;
       }
 
       .prompt {
-        top: 8px;
+        top: 6px;
         grid-template-columns: 1fr;
-        width: min(420px, calc(100vw - 16px));
-        padding: 7px 8px;
+        gap: 6px;
+        width: min(420px, calc(100vw - 12px));
+        padding: 6px;
       }
 
       .question {
         justify-content: flex-start;
+        gap: 6px;
+        font-size: 14px;
       }
 
       .big-word {
-        width: 38px;
-        height: 38px;
-        font-size: 27px;
+        width: 34px;
+        height: 34px;
+        font-size: 24px;
       }
 
       .choices {
@@ -3275,12 +3495,173 @@
       }
 
       .choice {
-        min-height: 34px;
-        font-size: 16px;
+        min-height: 32px;
+        padding: 4px 6px;
+        font-size: clamp(14px, 4vw, 16px);
+      }
+
+      .message {
+        min-height: 18px;
+        font-size: 13px;
       }
 
       .tank {
-        bottom: 34px;
+        width: clamp(102px, 28vw, 136px);
+      }
+
+      .tank.player {
+        left: clamp(8px, 4vw, 24px);
+      }
+
+      .tank.enemy {
+        right: clamp(8px, 4vw, 24px);
+      }
+
+      .battlefield.multi-lane-mode .tank.player {
+        width: clamp(72px, 22vw, 104px);
+      }
+
+      .lane-enemy {
+        width: clamp(68px, 20vw, 104px);
+      }
+
+      .tank.enemy-boss {
+        width: clamp(132px, 42vw, 188px);
+      }
+
+      .unit-hud {
+        top: -22px;
+        width: min(110%, 150px);
+      }
+
+      .health-label {
+        font-size: 9px;
+      }
+
+      .health-bar {
+        height: 8px;
+      }
+
+      .reload-label,
+      .defense-label {
+        font-size: 8px;
+      }
+
+      .reload-bar,
+      .defense-bar {
+        height: 6px;
+      }
+
+      .training-camp {
+        padding: clamp(112px, 26vh, 156px) 10px 82px;
+        overflow: auto;
+      }
+
+      .training-yard {
+        display: none;
+      }
+
+      .training-panel {
+        padding: 10px;
+      }
+
+      .training-head {
+        align-items: flex-start;
+        font-size: 13px;
+      }
+
+      .training-word {
+        width: 46px;
+        height: 46px;
+        font-size: 32px;
+      }
+
+      .training-options {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+      }
+
+      .training-choice {
+        min-height: 38px;
+        font-size: 15px;
+      }
+
+      .boss-card {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 12px;
+        text-align: center;
+      }
+
+      .boss-portrait {
+        max-height: 32dvh;
+      }
+
+      .perk-panel,
+      .supply-panel,
+      .wreck,
+      .profile-panel {
+        padding: 12px;
+      }
+
+      .perk-choice {
+        grid-template-columns: 46px 1fr;
+        min-height: 104px;
+        padding: 9px;
+      }
+
+      .perk-icon {
+        width: 46px;
+        height: 46px;
+      }
+
+      .perk-name {
+        font-size: 18px;
+      }
+
+      .perk-desc {
+        font-size: 14px;
+      }
+
+      .arsenal-head {
+        padding: 10px;
+      }
+
+      .shop-grid {
+        gap: 8px;
+        padding: 10px;
+      }
+
+      .shop-card {
+        min-height: 0;
+      }
+
+      .controls {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 8px;
+        overflow-x: auto;
+        padding-top: 7px;
+        padding-bottom: calc(7px + var(--safe-bottom));
+        scrollbar-width: none;
+      }
+
+      .controls::-webkit-scrollbar {
+        display: none;
+      }
+
+      .primary {
+        flex: 0 0 auto;
+        min-height: 38px;
+        padding: 6px 10px;
+        border-width: 2px;
+        font-size: 14px;
+      }
+
+      .controls .level {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        font-size: 12px;
       }
 
       .shop-grid {
@@ -3292,11 +3673,11 @@
       }
 
       .enemy-preview-stage {
-        min-height: 390px;
+        min-height: min(560px, calc(100vh - 96px));
       }
 
       .enemy-gallery-list {
-        max-height: 260px;
+        max-height: 220px;
       }
 
       .perk-options {
@@ -3322,6 +3703,166 @@
 
       .rank-title-row {
         display: grid;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .topbar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .brand,
+      .level-stat,
+      .coin-stat {
+        grid-column: 1 / -1;
+      }
+
+      .prompt {
+        width: calc(100vw - 8px);
+      }
+
+      .choices,
+      .training-options,
+      .supply-options {
+        grid-template-columns: 1fr;
+      }
+
+      .choice,
+      .training-choice,
+      .supply-choice {
+        min-height: 30px;
+      }
+
+      .lane-question-tag {
+        display: none;
+      }
+    }
+
+    @media (max-height: 560px) and (orientation: landscape) {
+      .topbar {
+        grid-template-columns: minmax(120px, 1fr) repeat(4, minmax(64px, auto));
+        padding-top: calc(5px + var(--safe-top));
+        padding-bottom: 5px;
+      }
+
+      .brand,
+      .level-stat,
+      .coin-stat {
+        grid-column: auto;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      .subtitle {
+        display: none;
+      }
+
+      .stat {
+        padding: 5px 6px;
+        font-size: 12px;
+      }
+
+      .lane-layer {
+        inset: 46px 0 54px;
+      }
+
+      .prompt {
+        top: 4px;
+        width: min(720px, calc(100vw - 12px));
+        grid-template-columns: auto 1fr auto;
+        gap: 5px 8px;
+        padding: 5px 6px;
+      }
+
+      .big-word {
+        width: 32px;
+        height: 32px;
+        font-size: 23px;
+      }
+
+      .choices {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 5px;
+      }
+
+      .choice,
+      .skip-training-button {
+        min-height: 30px;
+        font-size: 13px;
+      }
+
+      .message {
+        display: none;
+      }
+
+      .tank {
+        bottom: 18px;
+        width: clamp(94px, 18vw, 148px);
+      }
+
+      .battlefield.multi-lane-mode .tank.player,
+      .lane-enemy {
+        width: clamp(66px, 13vw, 98px);
+      }
+
+      .unit-hud {
+        top: -20px;
+      }
+
+      .controls {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 7px;
+        overflow-x: auto;
+        padding-top: 5px;
+        padding-bottom: calc(5px + var(--safe-bottom));
+      }
+
+      .primary {
+        flex: 0 0 auto;
+        min-height: 32px;
+        padding: 4px 9px;
+        border-width: 2px;
+        font-size: 13px;
+      }
+
+      .controls .level {
+        display: none;
+      }
+
+      .profile-gate {
+        place-items: start center;
+        padding: 10px;
+      }
+
+      .profile-panel {
+        padding: 10px;
+      }
+
+      .profile-title {
+        font-size: 24px;
+      }
+
+      .profile-copy {
+        margin: 6px 0 8px;
+        font-size: 13px;
+      }
+
+      .profile-field {
+        gap: 4px;
+        margin-top: 8px;
+      }
+
+      .profile-field input,
+      .profile-field select,
+      .profile-submit {
+        min-height: 36px;
+      }
+
+      .profile-actions {
+        margin-top: 10px;
       }
     }
   </style>
@@ -3401,7 +3942,7 @@
         <div class="training-panel">
           <div class="training-head">
             <span>Training Camp</span>
-            <span>Hit each Hanzi twice</span>
+            <span>Hit each Hanzi once</span>
           </div>
           <div class="question">
             <span>Meaning of</span>
@@ -3420,8 +3961,11 @@
           <span class="big-word" id="questionWord">天</span>
         </div>
         <div class="choices" id="choices"></div>
+        <button class="skip-training-button" id="skipTrainingButton" type="button">Skip Drill</button>
         <div class="message" id="message">Choose the meaning to fire.</div>
       </div>
+
+      <div class="phase-banner" id="phaseBanner" aria-live="polite"></div>
 
       <div class="game-over" id="gameOver" aria-hidden="true">
         <div class="wreck">
@@ -3504,8 +4048,6 @@
     <footer class="controls">
       <button class="primary" id="soundButton" type="button" aria-pressed="true">Sound On</button>
       <button class="primary" id="pauseButton" type="button" aria-pressed="false">Pause</button>
-      <button class="primary" id="speakButton" type="button">Speak</button>
-      <button class="primary" id="nextButton" type="button">Next Word</button>
       <button class="primary" id="reviewButton" type="button">Review Misses</button>
       <button class="primary" id="masteryButton" type="button">Mastery Records</button>
       <button class="primary war-shop-button" id="arsenalButton" type="button">War Prep</button>
@@ -3622,10 +4164,14 @@
               <div class="enemy-preview-stage">
                 <div class="enemy-preview-canvas" id="enemyGalleryPreview" aria-hidden="true"></div>
                 <img class="enemy-gallery-fallback" id="enemyGalleryFallback" src="assets/enemy-suicide-truck.svg" alt="">
+                <div class="enemy-gallery-sheet-preview" id="enemyGallerySheetPreview" aria-hidden="true"></div>
                 <div class="enemy-gallery-info">
                   <div class="enemy-gallery-name" id="enemyGalleryName">Self-Destruct Truck</div>
                   <div class="enemy-gallery-meta" id="enemyGalleryMeta">HP 1 · Damage 1</div>
                   <div class="enemy-gallery-meta" id="enemyGalleryDesc">Closest Phaser-style portrait based on the reference image.</div>
+                  <div class="enemy-gallery-actions">
+                    <button class="enemy-gallery-action" id="enemyGalleryAttackButton" type="button">Attack Preview</button>
+                  </div>
                 </div>
               </div>
               <div class="enemy-gallery-list" id="enemyGalleryList"></div>
@@ -3668,10 +4214,11 @@
   <script src="src/core/storage-core.js"></script>
   <script src="src/core/combat-core.js"></script>
   <script src="src/core/learning-core.js"></script>
+  <script src="src/core/training-core.js"></script>
   <script src="src/core/question-core.js"></script>
   <script src="src/core/mastery-core.js"></script>
   <script>
-    const appVersion = "2026.05.25.14";
+    const appVersion = "2026.05.26.08";
     const { gradeOneWordData, createWords, createWordMap } = window.HanziTankWords;
     const words = createWords(gradeOneWordData);
     const wordByHanzi = createWordMap(words);
@@ -3688,6 +4235,7 @@
     } = window.HanziTankEnemies;
 
     const enemyAttackInterval = 5;
+    const trainingHitsRequired = 1;
     const stageOpeningHanzi = {
       1: "一",
       2: "看",
@@ -3725,6 +4273,25 @@
       getWordWeight: getQuestionWordWeight,
       pickWeightedWord: pickQuestionWeightedWord
     } = window.HanziTankQuestions;
+    const {
+      getLaneCount: getTrainingCoreLaneCount,
+      getTrainingLaneCount: getTrainingCoreTrainingLaneCount,
+      getActiveLaneCount: getTrainingCoreActiveLaneCount,
+      getActiveLaneIndexes: getTrainingCoreActiveLaneIndexes,
+      getTrainingLaneIndexes: getTrainingCoreTrainingLaneIndexes,
+      isLaneLive: isTrainingCoreLaneLive,
+      isTrainingLaneLearned: isTrainingCoreTrainingLaneLearned,
+      isTrainingLaneSelectable: isTrainingCoreTrainingLaneSelectable,
+      normalizeLaneEnemy: normalizeTrainingCoreLaneEnemy,
+      getLaneTop: getTrainingCoreLaneTop,
+      getLaneEnemyLeft: getTrainingCoreLaneEnemyLeft,
+      createCombatLaneStates: createTrainingCoreCombatLaneStates,
+      createTrainingLaneStates: createTrainingCoreTrainingLaneStates,
+      selectTrainingWords: selectTrainingCoreTrainingWords,
+      getTrainingRemainingWords: getTrainingCoreTrainingRemainingWords,
+      pickTrainingWord: pickTrainingCoreTrainingWord,
+      recordTrainingHit: recordTrainingCoreHit
+    } = window.HanziTankTraining;
 
     const perks = [
       { id: "armor", iconClass: "armor-icon", name: "Extra Armor", desc: "Max HP +1 and repair 1 HP now.", apply: () => { runUpgrades.maxLives += 1; lives = Math.min(lives + 1, getMaxLives()); } },
@@ -3752,7 +4319,9 @@
     const laneDownButton = document.querySelector("#laneDownButton");
     const questionWordEl = document.querySelector("#questionWord");
     const choicesEl = document.querySelector("#choices");
+    const skipTrainingButton = document.querySelector("#skipTrainingButton");
     const messageEl = document.querySelector("#message");
+    const phaseBanner = document.querySelector("#phaseBanner");
     const playerTank = document.querySelector("#playerTank");
     const enemyTank = document.querySelector("#enemyTank");
     const playerTankSprite = document.querySelector("#playerTankSprite");
@@ -3815,10 +4384,8 @@
     const bossIntroName = document.querySelector("#bossIntroName");
     const bossIntroText = document.querySelector("#bossIntroText");
     const restartButton = document.querySelector("#restartButton");
-    const nextButton = document.querySelector("#nextButton");
     const soundButton = document.querySelector("#soundButton");
     const pauseButton = document.querySelector("#pauseButton");
-    const speakButton = document.querySelector("#speakButton");
     const reviewButton = document.querySelector("#reviewButton");
     const masteryButton = document.querySelector("#masteryButton");
     const archiveButton = document.querySelector("#archiveButton");
@@ -3851,9 +4418,11 @@
     const closeEnemyGalleryButton = document.querySelector("#closeEnemyGalleryButton");
     const enemyGalleryPreview = document.querySelector("#enemyGalleryPreview");
     const enemyGalleryFallback = document.querySelector("#enemyGalleryFallback");
+    const enemyGallerySheetPreview = document.querySelector("#enemyGallerySheetPreview");
     const enemyGalleryName = document.querySelector("#enemyGalleryName");
     const enemyGalleryMeta = document.querySelector("#enemyGalleryMeta");
     const enemyGalleryDesc = document.querySelector("#enemyGalleryDesc");
+    const enemyGalleryAttackButton = document.querySelector("#enemyGalleryAttackButton");
     const enemyGalleryList = document.querySelector("#enemyGalleryList");
     const shopGrid = document.querySelector("#shopGrid");
     const shopCoins = document.querySelector("#shopCoins");
@@ -3904,6 +4473,8 @@
     let trainingLocked = false;
     let trainedStage = 0;
     let currentTrainingWord = null;
+    let phaseBannerTimeoutId = 0;
+    let selectedChoiceIndex = 0;
     let laneStates = [];
     let activeLaneIndex = 0;
     let laneAdvanceId = 0;
@@ -3972,7 +4543,51 @@
     let enemyGalleryGame = null;
     let enemyGalleryScene = null;
     let enemyGallerySprite = null;
+    let enemyGalleryFrameTimer = 0;
     let selectedEnemyGalleryId = "truck";
+    const enemyGallerySpriteSheets = {
+      enemyTank: {
+        url: "assets/sprites/enemies/enemy-tank-spritesheet.png?v=20260525",
+        frameWidth: 224,
+        frameHeight: 144,
+        columns: 4
+      },
+      regularEnemyTank: {
+        url: "assets/sprites/enemies/regular-enemy-tank-spritesheet.png?v=20260525",
+        frameWidth: 469,
+        frameHeight: 300,
+        columns: 6
+      },
+      regularInfantry: {
+        url: "assets/sprites/enemies/regular-infantry-spritesheet.png?v=20260525",
+        frameWidth: 469,
+        frameHeight: 300,
+        columns: 6
+      },
+      grenadier: {
+        url: "assets/sprites/enemies/grenadier-spritesheet.png?v=20260525",
+        frameWidth: 469,
+        frameHeight: 300,
+        columns: 6
+      },
+      bossTankDismantler: {
+        url: "assets/sprites/enemies/tank-dismantler-spritesheet.png?v=20260525",
+        frameWidth: 224,
+        frameHeight: 224,
+        columns: 6
+      }
+    };
+    const enemyGalleryAnimationMap = {
+      tank: { sheet: "enemyTank", start: 0, end: 3, frameRate: 6, attackStart: 4, attackEnd: 7, attackFrameRate: 10, maxHeight: 205, y: 198 },
+      armor: { sheet: "regularEnemyTank", start: 0, end: 5, frameRate: 8, attackStart: 6, attackEnd: 11, attackFrameRate: 10, maxHeight: 230, y: 198 },
+      scout: { sheet: "enemyTank", start: 0, end: 3, frameRate: 9, attackStart: 4, attackEnd: 7, attackFrameRate: 12, maxHeight: 195, displayScale: 0.92, y: 198 },
+      truck: { sheet: "enemyTank", start: 0, end: 3, frameRate: 7, attackStart: 4, attackEnd: 7, attackFrameRate: 10, maxHeight: 205, displayScale: 1.04, y: 198 },
+      infantry: { sheet: "regularInfantry", start: 0, end: 5, frameRate: 8, attackStart: 6, attackEnd: 11, attackFrameRate: 10, maxHeight: 235, y: 214 },
+      heavyInfantry: { sheet: "regularInfantry", start: 0, end: 5, frameRate: 7, attackStart: 6, attackEnd: 11, attackFrameRate: 9, maxHeight: 245, displayScale: 1.04, y: 214 },
+      rpgInfantry: { sheet: "grenadier", start: 0, end: 5, frameRate: 8, attackStart: 6, attackEnd: 11, attackFrameRate: 10, maxHeight: 235, y: 214 },
+      grenadier: { sheet: "grenadier", start: 0, end: 5, frameRate: 8, attackStart: 6, attackEnd: 11, attackFrameRate: 10, maxHeight: 235, y: 214 },
+      boss: { sheet: "bossTankDismantler", start: 0, end: 5, frameRate: 8, attackStart: 6, attackEnd: 11, attackFrameRate: 10, maxHeight: 210, y: 154 }
+    };
 
     function initPhaserEffects() {
       if (!window.Phaser || !phaserLayer || phaserGame) return;
@@ -4260,14 +4875,25 @@
     function getPhaserPlayerPoint(rect) {
       if (!isMultiLaneStage()) return getBattlefieldPoint(playerTank, 0.5, 0.86);
       const fieldRect = battlefieldEl.getBoundingClientRect();
+      const laneRect = laneLayer.getBoundingClientRect();
       const laneTop = getLaneTop(activeLaneIndex, laneStates.length || (trainingActive ? getTrainingLaneCount() : getLaneCount())) / 100;
-      const laneAreaTop = 72;
-      const laneAreaBottom = 118;
-      const laneAreaHeight = Math.max(1, fieldRect.height - laneAreaTop - laneAreaBottom);
+      const laneAreaTop = Math.max(0, laneRect.top - fieldRect.top);
+      const laneAreaHeight = Math.max(1, laneRect.height || fieldRect.height);
       return {
         x: playerTank.getBoundingClientRect().left - fieldRect.left + rect.width * 0.5,
         y: laneAreaTop + laneAreaHeight * laneTop + rect.height * 0.36
       };
+    }
+
+    function syncResponsiveLayout() {
+      if (phaserGame?.scale && phaserLayer) {
+        const width = Math.max(1, phaserLayer.clientWidth || battlefieldEl.clientWidth || 800);
+        const height = Math.max(1, phaserLayer.clientHeight || battlefieldEl.clientHeight || 520);
+        phaserGame.scale.resize(width, height);
+      }
+      updatePlayerLanePosition();
+      updatePhaserActors();
+      if (enemyGalleryModal.classList.contains("show")) resizeEnemyGalleryPreview();
     }
 
     function updatePhaserPlayerTank() {
@@ -4498,7 +5124,9 @@
         sprite.setAlpha(1);
         if (isTrainingLaneLearned(lane)) {
           holdPhaserTargetDummyDestroyed(index);
-        } else if (!["target-dummy-miss", "target-dummy-sad", "target-dummy-destroyed"].includes(sprite.anims.currentAnim?.key)) {
+        } else if (sprite.anims.currentAnim?.key === "target-dummy-destroyed") {
+          playPhaserTargetDummyState(index, "idle", { force: true });
+        } else if (!["target-dummy-miss", "target-dummy-sad"].includes(sprite.anims.currentAnim?.key)) {
           playPhaserTargetDummyState(index, "idle");
         }
       });
@@ -5414,67 +6042,48 @@
     }
 
     function getLaneCount(stage = levelNumber) {
-      if (!isMultiLaneStage(stage)) return 1;
-      return 3;
+      return getTrainingCoreLaneCount(stage, { isMultiLaneStage });
     }
 
     function getTrainingLaneCount() {
-      return 5;
+      return getTrainingCoreTrainingLaneCount();
     }
 
     function getActiveLaneCount(stage = levelNumber) {
       if (!isMultiLaneStage(stage)) return 1;
-      return Math.min(3, Math.max(1, stage));
+      return getTrainingCoreActiveLaneCount(stage);
     }
 
     function getActiveLaneIndexes(stage = levelNumber) {
-      const activeCount = getActiveLaneCount(stage);
-      if (activeCount === 1) return [1];
-      if (activeCount === 2) return [0, 2];
-      return [0, 1, 2];
+      return getTrainingCoreActiveLaneIndexes(stage);
     }
 
     function getTrainingLaneIndexes() {
-      return [0, 1, 2, 3, 4];
+      return getTrainingCoreTrainingLaneIndexes();
     }
 
     function isLaneLive(lane) {
-      return Boolean(lane?.active && !lane.defeated && lane.enemy && lane.enemy.hp > 0);
+      return isTrainingCoreLaneLive(lane);
     }
 
     function isTrainingLaneLearned(lane) {
-      return Boolean(lane?.training && lane.word && (trainingHits[lane.word.hanzi] || 0) >= 2);
+      return isTrainingCoreTrainingLaneLearned(lane, trainingHits, trainingHitsRequired);
     }
 
     function isTrainingLaneSelectable(lane) {
-      return Boolean(lane?.active && lane.training && lane.word && !isTrainingLaneLearned(lane));
+      return isTrainingCoreTrainingLaneSelectable(lane, trainingHits, trainingHitsRequired);
     }
 
     function normalizeLaneEnemy(enemy) {
-      return {
-        ...enemy,
-        id: "infantry",
-        name: "Regular Soldier",
-        hp: 1,
-        maxHp: 1,
-        armor: 0,
-        maxArmor: 0,
-        absoluteDefense: 0,
-        maxAbsoluteDefense: 0,
-        damage: 1,
-        attackInterval: Math.max(5, Number(enemy.attackInterval || enemyAttackInterval))
-      };
+      return normalizeTrainingCoreLaneEnemy(enemy, enemyAttackInterval);
     }
 
     function getLaneTop(index, count = getLaneCount()) {
-      if (count <= 1) return 50;
-      const topPadding = count >= 5 ? 12 : 16;
-      const bottomPadding = count >= 5 ? 88 : 84;
-      return topPadding + ((bottomPadding - topPadding) * index) / (count - 1);
+      return getTrainingCoreLaneTop(index, count);
     }
 
     function getLaneEnemyLeft(progress) {
-      return 82 - Math.max(0, Math.min(100, progress)) * 0.5;
+      return getTrainingCoreLaneEnemyLeft(progress);
     }
 
     function getBattleWordSource() {
@@ -5490,30 +6099,13 @@
     }
 
     function createLaneStates(stage = levelNumber) {
-      const count = getLaneCount(stage);
-      const activeIndexes = new Set(getActiveLaneIndexes(stage));
-      const used = new Set();
-      let enemyStageCursor = stage;
-      laneStates = Array.from({ length: count }, (_, index) => {
-        const active = activeIndexes.has(index);
-        while (isBossStage(enemyStageCursor)) enemyStageCursor += 1;
-        const enemy = active ? normalizeLaneEnemy(createEnemy(enemyStageCursor)) : null;
-        if (active) enemyStageCursor += 1;
-        const word = active ? pickLaneWord(used) : null;
-        if (word) used.add(word.hanzi);
-        return {
-          id: `lane-${index}`,
-          active,
-          enemy,
-          word,
-          progress: Math.max(0, index * 7 - stage),
-          defeated: false,
-          element: null,
-          healthFill: null,
-          hpText: null,
-          tag: null,
-          track: null
-        };
+      laneStates = createTrainingCoreCombatLaneStates({
+        stage,
+        activeLaneIndexes: getActiveLaneIndexes(stage),
+        createEnemy,
+        isBossStage,
+        pickLaneWord,
+        enemyAttackInterval
       });
       activeLaneIndex = getActiveLaneIndexes(stage)[0] || 0;
       currentEnemy = getActiveLane()?.enemy || currentEnemy;
@@ -5521,34 +6113,16 @@
     }
 
     function createTrainingLaneStates(stage = levelNumber) {
-      const count = getTrainingLaneCount();
-      const activeIndexes = new Set(getTrainingLaneIndexes());
-      const wordsByHanzi = new Map(trainingWords.map((word) => [word.hanzi, word]));
-      laneStates = Array.from({ length: count }, (_, index) => {
-        const previousWord = laneStates[index]?.word;
-        const word = activeIndexes.has(index)
-          ? previousWord && wordsByHanzi.has(previousWord.hanzi)
-            ? wordsByHanzi.get(previousWord.hanzi)
-            : trainingWords[index] || null
-          : null;
-        const active = Boolean(word);
-        return {
-          id: `training-lane-${index}`,
-          active,
-          training: true,
-          enemy: active ? { id: "dummy", name: "Target Dummy", hp: 1, maxHp: 1, damage: 0, attackInterval: 999 } : null,
-          word,
-          progress: Math.max(0, index * 7 - stage),
-          defeated: false,
-          element: null,
-          healthFill: null,
-          hpText: null,
-          tag: null,
-          track: null
-        };
+      const created = createTrainingCoreTrainingLaneStates({
+        stage,
+        trainingWords,
+        previousLaneStates: laneStates,
+        activeLaneIndex,
+        trainingHits,
+        trainingHitsRequired
       });
-      const liveIndexes = laneStates.map((lane, index) => isTrainingLaneSelectable(lane) ? index : -1).filter((index) => index >= 0);
-      activeLaneIndex = liveIndexes.includes(activeLaneIndex) ? activeLaneIndex : liveIndexes[Math.floor(liveIndexes.length / 2)] || 0;
+      laneStates = created.laneStates;
+      activeLaneIndex = created.activeLaneIndex;
       currentTrainingWord = getActiveLane()?.word || null;
       currentWord = currentTrainingWord || currentWord;
     }
@@ -5644,9 +6218,9 @@
         lane.track?.classList.toggle("learned", isTrainingLaneLearned(lane) || Boolean(lane.defeated));
         lane.tag.textContent = !lane.active ? "" : lane.defeated || isTrainingLaneLearned(lane) ? "✓" : lane.word.hanzi;
         lane.element.querySelector(".lane-enemy-name").textContent = lane.enemy?.name || "";
-        const trainingHitsForLane = lane.training && lane.word ? Math.min(2, trainingHits[lane.word.hanzi] || 0) : 0;
-        lane.hpText.textContent = lane.training && lane.word ? `${trainingHitsForLane}/2` : lane.enemy ? `${Math.max(0, lane.enemy.hp)}/${lane.enemy.maxHp}` : "";
-        syncHealthBar(lane.healthFill, lane.training ? trainingHitsForLane : lane.enemy?.hp || 0, lane.training ? 2 : lane.enemy?.maxHp || 1);
+        const trainingHitsForLane = lane.training && lane.word ? Math.min(trainingHitsRequired, trainingHits[lane.word.hanzi] || 0) : 0;
+        lane.hpText.textContent = lane.training && lane.word ? `${trainingHitsForLane}/${trainingHitsRequired}` : lane.enemy ? `${Math.max(0, lane.enemy.hp)}/${lane.enemy.maxHp}` : "";
+        syncHealthBar(lane.healthFill, lane.training ? trainingHitsForLane : lane.enemy?.hp || 0, lane.training ? trainingHitsRequired : lane.enemy?.maxHp || 1);
         const sprite = lane.element.querySelector(".tank-sprite");
         sprite.src = lane.enemy ? (enemySpriteMap[lane.enemy.id] || enemySpriteMap.infantry || enemySpriteMap.tank) : "";
       });
@@ -5704,6 +6278,65 @@
         return;
       }
       renderMultiLaneQuestion({ preserveAdvance: true });
+    }
+
+    function getChoiceButtons() {
+      return [...choicesEl.querySelectorAll(".choice")].filter((button) => !button.disabled && getComputedStyle(button).display !== "none");
+    }
+
+    function syncSelectedChoice() {
+      const buttons = getChoiceButtons();
+      if (buttons.length === 0) {
+        selectedChoiceIndex = 0;
+        return;
+      }
+      selectedChoiceIndex = Math.max(0, Math.min(selectedChoiceIndex, buttons.length - 1));
+      buttons.forEach((button, index) => {
+        const selected = index === selectedChoiceIndex;
+        button.classList.toggle("selected-choice", selected);
+        button.setAttribute("aria-selected", String(selected));
+        if (selected && document.activeElement?.tagName !== "INPUT") button.focus({ preventScroll: true });
+      });
+    }
+
+    function resetSelectedChoice(index = 0) {
+      selectedChoiceIndex = index;
+      setTimeout(syncSelectedChoice, 0);
+    }
+
+    function moveSelectedChoice(delta) {
+      const buttons = getChoiceButtons();
+      if (buttons.length === 0) return false;
+      selectedChoiceIndex = (selectedChoiceIndex + delta + buttons.length) % buttons.length;
+      syncSelectedChoice();
+      return true;
+    }
+
+    function confirmSelectedChoice() {
+      const buttons = getChoiceButtons();
+      const button = buttons[selectedChoiceIndex];
+      if (!button) return false;
+      button.click();
+      return true;
+    }
+
+    function isTypingInForm() {
+      const tagName = document.activeElement?.tagName;
+      return tagName === "INPUT" || tagName === "TEXTAREA" || tagName === "SELECT" || document.activeElement?.isContentEditable;
+    }
+
+    function canUseChoiceKeyboard() {
+      if (isTypingInForm()) return false;
+      if (!profileGate.classList.contains("hidden")) return false;
+      if (gameOver.classList.contains("show")) return false;
+      if (perkScreen.classList.contains("show")) return false;
+      if (supplyScreen.classList.contains("show")) return false;
+      if (arsenal.classList.contains("show")) return false;
+      if (archiveModal.classList.contains("show")) return false;
+      if (masteryModal.classList.contains("show")) return false;
+      if (debugModal.classList.contains("show")) return false;
+      if (enemyGalleryModal.classList.contains("show")) return false;
+      return getChoiceButtons().length > 0;
     }
 
     function getBattlefieldPercentPoint(element, xRatio = 0.5, yRatio = 0.5) {
@@ -6111,6 +6744,7 @@
       trainingCamp.setAttribute("aria-hidden", "true");
       battlefieldEl.classList.remove("training-mode");
       trainingActive = false;
+      showPhaseBanner("战斗阶段", "Battle Phase", "battle");
       if (isMultiLaneStage(stage)) {
         createLaneStates(stage);
         renderLaneLayer();
@@ -6148,37 +6782,53 @@
       trainingCamp.setAttribute("aria-hidden", "true");
       battlefieldEl.classList.add("training-mode");
       messageEl.textContent = `Training camp for Stage ${stage}. Learn 5 Hanzi before battle.`;
+      showPhaseBanner("训练阶段", "Training Phase", "training");
       renderTrainingQuestion();
       syncHud();
     }
 
+    function showPhaseBanner(text, subtitle = "", mode = "") {
+      if (!phaseBanner) return;
+      if (phaseBannerTimeoutId) clearTimeout(phaseBannerTimeoutId);
+      phaseBanner.innerHTML = "";
+      const main = document.createElement("span");
+      main.className = "phase-banner-main";
+      main.textContent = text;
+      phaseBanner.appendChild(main);
+      if (subtitle) {
+        const sub = document.createElement("span");
+        sub.className = "phase-banner-sub";
+        sub.textContent = subtitle;
+        phaseBanner.appendChild(sub);
+      }
+      phaseBanner.className = `phase-banner ${mode}`.trim();
+      void phaseBanner.offsetWidth;
+      phaseBanner.classList.add("show");
+      phaseBannerTimeoutId = setTimeout(() => {
+        phaseBanner.classList.remove("show");
+        phaseBannerTimeoutId = 0;
+      }, 1200);
+    }
+
     function selectTrainingWords(stage = levelNumber) {
-      const picked = [];
-      const scripted = getStageOpeningWord(stage);
-      if (scripted) picked.push(scripted);
-      const candidates = shuffle(words.filter((word) => !picked.some((item) => item.hanzi === word.hanzi)));
-      while (picked.length < 5 && candidates.length > 0) picked.push(candidates.shift());
-      return picked;
+      return selectTrainingCoreTrainingWords(words, getStageOpeningWord(stage), shuffle, 5);
     }
 
     function getTrainingRemainingWords() {
-      return trainingWords.filter((word) => (trainingHits[word.hanzi] || 0) < 2);
+      return getTrainingCoreTrainingRemainingWords(trainingWords, trainingHits, trainingHitsRequired);
     }
 
     function pickTrainingWord() {
-      const remaining = getTrainingRemainingWords();
-      if (remaining.length === 0) return null;
-      if (!currentTrainingWord || (trainingHits[currentTrainingWord.hanzi] || 0) >= 2) return remaining[0];
-      return currentTrainingWord;
+      return pickTrainingCoreTrainingWord(trainingWords, trainingHits, trainingHitsRequired, currentTrainingWord);
     }
 
     function renderTrainingProgress() {
       trainingProgress.innerHTML = "";
       trainingWords.forEach((word) => {
-        const hits = Math.min(2, trainingHits[word.hanzi] || 0);
+        const hits = Math.min(trainingHitsRequired, trainingHits[word.hanzi] || 0);
         const chip = document.createElement("span");
-        chip.className = `training-chip${hits >= 2 ? " learned" : ""}`;
-        chip.textContent = `${word.hanzi} ${hits}/2`;
+        chip.className = `training-chip${hits >= trainingHitsRequired ? " learned" : ""}`;
+        chip.textContent = `${word.hanzi} ${hits}/${trainingHitsRequired}`;
         trainingProgress.appendChild(chip);
       });
     }
@@ -6202,12 +6852,12 @@
         startButton.textContent = "Start Battle";
         startButton.addEventListener("click", finishTrainingAndStartBattle);
         choicesEl.appendChild(startButton);
-        startButton.focus();
+        resetSelectedChoice(0);
         return;
       }
       trainingLocked = false;
       questionWordEl.textContent = word.hanzi;
-      messageEl.textContent = `Training Camp: hit the target dummy twice. ${word.hanzi} (${Math.min(2, trainingHits[word.hanzi] || 0)}/2).`;
+      messageEl.textContent = `Training Camp: hit the target dummy once. ${word.hanzi} (${Math.min(trainingHitsRequired, trainingHits[word.hanzi] || 0)}/${trainingHitsRequired}).`;
       queueHanziAudioBackgroundDownload(word, getSpokenWordText(word));
       const wrongChoices = shuffle(words.filter((item) => item.hanzi !== word.hanzi)).slice(0, 3);
       const answers = shuffle([word, ...wrongChoices]);
@@ -6220,7 +6870,7 @@
         button.addEventListener("click", () => chooseTrainingAnswer(button, answer));
         choicesEl.appendChild(button);
       });
-      choicesEl.querySelector("button")?.focus();
+      resetSelectedChoice(0);
     }
 
     function chooseTrainingAnswer(button, answer) {
@@ -6244,8 +6894,8 @@
       shootLaneTarget(lane, null);
       playSuccessSound();
       speakWord(currentTrainingWord);
-      trainingHits[currentTrainingWord.hanzi] = Math.min(2, (trainingHits[currentTrainingWord.hanzi] || 0) + 1);
-      if (trainingHits[currentTrainingWord.hanzi] >= 2) {
+      trainingHits = recordTrainingCoreHit(trainingHits, currentTrainingWord.hanzi, trainingHitsRequired);
+      if (trainingHits[currentTrainingWord.hanzi] >= trainingHitsRequired) {
         playPhaserTargetDummyState(activeLaneIndex, "destroyed", { force: true, hold: true });
         recordCorrectBank(currentTrainingWord);
         recordCorrectWord(currentTrainingWord);
@@ -6265,6 +6915,17 @@
       markSeenWords(battleWordPool);
       trainingActive = false;
       locked = false;
+      beginBattleStage(levelNumber);
+    }
+
+    function skipTrainingAndStartBattle() {
+      if (!trainingActive) return;
+      trainedStage = levelNumber;
+      markSeenWords(battleWordPool);
+      trainingActive = false;
+      trainingLocked = false;
+      locked = false;
+      messageEl.textContent = "Drill skipped. Starting battle.";
       beginBattleStage(levelNumber);
     }
 
@@ -6862,6 +7523,7 @@
         button.addEventListener("click", () => chooseAnswer(button, answer));
         choicesEl.appendChild(button);
       });
+      resetSelectedChoice(0);
       if (!options.preserveReload) startCountdown();
     }
 
@@ -6911,6 +7573,7 @@
         button.addEventListener("click", () => chooseMultiLaneAnswer(button, answer));
         choicesEl.appendChild(button);
       });
+      resetSelectedChoice(0);
       syncHud();
       if (!options.preserveAdvance) startLaneAdvance();
     }
@@ -6949,6 +7612,7 @@
         button.addEventListener("click", () => chooseBossAnswer(button));
         choicesEl.appendChild(button);
       });
+      resetSelectedChoice(0);
       const phraseToSpeak = bossPhrase;
       speakBossPhrase(phraseToSpeak, {
         delay: 180,
@@ -7577,12 +8241,18 @@
         backgroundColor: "rgba(0,0,0,0)",
         scene: {
           preload() {
-            getEnemyGalleryItems().forEach((item) => this.load.svg(`gallery:${item.id}`, item.sprite));
+            Object.entries(enemyGallerySpriteSheets).forEach(([key, sheet]) => {
+              this.load.spritesheet(`gallerySheet:${key}`, sheet.url, {
+                frameWidth: sheet.frameWidth,
+                frameHeight: sheet.frameHeight
+              });
+            });
           },
           create() {
             enemyGalleryScene = this;
             drawEnemyGalleryBackdrop(this);
-            enemyGallerySprite = this.add.image(440, 276, `gallery:${selectedEnemyGalleryId}`).setOrigin(0.5, 0.5).setDepth(5);
+            createEnemyGalleryAnimations(this);
+            enemyGallerySprite = this.add.sprite(440, 276, getEnemyGalleryTextureKey(selectedEnemyGalleryId), 0).setOrigin(0.5, 0.5).setDepth(5);
             this.tweens.add({ targets: enemyGallerySprite, y: 264, duration: 1200, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
             renderEnemyGalleryPreview(selectedEnemyGalleryId);
           }
@@ -7590,16 +8260,148 @@
       });
     }
 
-    function fitEnemyGallerySprite() {
+    function getEnemyGalleryAnimationConfig(id) {
+      return enemyGalleryAnimationMap[id] || enemyGalleryAnimationMap.tank;
+    }
+
+    function getEnemyGalleryTextureKey(id) {
+      return `gallerySheet:${getEnemyGalleryAnimationConfig(id).sheet}`;
+    }
+
+    function createEnemyGalleryAnimations(scene) {
+      Object.entries(enemyGalleryAnimationMap).forEach(([id, config]) => {
+        const idleKey = `gallery-${id}-idle`;
+        if (!scene.anims.exists(idleKey)) scene.anims.create({
+          key: idleKey,
+          frames: scene.anims.generateFrameNumbers(`gallerySheet:${config.sheet}`, { start: config.start, end: config.end }),
+          frameRate: config.frameRate,
+          repeat: -1
+        });
+        const attackKey = `gallery-${id}-attack`;
+        if (!scene.anims.exists(attackKey)) scene.anims.create({
+          key: attackKey,
+          frames: scene.anims.generateFrameNumbers(`gallerySheet:${config.sheet}`, { start: config.attackStart, end: config.attackEnd }),
+          frameRate: config.attackFrameRate || config.frameRate,
+          repeat: 0
+        });
+      });
+    }
+
+    function fitEnemyGallerySprite(item) {
       if (!enemyGallerySprite) return;
-      const source = enemyGallerySprite.texture.getSourceImage?.();
-      const width = source?.width || 760;
-      const height = source?.height || 430;
-      const ratio = Math.min(760 / width, 360 / height);
-      enemyGallerySprite.setDisplaySize(width * ratio, height * ratio);
-      enemyGallerySprite.setPosition(440, selectedEnemyGalleryId === "boss" ? 272 : 284);
+      const config = getEnemyGalleryAnimationConfig(item.id);
+      const sheet = enemyGallerySpriteSheets[config.sheet] || enemyGallerySpriteSheets.enemyTank;
+      const ratio = Math.min(760 / sheet.frameWidth, (config.maxHeight || 360) / sheet.frameHeight) * (config.displayScale || 1);
+      enemyGallerySprite.setDisplaySize(sheet.frameWidth * ratio, sheet.frameHeight * ratio);
+      enemyGallerySprite.setPosition(440, config.y || 284);
       enemyGallerySprite.setFlipX(false);
       enemyGallerySprite.setAlpha(1);
+    }
+
+    function resizeEnemyGalleryPreview() {
+      if (enemyGalleryGame?.scale) enemyGalleryGame.scale.resize(880, 520);
+      const item = enemyPortraitDetails.find((candidate) => candidate.id === selectedEnemyGalleryId);
+      if (item) fitEnemyGallerySprite(item);
+    }
+
+    function stopEnemyGalleryFrameLoop() {
+      if (!enemyGalleryFrameTimer) return;
+      window.clearInterval(enemyGalleryFrameTimer);
+      enemyGalleryFrameTimer = 0;
+    }
+
+    function getEnemyGalleryFrameRange(config, stateName) {
+      if (stateName === "attack") {
+        return {
+          start: config.attackStart,
+          end: config.attackEnd,
+          frameRate: config.attackFrameRate || config.frameRate,
+          repeat: false
+        };
+      }
+      return {
+        start: config.start,
+        end: config.end,
+        frameRate: config.frameRate,
+        repeat: true
+      };
+    }
+
+    function updateEnemyGallerySheetPreview(item, stateName, range) {
+      if (!enemyGallerySheetPreview) return;
+      const config = getEnemyGalleryAnimationConfig(item.id);
+      const sheet = enemyGallerySpriteSheets[config.sheet] || enemyGallerySpriteSheets.enemyTank;
+      const row = Math.floor(range.start / sheet.columns);
+      const ratio = Math.min(760 / sheet.frameWidth, (config.maxHeight || 360) / sheet.frameHeight) * (config.displayScale || 1);
+      enemyGallerySheetPreview.style.display = "block";
+      enemyGallerySheetPreview.style.width = `${sheet.frameWidth}px`;
+      enemyGallerySheetPreview.style.height = `${sheet.frameHeight}px`;
+      enemyGallerySheetPreview.style.top = `${((config.y || 284) / 520) * 100}%`;
+      enemyGallerySheetPreview.style.backgroundImage = `url("${sheet.url}")`;
+      enemyGallerySheetPreview.style.backgroundPosition = `0px ${-row * sheet.frameHeight}px`;
+      enemyGallerySheetPreview.style.setProperty("--gallery-preview-scale", ratio);
+      enemyGallerySheetPreview.style.animation = "none";
+    }
+
+    function setEnemyGallerySheetFrame(item, frame) {
+      if (!enemyGallerySheetPreview) return;
+      const config = getEnemyGalleryAnimationConfig(item.id);
+      const sheet = enemyGallerySpriteSheets[config.sheet] || enemyGallerySpriteSheets.enemyTank;
+      const column = frame % sheet.columns;
+      const row = Math.floor(frame / sheet.columns);
+      enemyGallerySheetPreview.style.backgroundPosition = `${-column * sheet.frameWidth}px ${-row * sheet.frameHeight}px`;
+    }
+
+    function startEnemyGalleryFrameLoop(item, stateName, options = {}) {
+      if (!enemyGallerySprite) return;
+      stopEnemyGalleryFrameLoop();
+      const config = getEnemyGalleryAnimationConfig(item.id);
+      const range = getEnemyGalleryFrameRange(config, stateName);
+      updateEnemyGallerySheetPreview(item, stateName, range);
+      let frame = range.start;
+      enemyGallerySprite.stop?.();
+      enemyGallerySprite.setFrame(frame);
+      setEnemyGallerySheetFrame(item, frame);
+      const frameDelay = Math.max(70, Math.round(1000 / Math.max(1, range.frameRate || 8)));
+      enemyGalleryFrameTimer = window.setInterval(() => {
+        if (selectedEnemyGalleryId !== item.id || !enemyGallerySprite) {
+          stopEnemyGalleryFrameLoop();
+          return;
+        }
+        frame += 1;
+        if (frame > range.end) {
+          if (!range.repeat) {
+            stopEnemyGalleryFrameLoop();
+            options.onComplete?.();
+            return;
+          }
+          frame = range.start;
+        }
+        enemyGallerySprite.setFrame(frame);
+        setEnemyGallerySheetFrame(item, frame);
+      }, frameDelay);
+    }
+
+    function playEnemyGalleryAnimation(item, stateName = "idle", options = {}) {
+      if (!enemyGallerySprite || !enemyGalleryScene) return false;
+      const textureKey = getEnemyGalleryTextureKey(item.id);
+      if (!enemyGalleryScene.textures.exists(textureKey)) return false;
+      const config = getEnemyGalleryAnimationConfig(item.id);
+      enemyGallerySprite.setVisible(true);
+      enemyGallerySprite.setTexture(textureKey, stateName === "attack" ? config.attackStart : config.start);
+      fitEnemyGallerySprite(item);
+      enemyGallerySprite.setAlpha(0);
+      startEnemyGalleryFrameLoop(item, stateName, options);
+      return true;
+    }
+
+    function playEnemyGalleryAttackPreview() {
+      unlockAudio();
+      playUiSound();
+      const item = getEnemyGalleryItem(selectedEnemyGalleryId);
+      playEnemyGalleryAnimation(item, "attack", { onComplete: () => {
+        if (selectedEnemyGalleryId === item.id) playEnemyGalleryAnimation(item, "idle");
+      } });
     }
 
     function renderEnemyGalleryPreview(id) {
@@ -7612,12 +8414,11 @@
       enemyGalleryList.querySelectorAll(".enemy-gallery-choice").forEach((button) => {
         button.classList.toggle("active", button.dataset.enemyId === item.id);
       });
-      if (enemyGallerySprite && enemyGalleryScene?.textures.exists(`gallery:${item.id}`)) {
+      if (playEnemyGalleryAnimation(item)) {
         enemyGalleryFallback.style.display = "none";
-        enemyGallerySprite.setTexture(`gallery:${item.id}`);
-        fitEnemyGallerySprite();
         enemyGalleryScene.tweens.add({ targets: enemyGallerySprite, scaleX: enemyGallerySprite.scaleX * 1.04, scaleY: enemyGallerySprite.scaleY * 1.04, duration: 160, yoyo: true, ease: "Sine.easeOut" });
       } else {
+        if (enemyGallerySheetPreview) enemyGallerySheetPreview.style.display = "none";
         enemyGalleryFallback.style.display = "block";
       }
     }
@@ -7662,6 +8463,7 @@
       const wasOpen = enemyGalleryModal.classList.contains("show");
       if (!wasOpen) return;
       playUiSound();
+      stopEnemyGalleryFrameLoop();
       enemyGalleryModal.classList.remove("show");
       enemyGalleryModal.setAttribute("aria-hidden", "true");
       enemyGalleryButton.focus();
@@ -7997,15 +8799,6 @@
       }, cleanupTime);
     }
 
-    function speakCurrentWord() {
-      unlockAudio();
-      if (currentEnemy.id === "boss" && bossPhrase) {
-        speakBossPhrase(bossPhrase, { preserveMessage: false });
-        return;
-      }
-      speakWord(currentWord);
-    }
-
     function getChineseVoice() {
       if (!("speechSynthesis" in window)) return null;
       const voices = window.speechSynthesis.getVoices();
@@ -8088,7 +8881,7 @@
           queueChineseSpeech(text, { ...options, delay: 300, autoRetry: false, preserveMessage: true });
         }
         if (!options.preserveMessage) {
-          messageEl.textContent = "Speech was blocked or no Chinese voice is available. Click Speak once, then answer again.";
+          messageEl.textContent = "Speech was blocked or no Chinese voice is available. Click the screen once, then answer again.";
         }
       };
       window.speechSynthesis.speak(utterance);
@@ -8097,9 +8890,20 @@
 
     document.addEventListener("pointerdown", unlockAudio, { once: true });
     document.addEventListener("pointerdown", () => setTimeout(retryPendingSpeech, 0));
-    window.addEventListener("resize", () => setTimeout(updatePhaserActors, 80));
+    window.addEventListener("resize", () => setTimeout(syncResponsiveLayout, 80));
+    window.addEventListener("orientationchange", () => setTimeout(syncResponsiveLayout, 180));
     document.addEventListener("keydown", (event) => {
-      if (!isMultiLaneStage() || profileGate.classList.contains("hidden") === false) return;
+      if (canUseChoiceKeyboard() && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
+        event.preventDefault();
+        moveSelectedChoice(event.key === "ArrowRight" ? 1 : -1);
+        return;
+      }
+      if (canUseChoiceKeyboard() && (event.key === " " || event.key === "Enter")) {
+        event.preventDefault();
+        confirmSelectedChoice();
+        return;
+      }
+      if (!isMultiLaneStage() || profileGate.classList.contains("hidden") === false || isTypingInForm()) return;
       if (event.key === "ArrowUp" || event.key.toLowerCase() === "w") {
         event.preventDefault();
         moveLane(-1);
@@ -8115,6 +8919,7 @@
     laneUpButton.addEventListener("click", () => moveLane(-1));
     laneDownButton.addEventListener("click", () => moveLane(1));
     trainingStartButton.addEventListener("click", finishTrainingAndStartBattle);
+    skipTrainingButton.addEventListener("click", skipTrainingAndStartBattle);
 
     soundButton.addEventListener("click", () => {
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -8131,15 +8936,7 @@
       }
     });
 
-    nextButton.addEventListener("click", () => {
-      unlockAudio();
-      playUiSound();
-      if (isPaused) return;
-      if (lives <= 0) return;
-      renderQuestion();
-    });
     pauseButton.addEventListener("click", togglePause);
-    speakButton.addEventListener("click", speakCurrentWord);
     restartButton.addEventListener("click", restartGame);
     reviewButton.addEventListener("click", () => {
       if (isPaused) return;
@@ -8156,6 +8953,7 @@
     masteryButton.addEventListener("click", openMasteryRecords);
     debugButton.addEventListener("click", openDebugMode);
     enemyGalleryButton.addEventListener("click", openEnemyGallery);
+    enemyGalleryAttackButton.addEventListener("click", playEnemyGalleryAttackPreview);
     arsenalButton.addEventListener("click", openArsenal);
     switchProfileButton.addEventListener("click", () => {
       unlockAudio();

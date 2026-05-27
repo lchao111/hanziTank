@@ -1,6 +1,6 @@
 # Hanzi Tank Project State
 
-Last updated: 2026-05-24
+Last updated: 2026-05-26
 
 ## Purpose
 
@@ -11,7 +11,10 @@ This file is the first place to read after context loss. It records the current 
 ## Current Runtime
 
 - Main entry: `index.html`
-- Browser launch: open `index.html` directly with a `file:///` URL.
+- Browser launch: run `npm start`, then open `http://127.0.0.1:5173/index.html`.
+- Production site: `https://hanzitank05262136.z22.web.core.windows.net/`.
+- Production deploy source: run `npm run build`, then upload `.deploy/site` only.
+- Legacy `file:///` launch uses a different browser storage origin than `localhost`; player profiles may appear missing when switching between the two.
 - Game engine: Phaser 3.80.1 loaded from CDN.
 - Phaser currently handles effects/projectile/gallery previews; DOM still owns most primary UI and tank/enemy body sprites.
 - Battle VFX has been upgraded toward Phaser-native effects: camera shake/flash, enemy targeting lines, projectile muzzle flashes, projectile trails, impact glints, shockwaves, fire cores, sparks/debris, and smoke puffs are generated with Phaser primitives rather than texture assets.
@@ -25,10 +28,24 @@ This file is the first place to read after context loss. It records the current 
 
 ## Important Commands
 
+Create the production deploy package before uploading to Azure Static Website:
+
+```bash
+npm run build
+```
+
+Production output is written to `.deploy/site`. The build bundles and minifies the local game scripts into a hashed `assets/app.<hash>.js`, disables source maps, copies runtime assets, and excludes source-only project folders such as `src/`, `tests/`, `tools/`, and `assets/source/` from the deploy package. See `DEPLOYMENT.md` for the Azure publish and verification checklist.
+
 Run all regression tests before and after meaningful code changes:
 
 ```bash
 npm test
+```
+
+Start the local Node static server:
+
+```bash
+npm start
 ```
 
 Current test suite:

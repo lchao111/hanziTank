@@ -104,6 +104,8 @@ Because this is currently plain JavaScript, type annotations are not available. 
 - Passwords are currently hashed with a simple local hash and salt. This is only local child-profile protection, not real security.
 - Do not hardcode secrets.
 - Validate profile names and password length before profile creation/login.
+- Run `npm run build` before public deployment. Upload `.deploy/site`, not the project root, so readable source modules, tests, tools, and source-only assets are not published. Follow `DEPLOYMENT.md` for the clean Azure publish and verification steps.
+- Keep production source maps disabled unless there is an explicit debugging need and a private hosting location for them.
 
 ## 7. Gameplay Invariants
 
@@ -122,6 +124,7 @@ Do not break these rules without explicit product decision:
 
 ## 8. UI Guidelines
 
+- For AI-generated or newly imported visual assets, follow `ART_STYLE_GUIDE.md` so ranks, enemies, badges, items, and UI art stay visually consistent.
 - Keep educational workflows visible and simple.
 - Avoid hiding learning progress behind combat-only UI.
 - Kids should be able to inspect learned Hanzi, rank, and future idiom boosts without starting a battle.
