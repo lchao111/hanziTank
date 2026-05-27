@@ -2552,11 +2552,38 @@
 
     .rank-hero {
       display: grid;
-      gap: 10px;
+      grid-template-columns: minmax(84px, 120px) minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
       padding: 14px;
       border: 2px solid #b99b61;
       border-radius: 8px;
       background: #fff4cf;
+    }
+
+    .rank-hero-icon-wrap {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      aspect-ratio: 1;
+      overflow: hidden;
+      border: 2px solid #7a4f12;
+      border-radius: 8px;
+      background: radial-gradient(circle at 50% 35%, #fff7d9, #f0c14f 62%, #7a4f12 100%);
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.35), 0 4px 0 rgba(61, 38, 13, 0.18);
+    }
+
+    .rank-hero-icon {
+      width: 112%;
+      height: 112%;
+      object-fit: contain;
+      filter: drop-shadow(0 3px 1px rgba(0, 0, 0, 0.28));
+    }
+
+    .rank-hero-details {
+      display: grid;
+      gap: 10px;
+      min-width: 0;
     }
 
     .rank-title-row {
@@ -2605,11 +2632,37 @@
 
     .rank-card {
       display: grid;
+      grid-template-columns: 56px minmax(0, 1fr);
       gap: 7px;
+      align-items: center;
       padding: 10px;
       border: 2px solid #c6b28f;
       border-radius: 8px;
       background: #fffdf7;
+    }
+
+    .rank-card-icon-wrap {
+      display: grid;
+      place-items: center;
+      width: 56px;
+      height: 56px;
+      overflow: hidden;
+      border: 2px solid #b99b61;
+      border-radius: 8px;
+      background: #f8df88;
+    }
+
+    .rank-card-icon {
+      width: 122%;
+      height: 122%;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.25));
+    }
+
+    .rank-card-body {
+      display: grid;
+      gap: 7px;
+      min-width: 0;
     }
 
     .rank-card.current {
@@ -2625,6 +2678,7 @@
     .rank-card-title {
       color: #2f281f;
       font-weight: 900;
+      line-height: 1.15;
     }
 
     .rank-card-meta {
@@ -3701,6 +3755,10 @@
         grid-template-columns: 1fr;
       }
 
+      .rank-hero {
+        grid-template-columns: 76px minmax(0, 1fr);
+      }
+
       .rank-title-row {
         display: grid;
       }
@@ -4110,12 +4168,17 @@
         </div>
         <div class="archive-body mastery-dashboard">
           <section class="rank-hero">
-            <div class="rank-title-row">
-              <div class="rank-title" id="currentRankName">Recruit</div>
-              <div class="rank-total" id="masteryTotal">0 / 3000 Hanzi</div>
+            <div class="rank-hero-icon-wrap" aria-hidden="true">
+              <img class="rank-hero-icon" id="currentRankIcon" src="assets/sprites/ranks/recruit.png" alt="">
             </div>
-            <div class="mastery-progress" aria-hidden="true"><div class="mastery-progress-fill" id="masteryProgressFill"></div></div>
-            <div class="rank-next" id="nextRankText">Learn your first Hanzi to begin promotion.</div>
+            <div class="rank-hero-details">
+              <div class="rank-title-row">
+                <div class="rank-title" id="currentRankName">Recruit</div>
+                <div class="rank-total" id="masteryTotal">0 / 3000 Hanzi</div>
+              </div>
+              <div class="mastery-progress" aria-hidden="true"><div class="mastery-progress-fill" id="masteryProgressFill"></div></div>
+              <div class="rank-next" id="nextRankText">Learn your first Hanzi to begin promotion.</div>
+            </div>
           </section>
           <section class="archive-section">
             <div class="archive-section-title">Rank Ladder</div>
@@ -4218,7 +4281,22 @@
   <script src="src/core/question-core.js"></script>
   <script src="src/core/mastery-core.js"></script>
   <script>
-    const appVersion = "2026.05.26.08";
+    const appVersion = "2026.05.26.09";
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#39;"
+      })[character]);
+    }
+
+    function escapeInteger(value, fallback = 0) {
+      const number = Number(value);
+      return Number.isFinite(number) ? String(Math.trunc(number)) : String(fallback);
+    }
+
     const { gradeOneWordData, createWords, createWordMap } = window.HanziTankWords;
     const words = createWords(gradeOneWordData);
     const wordByHanzi = createWordMap(words);
@@ -4404,6 +4482,7 @@
     const masteryModal = document.querySelector("#masteryModal");
     const closeMasteryButton = document.querySelector("#closeMasteryButton");
     const masteryMeta = document.querySelector("#masteryMeta");
+    const currentRankIcon = document.querySelector("#currentRankIcon");
     const currentRankName = document.querySelector("#currentRankName");
     const masteryTotal = document.querySelector("#masteryTotal");
     const masteryProgressFill = document.querySelector("#masteryProgressFill");
@@ -4629,26 +4708,6 @@
               frameWidth: 469,
               frameHeight: 300
             });
-            this.load.spritesheet("burnedTrees", "assets/sprites/environment/burned-trees-spritesheet.png?v=20260525", {
-              frameWidth: 704,
-              frameHeight: 1536
-            });
-            this.load.spritesheet("ruinedHouses", "assets/sprites/environment/ruined-houses-spritesheet.png?v=20260525", {
-              frameWidth: 938,
-              frameHeight: 768
-            });
-            this.load.spritesheet("trenchStrips", "assets/sprites/environment/trench-strips-spritesheet.png?v=20260525", {
-              frameWidth: 2816,
-              frameHeight: 512
-            });
-            this.load.spritesheet("craterTracks", "assets/sprites/environment/crater-tracks-spritesheet.png?v=20260525", {
-              frameWidth: 938,
-              frameHeight: 768
-            });
-            this.load.spritesheet("forestClusters", "assets/sprites/environment/forest-clusters-spritesheet.png?v=20260525", {
-              frameWidth: 1408,
-              frameHeight: 768
-            });
             this.load.spritesheet("regularEnemyTank", "assets/sprites/enemies/regular-enemy-tank-spritesheet.png?v=20260525", {
               frameWidth: 469,
               frameHeight: 300
@@ -4669,8 +4728,6 @@
             buildPhaserRegularInfantry(this);
             buildPhaserLaneInfantry(this);
             buildPhaserTargetDummies(this);
-            buildPhaserBurnedTrees(this);
-            buildPhaserEnvironmentScenery(this);
             buildPhaserRegularEnemyTank(this);
             buildPhaserGrenadier(this);
             phaserPlayerSprite.setVisible(false);
@@ -7979,14 +8036,14 @@
       archive.slice(0, 10).forEach((record) => {
         const topWords = (record.topDamagingWords || [])
           .slice(0, 3)
-          .map((word) => `${word.hanzi} (${word.meaning}) ${word.damage} dmg`)
+          .map((word) => `${escapeHtml(word.hanzi)} (${escapeHtml(word.meaning)}) ${escapeInteger(word.damage)} dmg`)
           .join(" · ") || "No damaging words";
-        const upgrades = (record.upgrades || []).slice(0, 3).join(" · ") || "No upgrades";
+        const upgrades = (record.upgrades || []).slice(0, 3).map(escapeHtml).join(" · ") || "No upgrades";
         const card = document.createElement("article");
         card.className = "archive-card";
         card.innerHTML = `
-          <div class="archive-card-head"><span>${formatDate(record.date)}</span><span>Stage ${record.stage || 1}</span></div>
-          <div class="archive-card-meta">Score ${record.score || 0} · Coins ${record.coins || 0}</div>
+          <div class="archive-card-head"><span>${escapeHtml(formatDate(record.date))}</span><span>Stage ${escapeInteger(record.stage, 1)}</span></div>
+          <div class="archive-card-meta">Score ${escapeInteger(record.score)} · Coins ${escapeInteger(record.coins)}</div>
           <div class="archive-card-meta">Upgrades: ${upgrades}</div>
           <div class="archive-card-meta">Damage Words: ${topWords}</div>
         `;
@@ -8031,9 +8088,9 @@
         const card = document.createElement("article");
         card.className = "leaderboard-card";
         card.innerHTML = `
-          <div class="leaderboard-card-head"><span>#${index + 1} ${record.name}</span><span>Stage ${record.stage}</span></div>
-          <div class="leaderboard-card-meta">Mastered ${record.masteredCount} Hanzi · Rank ${record.rankZh} · ${record.rankName}</div>
-          <div class="leaderboard-card-meta">Best Score ${record.score} · Coins ${record.coins} · ${formatDate(record.date)}</div>
+          <div class="leaderboard-card-head"><span>#${index + 1} ${escapeHtml(record.name)}</span><span>Stage ${escapeInteger(record.stage)}</span></div>
+          <div class="leaderboard-card-meta">Mastered ${escapeInteger(record.masteredCount)} Hanzi · Rank ${escapeHtml(record.rankZh)} · ${escapeHtml(record.rankName)}</div>
+          <div class="leaderboard-card-meta">Best Score ${escapeInteger(record.score)} · Coins ${escapeInteger(record.coins)} · ${escapeHtml(formatDate(record.date))}</div>
         `;
         leaderboardList.appendChild(card);
       });
@@ -8048,18 +8105,23 @@
       rankGrid.innerHTML = "";
       const currentRank = getRankForMastery(masteredCount);
       rankTiers.forEach((rank, index) => {
-        const nextMin = rankTiers[index + 1]?.min || masteryGoal;
-        const rangeStart = rank.min + 1;
-        const rangeEnd = Math.max(rank.min, nextMin);
+        const isFinalRank = index === rankTiers.length - 1;
+        const nextMin = isFinalRank ? masteryGoal : rankTiers[index + 1].min;
+        const rangeStart = isFinalRank ? rank.min : rank.min + 1;
+        const rangeEnd = isFinalRank ? masteryGoal : Math.max(rank.min, nextMin);
+        const rangeText = isFinalRank ? `${rank.min} Hanzi` : `${rangeStart}-${rangeEnd} Hanzi`;
         const inRankCount = Math.max(0, Math.min(masteredCount, nextMin) - rank.min);
         const rankTarget = Math.max(1, nextMin - rank.min);
         const card = document.createElement("article");
         card.className = `rank-card${rank === currentRank ? " current" : ""}${masteredCount >= nextMin ? " complete" : ""}`;
         card.innerHTML = `
-          <div class="rank-card-title">${rank.zh} · ${rank.name}</div>
-          <div class="rank-card-meta">${rangeStart}-${rangeEnd} Hanzi</div>
-          <div class="mastery-progress" aria-hidden="true"><div class="mastery-progress-fill" style="width:${getHealthPercent(inRankCount, rankTarget)}%"></div></div>
-          <div class="rank-card-meta">${Math.min(inRankCount, rankTarget)} / ${rankTarget}</div>
+          <div class="rank-card-icon-wrap" aria-hidden="true"><img class="rank-card-icon" src="${rank.icon}" alt=""></div>
+          <div class="rank-card-body">
+            <div class="rank-card-title">${rank.zh} · ${rank.name}</div>
+            <div class="rank-card-meta">${rangeText}</div>
+            <div class="mastery-progress" aria-hidden="true"><div class="mastery-progress-fill" style="width:${getHealthPercent(inRankCount, rankTarget)}%"></div></div>
+            <div class="rank-card-meta">${Math.min(inRankCount, rankTarget)} / ${rankTarget}</div>
+          </div>
         `;
         rankGrid.appendChild(card);
       });
@@ -8072,9 +8134,9 @@
         const card = document.createElement("article");
         card.className = "mastered-word-card";
         card.innerHTML = `
-          <div class="mastered-hanzi">${word.hanzi}</div>
-          <div class="mastered-meta">${word.phrase || word.meaning || "mastered"}</div>
-          <div class="mastered-meta">x${word.count || 1}</div>
+          <div class="mastered-hanzi">${escapeHtml(word.hanzi)}</div>
+          <div class="mastered-meta">${escapeHtml(word.phrase || word.meaning || "mastered")}</div>
+          <div class="mastered-meta">x${escapeInteger(word.count, 1)}</div>
         `;
         masteredWordGrid.appendChild(card);
       });
@@ -8085,6 +8147,8 @@
       const masteredCount = masteredWords.length;
       const currentRank = getRankForMastery(masteredCount);
       const nextRank = getNextRank(masteredCount);
+      currentRankIcon.src = currentRank.icon;
+      currentRankIcon.alt = `${currentRank.zh} ${currentRank.name} rank icon`;
       currentRankName.textContent = `${currentRank.zh} · ${currentRank.name}`;
       masteryTotal.textContent = `${masteredCount} / ${masteryGoal} Hanzi`;
       masteryProgressFill.style.width = `${getHealthPercent(masteredCount, masteryGoal)}%`;
@@ -9032,3 +9096,5 @@
   </script>
 </body>
 </html>
+
+

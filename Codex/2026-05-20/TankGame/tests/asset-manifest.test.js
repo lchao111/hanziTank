@@ -7,11 +7,12 @@ assert.ok(assets.assetSourceGuidelines.preferredSearches.includes('Top down Tank
 assert.strictEqual(assets.assetSourceGuidelines.requiredLicenseNoteFolder, 'assets/licenses/');
 assert.strictEqual(assets.plannedAssetFolders.tankSprites, 'assets/sprites/tanks/');
 assert.strictEqual(assets.plannedAssetFolders.effectSprites, 'assets/sprites/effects/');
+assert.strictEqual(assets.plannedAssetFolders.rankSprites, 'assets/sprites/ranks/');
 assert.strictEqual(assets.plannedAssetFolders.licenses, 'assets/licenses/');
 assert.ok(Object.prototype.hasOwnProperty.call(assets.spriteActorSchema, 'hullTexture'));
 assert.ok(Object.prototype.hasOwnProperty.call(assets.spriteActorSchema, 'turretTexture'));
 assert.ok(Object.prototype.hasOwnProperty.call(assets.spriteActorSchema, 'fallbackSvg'));
-assert.strictEqual(assets.importedSpriteTrials.length, 13);
+assert.strictEqual(assets.importedSpriteTrials.length, 14);
 assert.strictEqual(assets.importedSpriteTrials[0].license.includes('CC0'), true);
 assert.strictEqual(assets.importedSpriteTrials[0].hullTexture, 'kenney:playerHull');
 assert.strictEqual(assets.importedSpriteTrials[1].turretTexture, 'kenney:enemyTurret');
@@ -68,5 +69,10 @@ assert.strictEqual(assets.importedSpriteTrials[12].texture, 'css:battlefield-bac
 assert.strictEqual(assets.importedSpriteTrials[12].imagePath, 'assets/sprites/environment/battlefield-background.png');
 assert.strictEqual(assets.importedSpriteTrials[12].width, 2752);
 assert.strictEqual(assets.importedSpriteTrials[12].height, 1536);
+assert.strictEqual(assets.importedSpriteTrials[13].texture, 'css:mastery-rank-icons');
+assert.strictEqual(assets.importedSpriteTrials[13].spritesheetPath, 'assets/sprites/ranks/rank-icons.png');
+assert.strictEqual(assets.importedSpriteTrials[13].imagePaths.length, 11);
+assert.strictEqual(assets.importedSpriteTrials[13].imagePaths[0], 'assets/sprites/ranks/recruit.png');
+assert.strictEqual(assets.importedSpriteTrials[13].imagePaths[10], 'assets/sprites/ranks/colonel.png');
 
 console.log('asset manifest tests passed');

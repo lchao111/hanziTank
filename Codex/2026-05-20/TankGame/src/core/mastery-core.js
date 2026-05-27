@@ -6,17 +6,17 @@
   const masteryGoal = 3000;
   const rankSize = 300;
   const rankTiers = [
-    { name: "Recruit", zh: "新兵", min: 0 },
-    { name: "Private", zh: "列兵", min: 300 },
-    { name: "Corporal", zh: "下士", min: 600 },
-    { name: "Sergeant", zh: "中士", min: 900 },
-    { name: "Staff Sergeant", zh: "上士", min: 1200 },
-    { name: "Second Lieutenant", zh: "少尉", min: 1500 },
-    { name: "First Lieutenant", zh: "中尉", min: 1800 },
-    { name: "Captain", zh: "上尉", min: 2100 },
-    { name: "Major", zh: "少校", min: 2400 },
-    { name: "Lieutenant Colonel", zh: "中校", min: 2700 },
-    { name: "Colonel", zh: "上校", min: 3000 }
+    { name: "Recruit", zh: "新兵", min: 0, icon: "assets/sprites/ranks/recruit.png" },
+    { name: "Private", zh: "列兵", min: 300, icon: "assets/sprites/ranks/private.png" },
+    { name: "Corporal", zh: "下士", min: 600, icon: "assets/sprites/ranks/corporal.png" },
+    { name: "Sergeant", zh: "中士", min: 900, icon: "assets/sprites/ranks/sergeant.png" },
+    { name: "Staff Sergeant", zh: "上士", min: 1200, icon: "assets/sprites/ranks/staff-sergeant.png" },
+    { name: "Second Lieutenant", zh: "少尉", min: 1500, icon: "assets/sprites/ranks/second-lieutenant.png" },
+    { name: "First Lieutenant", zh: "中尉", min: 1800, icon: "assets/sprites/ranks/first-lieutenant.png" },
+    { name: "Captain", zh: "上尉", min: 2100, icon: "assets/sprites/ranks/captain.png" },
+    { name: "Major", zh: "少校", min: 2400, icon: "assets/sprites/ranks/major.png" },
+    { name: "Lieutenant Colonel", zh: "中校", min: 2700, icon: "assets/sprites/ranks/lieutenant-colonel.png" },
+    { name: "Colonel", zh: "上校", min: 3000, icon: "assets/sprites/ranks/colonel.png" }
   ];
 
   function getRankForMastery(count) {

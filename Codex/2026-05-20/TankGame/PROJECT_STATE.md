@@ -12,7 +12,8 @@ This file is the first place to read after context loss. It records the current 
 
 - Main entry: `index.html`
 - Browser launch: run `npm start`, then open `http://127.0.0.1:5173/index.html`.
-- Production site: `https://hanzitank05262136.z22.web.core.windows.net/`.
+- GitHub Pages site: `https://lchao111.github.io/hanziTank/` after the Pages workflow succeeds.
+- Azure fallback site: `https://hanzitank05262136.z22.web.core.windows.net/`.
 - Production deploy source: run `npm run build`, then upload `.deploy/site` only.
 - Legacy `file:///` launch uses a different browser storage origin than `localhost`; player profiles may appear missing when switching between the two.
 - Game engine: Phaser 3.80.1 loaded from CDN.
@@ -34,7 +35,7 @@ Create the production deploy package before uploading to Azure Static Website:
 npm run build
 ```
 
-Production output is written to `.deploy/site`. The build bundles and minifies the local game scripts into a hashed `assets/app.<hash>.js`, disables source maps, copies runtime assets, and excludes source-only project folders such as `src/`, `tests/`, `tools/`, and `assets/source/` from the deploy package. See `DEPLOYMENT.md` for the Azure publish and verification checklist.
+Production output is written to `.deploy/site`. The build bundles and minifies the local game scripts into a hashed `assets/app.<hash>.js`, copies local Phaser to `assets/vendor/phaser.min.js`, writes `.nojekyll` for GitHub Pages, disables source maps, copies runtime assets, and excludes source-only project folders such as `src/`, `tests/`, `tools/`, and `assets/source/` from the deploy package. See `DEPLOYMENT.md` for the GitHub Pages and Azure publish checklists.
 
 Run all regression tests before and after meaningful code changes:
 

@@ -1,8 +1,13 @@
 # Hanzi Tank Deployment
 
-This project is published as an Azure Storage static website.
+This project can be published to GitHub Pages for a shorter public URL. Azure Storage remains available as a fallback static website host.
 
 ## Current Production
+
+- Primary GitHub Pages URL: `https://lchao111.github.io/hanziTank/`
+- Fallback Azure URL: `https://hanzitank05262136.z22.web.core.windows.net/`
+
+## Azure Production
 
 - Site: `https://hanzitank05262136.z22.web.core.windows.net/`
 - Resource group: `HanZiTank`
@@ -17,7 +22,7 @@ Always build before publishing:
 npm run build
 ```
 
-The build writes `.deploy/site` and creates a hashed bundle such as `assets/app.9594139a7cb9.js`. The deploy package intentionally excludes readable source modules, tests, tools, and source-only assets:
+The build writes `.deploy/site` and creates a hashed bundle such as `assets/app.d31d9ce42e8d.js`. The deploy package intentionally excludes readable source modules, tests, tools, and source-only assets:
 
 - `src/`
 - `tests/`
@@ -25,6 +30,26 @@ The build writes `.deploy/site` and creates a hashed bundle such as `assets/app.
 - `assets/source/`
 
 Do not upload the project root.
+
+## Publish To GitHub Pages
+
+GitHub Pages deployment is handled by the repository-root workflow at `.github/workflows/hanzitank-pages.yml`. The repository root is `C:/Users/chlia/Documents`, and this game lives under `Codex/2026-05-20/TankGame`, so the workflow sets that folder as its working directory.
+
+The workflow runs on pushes to `main` and `release/**`, and can also be started manually from the GitHub Actions tab. It performs:
+
+1. `npm ci`
+2. `npm test`
+3. `npm run build`
+4. Upload `.deploy/site` as the Pages artifact
+5. Deploy through `actions/deploy-pages`
+
+Expected public URL after the first successful Pages deployment:
+
+```text
+https://lchao111.github.io/hanziTank/
+```
+
+If GitHub Pages has not been enabled for the repository yet, set the repository Pages source to **GitHub Actions** in GitHub settings, or use `gh`/GitHub API to enable Pages build type `workflow`.
 
 ## Publish To Azure
 
@@ -94,7 +119,8 @@ Also open the production site in a browser and confirm the game starts and the f
 ## Last Verified Publish
 
 - Date: 2026-05-26
-- Build tag shown in game: `2026.05.26.08`
-- Production bundle: `assets/app.9594139a7cb9.js`
-- Blob count after clean publish: `488`
+- Build tag shown in game: `2026.05.26.09`
+- Production bundle: `assets/app.d31d9ce42e8d.js`
+- Blob count after clean publish: `501`
 - Old source paths verified unavailable: `src/core/combat-core.js` and `assets/source/tank-dismantler-level5-boss-reference.png` returned `404`.
+- Phaser runtime is served locally from `assets/vendor/phaser.min.js`; production no longer depends on the CDN script.

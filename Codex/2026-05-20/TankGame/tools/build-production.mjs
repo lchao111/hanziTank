@@ -8,9 +8,12 @@ const rootDir = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const sourceHtmlPath = join(rootDir, "index.html");
 const outputDir = join(rootDir, ".deploy", "site");
 const outputAssetsDir = join(outputDir, "assets");
+const phaserSourcePath = join(rootDir, "node_modules", "phaser", "dist", "phaser.min.js");
+const phaserOutputPath = "assets/vendor/phaser.min.js";
 
 const localScriptPattern = /\n?\s*<script src="(src\/[^"]+\.js)"><\/script>/g;
 const inlineScriptPattern = /\n?\s*<script>\s*([\s\S]*?)\s*<\/script>\s*\n<\/body>/;
+const phaserCdnScriptPattern = /<script src="https:\/\/cdn\.jsdelivr\.net\/npm\/phaser@3\.80\.1\/dist\/phaser\.min\.js"><\/script>/;
 
 function toPosixPath(path) {
   return path.split(sep).join("/");
@@ -91,6 +94,11 @@ async function copyRuntimeAssets() {
   await rm(join(outputAssetsDir, "audio", "README.md"), { force: true });
 }
 
+async function copyPhaserRuntime() {
+  await mkdir(dirname(join(outputDir, phaserOutputPath)), { recursive: true });
+  await cp(phaserSourcePath, join(outputDir, phaserOutputPath));
+}
+
 async function build() {
   const sourceHtml = await readFile(sourceHtmlPath, "utf8");
   const localScripts = await readLocalScripts(sourceHtml);
@@ -104,6 +112,10 @@ async function build() {
 
   let productionHtml = sourceHtml.replace(localScriptPattern, "");
   productionHtml = productionHtml.replace(
+    phaserCdnScriptPattern,
+    `<script src="${phaserOutputPath}"></script>`
+  );
+  productionHtml = productionHtml.replace(
     inlineScriptPattern,
     `\n  <script src="${appScriptPath}"></script>\n</body>`
   );
@@ -116,11 +128,14 @@ async function build() {
   await rm(outputDir, { recursive: true, force: true });
   await mkdir(dirname(join(outputDir, appScriptPath)), { recursive: true });
   await copyRuntimeAssets();
+  await copyPhaserRuntime();
   await writeFile(join(outputDir, appScriptPath), minifiedJs, "utf8");
   await writeFile(join(outputDir, "index.html"), `${minifyHtml(productionHtml)}\n`, "utf8");
+  await writeFile(join(outputDir, ".nojekyll"), "", "utf8");
 
   console.log(`Built ${toPosixPath(relative(rootDir, outputDir))}`);
   console.log(`Bundled ${localScripts.length} local scripts into ${appScriptPath}`);
+  console.log(`Copied Phaser runtime to ${phaserOutputPath}`);
   console.log("Source maps are disabled for production output.");
 }
 

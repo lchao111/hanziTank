@@ -22,6 +22,7 @@ function bodyOf(functionName) {
 
 assert.match(source, /id="masteryButton"/, 'Mastery Records button should exist.');
 assert.match(source, /id="masteryModal"/, 'Mastery Records modal should exist.');
+assert.match(source, /id="currentRankIcon"/, 'Mastery Records should show the current rank icon.');
 assert.match(source, /id="appVersion"/, 'Visible build version should exist so browser and test versions can be compared.');
 assert.match(source, /const appVersion = "\d{4}\.\d{2}\.\d{2}\.\d{2}"/, 'Build version should use a stable date-based format.');
 assert.match(source, /<script src="src\/core\/mastery-core\.js"><\/script>/, 'Mastery core should be loaded before game logic.');
@@ -47,7 +48,12 @@ assert.doesNotMatch(getMasteredWords, /wrongBank|review|warArchive/, 'Mastery sh
 const renderMasteryRecords = bodyOf('renderMasteryRecords');
 assert.match(renderMasteryRecords, /getMasteredWords\(\)/, 'Mastery screen should render learned Hanzi from correctBank.');
 assert.match(renderMasteryRecords, /masteredCount/, 'Mastery screen should calculate unique mastered count.');
+assert.match(renderMasteryRecords, /currentRankIcon\.src = currentRank\.icon/, 'Mastery screen should render the current rank image.');
 assert.match(renderMasteryRecords, /War losses do not erase learning/, 'Mastery screen should communicate that learning survives defeat.');
+
+const renderRankLadder = bodyOf('renderRankLadder');
+assert.match(renderRankLadder, /rank-card-icon/, 'Rank ladder cards should render rank icons.');
+assert.match(renderRankLadder, /src="\$\{rank\.icon\}"/, 'Rank ladder icons should come from mastery rank data.');
 
 const getRankProgressText = bodyOf('getRankProgressText');
 assert.match(getRankProgressText, /getRankForMastery\(masteredCount\)/, 'Inline progress should show the current rank.');
@@ -97,8 +103,8 @@ assert.match(getProfileBestRecord, /rankName: rank\.name/, 'Leaderboard records 
 assert.match(getProfileBestRecord, /rankZh: rank\.zh/, 'Leaderboard records should expose Chinese rank name.');
 
 const renderLeaderboard = bodyOf('renderLeaderboard');
-assert.match(renderLeaderboard, /Mastered \$\{record\.masteredCount\} Hanzi/, 'Leaderboard should display mastered Hanzi count.');
-assert.match(renderLeaderboard, /Rank \$\{record\.rankZh\} · \$\{record\.rankName\}/, 'Leaderboard should display current rank.');
+assert.match(renderLeaderboard, /Mastered \$\{escapeInteger\(record\.masteredCount\)\} Hanzi/, 'Leaderboard should display mastered Hanzi count.');
+assert.match(renderLeaderboard, /Rank \$\{escapeHtml\(record\.rankZh\)\} · \$\{escapeHtml\(record\.rankName\)\}/, 'Leaderboard should display current rank.');
 
 const buildWarSummary = bodyOf('buildWarSummary');
 assert.match(buildWarSummary, /const coinsBeforeDefeat = playerState\.coins/, 'War summary should preserve pre-defeat coins in the record.');
@@ -112,3 +118,4 @@ assert.match(source, /masteryButton\.addEventListener\("click", openMasteryRecor
 assert.match(source, /closeMasteryButton\.addEventListener\("click", closeMasteryRecords\)/, 'Mastery modal close button should be wired.');
 
 console.log('mastery regression tests passed');
+

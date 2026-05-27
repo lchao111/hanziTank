@@ -15,6 +15,7 @@
     tankSprites: "assets/sprites/tanks/",
     enemySprites: "assets/sprites/enemies/",
     effectSprites: "assets/sprites/effects/",
+    rankSprites: "assets/sprites/ranks/",
     atlases: "assets/atlases/",
     licenses: "assets/licenses/"
   };
@@ -176,6 +177,26 @@
       imagePath: "assets/sprites/environment/battlefield-background.png",
       width: 2752,
       height: 1536
+    },
+    {
+      id: "mastery-rank-icons",
+      source: "User-provided Gemini rank icon sheet, cropped into one PNG per Mastery Records rank",
+      license: "User-provided reference asset; source file from Downloads/Gemini_Generated_Image_q21lllq21lllq21l.png",
+      texture: "css:mastery-rank-icons",
+      spritesheetPath: "assets/sprites/ranks/rank-icons.png",
+      imagePaths: [
+        "assets/sprites/ranks/recruit.png",
+        "assets/sprites/ranks/private.png",
+        "assets/sprites/ranks/corporal.png",
+        "assets/sprites/ranks/sergeant.png",
+        "assets/sprites/ranks/staff-sergeant.png",
+        "assets/sprites/ranks/second-lieutenant.png",
+        "assets/sprites/ranks/first-lieutenant.png",
+        "assets/sprites/ranks/captain.png",
+        "assets/sprites/ranks/major.png",
+        "assets/sprites/ranks/lieutenant-colonel.png",
+        "assets/sprites/ranks/colonel.png"
+      ]
     }
   ];
 
