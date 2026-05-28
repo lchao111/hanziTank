@@ -23,6 +23,8 @@ function bodyOf(functionName) {
 assert.match(source, /id="masteryButton"/, 'Mastery Records button should exist.');
 assert.match(source, /id="masteryModal"/, 'Mastery Records modal should exist.');
 assert.match(source, /id="currentRankIcon"/, 'Mastery Records should show the current rank icon.');
+assert.match(source, /\.rank-card-icon \{[\s\S]*width: 100%;[\s\S]*height: 100%;[\s\S]*object-fit: contain;/, 'Rank ladder icons should fit inside their square frames without being cropped.');
+assert.match(source, /\.rank-hero-icon \{[\s\S]*width: 100%;[\s\S]*height: 100%;[\s\S]*object-fit: contain;/, 'Current rank hero icon should fit inside its square frame without being cropped.');
 assert.match(source, /id="appVersion"/, 'Visible build version should exist so browser and test versions can be compared.');
 assert.match(source, /const appVersion = "\d{4}\.\d{2}\.\d{2}\.\d{2}"/, 'Build version should use a stable date-based format.');
 assert.match(source, /<script src="src\/core\/mastery-core\.js"><\/script>/, 'Mastery core should be loaded before game logic.');
@@ -107,6 +109,17 @@ const renderLeaderboard = bodyOf('renderLeaderboard');
 assert.match(renderLeaderboard, /Mastered \$\{escapeInteger\(record\.masteredCount\)\} Hanzi/, 'Leaderboard should display mastered Hanzi count.');
 assert.match(renderLeaderboard, /Rank \$\{escapeHtml\(record\.rankZh\)\} · \$\{escapeHtml\(record\.rankName\)\}/, 'Leaderboard should display current rank.');
 
+
+const renderMasteredWords = bodyOf('renderMasteredWords');
+assert.match(renderMasteredWords, /document\.createElement\("button"\)/, 'Mastered Hanzi cards should be clickable buttons.');
+assert.match(renderMasteredWords, /data-mastered-phrase/, 'Mastered Hanzi cards should expose a phrase label that can refresh on click.');
+assert.match(renderMasteredWords, /card\.dataset\.hanzi = word\.hanzi/, 'Mastered Hanzi buttons should keep their Hanzi target in a data attribute.');
+
+const playMasteredWordCard = bodyOf('playMasteredWordCard');
+assert.match(playMasteredWordCard, /prepareSpokenWord\(playbackWord, \{ force: true \}\)/, 'Clicking a mastered Hanzi should choose a fresh random phrase.');
+assert.match(playMasteredWordCard, /phraseEl\.textContent = getCurrentWordPhrase\(playbackWord\)/, 'Clicking a mastered Hanzi should update the visible phrase.');
+assert.match(playMasteredWordCard, /speakWord\(playbackWord\)/, 'Clicking a mastered Hanzi should reuse the training speech path.');
+assert.match(source, /masteredWordGrid\.addEventListener\("click"/, 'Mastered Hanzi grid should listen for card clicks.');
 const buildWarSummary = bodyOf('buildWarSummary');
 assert.match(buildWarSummary, /const coinsBeforeDefeat = playerState\.coins/, 'War summary should preserve pre-defeat coins in the record.');
 assert.match(buildWarSummary, /score\s*=\s*0/, 'Defeat should reset score.');
@@ -119,4 +132,3 @@ assert.match(source, /masteryButton\.addEventListener\("click", openMasteryRecor
 assert.match(source, /closeMasteryButton\.addEventListener\("click", closeMasteryRecords\)/, 'Mastery modal close button should be wired.');
 
 console.log('mastery regression tests passed');
-

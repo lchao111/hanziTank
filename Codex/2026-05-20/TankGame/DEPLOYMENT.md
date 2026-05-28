@@ -49,6 +49,82 @@ Expected public URL after the first successful Pages deployment:
 https://lchao111.github.io/hanziTank/
 ```
 
+## Shared Leaderboard API
+
+The game can show a cross-device leaderboard without moving full player saves to the cloud. The browser only calls a public leaderboard API URL; Cosmos DB credentials stay in Azure Functions application settings.
+
+Current API:
+
+```text
+https://hanzitankapie34413bf.azurewebsites.net/api
+```
+
+Current Azure resources:
+
+- Subscription: `Visual Studio Ultimate with MSDN`
+- Tenant: `a13619cf-54d1-4cca-9213-d94847319fa4`
+- Resource group: `rg-hanzi-tank-leaderboard`
+- Cosmos account: `hanzitankcosmose34413bf`
+- Cosmos database/container: `hanziTank` / `leaderboard`
+- Function App: `hanzitankapie34413bf`
+- Function storage: `hanzitanke34413bf`
+- Region: `West US 3`
+
+Frontend behavior:
+
+- No API configured: War Archives shows local profiles only.
+- API configured: War Archives merges local records with the shared top 20.
+- Offline/API down: cached shared records plus local records are shown.
+
+Server files live under `api/` and expose:
+
+- `GET /api/leaderboard`
+- `POST /api/leaderboard`
+
+Required Azure Functions settings:
+
+```text
+COSMOS_CONNECTION_STRING=AccountEndpoint=...;AccountKey=...
+COSMOS_DATABASE=hanziTank
+COSMOS_LEADERBOARD_CONTAINER=leaderboard
+ALLOWED_ORIGIN=https://lchao111.github.io,http://127.0.0.1:5173,http://localhost:5173
+```
+
+Do not put `COSMOS_CONNECTION_STRING`, AccountKey, or any Cosmos token in `index.html`, GitHub Pages secrets rendered into JS, or browser localStorage.
+
+To create the leaderboard Azure resources in the personal tenant and deploy the API, run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/provision-azure-leaderboard.ps1 -Login -ExpectedTenant "l.chaoneu"
+```
+
+The script creates/updates:
+
+- Resource group `rg-hanzi-tank-leaderboard`
+- Cosmos DB for NoSQL account with serverless capacity
+- Database `hanziTank`
+- Container `leaderboard`, partitioned by `/profileId`
+- Storage account for Azure Functions runtime
+- Node 24 Azure Function App
+- Function app settings containing the Cosmos connection string
+- Zip deployment for `api/`
+
+The script prints the public API base URL when it finishes. It does not print the Cosmos connection string.
+
+To build the static site with the public API URL embedded:
+
+```powershell
+$env:HANZI_TANK_LEADERBOARD_API = "https://YOUR-FUNCTION-APP.azurewebsites.net/api"
+npm run build
+```
+
+For local testing without rebuilding, set the public API URL in the browser console:
+
+```js
+localStorage.setItem("hanziTankLeaderboardApi", "http://localhost:7071/api");
+location.reload();
+```
+
 If GitHub Pages has not been enabled for the repository yet, set the repository Pages source to **GitHub Actions** in GitHub settings, or use `gh`/GitHub API to enable Pages build type `workflow`.
 
 ## Publish To Azure

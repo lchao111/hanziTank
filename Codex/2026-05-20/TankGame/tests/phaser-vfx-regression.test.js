@@ -273,6 +273,8 @@ assert.match(showDamage, /targetTank === enemyTank && currentEnemy\.id === "gren
 const enemyFire = bodyOf('enemyFire');
 assert.match(enemyFire, /playPhaserTargetingLine\(enemyTank, playerTank/, 'Enemy fire should show a Phaser targeting line before impact.');
 assert.match(enemyFire, /if \(currentEnemy\.attackStyle === "melee"\)/, 'Melee enemies should route through melee strike attacks.');
+assert.match(enemyFire, /const windupTime = currentEnemy\.id === "infantry" \|\| currentEnemy\.id === "grenadier" \? 260 : 160/, 'Ranged enemies should wind up before firing.');
+assert.match(enemyFire, /getPhaserEnemyAttackTargets\(\)\.forEach/, 'Ranged wind-up should move the visible Phaser enemy actor.');
 assert.match(enemyFire, /if \(currentEnemy\.id === "infantry"\) playPhaserRegularInfantryState\("fire"\)/, 'Regular soldier should play its firing animation when attacking.');
 assert.match(enemyFire, /if \(currentEnemy\.id === "armor"\) playPhaserRegularEnemyTankState\("fire"\)/, 'Regular enemy tank should play its firing animation when attacking.');
 assert.match(enemyFire, /if \(currentEnemy\.id === "grenadier"\) playPhaserGrenadierState\("fire"\)/, 'Grenadier should play its throw/fire animation when attacking.');
@@ -289,10 +291,27 @@ assert.match(source, /@keyframes boss-attack-approach[\s\S]*translateX\(clamp\(3
 assert.match(source, /@keyframes melee-menace-approach[\s\S]*translateX\(clamp\(220px, 34vw, 620px\)\)/, 'Generic melee enemies should use viewport-relative approach distance.');
 assert.match(source, /@keyframes melee-strike-attack[\s\S]*translateX\(clamp\(220px, 34vw, 620px\)\)/, 'Generic melee strike should start from close reload position.');
 
+const enemyAttackTargets = bodyOf('getPhaserEnemyAttackTargets');
+assert.match(enemyAttackTargets, /currentEnemy\.id === "infantry" && phaserRegularInfantry\?\.visible/, 'Regular soldier wind-up should target the visible infantry sprite.');
+assert.match(enemyAttackTargets, /currentEnemy\.id === "armor" && phaserRegularEnemyTank\?\.visible/, 'Armored tank wind-up should target the visible tank sprite.');
+assert.match(enemyAttackTargets, /currentEnemy\.id === "grenadier" && phaserGrenadier\?\.visible/, 'Grenadier wind-up should target the visible grenadier sprite.');
+
 const meleeStrike = bodyOf('meleeStrikeAttack');
 assert.match(meleeStrike, /tweenEnemyAttackToBase\(currentEnemy\.approachDistance/, 'Melee attack should close in using approach distance.');
 assert.match(meleeStrike, /playPhaserImpact\(playerTank/, 'Melee attack should use Phaser hit feedback.');
 assert.match(meleeStrike, /enemyTank\.classList\.add\("melee-strike"\)/, 'Generic melee attack should add a visible DOM strike class.');
+
+const attackFromLane = bodyOf('attackFromLane');
+assert.doesNotMatch(attackFromLane, /lane\.progress = 0;[\s\S]*laneEnemyAttack/, 'Lane soldiers should not teleport back before firing.');
+assert.match(attackFromLane, /lane\.attacking = true/, 'Lane attacks should be guarded while the shot animation resolves.');
+
+const startLaneAdvance = bodyOf('startLaneAdvance');
+assert.match(startLaneAdvance, /if \(lane\.attacking\) return/, 'Lane advance ticks should not move soldiers during an attack animation.');
+
+const laneEnemyAttack = bodyOf('laneEnemyAttack');
+assert.match(laneEnemyAttack, /const windupTime = 220/, 'Lane soldiers should have a short wind-up before firing.');
+assert.match(laneEnemyAttack, /playLaneProjectile\(lane\.element, playerTank/, 'Lane soldiers should fire from their current frontline position.');
+assert.match(laneEnemyAttack, /lane\.progress = 0;[\s\S]*lane\.attacking = false;[\s\S]*syncLaneHud\(\)/, 'Lane soldiers should reset position only after the attack resolves.');
 
 const fireFunction = bodyOf('fire');
 assert.match(fireFunction, /playPhaserPlayerState\(ammo\?\.id === "shell_he" \? "heavy-fire" : "fire", true\)/, 'Player fire should trigger the Phaser fire animation.');
@@ -302,11 +321,12 @@ assert.match(gameOverFunction, /playPhaserPlayerState\("destroyed", true\)/, 'Ga
 
 const bossHammer = bodyOf('bossHammerAttack');
 assert.match(bossHammer, /playPhaserBossSlam\(\)/, 'Boss hammer attack should trigger the assembled Phaser boss slam.');
-assert.match(bossHammer, /const approachDuration = 520/, 'Boss hammer should have an explicit approach phase before swinging.');
-assert.match(bossHammer, /const impactTime = 1040/, 'Boss hammer impact should happen after approach plus swing wind-up.');
-assert.match(bossHammer, /const cleanupTime = 1640/, 'Boss hammer cleanup should wait for retreat after impact.');
-assert.match(bossHammer, /stopPhaserEnemyApproach\(true\)/, 'Boss hammer should reset stale approach tweens before the attack sequence.');
-assert.match(bossHammer, /tweenEnemyAttackToBase\(getEnemyApproachDistance\(\), \{ angle: -9, inDuration: impactTime, outDuration: 520 \}\)/, 'Boss Phaser movement should approach until the impact and retreat afterward.');
+assert.match(bossHammer, /const wasApproaching = enemyTank\.classList\.contains\("reloading"\) \|\| Boolean\(phaserEnemyReloadTween\)/, 'Boss hammer should detect an already-advanced reload pose.');
+assert.match(bossHammer, /const approachDuration = wasApproaching \? 0 : 520/, 'Boss hammer should not jump back for a second approach when already close.');
+assert.match(bossHammer, /const impactTime = approachDuration \+ swingWindup/, 'Boss hammer impact should happen after approach plus swing wind-up.');
+assert.match(bossHammer, /const cleanupTime = impactTime \+ 600/, 'Boss hammer cleanup should wait for retreat after impact.');
+assert.match(bossHammer, /stopPhaserEnemyApproach\(false\)/, 'Boss hammer should stop stale approach tweens without resetting position.');
+assert.match(bossHammer, /tweenEnemyAttackToBase\(getEnemyApproachDistance\(\), \{ angle: -9, inDuration: Math\.max\(160, impactTime\), outDuration: 520 \}\)/, 'Boss Phaser movement should continue from the current position to impact and retreat afterward.');
 assert.match(bossHammer, /enemyTank\.classList\.add\("boss-attack-approach"\)/, 'Boss DOM attack should visibly approach before swinging.');
 assert.match(bossHammer, /enemyTank\.classList\.remove\("boss-attack-approach"\);\s*enemyTank\.classList\.add\("boss-slam"\)/, 'Boss DOM attack should switch from approach to slam.');
 assert.match(bossHammer, /\}, impactTime\)/, 'Boss damage should land at the scripted axe impact timing.');

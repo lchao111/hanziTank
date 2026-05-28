@@ -28,7 +28,14 @@ function bodyOf(functionName) {
 const showPerkChoices = bodyOf('showPerkChoices');
 assert.match(showPerkChoices, /<span class="perk-icon \$\{perk\.iconClass\}" aria-hidden="true"><\/span>/, 'Stage clear choices should render perk icons.');
 assert.match(showPerkChoices, /<span class="perk-copy">/, 'Stage clear choices should keep text grouped beside the icon.');
+assert.match(showPerkChoices, /renderVictoryScene\(\)/, 'Stage clear should render a victory scene before upgrade choices.');
 assert.match(source, /\.perk-choice \{\s*display: grid;/, 'Perk choices should use a stable icon/text grid layout.');
+
+const victorySceneCount = (source.match(/className: "victory-/g) || []).length;
+assert.strictEqual(victorySceneCount, 5, 'Stage clear should have exactly five victory scene variants.');
+const renderVictoryScene = bodyOf('renderVictoryScene');
+assert.match(renderVictoryScene, /Math\.floor\(Math\.random\(\) \* victoryScenes\.length\)/, 'Victory scenes should be selected randomly.');
+assert.match(source, /id="victoryShowcase"/, 'Stage clear panel should include the victory showcase.');
 
 const syncHud = bodyOf('syncHud');
 assert.match(syncHud, /playerTank\.classList\.toggle\("absolute-shield-active", absoluteDefenseAvailable > 0\)/, 'Player absolute defense shield should be visible only while charges remain.');

@@ -12,6 +12,7 @@
       correctBank: {},
       wrongBank: {},
       warArchive: [],
+      runProgress: null,
       ammo: {},
       owned: ["tank_sherman"],
       equipped: {
@@ -29,6 +30,7 @@
       correctBank: {},
       wrongBank: {},
       warArchive: [],
+      runProgress: null,
       ammo: {},
       owned: [...defaultState.owned],
       equipped: { ...defaultState.equipped }
@@ -87,6 +89,7 @@
       correctBank: saved?.correctBank && typeof saved.correctBank === "object" ? saved.correctBank : {},
       wrongBank: saved?.wrongBank && typeof saved.wrongBank === "object" ? saved.wrongBank : {},
       warArchive: Array.isArray(saved?.warArchive) ? saved.warArchive : [],
+      runProgress: saved?.runProgress && typeof saved.runProgress === "object" ? saved.runProgress : null,
       ammo: saved?.ammo && typeof saved.ammo === "object" ? saved.ammo : {},
       owned: Array.isArray(saved?.owned) ? saved.owned : [...defaultState.owned]
     };

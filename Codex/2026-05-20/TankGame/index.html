@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="hanzi-tank-leaderboard-api" content="">
   <title>汉字Tank - Multi Lane</title>
   <style>
     :root {
@@ -615,12 +616,36 @@
       filter: saturate(0.86) contrast(1.16) drop-shadow(0 14px 12px rgba(10, 6, 5, 0.52));
     }
 
+    .tank.enemy-boss.boss-charred .tank-sprite {
+      opacity: 1;
+      filter: grayscale(1) brightness(0.28) contrast(1.8) drop-shadow(0 0 18px rgba(255, 214, 82, 0.82));
+    }
+
+    .tank.enemy-boss.boss-charred::after {
+      content: "";
+      position: absolute;
+      z-index: 2;
+      inset: 8% 12%;
+      border-radius: 45% 45% 52% 52%;
+      background:
+        radial-gradient(circle at 42% 34%, rgba(255, 237, 147, 0.52), transparent 9%),
+        radial-gradient(circle at 62% 55%, rgba(255, 164, 28, 0.38), transparent 11%),
+        linear-gradient(115deg, transparent 0 42%, rgba(255, 225, 95, 0.5) 44% 47%, transparent 49% 100%);
+      mix-blend-mode: screen;
+      animation: charred-boss-spark 420ms steps(2, end) infinite;
+      pointer-events: none;
+    }
+
     .tank.enemy-boss {
       z-index: 4;
     }
 
     .enemy-boss.phaser-boss-active .tank-sprite {
       opacity: 0;
+    }
+
+    .enemy-boss.phaser-boss-active.boss-charred .tank-sprite {
+      opacity: 0.46;
     }
 
     .enemy-infantry.phaser-infantry-active .tank-sprite {
@@ -1470,10 +1495,6 @@
       display: block;
     }
 
-    .lane-enemy.phaser-target-dummy-active .lane-dummy {
-      display: none;
-    }
-
     .lane-dummy .dummy-head,
     .lane-dummy .dummy-body,
     .lane-dummy .dummy-arm,
@@ -1902,6 +1923,117 @@
       animation: boss-intro-fade 2000ms ease forwards;
     }
 
+    .boss-idiom-screen {
+      position: absolute;
+      z-index: 10;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(255, 235, 150, 0.22), transparent 34%),
+        rgba(14, 20, 22, 0.84);
+    }
+
+    .boss-idiom-screen.show {
+      display: grid;
+    }
+
+    .boss-idiom-panel {
+      width: min(760px, calc(100vw - 28px));
+      padding: 18px;
+      border: 4px solid #201713;
+      border-radius: 8px;
+      background: #fff4d6;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.48);
+      text-align: center;
+    }
+
+    .boss-idiom-title {
+      color: #4b160f;
+      font-size: clamp(28px, 6vw, 46px);
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .boss-idiom-subtitle,
+    .boss-idiom-message {
+      color: #5c4330;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    .boss-idiom-subtitle {
+      margin-top: 8px;
+    }
+
+    .boss-idiom-tiles {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(58px, 1fr));
+      gap: 10px;
+      margin: 16px auto 12px;
+      max-width: 520px;
+    }
+
+    .boss-idiom-tile {
+      min-height: 88px;
+      border: 3px solid #6d4b1c;
+      border-radius: 8px;
+      background: linear-gradient(145deg, #fffdf2, #f0c14f 74%, #93611d);
+      color: #321f11;
+      font-size: clamp(34px, 8vw, 56px);
+      line-height: 1;
+      font-weight: 900;
+      cursor: grab;
+      box-shadow: inset 0 3px 0 rgba(255,255,255,0.5), 0 8px 12px rgba(43, 35, 24, 0.22);
+    }
+
+    .boss-idiom-tile:active {
+      cursor: grabbing;
+    }
+
+    .boss-idiom-tile.dragging {
+      opacity: 0.45;
+      transform: scale(0.96);
+    }
+
+    .boss-idiom-tile.selected-choice {
+      outline: 5px solid rgba(37, 99, 235, 0.34);
+    }
+
+    .boss-special-effect {
+      pointer-events: none;
+      position: absolute;
+      z-index: 12;
+      inset: 0;
+      display: none;
+      place-items: center;
+      overflow: hidden;
+      color: #fff7c2;
+      font-size: clamp(38px, 10vw, 86px);
+      font-weight: 900;
+      text-shadow: 0 4px 0 rgba(0, 0, 0, 0.42), 0 0 24px rgba(255, 255, 255, 0.7);
+    }
+
+    .boss-special-effect.show {
+      display: grid;
+      animation: boss-special-flash 2400ms ease forwards;
+    }
+
+    .boss-special-effect.thunder {
+      background: repeating-linear-gradient(115deg, rgba(255,255,255,0.95) 0 7px, rgba(255,206,69,0.86) 7px 18px, transparent 18px 58px), rgba(60, 35, 10, 0.38);
+    }
+
+    .boss-special-effect.ice {
+      background: radial-gradient(circle at 48% 50%, rgba(255,255,255,0.92), rgba(92,188,255,0.62) 28%, transparent 58%), repeating-linear-gradient(45deg, rgba(215,242,255,0.72) 0 10px, transparent 10px 42px);
+      color: #eaf9ff;
+    }
+
+    .boss-special-effect.wind {
+      background: conic-gradient(from 20deg, transparent, rgba(204,255,224,0.82), transparent, rgba(157,231,255,0.66), transparent);
+      color: #e8fff0;
+    }
+
     .boss-card {
       display: grid;
       grid-template-columns: minmax(120px, 260px) minmax(160px, 320px);
@@ -1965,10 +2097,250 @@
       text-align: center;
     }
 
+    .victory-showcase {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(190px, 0.8fr) minmax(240px, 1.2fr);
+      gap: 16px;
+      align-items: stretch;
+      min-height: 168px;
+      margin: 0 0 16px;
+      border: 3px solid #302820;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #edf4e0;
+      color: #2b241c;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.38);
+    }
+
+    .victory-scene {
+      position: relative;
+      min-height: 168px;
+      overflow: hidden;
+      background: linear-gradient(var(--victory-sky, #cfe9f2) 0 58%, var(--victory-ground, #69784a) 58% 100%);
+    }
+
+    .victory-scene::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 38%;
+      height: 8px;
+      background: repeating-linear-gradient(90deg, rgba(48, 40, 32, 0.46) 0 22px, transparent 22px 42px);
+      opacity: 0.46;
+    }
+
+    .victory-sun {
+      position: absolute;
+      top: 18px;
+      right: 24px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--victory-sun, #ffd56a);
+      box-shadow: 0 0 0 10px rgba(255, 213, 106, 0.18), 0 0 28px rgba(255, 213, 106, 0.62);
+    }
+
+    .victory-beam {
+      position: absolute;
+      width: 92px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.42);
+      transform: rotate(-14deg);
+      animation: victory-beam-drift 2400ms ease-in-out infinite alternate;
+    }
+
+    .victory-beam.beam-one { top: 28px; left: 18px; }
+    .victory-beam.beam-two { top: 58px; left: 72px; width: 64px; animation-delay: 420ms; }
+
+    .victory-tank-visual {
+      position: absolute;
+      left: 22%;
+      bottom: 28px;
+      width: 132px;
+      height: 66px;
+      transform: translateX(-50%);
+      animation: victory-tank-roll 1200ms ease-out both;
+    }
+
+    .victory-tank-body {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+      width: 92px;
+      height: 34px;
+      border: 3px solid #2a241d;
+      border-radius: 8px 14px 8px 8px;
+      background: linear-gradient(135deg, var(--victory-tank, #5d8e4e), #2d5233);
+      box-shadow: inset 0 6px 0 rgba(255, 255, 255, 0.16);
+    }
+
+    .victory-tank-body::before {
+      content: "";
+      position: absolute;
+      top: -18px;
+      left: 30px;
+      width: 38px;
+      height: 22px;
+      border: 3px solid #2a241d;
+      border-bottom: 0;
+      border-radius: 10px 10px 0 0;
+      background: inherit;
+    }
+
+    .victory-barrel {
+      position: absolute;
+      left: 90px;
+      bottom: 40px;
+      width: 42px;
+      height: 9px;
+      border: 3px solid #2a241d;
+      border-left: 0;
+      border-radius: 0 6px 6px 0;
+      background: #394730;
+    }
+
+    .victory-track {
+      position: absolute;
+      left: 10px;
+      right: 18px;
+      bottom: 4px;
+      height: 22px;
+      border: 3px solid #2a241d;
+      border-radius: 999px;
+      background: repeating-linear-gradient(90deg, #24201c 0 9px, #514638 9px 18px);
+    }
+
+    .victory-flag {
+      position: absolute;
+      left: 54px;
+      bottom: 58px;
+      width: 36px;
+      height: 24px;
+      border-left: 4px solid #2a241d;
+      background: linear-gradient(135deg, var(--victory-flag, #d84c37), #fff1b9);
+      clip-path: polygon(0 0, 100% 10%, 76% 50%, 100% 88%, 0 100%);
+      animation: victory-flag-wave 900ms ease-in-out infinite alternate;
+    }
+
+    .victory-burst {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 3px solid var(--victory-spark, #f7c94b);
+      transform: rotate(45deg) scale(0.8);
+      opacity: 0.86;
+      animation: victory-spark 1200ms ease-in-out infinite;
+    }
+
+    .victory-burst.burst-one { right: 26px; bottom: 50px; }
+    .victory-burst.burst-two { right: 86px; top: 54px; animation-delay: 260ms; }
+    .victory-burst.burst-three { left: 34px; top: 78px; animation-delay: 520ms; }
+
+    .victory-copy {
+      display: grid;
+      align-content: center;
+      gap: 7px;
+      padding: 18px 18px 18px 0;
+    }
+
+    .victory-kicker {
+      color: #7a5217;
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .victory-heading {
+      color: #243125;
+      font-size: clamp(22px, 4vw, 34px);
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .victory-note {
+      color: #51483d;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .victory-showcase.victory-dawn {
+      --victory-sky: #c9e7f1;
+      --victory-ground: #71834f;
+      --victory-sun: #ffd15f;
+      --victory-tank: #5e9355;
+      --victory-flag: #d94f35;
+      --victory-spark: #f5b72f;
+      background: #f2f6de;
+    }
+
+    .victory-showcase.victory-night {
+      --victory-sky: #223247;
+      --victory-ground: #4e6042;
+      --victory-sun: #f6f0bf;
+      --victory-tank: #496d86;
+      --victory-flag: #7fc7ff;
+      --victory-spark: #e9f5ff;
+      background: #e9f2f1;
+    }
+
+    .victory-showcase.victory-supply {
+      --victory-sky: #f3d9a3;
+      --victory-ground: #8a7546;
+      --victory-sun: #ffe08a;
+      --victory-tank: #9a7440;
+      --victory-flag: #4f9d73;
+      --victory-spark: #fff0a6;
+      background: #f9efd6;
+    }
+
+    .victory-showcase.victory-river {
+      --victory-sky: #b8e3dc;
+      --victory-ground: #4f8677;
+      --victory-sun: #ffcf70;
+      --victory-tank: #3f8277;
+      --victory-flag: #f06f5d;
+      --victory-spark: #8ce6d2;
+      background: #e5f3ea;
+    }
+
+    .victory-showcase.victory-fortress {
+      --victory-sky: #d6d0c5;
+      --victory-ground: #646464;
+      --victory-sun: #ffbe65;
+      --victory-tank: #6e6a55;
+      --victory-flag: #e2b33d;
+      --victory-spark: #f5d568;
+      background: #efe9dc;
+    }
+
     .perk-options {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
+    }
+
+    @keyframes victory-tank-roll {
+      from { transform: translateX(-82%) translateY(8px); }
+      to { transform: translateX(-50%) translateY(0); }
+    }
+
+    @keyframes victory-flag-wave {
+      from { transform: skewY(-5deg); }
+      to { transform: skewY(7deg); }
+    }
+
+    @keyframes victory-spark {
+      0%, 100% { opacity: 0.36; transform: rotate(45deg) scale(0.66); }
+      50% { opacity: 1; transform: rotate(45deg) scale(1.05); }
+    }
+
+    @keyframes victory-beam-drift {
+      from { transform: translateX(-6px) rotate(-14deg); }
+      to { transform: translateX(10px) rotate(-14deg); }
     }
 
     .stage-clear-layout {
@@ -2549,6 +2921,14 @@
       font-weight: 900;
     }
 
+    .leaderboard-status {
+      padding: 8px 12px 0;
+      color: #5f5549;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
     .archive-list,
     .leaderboard-list {
       display: grid;
@@ -2618,8 +2998,8 @@
     }
 
     .rank-hero-icon {
-      width: 112%;
-      height: 112%;
+      width: 100%;
+      height: 100%;
       object-fit: contain;
       filter: drop-shadow(0 3px 1px rgba(0, 0, 0, 0.28));
     }
@@ -2697,8 +3077,8 @@
     }
 
     .rank-card-icon {
-      width: 122%;
-      height: 122%;
+      width: 100%;
+      height: 100%;
       object-fit: contain;
       filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.25));
     }
@@ -2750,6 +3130,18 @@
       border-radius: 8px;
       background: #fffdf7;
       text-align: center;
+    }
+
+    .mastered-word-card {
+      cursor: pointer;
+    }
+
+    .mastered-word-card:hover,
+    .mastered-word-card:focus-visible {
+      border-color: #b98424;
+      background: #fff2c4;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(243, 178, 60, 0.26);
     }
 
     .mastered-hanzi {
@@ -3128,6 +3520,12 @@
       margin-top: 16px;
     }
 
+    .mode-actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
     .profile-submit {
       flex: 1;
       min-height: 46px;
@@ -3135,6 +3533,289 @@
       border-radius: 8px;
       background: #ffd777;
       color: #3d2d1d;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .mode-button {
+      display: grid;
+      gap: 3px;
+      place-items: center;
+      min-height: 62px;
+      line-height: 1.1;
+    }
+
+    .mode-label-zh {
+      font-size: 22px;
+    }
+
+    .mode-label-en {
+      color: rgba(61, 45, 29, 0.76);
+      font-size: 14px;
+    }
+
+    .versus-modal {
+      position: fixed;
+      z-index: 16;
+      inset: 0;
+      display: none;
+      grid-template-rows: minmax(0, 1fr) auto;
+      background:
+        url("assets/sprites/environment/battlefield-background.png?v=20260525") center bottom / cover no-repeat,
+        linear-gradient(#90988d 0 42%, #c3b79c 42% 54%, #806f56 54% 68%, #4d3e31 68% 100%);
+      color: #fff7e6;
+    }
+
+    .versus-modal.show {
+      display: grid;
+    }
+
+    .versus-arena {
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(45, 85, 70, 0.22), transparent 42% 58%, rgba(90, 57, 54, 0.22)),
+        url("assets/sprites/environment/battlefield-background.png?v=20260525") center bottom / cover no-repeat;
+    }
+
+    .versus-console {
+      position: absolute;
+      z-index: 5;
+      top: 12px;
+      width: min(560px, calc(50vw - 24px));
+      display: grid;
+      grid-template-columns: minmax(74px, 0.72fr) auto minmax(0, 2.2fr);
+      gap: 8px;
+      align-items: center;
+      height: clamp(86px, 12vh, 118px);
+      min-width: 0;
+      padding: 8px 10px;
+      border: 3px solid #2b2520;
+      border-radius: 8px;
+      background: rgba(255, 247, 230, 0.97);
+      color: #2f281f;
+      box-shadow: 0 10px 24px rgba(12, 16, 15, 0.34), inset 0 2px 0 rgba(255,255,255,0.42);
+    }
+
+    .versus-console.left {
+      left: 12px;
+    }
+
+    .versus-console.right {
+      right: 12px;
+    }
+
+    .versus-status {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+      font-weight: 900;
+      line-height: 1.1;
+    }
+
+    .versus-heart-label {
+      font-size: clamp(11px, 1.8vw, 15px);
+    }
+
+    .versus-hearts {
+      display: flex;
+      gap: 2px;
+      color: #b91c1c;
+      font-size: clamp(15px, 2.5vw, 22px);
+      line-height: 1;
+      text-shadow: 0 1px 0 #fff6d4, 0 2px 0 rgba(53, 24, 18, 0.18);
+    }
+
+    .versus-heart.empty {
+      color: #9ca3af;
+      opacity: 0.58;
+    }
+
+    .versus-word {
+      display: grid;
+      place-items: center;
+      width: clamp(42px, 7vmin, 62px);
+      aspect-ratio: 1;
+      border: 3px solid #2f6f2f;
+      border-radius: 8px;
+      background: #f5ffe6;
+      color: #163b1b;
+      font-size: clamp(28px, 5vmin, 44px);
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .versus-options {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+      min-width: 0;
+      height: 100%;
+      align-items: stretch;
+    }
+
+    .versus-option {
+      display: grid;
+      place-items: center;
+      min-width: 0;
+      min-height: 0;
+      height: 100%;
+      padding: 4px 5px;
+      border: 2px solid #24566f;
+      border-radius: 8px;
+      background: #e9f8ff;
+      color: #163246;
+      font-weight: 900;
+      line-height: 1.05;
+      font-size: clamp(10px, 1.45vw, 15px);
+      text-align: center;
+      overflow: hidden;
+      overflow-wrap: anywhere;
+    }
+
+    .versus-option.selected-choice {
+      border-color: #b98424;
+      background: #fff2c4;
+      outline: 4px solid rgba(255, 215, 119, 0.5);
+    }
+
+    .versus-battle-lane {
+      position: absolute;
+      z-index: 2;
+      left: 0;
+      right: 0;
+      top: 52%;
+      height: clamp(82px, 18vh, 142px);
+      border-top: 2px solid rgba(255, 248, 223, 0.2);
+      border-bottom: 2px solid rgba(20, 15, 10, 0.34);
+      background:
+        radial-gradient(ellipse at 50% 50%, rgba(118, 96, 70, 0.16) 0 44%, transparent 70%),
+        linear-gradient(90deg, rgba(42, 34, 27, 0.18), rgba(126, 103, 76, 0.08) 48%, rgba(42, 34, 27, 0.18));
+      transform: translateY(-50%);
+    }
+
+    .versus-frontline {
+      position: absolute;
+      z-index: 3;
+      left: 50%;
+      top: 50%;
+      width: 4px;
+      height: 118%;
+      transform: translate(-50%, -50%);
+      border-radius: 999px;
+      background: rgba(255, 215, 119, 0.72);
+      box-shadow: 0 0 16px rgba(255, 215, 119, 0.45);
+      pointer-events: none;
+    }
+
+    .versus-base {
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      width: clamp(82px, 14vw, 170px);
+      height: clamp(46px, 8vw, 98px);
+      border: 0;
+      background: url("assets/sprites/tanks/player-tank-spritesheet.png?v=20260525") left top / 600% 500% no-repeat;
+      color: transparent;
+      filter: drop-shadow(0 10px 8px rgba(0,0,0,0.34));
+      transform: translateY(-50%);
+    }
+
+    .versus-base.left {
+      left: clamp(10px, 4vw, 72px);
+    }
+
+    .versus-base.right {
+      right: clamp(10px, 4vw, 72px);
+      background-image: url("assets/sprites/enemies/regular-enemy-tank-spritesheet.png?v=20260525");
+      transform: translateY(-50%) scaleX(-1);
+    }
+
+    .versus-soldier {
+      position: absolute;
+      z-index: 4;
+      top: 50%;
+      display: grid;
+      place-items: center;
+      width: clamp(58px, 9vw, 104px);
+      aspect-ratio: 1.56;
+      background: url("assets/sprites/enemies/regular-infantry-spritesheet.png?v=20260525") left top / 600% 500% no-repeat;
+      color: #163b1b;
+      font-size: clamp(14px, 2.4vw, 20px);
+      font-weight: 900;
+      transform: translate(-50%, -50%);
+      filter: sepia(0.34) saturate(1.15) hue-rotate(52deg) drop-shadow(0 9px 6px rgba(0, 0, 0, 0.34));
+      pointer-events: none;
+    }
+
+    .versus-soldier.right {
+      transform: translate(-50%, -50%) scaleX(-1);
+      filter: sepia(0.42) saturate(1.55) hue-rotate(-34deg) drop-shadow(0 9px 6px rgba(0, 0, 0, 0.34));
+    }
+
+    .versus-message {
+      position: absolute;
+      z-index: 5;
+      bottom: 10px;
+      width: min(46vw, 520px);
+      min-height: 36px;
+      padding: 7px 8px;
+      border: 2px solid rgba(255, 247, 230, 0.28);
+      border-radius: 8px;
+      background: rgba(17, 24, 22, 0.56);
+      color: #fff7e6;
+      font-weight: 900;
+      line-height: 1.2;
+      pointer-events: none;
+    }
+
+    .versus-message.left {
+      left: 12px;
+    }
+
+    .versus-message.right {
+      right: 12px;
+      text-align: right;
+    }
+
+    .versus-result {
+      position: absolute;
+      z-index: 8;
+      inset: 0;
+      display: none;
+      place-items: center;
+      background: rgba(17, 24, 22, 0.78);
+      color: #fff7e6;
+      font-size: clamp(32px, 8vw, 76px);
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .versus-result.show {
+      display: grid;
+    }
+
+    .versus-footer {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 10px calc(12px + var(--safe-right)) 10px calc(12px + var(--safe-left));
+      border-top: 2px solid rgba(255, 247, 230, 0.18);
+      background: rgba(47, 58, 43, 0.94);
+      color: #fff7e6;
+      font-weight: 800;
+    }
+
+    .versus-close {
+      width: 42px;
+      height: 42px;
+      border: 3px solid #715332;
+      border-radius: 8px;
+      background: #ffd777;
+      color: #3d2d1d;
+      font-size: 24px;
       font-weight: 900;
       cursor: pointer;
     }
@@ -3368,6 +4049,18 @@
       100% { transform: scale(1.06) translateY(-8px); }
     }
 
+    @keyframes boss-special-flash {
+      0% { opacity: 0; transform: scale(0.85); filter: brightness(1); }
+      12% { opacity: 1; transform: scale(1.04); filter: brightness(1.35); }
+      72% { opacity: 0.95; transform: scale(1); filter: brightness(1.15); }
+      100% { opacity: 0; transform: scale(1.12); filter: brightness(1); }
+    }
+
+    @keyframes charred-boss-spark {
+      0%, 100% { opacity: 0.18; transform: translate(0, 0) rotate(0deg); }
+      50% { opacity: 0.82; transform: translate(3px, -2px) rotate(2deg); }
+    }
+
     @keyframes damage-rise {
       0% {
         opacity: 0;
@@ -3501,6 +4194,14 @@
 
       .stage-clear-layout {
         grid-template-columns: 1fr;
+      }
+
+      .victory-showcase {
+        grid-template-columns: 1fr;
+      }
+
+      .victory-copy {
+        padding: 0 14px 14px;
       }
 
       .inline-war-prep .shop-grid {
@@ -3793,8 +4494,20 @@
         grid-template-columns: 1fr;
       }
 
+      .boss-idiom-tiles {
+        grid-template-columns: repeat(2, minmax(78px, 1fr));
+      }
+
       .stage-clear-layout {
         grid-template-columns: 1fr;
+      }
+
+      .victory-showcase {
+        grid-template-columns: 1fr;
+      }
+
+      .victory-copy {
+        padding: 0 12px 14px;
       }
 
       .inline-war-prep .shop-grid {
@@ -4117,6 +4830,27 @@
         <div class="perk-panel">
           <div class="perk-title">Stage Clear</div>
           <div class="perk-subtitle" id="perkSubtitle">Choose one upgrade for the next stage.</div>
+          <div class="victory-showcase victory-dawn" id="victoryShowcase" aria-live="polite">
+            <div class="victory-scene" aria-hidden="true">
+              <div class="victory-sun"></div>
+              <div class="victory-beam beam-one"></div>
+              <div class="victory-beam beam-two"></div>
+              <div class="victory-tank-visual">
+                <div class="victory-flag"></div>
+                <div class="victory-barrel"></div>
+                <div class="victory-tank-body"></div>
+                <div class="victory-track"></div>
+              </div>
+              <div class="victory-burst burst-one"></div>
+              <div class="victory-burst burst-two"></div>
+              <div class="victory-burst burst-three"></div>
+            </div>
+            <div class="victory-copy">
+              <div class="victory-kicker" id="victoryKicker">Stage secured</div>
+              <div class="victory-heading" id="victoryHeading">Frontline breakthrough</div>
+              <div class="victory-note" id="victoryNote">The crew regroups, reloads, and rolls toward the next Hanzi front.</div>
+            </div>
+          </div>
           <div class="stage-clear-layout">
             <section class="stage-clear-column" aria-label="Stage clear upgrades">
               <div class="perk-options" id="perkOptions"></div>
@@ -4147,6 +4881,17 @@
         </div>
       </div>
 
+      <div class="boss-idiom-screen" id="bossIdiomScreen" aria-hidden="true">
+        <div class="boss-idiom-panel">
+          <div class="boss-idiom-title">Boss Idiom Strike</div>
+          <div class="boss-idiom-subtitle" id="bossIdiomSubtitle">Drag the four characters into the correct order.</div>
+          <div class="boss-idiom-tiles" id="bossIdiomTiles"></div>
+          <div class="boss-idiom-message" id="bossIdiomMessage" aria-live="polite">Complete the idiom to charge a special attack.</div>
+        </div>
+      </div>
+
+      <div class="boss-special-effect" id="bossSpecialEffect" aria-hidden="true"></div>
+
       <div class="boss-intro" id="bossIntro" aria-hidden="true">
         <div class="boss-card">
           <img class="boss-portrait" id="bossPortrait" src="assets/enemy-boss-dismantler.svg" alt="">
@@ -4165,11 +4910,35 @@
       <button class="primary war-shop-button" id="arsenalButton" type="button">War Prep</button>
       <button class="primary" id="archiveButton" type="button">War Archives</button>
       <button class="primary" id="debugButton" type="button" hidden>Debug Mode</button>
+      <button class="primary" id="adminButton" type="button" hidden>Admin</button>
       <button class="primary" id="enemyGalleryButton" type="button">Enemy Gallery</button>
       <button class="primary" id="switchProfileButton" type="button">Switch Player</button>
       <span class="level" id="wordCount">Loading word bank</span>
       <span class="level" id="appVersion">Build loading</span>
     </footer>
+
+    <div class="versus-modal" id="versusModal" aria-hidden="true">
+      <section class="versus-arena" aria-label="One lane two player battle">
+        <div class="versus-console left">
+          <div class="versus-status" id="versusLeftStatus">Left HQ</div>
+          <div class="versus-word" id="versusLeftWord">一</div>
+          <div class="versus-options" id="versusLeftOptions"></div>
+        </div>
+        <div class="versus-console right">
+          <div class="versus-status" id="versusRightStatus">Right HQ</div>
+          <div class="versus-word" id="versusRightWord">二</div>
+          <div class="versus-options" id="versusRightOptions"></div>
+        </div>
+        <div class="versus-battle-lane" id="versusBattleLane" aria-hidden="true"></div>
+        <div class="versus-message left" id="versusLeftMessage">A/D choice · Space confirm</div>
+        <div class="versus-message right" id="versusRightMessage">Arrow keys choice · Enter confirm</div>
+        <div class="versus-result" id="versusResult" aria-live="polite"></div>
+      </section>
+      <footer class="versus-footer">
+        <div id="versusGlobalMessage">Answer fast to send soldiers. Soldiers meet and fight in the center lane.</div>
+        <button class="versus-close" id="closeVersusButton" type="button" aria-label="Close versus mode">×</button>
+      </footer>
+    </div>
 
     <div class="arsenal" id="arsenal" aria-hidden="true">
       <section class="arsenal-panel" aria-label="War Shop">
@@ -4204,6 +4973,7 @@
           </section>
           <section class="archive-section">
             <div class="archive-section-title">Player Best Stage Leaderboard</div>
+            <div class="leaderboard-status" id="leaderboardStatus">Local records only.</div>
             <div class="archive-empty" id="leaderboardEmpty">No player records yet.</div>
             <div class="leaderboard-list" id="leaderboardList"></div>
           </section>
@@ -4317,9 +5087,28 @@
       </label>
       <div class="profile-actions">
         <button class="profile-submit" type="submit">Enter Game</button>
+        <button class="profile-submit admin-recovery" id="recoverChaoButton" type="button" hidden>Recover Chao</button>
       </div>
       <div class="profile-message" id="profileMessage" aria-live="polite"></div>
     </form>
+  </div>
+
+  <div class="profile-gate hidden" id="modeGate" role="dialog" aria-modal="true" aria-labelledby="modeTitle">
+    <section class="profile-panel" aria-describedby="modeCopy">
+      <div class="profile-title" id="modeTitle">选择模式 / Choose Mode</div>
+      <div class="profile-copy" id="modeCopy">Choose how to play this session.</div>
+      <div class="mode-actions">
+        <button class="profile-submit mode-button" id="adventureModeButton" type="button">
+          <span class="mode-label-zh">闯关模式</span>
+          <span class="mode-label-en">Adventure Mode</span>
+        </button>
+        <button class="profile-submit mode-button" id="versusModeButton" type="button">
+          <span class="mode-label-zh">对战模式</span>
+          <span class="mode-label-en">Versus Mode</span>
+        </button>
+      </div>
+      <div class="profile-message" id="modeMessage" aria-live="polite"></div>
+    </section>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
@@ -4335,7 +5124,7 @@
   <script src="src/core/question-core.js"></script>
   <script src="src/core/mastery-core.js"></script>
   <script>
-    const appVersion = "2026.05.26.10";
+    const appVersion = "2026.05.27.01";
     function escapeHtml(value) {
       return String(value ?? "").replace(/[&<>"']/g, (character) => ({
         "&": "&amp;",
@@ -4434,6 +5223,20 @@
       { id: "plating", iconClass: "plating-icon", name: "Armor Plating", desc: "Add 2 armor. Incoming damage removes armor before HP.", apply: () => { runUpgrades.armor += 2; playerArmor += 2; } }
     ];
 
+    const bossIdiomTechniques = [
+      { id: "thunder", phrase: "雷霆万钧", name: "Thunderbolt Strike", effectClass: "thunder", bonusDamage: 5, effectText: "雷霆万钧 shatters Boss armor." },
+      { id: "ice", phrase: "冰天雪地", name: "Frozen Field", effectClass: "ice", bonusDamage: 5, effectText: "冰天雪地 freezes the Boss plating." },
+      { id: "wind", phrase: "迅如疾风", name: "Gale Assault", effectClass: "wind", bonusDamage: 5, effectText: "迅如疾风 drives a high-speed strike." }
+    ];
+
+    const victoryScenes = [
+      { className: "victory-dawn", kicker: "Stage secured", heading: "Dawn breakthrough", note: "The crew pushes past the line and marks a fresh route forward." },
+      { className: "victory-night", kicker: "Silent win", heading: "Night raid complete", note: "Searchlights fade behind the tank while the next target comes into range." },
+      { className: "victory-supply", kicker: "Depot captured", heading: "Supply line restored", note: "Fuel, shells, and confidence arrive just in time for the next stage." },
+      { className: "victory-river", kicker: "Bridge held", heading: "River crossing secured", note: "The squad rolls over wet ground and keeps the Hanzi campaign moving." },
+      { className: "victory-fortress", kicker: "Armor broken", heading: "Fortress gate open", note: "Enemy defenses crack, leaving one more hard-earned victory in the archive." }
+    ];
+
     const defaultState = createDefaultState(todayKey);
 
     const scoreEl = document.querySelector("#score");
@@ -4501,6 +5304,10 @@
     const summaryDamageEmpty = document.querySelector("#summaryDamageEmpty");
     const perkScreen = document.querySelector("#perkScreen");
     const perkSubtitle = document.querySelector("#perkSubtitle");
+    const victoryShowcase = document.querySelector("#victoryShowcase");
+    const victoryKicker = document.querySelector("#victoryKicker");
+    const victoryHeading = document.querySelector("#victoryHeading");
+    const victoryNote = document.querySelector("#victoryNote");
     const perkOptions = document.querySelector("#perkOptions");
     const inlineShopCoins = document.querySelector("#inlineShopCoins");
     const inlineShopGrid = document.querySelector("#inlineShopGrid");
@@ -4512,6 +5319,11 @@
     const supplyWordEl = document.querySelector("#supplyWord");
     const supplyOptions = document.querySelector("#supplyOptions");
     const supplyMessage = document.querySelector("#supplyMessage");
+    const bossIdiomScreen = document.querySelector("#bossIdiomScreen");
+    const bossIdiomSubtitle = document.querySelector("#bossIdiomSubtitle");
+    const bossIdiomTiles = document.querySelector("#bossIdiomTiles");
+    const bossIdiomMessage = document.querySelector("#bossIdiomMessage");
+    const bossSpecialEffect = document.querySelector("#bossSpecialEffect");
     const bossIntro = document.querySelector("#bossIntro");
     const bossPortrait = document.querySelector("#bossPortrait");
     const bossIntroName = document.querySelector("#bossIntroName");
@@ -4522,6 +5334,7 @@
     const masteryButton = document.querySelector("#masteryButton");
     const archiveButton = document.querySelector("#archiveButton");
     const debugButton = document.querySelector("#debugButton");
+    const adminButton = document.querySelector("#adminButton");
     const enemyGalleryButton = document.querySelector("#enemyGalleryButton");
     const arsenal = document.querySelector("#arsenal");
     const arsenalButton = document.querySelector("#arsenalButton");
@@ -4531,6 +5344,7 @@
     const archiveMeta = document.querySelector("#archiveMeta");
     const archiveEmpty = document.querySelector("#archiveEmpty");
     const archiveList = document.querySelector("#archiveList");
+    const leaderboardStatus = document.querySelector("#leaderboardStatus");
     const leaderboardEmpty = document.querySelector("#leaderboardEmpty");
     const leaderboardList = document.querySelector("#leaderboardList");
     const masteryModal = document.querySelector("#masteryModal");
@@ -4566,11 +5380,29 @@
     const playerNameDisplay = document.querySelector("#playerNameDisplay");
     const switchProfileButton = document.querySelector("#switchProfileButton");
     const profileGate = document.querySelector("#profileGate");
+    const modeGate = document.querySelector("#modeGate");
+    const adventureModeButton = document.querySelector("#adventureModeButton");
+    const versusModeButton = document.querySelector("#versusModeButton");
+    const modeMessage = document.querySelector("#modeMessage");
+    const versusModal = document.querySelector("#versusModal");
+    const closeVersusButton = document.querySelector("#closeVersusButton");
+    const versusBattleLane = document.querySelector("#versusBattleLane");
+    const versusLeftStatus = document.querySelector("#versusLeftStatus");
+    const versusRightStatus = document.querySelector("#versusRightStatus");
+    const versusLeftWord = document.querySelector("#versusLeftWord");
+    const versusRightWord = document.querySelector("#versusRightWord");
+    const versusLeftOptions = document.querySelector("#versusLeftOptions");
+    const versusRightOptions = document.querySelector("#versusRightOptions");
+    const versusLeftMessage = document.querySelector("#versusLeftMessage");
+    const versusRightMessage = document.querySelector("#versusRightMessage");
+    const versusGlobalMessage = document.querySelector("#versusGlobalMessage");
+    const versusResult = document.querySelector("#versusResult");
     const profileForm = document.querySelector("#profileForm");
     const profileSelect = document.querySelector("#profileSelect");
     const profileNameInput = document.querySelector("#profileNameInput");
     const profilePasswordInput = document.querySelector("#profilePasswordInput");
     const profileMessage = document.querySelector("#profileMessage");
+    const recoverChaoButton = document.querySelector("#recoverChaoButton");
 
     const {
       masteryGoal,
@@ -4585,6 +5417,19 @@
     let activeProfileId = "";
     let activeProfileName = "";
     const debugProfileId = "chao";
+    const telemetryStorageKey = "hanziTankTelemetry";
+    const leaderboardStorageKey = "hanziTankLeaderboardCache";
+    const leaderboardApiMeta = document.querySelector('meta[name="hanzi-tank-leaderboard-api"]')?.content || "";
+    const leaderboardApiBase = String(window.HANZI_TANK_LEADERBOARD_API || localStorage.getItem("hanziTankLeaderboardApi") || leaderboardApiMeta || "").replace(/\/$/, "");
+    const leaderboardSyncIntervalMs = 300000;
+    const versusHqMaxHp = 5;
+    const versusBaseWordCount = 48;
+    const versusTickMs = 520;
+    const versusSoldierStep = 2.2;
+    let versusActive = false;
+    let versusTimerId = 0;
+    let versusSoldierId = 0;
+    let versusState = null;
     let currentWord = words[0];
     let playerState = cloneDefaultState();
     let score = 0;
@@ -4633,7 +5478,12 @@
     let runSeenWords = {};
     let bossPhrase = null;
     let shownBossIntroStage = 0;
+    let shownBossIdiomStage = 0;
     let bossIntroToken = 0;
+    let debugBossIdiomMode = false;
+    let activeBossIdiom = null;
+    let pendingBossIdiomAttack = null;
+    let selectedBossIdiomTileIndex = -1;
     let stageAdvanceTimeoutId = 0;
     let voicesReady = false;
     let audioContext = null;
@@ -5367,6 +6217,7 @@
       if (phaserEffects && phaserRegularInfantry) phaserEffects.tweens.killTweensOf(phaserRegularInfantry);
       if (phaserEffects && phaserRegularEnemyTank) phaserEffects.tweens.killTweensOf(phaserRegularEnemyTank);
       if (phaserEffects && phaserGrenadier) phaserEffects.tweens.killTweensOf(phaserGrenadier);
+      if (phaserEffects && phaserBossDismantler) phaserEffects.tweens.killTweensOf(phaserBossDismantler);
       if (phaserEnemyReloadTween) {
         phaserEnemyReloadTween.stop();
         phaserEnemyReloadTween = null;
@@ -5401,15 +6252,14 @@
 
     function tweenEnemyAttackToBase(distance, windup = {}) {
       if (!phaserEffects || !phaserEnemySprite) return;
-      phaserEffects.tweens.killTweensOf(phaserEnemySprite);
-      if (phaserEnemyTurretSprite) phaserEffects.tweens.killTweensOf(phaserEnemyTurretSprite);
       const actor = currentEnemy.id === "boss" && phaserBossDismantler?.visible ? phaserBossDismantler : phaserEnemySprite;
       const targets = currentEnemy.id === "boss" && phaserBossDismantler?.visible ? [phaserBossDismantler] : [phaserEnemySprite, phaserEnemyTurretSprite].filter(Boolean);
-      const startX = actor.x;
+      targets.forEach((target) => phaserEffects.tweens.killTweensOf(target));
       const basePoint = getBattlefieldPoint(enemyTank, 0.5, 0.54);
+      const closeX = basePoint.x - distance;
       phaserEffects.tweens.add({
         targets,
-        x: startX - distance,
+        x: closeX,
         angle: windup.angle || 0,
         duration: windup.inDuration || 520,
         ease: "Cubic.easeIn",
@@ -5417,7 +6267,6 @@
           phaserEffects.tweens.add({
             targets,
             x: basePoint.x,
-            y: basePoint.y,
             angle: 0,
             duration: windup.outDuration || 360,
             ease: "Cubic.easeOut",
@@ -5627,6 +6476,14 @@
     function tweenPhaserSprite(sprite, props, duration = 300, ease = "Sine.easeOut") {
       if (!phaserEffects || !sprite) return;
       phaserEffects.tweens.add({ targets: sprite, duration, ease, ...props });
+    }
+
+    function getPhaserEnemyAttackTargets() {
+      if (currentEnemy.id === "infantry" && phaserRegularInfantry?.visible) return [phaserRegularInfantry];
+      if (currentEnemy.id === "armor" && phaserRegularEnemyTank?.visible) return [phaserRegularEnemyTank];
+      if (currentEnemy.id === "grenadier" && phaserGrenadier?.visible) return [phaserGrenadier];
+      if (currentEnemy.id === "boss" && phaserBossDismantler?.visible) return [phaserBossDismantler];
+      return [phaserEnemySprite, phaserEnemyTurretSprite].filter(Boolean);
     }
 
     function addPhaserMuzzleFlash(scene, x, y, angle, color) {
@@ -5895,31 +6752,183 @@
       return loadStoredState(localStorage, profileId, defaultState, todayKey);
     }
 
+    function getCurrentRunPhase() {
+      if (isGameOver) return "gameOver";
+      if (isLevelCleared) return "stageClear";
+      return trainingActive ? "training" : "battle";
+    }
+
+    function buildRunProgress() {
+      return {
+        version: 1,
+        stage: Math.max(1, Number(levelNumber) || 1),
+        phase: getCurrentRunPhase(),
+        score,
+        lives,
+        runUpgrades: { ...runUpgrades },
+        absoluteDefenseAvailable,
+        playerArmor,
+        smokeCoverCharges,
+        warShopAvailable,
+        trainedStage,
+        shownBossIntroStage,
+        shownBossIdiomStage,
+        reviewMode,
+        savedAt: new Date().toISOString()
+      };
+    }
+
+    function syncRunProgressToState() {
+      if (!activeProfileId || !playerState) return;
+      playerState.runProgress = isGameOver ? null : buildRunProgress();
+    }
+
     function saveState() {
+      syncRunProgressToState();
       saveStoredState(localStorage, activeProfileId, playerState);
+      queueLeaderboardSync();
+    }
+
+    function saveRunProgressNow() {
+      if (!activeProfileId || !playerState || isGameOver) return;
+      saveState();
+    }
+
+    function getTelemetryEvents() {
+      try {
+        const events = JSON.parse(localStorage.getItem(telemetryStorageKey) || "[]");
+        return Array.isArray(events) ? events : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function recordTelemetryEvent(type, detail = {}) {
+      if (!type) return;
+      const events = getTelemetryEvents();
+      events.push({
+        at: new Date().toISOString(),
+        type,
+        profileId: activeProfileId || null,
+        profileName: activeProfileName || null,
+        stage: levelNumber,
+        score,
+        lives,
+        detail
+      });
+      localStorage.setItem(telemetryStorageKey, JSON.stringify(events.slice(-500)));
+    }
+
+    function restoreRunProgress() {
+      const progress = playerState?.runProgress;
+      if (!progress || typeof progress !== "object" || progress.phase === "gameOver") return false;
+      try {
+        const stage = Math.max(1, Math.floor(Number(progress.stage) || 0));
+        if (!Number.isFinite(stage) || !progress.phase) throw new Error("Invalid run progress");
+        cancelStageAdvance();
+        clearPauseState();
+        stopCountdown();
+        stopLaneAdvance();
+        isGameOver = false;
+        isLevelCleared = progress.phase === "stageClear";
+        score = Math.max(0, Number(progress.score) || 0);
+        levelNumber = stage;
+        currentEnemy = createEnemy(levelNumber);
+        runUpgrades = {
+          maxLives: Math.max(0, Number(progress.runUpgrades?.maxLives) || 0),
+          damage: Math.max(0, Number(progress.runUpgrades?.damage) || 0),
+          reward: Math.max(0, Number(progress.runUpgrades?.reward) || 0),
+          absoluteDefense: Math.max(0, Number(progress.runUpgrades?.absoluteDefense) || 0),
+          armor: Math.max(0, Number(progress.runUpgrades?.armor) || 0)
+        };
+        lives = Math.max(1, Math.min(getMaxLives(), Number(progress.lives) || getMaxLives()));
+        absoluteDefenseAvailable = Math.max(0, Number(progress.absoluteDefenseAvailable) || 0);
+        playerArmor = Math.max(0, Number(progress.playerArmor) || 0);
+        smokeCoverCharges = Math.max(0, Number(progress.smokeCoverCharges) || 0);
+        warShopAvailable = Boolean(progress.warShopAvailable || isLevelCleared);
+        trainedStage = progress.phase === "battle" || progress.phase === "stageClear" ? levelNumber : Math.max(0, Number(progress.trainedStage) || 0);
+        shownBossIntroStage = Math.max(0, Number(progress.shownBossIntroStage) || 0);
+        shownBossIdiomStage = Math.max(0, Number(progress.shownBossIdiomStage) || 0);
+        reviewMode = Boolean(progress.reviewMode);
+        laneStates = [];
+        activeLaneIndex = 0;
+        trainingActive = false;
+        trainingLocked = false;
+        currentTrainingWord = null;
+        bossPhrase = null;
+        debugBossIdiomMode = false;
+        clearBossIdiomPrep();
+        bossIntroToken += 1;
+        locked = false;
+        syncHud();
+        renderStageOpeningQuestion(levelNumber);
+        return true;
+      } catch (error) {
+        console.warn("Bad run progress reset", error);
+        playerState.runProgress = null;
+        saveStoredState(localStorage, activeProfileId, playerState);
+        return false;
+      }
     }
 
     function canUseDebugMode() {
       return activeProfileId === debugProfileId;
     }
 
+    function canUseAdminMode() {
+      return activeProfileId === debugProfileId;
+    }
+
+    function syncChaoRecoveryAccess() {
+      const profileId = getProfileId(profileNameInput.value);
+      const profiles = getProfiles();
+      recoverChaoButton.hidden = !(profileId === debugProfileId && Boolean(profiles[debugProfileId]));
+    }
+
     function syncDebugModeAccess() {
       const allowed = canUseDebugMode();
       debugButton.hidden = !allowed;
+      adminButton.hidden = !canUseAdminMode();
       if (!allowed) {
         debugModal.classList.remove("show");
         debugModal.setAttribute("aria-hidden", "true");
       }
     }
 
+    function openAdminPanel() {
+      if (!canUseAdminMode()) return;
+      messageEl.textContent = "Admin tools are available for the Chao profile.";
+    }
+
+    function resetSelectedProfilePassword() {
+      const profileId = arguments[0] || "";
+      const newPassword = arguments[1] || "";
+      if (!canUseAdminMode()) return;
+      const profiles = getProfiles();
+      const profile = profiles[profileId];
+      if (!profile || newPassword.length < 3) return;
+      const salt = createSalt();
+      profiles[profileId] = {
+        ...profile,
+        salt,
+        passwordHash: hashPassword(newPassword, salt),
+        passwordResetAt: new Date().toISOString(),
+        passwordResetBy: activeProfileId
+      };
+      saveProfiles(profiles);
+      recordTelemetryEvent("admin-password-reset", { targetProfileId: profileId });
+    }
+
     function showProfileGate(message = "") {
       stopCountdown();
       locked = true;
+      hideModeGate();
       profileGate.classList.remove("hidden");
       profileMessage.textContent = message;
       profilePasswordInput.value = "";
       profileNameInput.value = activeProfileName || localStorage.getItem("hanziTankLastProfile") || "";
       renderProfileSelect(profileNameInput.value);
+      syncChaoRecoveryAccess();
       setTimeout(() => {
         (profileNameInput.value ? profilePasswordInput : profileNameInput).focus();
       }, 0);
@@ -5927,6 +6936,268 @@
 
     function hideProfileGate() {
       profileGate.classList.add("hidden");
+    }
+
+    function showModeGate() {
+      stopCountdown();
+      locked = true;
+      modeMessage.textContent = "";
+      modeGate.classList.remove("hidden");
+      setTimeout(() => adventureModeButton.focus(), 0);
+    }
+
+    function hideModeGate() {
+      modeGate.classList.add("hidden");
+    }
+
+    function getVersusWordBank() {
+      return words.slice(0, Math.min(versusBaseWordCount, words.length));
+    }
+
+    function createVersusQuestion(otherHanzi = "") {
+      const bank = getVersusWordBank();
+      const candidates = bank.filter((word) => word.hanzi !== otherHanzi);
+      const word = shuffle(candidates.length ? candidates : bank)[0] || words[0];
+      const wrongChoices = shuffle(bank.filter((item) => item.hanzi !== word.hanzi)).slice(0, 3);
+      return {
+        word,
+        options: shuffle([word, ...wrongChoices]),
+        selected: 0
+      };
+    }
+
+    function createVersusPlayer(side) {
+      return {
+        side,
+        hp: versusHqMaxHp,
+        question: createVersusQuestion(),
+        selected: 0,
+        message: side === "left" ? "A/D choice · Space confirm" : "Arrow keys choice · Enter confirm"
+      };
+    }
+
+    function startVersusMode() {
+      unlockAudio();
+      playUiSound();
+      stopCountdown();
+      stopLaneAdvance();
+      closeArsenal();
+      closeArchives();
+      closeDebugMode();
+      closeMasteryRecords();
+      closeEnemyGallery();
+      versusActive = true;
+      versusSoldierId = 0;
+      versusState = {
+        winner: "",
+        soldiers: [],
+        left: createVersusPlayer("left"),
+        right: createVersusPlayer("right")
+      };
+      versusState.right.question = createVersusQuestion(versusState.left.question.word.hanzi);
+      versusResult.classList.remove("show");
+      versusResult.textContent = "";
+      versusModal.classList.add("show");
+      versusModal.setAttribute("aria-hidden", "false");
+      renderVersusMode();
+      scheduleVersusTick();
+    }
+
+    function closeVersusMode() {
+      if (!versusModal.classList.contains("show")) return;
+      playUiSound();
+      versusActive = false;
+      if (versusTimerId) clearInterval(versusTimerId);
+      versusTimerId = 0;
+      versusModal.classList.remove("show");
+      versusModal.setAttribute("aria-hidden", "true");
+      versusModeButton.focus();
+    }
+
+    function scheduleVersusTick() {
+      if (versusTimerId) clearInterval(versusTimerId);
+      versusTimerId = setInterval(advanceVersusBattle, versusTickMs);
+    }
+
+    function renderVersusHearts(label, hp) {
+      const safeHp = Math.max(0, Math.min(versusHqMaxHp, Number(hp) || 0));
+      const hearts = Array.from({ length: versusHqMaxHp }, (_, index) => (
+        `<span class="versus-heart${index < safeHp ? "" : " empty"}" aria-hidden="true">♥</span>`
+      )).join("");
+      return `<span class="versus-heart-label">${label}</span><span class="versus-hearts" aria-label="${label} health ${safeHp} of ${versusHqMaxHp}">${hearts}</span>`;
+    }
+
+    function getVersusPlayer(side) {
+      return versusState?.[side] || null;
+    }
+
+    function getVersusOpponentSide(side) {
+      return side === "left" ? "right" : "left";
+    }
+
+    function moveVersusChoice(side, delta) {
+      if (!versusActive || versusState?.winner) return;
+      const player = getVersusPlayer(side);
+      const count = player.question.options.length;
+      player.selected = (player.selected + delta + count) % count;
+      renderVersusMode();
+    }
+
+    function spawnVersusSoldier(side, word) {
+      versusState.soldiers.push({
+        id: ++versusSoldierId,
+        owner: side,
+        position: side === "left" ? 0 : 100,
+        word
+      });
+      getVersusPlayer(side).message = `Correct. ${word.hanzi} soldier joined the center lane.`;
+      getVersusPlayer(getVersusOpponentSide(side)).message = `${word.hanzi} is pushing the battle line.`;
+    }
+
+    function answerVersusQuestion(side) {
+      if (!versusActive || versusState?.winner) return;
+      const player = getVersusPlayer(side);
+      const answer = player.question.options[player.selected];
+      const correct = answer?.hanzi === player.question.word.hanzi;
+      if (correct) {
+        playSuccessSound();
+        spawnVersusSoldier(side, player.question.word);
+        const otherQuestion = getVersusPlayer(getVersusOpponentSide(side)).question;
+        player.question = createVersusQuestion(otherQuestion.word.hanzi);
+      } else {
+        playMissSound();
+        player.message = `Wrong. ${player.question.word.hanzi} stays queued.`;
+      }
+      player.selected = 0;
+      renderVersusMode();
+    }
+
+    function advanceVersusBattle() {
+      if (!versusActive || !versusState || versusState.winner) return;
+      versusState.soldiers.forEach((soldier) => {
+        soldier.position += soldier.owner === "left" ? versusSoldierStep : -versusSoldierStep;
+      });
+      resolveVersusCollisions();
+      resolveVersusInvasions();
+      renderVersusMode();
+    }
+
+    function resolveVersusCollisions() {
+      const left = versusState.soldiers.filter((soldier) => soldier.owner === "left").sort((a, b) => b.position - a.position);
+      const right = versusState.soldiers.filter((soldier) => soldier.owner === "right").sort((a, b) => a.position - b.position);
+      const removed = new Set();
+      left.forEach((leftSoldier) => {
+        if (removed.has(leftSoldier.id)) return;
+        const target = right.find((rightSoldier) => !removed.has(rightSoldier.id) && Math.abs(leftSoldier.position - rightSoldier.position) <= 4);
+        if (!target) return;
+        removed.add(leftSoldier.id);
+        removed.add(target.id);
+      });
+      if (removed.size > 0) {
+        playHitSound();
+        versusGlobalMessage.textContent = "Soldiers clashed in the center lane.";
+        versusState.soldiers = versusState.soldiers.filter((soldier) => !removed.has(soldier.id));
+      }
+    }
+
+    function resolveVersusInvasions() {
+      const survivors = [];
+      versusState.soldiers.forEach((soldier) => {
+        if (soldier.owner === "left" && soldier.position >= 100) {
+          versusState.right.hp -= 1;
+          versusGlobalMessage.textContent = "Left pushed into Right HQ.";
+          return;
+        }
+        if (soldier.owner === "right" && soldier.position <= 0) {
+          versusState.left.hp -= 1;
+          versusGlobalMessage.textContent = "Right pushed into Left HQ.";
+          return;
+        }
+        survivors.push(soldier);
+      });
+      versusState.soldiers = survivors;
+      if (versusState.left.hp <= 0) finishVersusMode("Right");
+      if (versusState.right.hp <= 0) finishVersusMode("Left");
+    }
+
+    function finishVersusMode(winner) {
+      if (versusState.winner) return;
+      versusState.winner = winner;
+      versusActive = false;
+      if (versusTimerId) clearInterval(versusTimerId);
+      versusTimerId = 0;
+      versusResult.textContent = `${winner} Player Wins!`;
+      versusResult.classList.add("show");
+      playSuccessSound();
+    }
+
+    function renderVersusQuestion(side) {
+      const player = getVersusPlayer(side);
+      const wordEl = side === "left" ? versusLeftWord : versusRightWord;
+      const optionsEl = side === "left" ? versusLeftOptions : versusRightOptions;
+      wordEl.textContent = player.question.word.hanzi;
+      optionsEl.innerHTML = "";
+      player.question.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `versus-option${index === player.selected ? " selected-choice" : ""}`;
+        button.textContent = option.meaning;
+        button.addEventListener("click", () => {
+          player.selected = index;
+          answerVersusQuestion(side);
+        });
+        optionsEl.appendChild(button);
+      });
+    }
+
+    function renderVersusBattleLane() {
+      versusBattleLane.innerHTML = `
+        <div class="versus-frontline"></div>
+        <div class="versus-base left" aria-hidden="true"></div>
+        <div class="versus-base right" aria-hidden="true"></div>
+      `;
+      versusState.soldiers.forEach((soldier) => {
+        const soldierEl = document.createElement("div");
+        soldierEl.className = `versus-soldier ${soldier.owner}`;
+        soldierEl.style.left = `${Math.max(2, Math.min(98, soldier.position))}%`;
+        soldierEl.title = `${soldier.word?.hanzi || "Soldier"} · ${soldier.word?.meaning || "attack"}`;
+        versusBattleLane.appendChild(soldierEl);
+      });
+    }
+
+    function renderVersusMode() {
+      if (!versusState) return;
+      versusLeftStatus.innerHTML = renderVersusHearts("Left HQ", versusState.left.hp);
+      versusRightStatus.innerHTML = renderVersusHearts("Right HQ", versusState.right.hp);
+      renderVersusQuestion("left");
+      renderVersusQuestion("right");
+      renderVersusBattleLane();
+      versusLeftMessage.textContent = versusState.left.message;
+      versusRightMessage.textContent = versusState.right.message;
+    }
+
+    function handleVersusKeydown(event) {
+      if (!versusModal.classList.contains("show")) return;
+      const key = event.key.toLowerCase();
+      const handledKeys = ["a", "d", " ", "arrowleft", "arrowright", "enter"];
+      if (!handledKeys.includes(key)) return;
+      event.preventDefault();
+      if (key === "a") moveVersusChoice("left", -1);
+      if (key === "d") moveVersusChoice("left", 1);
+      if (key === " ") answerVersusQuestion("left");
+      if (key === "arrowleft") moveVersusChoice("right", -1);
+      if (key === "arrowright") moveVersusChoice("right", 1);
+      if (key === "enter") answerVersusQuestion("right");
+    }
+
+    function startAdventureMode() {
+      hideModeGate();
+      if (!restoreRunProgress()) resetRunForProfile();
+    }
+
+    function startVersusFromModeGate() {
+      hideModeGate();
+      startVersusMode();
     }
 
     function resetRunForProfile() {
@@ -5964,6 +7235,9 @@
       trainedStage = 0;
       currentTrainingWord = null;
       bossPhrase = null;
+      shownBossIdiomStage = 0;
+      debugBossIdiomMode = false;
+      clearBossIdiomPrep();
       bossIntroToken += 1;
       lives = getMaxLives();
       reviewMode = false;
@@ -5984,7 +7258,7 @@
       playerHealthName.textContent = profile.name;
       syncDebugModeAccess();
       hideProfileGate();
-      resetRunForProfile();
+      showModeGate();
     }
 
     function handleProfileSubmit(event) {
@@ -6018,11 +7292,39 @@
       }
 
       if (profile.passwordHash !== hashPassword(password, profile.salt)) {
-        profileMessage.textContent = "Wrong password for this player.";
+        profileMessage.textContent = profileId === debugProfileId ? "Wrong Chao password. Use Recover Chao to reset this local admin password." : "Wrong password for this player.";
+        syncChaoRecoveryAccess();
         profilePasswordInput.select();
         return;
       }
       enterProfile(profileId, profile);
+    }
+
+    function recoverChaoProfilePassword() {
+      const profileId = getProfileId(profileNameInput.value);
+      const newPassword = profilePasswordInput.value;
+      const profiles = getProfiles();
+      const profile = profiles[debugProfileId];
+      if (profileId !== debugProfileId || !profile) return;
+      if (newPassword.length < 3) {
+        profileMessage.textContent = "Enter a new Chao password with at least 3 characters, then click Recover Chao.";
+        profilePasswordInput.focus();
+        return;
+      }
+      const salt = createSalt();
+      profiles[debugProfileId] = {
+        ...profile,
+        salt,
+        passwordHash: hashPassword(newPassword, salt),
+        passwordResetAt: new Date().toISOString(),
+        passwordResetBy: "local-recovery"
+      };
+      saveProfiles(profiles);
+      const state = loadState(debugProfileId);
+      state.runProgress = null;
+      saveStoredState(localStorage, debugProfileId, state);
+      profileMessage.textContent = "Chao password recovered locally. Enter Game with this password.";
+      syncChaoRecoveryAccess();
     }
 
     function handleProfileSelectChange() {
@@ -6031,6 +7333,7 @@
       if (!profile) return;
       profileNameInput.value = profile.name;
       profileMessage.textContent = "";
+      syncChaoRecoveryAccess();
       profilePasswordInput.focus();
     }
 
@@ -6048,6 +7351,12 @@
 
     function getEquippedAmmoIds() {
       return [playerState.equipped?.shell, playerState.equipped?.weapon].filter(Boolean);
+    }
+
+    function getSpecialAmmoLoadoutText() {
+      const equippedAmmo = getEquippedAmmoIds().map(getItem).filter(Boolean);
+      const ammoNames = equippedAmmo.map((item) => item.name).join(" / ");
+      return `Special ammo loaded ${equippedAmmo.length}/2: ${ammoNames || "empty"}. You can equip two special ammo types.`;
     }
 
     function isAmmoEquipped(itemId) {
@@ -6374,6 +7683,7 @@
         }
         laneStates.forEach((lane) => {
           if (!isLaneLive(lane)) return;
+          if (lane.attacking) return;
           const interval = Math.max(3, Number(lane.enemy.attackInterval || enemyAttackInterval) + 2);
           lane.progress += 100 / (interval * 2);
           if (lane.progress >= 100) attackFromLane(lane);
@@ -6384,7 +7694,8 @@
 
     function attackFromLane(lane) {
       if (!isLaneLive(lane)) return;
-      lane.progress = 0;
+      if (lane.attacking) return;
+      lane.attacking = true;
       const smokeMissed = consumeSmokeCover();
       const damage = lane.enemy.damage || 1;
       const result = smokeMissed ? createMissResult() : takeDamage(damage);
@@ -6460,6 +7771,7 @@
       if (gameOver.classList.contains("show")) return false;
       if (perkScreen.classList.contains("show")) return false;
       if (supplyScreen.classList.contains("show")) return false;
+      if (bossIdiomScreen.classList.contains("show")) return false;
       if (arsenal.classList.contains("show")) return false;
       if (archiveModal.classList.contains("show")) return false;
       if (masteryModal.classList.contains("show")) return false;
@@ -6563,13 +7875,18 @@
 
     function laneEnemyAttack(lane, damage = 1, result = { hpDamage: damage }) {
       if (!lane?.element || !isLaneLive(lane) || isGameOver || isLevelCleared || lives <= 0) return;
-      playCannonSound();
+      const windupTime = 220;
       lane.element.classList.remove("fire");
       playerTank.classList.remove("hit");
       playerBurst.classList.remove("show");
-      playLaneProjectile(lane.element, playerTank, { enemy: true, fromX: 0.24, toX: 0.72, color: "#ff6b4a" });
-      playPhaserLaneInfantryState(laneStates.indexOf(lane), "fire");
-      requestAnimationFrame(() => lane.element.classList.add("fire"));
+      playPhaserLaneInfantryState(laneStates.indexOf(lane), "walk", { force: true });
+      setTimeout(() => {
+        if (isGameOver || isLevelCleared || lives <= 0) return;
+        playCannonSound();
+        playLaneProjectile(lane.element, playerTank, { enemy: true, fromX: 0.24, toX: 0.72, color: "#ff6b4a" });
+        playPhaserLaneInfantryState(laneStates.indexOf(lane), "fire");
+        lane.element.classList.add("fire");
+      }, windupTime);
       setTimeout(() => {
         if (isGameOver || isLevelCleared) return;
         playHitSound();
@@ -6582,11 +7899,14 @@
         }
         playerTank.classList.add("hit");
         shakeBattlefield();
-      }, 520);
+      }, windupTime + 520);
       setTimeout(() => {
         lane.element?.classList.remove("fire");
+        lane.progress = 0;
+        lane.attacking = false;
+        syncLaneHud();
         if (!playerTank.classList.contains("destroyed")) playerTank.classList.remove("hit");
-      }, 900);
+      }, windupTime + 900);
     }
 
     function getHealthPercent(current, max) {
@@ -6813,9 +8133,11 @@
       if (result.absoluteBlocked) {
         messageEl.textContent = "Absolute defense blocked the hit.";
         syncHud();
+        saveState();
         return result;
       }
       syncHud();
+      saveState();
       return result;
     }
 
@@ -6915,6 +8237,8 @@
       perkScreen.setAttribute("aria-hidden", "true");
       supplyScreen.classList.remove("show");
       supplyScreen.setAttribute("aria-hidden", "true");
+      bossIdiomScreen.classList.remove("show");
+      bossIdiomScreen.setAttribute("aria-hidden", "true");
       trainingCamp.classList.remove("show");
       trainingCamp.setAttribute("aria-hidden", "true");
       battlefieldEl.classList.add("training-mode");
@@ -7100,7 +8424,7 @@
       inlineShopCoins.textContent = playerState.coins;
       dailyScoreEl.textContent = playerState.dailyScore;
       const equippedNames = getEquippedItems().map((item) => item.name).join(" / ");
-      loadoutEl.textContent = `Loadout: ${equippedNames || "Basic gear"}`;
+      loadoutEl.textContent = `Loadout: ${equippedNames || "Basic gear"} · ${getSpecialAmmoLoadoutText()}`;
       inlineLoadout.textContent = loadoutEl.textContent;
       document.body.dataset.shell = "";
       ["tank-sherman", "tank-tiger", "tank-panzer", "tank-is2", "tank-t34", "tank-cromwell", "tank-churchill"].forEach((className) => {
@@ -7149,6 +8473,7 @@
         const ammoItem = isAmmoItem(item);
         const ammoCount = getAmmoCount(item.id);
         const ammoEquipped = ammoItem && isAmmoEquipped(item.id);
+        const equippedAmmoCount = getEquippedAmmoIds().length;
         const owned = !ammoItem && playerState.owned.includes(item.id);
         const equipped = !ammoItem && playerState.equipped[item.type] === item.id;
         const canBuy = playerState.coins >= item.cost;
@@ -7160,6 +8485,7 @@
             <div class="shop-type">${item.typeLabel} · ${item.doctrine || "Special"}</div>
             <div class="shop-name">${item.name}</div>
             <div class="shop-desc">${item.desc}</div>
+            <div class="shop-cost">Special ammo loaded ${equippedAmmoCount}/2 · You can equip two special ammo types.</div>
             <div class="shop-cost">${ammoCount} round${ammoCount === 1 ? "" : "s"} · ${ammoEquipped ? "Equipped" : "Reserve"} · ${item.cost} coins / +1</div>
             <button class="shop-action" type="button" data-item="${item.id}" data-action="buy">${canBuy ? "Buy 1" : "Not enough coins"}</button>
             <button class="shop-action" type="button" data-item="${item.id}" data-action="${ammoEquipped ? "unequip" : "equip"}">${ammoEquipped ? "Unequip" : "Equip"}</button>
@@ -7376,6 +8702,7 @@
 
     function showPerkChoices() {
       const choices = shuffle(perks).slice(0, 2);
+      renderVictoryScene();
       perkSubtitle.textContent = `Stage ${levelNumber} clear. Choose one upgrade for the next stage.`;
       perkOptions.innerHTML = "";
       choices.forEach((perk) => {
@@ -7396,6 +8723,15 @@
       perkScreen.classList.add("show");
       perkScreen.setAttribute("aria-hidden", "false");
       perkOptions.querySelector("button")?.focus();
+    }
+
+    function renderVictoryScene() {
+      const scene = victoryScenes[Math.floor(Math.random() * victoryScenes.length)];
+      if (!scene || !victoryShowcase) return;
+      victoryShowcase.className = `victory-showcase ${scene.className}`;
+      victoryKicker.textContent = `${scene.kicker} · Stage ${levelNumber}`;
+      victoryHeading.textContent = scene.heading;
+      victoryNote.textContent = scene.note;
     }
 
     function choosePerk(perkId) {
@@ -7752,10 +9088,168 @@
       if (!options.preserveAdvance) startLaneAdvance();
     }
 
+    function pickBossIdiomTechnique(stage = levelNumber) {
+      const bossIndex = Math.max(0, Math.floor(stage / 5) - 1);
+      return bossIdiomTechniques[bossIndex % bossIdiomTechniques.length];
+    }
+
+    function getBossIdiomTileChars() {
+      return [...bossIdiomTiles.querySelectorAll(".boss-idiom-tile")].map((tile) => tile.dataset.char || tile.textContent);
+    }
+
+    function refreshBossIdiomTileIndexes() {
+      [...bossIdiomTiles.querySelectorAll(".boss-idiom-tile")].forEach((tile, index) => {
+        tile.dataset.index = String(index);
+        tile.classList.toggle("selected-choice", index === selectedBossIdiomTileIndex);
+      });
+    }
+
+    function reorderBossIdiomTiles(fromIndex, toIndex) {
+      const tiles = [...bossIdiomTiles.querySelectorAll(".boss-idiom-tile")];
+      if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0 || fromIndex >= tiles.length || toIndex >= tiles.length) return;
+      const moving = tiles[fromIndex];
+      const target = tiles[toIndex];
+      bossIdiomTiles.insertBefore(moving, fromIndex < toIndex ? target.nextSibling : target);
+      selectedBossIdiomTileIndex = -1;
+      refreshBossIdiomTileIndexes();
+      checkBossIdiomOrder();
+    }
+
+    function completeBossIdiomPrep(onDone) {
+      if (shownBossIdiomStage === levelNumber) return;
+      shownBossIdiomStage = levelNumber;
+      pendingBossIdiomAttack = activeBossIdiom;
+      runUpgradeLog.push(`Idiom Strike: ${activeBossIdiom.phrase}`);
+      bossIdiomMessage.textContent = `${activeBossIdiom.phrase} charged: ${activeBossIdiom.name}.`;
+      playSuccessSound();
+      setTimeout(() => {
+        bossIdiomScreen.classList.remove("show");
+        bossIdiomScreen.setAttribute("aria-hidden", "true");
+        onDone();
+      }, 700);
+    }
+
+    function clearBossIdiomPrep() {
+      bossIdiomScreen.classList.remove("show");
+      bossIdiomScreen.setAttribute("aria-hidden", "true");
+      bossSpecialEffect.className = "boss-special-effect";
+      bossSpecialEffect.textContent = "";
+      bossIdiomTiles.innerHTML = "";
+      activeBossIdiom = null;
+      pendingBossIdiomAttack = null;
+      selectedBossIdiomTileIndex = -1;
+      setBossCharredState(false);
+    }
+
+    function setBossCharredState(active) {
+      enemyTank.classList.toggle("boss-charred", active);
+      if (!phaserBossDismantler) return;
+      if (active) {
+        phaserBossDismantler.setTint(0x202020);
+        phaserBossDismantler.setAlpha(0.62);
+      } else {
+        phaserBossDismantler.clearTint?.();
+        phaserBossDismantler.setAlpha(1);
+      }
+    }
+
+    function checkBossIdiomOrder(onDone = null) {
+      if (!activeBossIdiom) return false;
+      const orderedText = getBossIdiomTileChars().join("");
+      const correct = orderedText === activeBossIdiom.phrase;
+      if (correct && onDone) completeBossIdiomPrep(onDone);
+      if (!correct) bossIdiomMessage.textContent = "Drag the tiles into the idiom order before the Boss arrives.";
+      return correct;
+    }
+
+    function renderBossIdiomTiles(technique, onDone) {
+      const chars = shuffle([...technique.phrase]);
+      if (chars.join("") === technique.phrase) chars.push(chars.shift());
+      bossIdiomTiles.innerHTML = "";
+      selectedBossIdiomTileIndex = -1;
+      chars.forEach((char, index) => {
+        const tile = document.createElement("button");
+        tile.type = "button";
+        tile.className = "boss-idiom-tile";
+        tile.draggable = true;
+        tile.textContent = char;
+        tile.dataset.char = char;
+        tile.dataset.index = String(index);
+        tile.addEventListener("dragstart", (event) => {
+          tile.classList.add("dragging");
+          event.dataTransfer.setData("text/plain", tile.dataset.index);
+        });
+        tile.addEventListener("dragend", () => tile.classList.remove("dragging"));
+        tile.addEventListener("dragover", (event) => event.preventDefault());
+        tile.addEventListener("drop", (event) => {
+          event.preventDefault();
+          reorderBossIdiomTiles(Number(event.dataTransfer.getData("text/plain")), Number(tile.dataset.index));
+          if (checkBossIdiomOrder()) completeBossIdiomPrep(onDone);
+        });
+        tile.addEventListener("click", () => {
+          const tileIndex = Number(tile.dataset.index);
+          if (selectedBossIdiomTileIndex < 0) {
+            selectedBossIdiomTileIndex = tileIndex;
+            refreshBossIdiomTileIndexes();
+            return;
+          }
+          reorderBossIdiomTiles(selectedBossIdiomTileIndex, tileIndex);
+          if (checkBossIdiomOrder()) completeBossIdiomPrep(onDone);
+        });
+        bossIdiomTiles.appendChild(tile);
+      });
+      refreshBossIdiomTileIndexes();
+      bossIdiomTiles.querySelector("button")?.focus();
+    }
+
+    function showBossIdiomPrep(onDone) {
+      locked = true;
+      stopCountdown();
+      activeBossIdiom = pickBossIdiomTechnique();
+      pendingBossIdiomAttack = null;
+      bossIdiomSubtitle.textContent = `Arrange ${activeBossIdiom.phrase.length} characters to charge ${activeBossIdiom.name}.`;
+      bossIdiomMessage.textContent = "Drag tiles, or tap two tiles to swap their order.";
+      gameOver.classList.remove("show");
+      gameOver.setAttribute("aria-hidden", "true");
+      perkScreen.classList.remove("show");
+      perkScreen.setAttribute("aria-hidden", "true");
+      supplyScreen.classList.remove("show");
+      supplyScreen.setAttribute("aria-hidden", "true");
+      bossIdiomScreen.classList.add("show");
+      bossIdiomScreen.setAttribute("aria-hidden", "false");
+      renderBossIdiomTiles(activeBossIdiom, onDone);
+    }
+
+    function playBossIdiomEffect(technique) {
+      queueChineseSpeech(technique.phrase, { preserveMessage: true, autoRetry: true, delay: 40 });
+      if (technique.effectClass === "thunder") setBossCharredState(true);
+      bossSpecialEffect.className = `boss-special-effect show ${technique.effectClass}`;
+      bossSpecialEffect.textContent = technique.phrase;
+      setTimeout(() => {
+        bossSpecialEffect.className = "boss-special-effect";
+        bossSpecialEffect.textContent = "";
+      }, 2400);
+    }
+
+    function applyBossIdiomAttack() {
+      if (!pendingBossIdiomAttack) return "";
+      const technique = pendingBossIdiomAttack;
+      pendingBossIdiomAttack = null;
+      playBossIdiomEffect(technique);
+      const damage = damageEnemy(technique.bonusDamage);
+      showDamage(enemyTank, damage.totalDamage || technique.bonusDamage, { armor: damage.armorDamage > 0 });
+      playExplosionSound();
+      return technique.effectText;
+    }
+
     function renderBossQuestion(options = {}) {
       if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
       enemyTank.classList.remove("fragmented");
       if (!options.preserveReload) stopCountdown();
+      if (debugBossIdiomMode && shownBossIdiomStage !== levelNumber) {
+        showBossIdiomPrep(() => renderBossQuestion(options));
+        return;
+      }
       if (shownBossIntroStage !== levelNumber) {
         showBossIntro(() => renderBossQuestion(options));
         return;
@@ -7821,6 +9315,7 @@
       locked = true;
 
       if (answer.hanzi === currentWord.hanzi) {
+        recordTelemetryEvent("battle-answer", { correct: true, hanzi: currentWord.hanzi, mode: "single" });
         const wasNew = !playerState.correctBank?.[currentWord.hanzi];
         let reviewCleared = false;
         button.classList.add("right");
@@ -7882,6 +9377,7 @@
       }
 
       stopCountdown({ preserveEnemyPosition: true });
+      recordTelemetryEvent("battle-answer", { correct: false, hanzi: currentWord.hanzi, selected: answer.hanzi, mode: "single" });
       button.classList.add("wrong");
       playMissSound();
       recordWrongBank(currentWord);
@@ -8074,6 +9570,8 @@
         } else {
           showDamage(enemyTank, damage.totalDamage || shotDamage, { armor: damage.armorDamage > 0 });
         }
+        const idiomEffectText = applyBossIdiomAttack();
+        if (idiomEffectText) messageEl.textContent += ` ${idiomEffectText}`;
         const ammoEffectText = applyAmmoHitEffects(shotAmmo);
         if (ammoEffectText) messageEl.textContent += ` ${ammoEffectText}`;
         syncHud();
@@ -8196,12 +9694,58 @@
       };
     }
 
-    function renderLeaderboard() {
+    function getLocalLeaderboardRecords() {
       const profiles = getProfiles();
-      const records = Object.entries(profiles)
+      return Object.entries(profiles)
         .map(([profileId, profile]) => getProfileBestRecord(profileId, profile))
         .filter((record) => record.stage > 0)
         .sort((a, b) => b.stage - a.stage || b.score - a.score || a.name.localeCompare(b.name));
+    }
+
+    function normalizeLeaderboardRecord(record) {
+      const masteredCount = Math.max(0, Number(record?.masteredCount) || 0);
+      const fallbackRank = getRankForMastery(masteredCount);
+      return {
+        profileId: String(record?.profileId || "").slice(0, 64),
+        name: normalizeProfileName(String(record?.name || "Player")).slice(0, 24) || "Player",
+        stage: Math.max(0, Math.floor(Number(record?.stage) || 0)),
+        score: Math.max(0, Math.floor(Number(record?.score) || 0)),
+        coins: Math.max(0, Math.floor(Number(record?.coins) || 0)),
+        masteredCount,
+        rankName: String(record?.rankName || fallbackRank.name || "Recruit").slice(0, 32),
+        rankZh: String(record?.rankZh || fallbackRank.zh || "新兵").slice(0, 12),
+        date: String(record?.date || record?.updatedAt || "").slice(0, 40),
+        source: String(record?.source || "cloud").slice(0, 16)
+      };
+    }
+
+    function getCachedCloudLeaderboard() {
+      try {
+        const cached = JSON.parse(localStorage.getItem(leaderboardStorageKey) || "[]");
+        return Array.isArray(cached) ? cached.map(normalizeLeaderboardRecord).filter((record) => record.stage > 0) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function mergeLeaderboardRecords(localRecords, cloudRecords) {
+      const bestByProfile = new Map();
+      [...cloudRecords, ...localRecords].forEach((record) => {
+        const normalized = normalizeLeaderboardRecord(record);
+        if (!normalized.stage) return;
+        const key = normalized.profileId || normalized.name.toLowerCase();
+        const current = bestByProfile.get(key);
+        if (!current || normalized.stage > current.stage || (normalized.stage === current.stage && normalized.score > current.score)) {
+          bestByProfile.set(key, normalized);
+        }
+      });
+      return [...bestByProfile.values()]
+        .sort((a, b) => b.stage - a.stage || b.score - a.score || b.masteredCount - a.masteredCount || a.name.localeCompare(b.name))
+        .slice(0, 20);
+    }
+
+    function renderLeaderboardRecords(records, statusText) {
+      leaderboardStatus.textContent = statusText;
 
       leaderboardList.innerHTML = "";
       leaderboardEmpty.style.display = records.length > 0 ? "none" : "block";
@@ -8215,6 +9759,51 @@
         `;
         leaderboardList.appendChild(card);
       });
+    }
+
+    function renderLeaderboard() {
+      const localRecords = getLocalLeaderboardRecords();
+      const cloudRecords = getCachedCloudLeaderboard();
+      const records = leaderboardApiBase && cloudRecords.length > 0 ? cloudRecords.slice(0, 20) : localRecords.slice(0, 20);
+      const statusText = leaderboardApiBase
+        ? cloudRecords.length > 0 ? "Shared leaderboard synced." : "Shared leaderboard loading. Local records are shown until cloud data arrives."
+        : "Local records only. Add a leaderboard API URL to share scores across devices.";
+      renderLeaderboardRecords(records, statusText);
+    }
+
+    async function refreshCloudLeaderboard() {
+      if (!leaderboardApiBase) return;
+      try {
+        const response = await fetch(`${leaderboardApiBase}/leaderboard`, { headers: { Accept: "application/json" } });
+        if (!response.ok) throw new Error(`Leaderboard fetch failed: ${response.status}`);
+        const payload = await response.json();
+        const records = Array.isArray(payload?.records) ? payload.records.map(normalizeLeaderboardRecord).filter((record) => record.stage > 0) : [];
+        localStorage.setItem(leaderboardStorageKey, JSON.stringify(records.slice(0, 20)));
+        renderLeaderboardRecords(records.slice(0, 20), `Shared leaderboard updated: ${records.length} records.`);
+      } catch {
+        const cachedRecords = getCachedCloudLeaderboard();
+        const fallbackRecords = cachedRecords.length > 0 ? cachedRecords : getLocalLeaderboardRecords();
+        renderLeaderboardRecords(fallbackRecords.slice(0, 20), cachedRecords.length > 0 ? "Shared leaderboard unavailable. Showing cached cloud records." : "Shared leaderboard unavailable. Showing local records.");
+      }
+    }
+
+    async function submitLeaderboardRecord(record) {
+      if (!leaderboardApiBase || !record?.stage) return;
+      await fetch(`${leaderboardApiBase}/leaderboard`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ record: normalizeLeaderboardRecord({ ...record, source: "local" }) })
+      });
+    }
+
+    function queueLeaderboardSync() {
+      if (!leaderboardApiBase || !activeProfileId || !playerState) return;
+      const now = Date.now();
+      if (now - Number(playerState.lastLeaderboardSyncAt || 0) < leaderboardSyncIntervalMs) return;
+      const record = getProfileBestRecord(activeProfileId, { name: activeProfileName || activeProfileId });
+      if (!record.stage) return;
+      playerState.lastLeaderboardSyncAt = now;
+      submitLeaderboardRecord(record).catch(() => {});
     }
 
     function getMasteredWords() {
@@ -8252,15 +9841,35 @@
       masteredWordGrid.innerHTML = "";
       masteredEmpty.style.display = wordsList.length > 0 ? "none" : "block";
       wordsList.forEach((word) => {
-        const card = document.createElement("article");
+        const card = document.createElement("button");
+        const wordDetails = wordByHanzi[word.hanzi] || word;
+        const phrase = word.phrase || getWordPhrase(wordDetails);
+        const phraseIndex = getWordPhraseIndex(wordDetails, phrase);
+        card.type = "button";
         card.className = "mastered-word-card";
+        card.dataset.hanzi = word.hanzi;
+        card.dataset.phraseIndex = String(phraseIndex);
+        card.setAttribute("aria-label", `Play ${word.hanzi} with a random phrase`);
         card.innerHTML = `
           <div class="mastered-hanzi">${escapeHtml(word.hanzi)}</div>
-          <div class="mastered-meta">${escapeHtml(word.phrase || word.meaning || "mastered")}</div>
+          <div class="mastered-meta" data-mastered-phrase>${escapeHtml(word.phrase || word.meaning || "mastered")}</div>
           <div class="mastered-meta">x${escapeInteger(word.count, 1)}</div>
         `;
         masteredWordGrid.appendChild(card);
       });
+    }
+
+    function playMasteredWordCard(button) {
+      const hanzi = button?.dataset?.hanzi || "";
+      const baseWord = wordByHanzi[hanzi];
+      if (!baseWord) return;
+      const playbackWord = { ...baseWord };
+      prepareSpokenWord(playbackWord, { force: true });
+      const phraseEl = button.querySelector("[data-mastered-phrase]");
+      if (phraseEl) phraseEl.textContent = getCurrentWordPhrase(playbackWord);
+      button.dataset.phraseIndex = String(getCurrentWordPhraseIndex(playbackWord));
+      masteryMeta.textContent = `${playbackWord.hanzi} · ${getCurrentWordPhrase(playbackWord)}`;
+      speakWord(playbackWord);
     }
 
     function renderMasteryRecords() {
@@ -8317,6 +9926,7 @@
         : "Review battle records and player best stages.";
       renderPlayerArchive();
       renderLeaderboard();
+      refreshCloudLeaderboard();
       archiveModal.classList.add("show");
       archiveModal.setAttribute("aria-hidden", "false");
       closeArchiveButton.focus();
@@ -8675,6 +10285,8 @@
       bossIntroToken += 1;
       bossIntro.classList.remove("show");
       bossIntro.setAttribute("aria-hidden", "true");
+      shownBossIdiomStage = 0;
+      clearBossIdiomPrep();
       activeProfileId = activeProfileId || "debug";
       activeProfileName = activeProfileName || "Debug Commander";
       playerNameDisplay.textContent = activeProfileName;
@@ -8682,6 +10294,7 @@
       score = 0;
       levelNumber = stage;
       currentEnemy = createEnemy(levelNumber);
+      debugBossIdiomMode = currentEnemy.id === "boss";
       laneStates = [];
       activeLaneIndex = 0;
       stopLaneAdvance();
@@ -8700,6 +10313,7 @@
       reviewMode = false;
       warShopAvailable = stage % 5 === 0;
       shownBossIntroStage = 0;
+      shownBossIdiomStage = 0;
       runSeenWords = Object.fromEntries(words.slice(0, Math.max(20, Math.min(words.length, stage * 3))).map((word) => [word.hanzi, word]));
       syncHud();
       renderStageOpeningQuestion(stage);
@@ -8728,6 +10342,7 @@
       score = 0;
       playerState.coins = 0;
       playerState.dailyScore = 0;
+      playerState.runProgress = null;
       saveState();
 
       summaryText.textContent = `${summary.player}'s war archive has been saved. Score and coins reset; mastered Hanzi were preserved.`;
@@ -8801,6 +10416,9 @@
       trainedStage = 0;
       currentTrainingWord = null;
       bossPhrase = null;
+      shownBossIdiomStage = 0;
+      debugBossIdiomMode = false;
+      clearBossIdiomPrep();
       bossIntroToken += 1;
       lives = getMaxLives();
       isGameOver = false;
@@ -8834,25 +10452,24 @@
         meleeStrikeAttack(damage, result);
         return;
       }
-      playCannonSound();
-      if (currentEnemy.id === "infantry") playPhaserRegularInfantryState("fire");
-      if (currentEnemy.id === "armor") playPhaserRegularEnemyTankState("fire");
-      if (currentEnemy.id === "grenadier") playPhaserGrenadierState("fire");
+      const windupTime = currentEnemy.id === "infantry" || currentEnemy.id === "grenadier" ? 260 : 160;
       enemyTank.classList.remove("fire");
       playerTank.classList.remove("hit");
       enemyBullet.classList.remove("fly");
       playerBurst.classList.remove("show");
-      const enemyStartX = phaserEnemySprite?.x || 0;
-      tweenPhaserSprite(phaserEnemySprite, { x: enemyStartX - 10, yoyo: true }, 160);
-      tweenPhaserSprite(phaserEnemyTurretSprite, { x: enemyStartX - 10, yoyo: true }, 160);
-      playPhaserTargetingLine(enemyTank, playerTank, { color: 0xff6b4a, duration: 360 });
-      playPhaserProjectile(enemyTank, playerTank, { fromX: 0.22, toX: 0.72, color: 0xff6b4a, width: 24, height: 10 });
+      getPhaserEnemyAttackTargets().forEach((sprite) => tweenPhaserSprite(sprite, { x: sprite.x - 12, yoyo: false }, windupTime));
+      playPhaserTargetingLine(enemyTank, playerTank, { color: 0xff6b4a, duration: windupTime + 220 });
 
-      requestAnimationFrame(() => {
+      setTimeout(() => {
         if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
+        playCannonSound();
+        if (currentEnemy.id === "infantry") playPhaserRegularInfantryState("fire");
+        if (currentEnemy.id === "armor") playPhaserRegularEnemyTankState("fire");
+        if (currentEnemy.id === "grenadier") playPhaserGrenadierState("fire");
+        playPhaserProjectile(enemyTank, playerTank, { fromX: 0.22, toX: 0.72, color: 0xff6b4a, width: 24, height: 10 });
         enemyTank.classList.add("fire");
         enemyBullet.classList.add("fly");
-      });
+      }, windupTime);
 
       setTimeout(() => {
         if (isGameOver || isLevelCleared) return;
@@ -8868,12 +10485,13 @@
         playerTank.classList.add("hit");
         playPhaserPlayerState("hit", true);
         shakeBattlefield();
-      }, 520);
+      }, windupTime + 520);
 
       setTimeout(() => {
         enemyTank.classList.remove("fire");
         if (!playerTank.classList.contains("destroyed")) playerTank.classList.remove("hit");
-      }, 900);
+        updatePhaserActors();
+      }, windupTime + 900);
     }
 
     function truckCrashAttack(damage = 1, result = { hpDamage: damage }) {
@@ -8948,18 +10566,22 @@
     function bossHammerAttack(damage = 1, result = { hpDamage: damage }) {
       if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
       playTone(68, 0.24, { type: "sawtooth", endFrequency: 38, volume: 0.13 });
-      const approachDuration = 520;
-      const impactTime = 1040;
-      const cleanupTime = 1640;
+      const wasApproaching = enemyTank.classList.contains("reloading") || Boolean(phaserEnemyReloadTween);
+      const approachDuration = wasApproaching ? 0 : 520;
+      const swingWindup = 520;
+      const impactTime = approachDuration + swingWindup;
+      const cleanupTime = impactTime + 600;
       enemyTank.classList.remove("reloading", "boss-slam", "boss-attack-approach");
       playerTank.classList.remove("hit");
       playerBurst.classList.remove("show");
-      stopPhaserEnemyApproach(true);
-      tweenEnemyAttackToBase(getEnemyApproachDistance(), { angle: -9, inDuration: impactTime, outDuration: 520 });
-      requestAnimationFrame(() => {
-        if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
-        enemyTank.classList.add("boss-attack-approach");
-      });
+      stopPhaserEnemyApproach(false);
+      tweenEnemyAttackToBase(getEnemyApproachDistance(), { angle: -9, inDuration: Math.max(160, impactTime), outDuration: 520 });
+      if (!wasApproaching) {
+        requestAnimationFrame(() => {
+          if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
+          enemyTank.classList.add("boss-attack-approach");
+        });
+      }
       setTimeout(() => {
         if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
         enemyTank.classList.remove("boss-attack-approach");
@@ -9083,9 +10705,15 @@
 
     document.addEventListener("pointerdown", unlockAudio, { once: true });
     document.addEventListener("pointerdown", () => setTimeout(retryPendingSpeech, 0));
+    window.addEventListener("pagehide", saveRunProgressNow);
+    window.addEventListener("beforeunload", saveRunProgressNow);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") saveRunProgressNow();
+    });
     window.addEventListener("resize", () => setTimeout(syncResponsiveLayout, 80));
     window.addEventListener("orientationchange", () => setTimeout(syncResponsiveLayout, 180));
     document.addEventListener("keydown", (event) => {
+      if (versusModal.classList.contains("show")) return;
       if (canUseChoiceKeyboard() && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
         event.preventDefault();
         moveSelectedChoice(event.key === "ArrowRight" ? 1 : -1);
@@ -9096,7 +10724,7 @@
         confirmSelectedChoice();
         return;
       }
-      if (!isMultiLaneStage() || profileGate.classList.contains("hidden") === false || isTypingInForm()) return;
+      if (!isMultiLaneStage() || profileGate.classList.contains("hidden") === false || modeGate.classList.contains("hidden") === false || isTypingInForm()) return;
       if (event.key === "ArrowUp" || event.key.toLowerCase() === "w") {
         event.preventDefault();
         moveLane(-1);
@@ -9108,7 +10736,13 @@
     });
     profileForm.addEventListener("submit", handleProfileSubmit);
     profileSelect.addEventListener("change", handleProfileSelectChange);
-    profileNameInput.addEventListener("input", () => renderProfileSelect(profileNameInput.value));
+    recoverChaoButton.addEventListener("click", recoverChaoProfilePassword);
+    profileNameInput.addEventListener("input", () => {
+      renderProfileSelect(profileNameInput.value);
+      syncChaoRecoveryAccess();
+    });
+    adventureModeButton.addEventListener("click", startAdventureMode);
+    versusModeButton.addEventListener("click", startVersusFromModeGate);
     laneUpButton.addEventListener("click", () => moveLane(-1));
     laneDownButton.addEventListener("click", () => moveLane(1));
     trainingStartButton.addEventListener("click", finishTrainingAndStartBattle);
@@ -9134,6 +10768,7 @@
     archiveButton.addEventListener("click", openArchives);
     masteryButton.addEventListener("click", openMasteryRecords);
     debugButton.addEventListener("click", openDebugMode);
+    adminButton.addEventListener("click", openAdminPanel);
     enemyGalleryButton.addEventListener("click", openEnemyGallery);
     enemyGalleryAttackButton.addEventListener("click", playEnemyGalleryAttackPreview);
     arsenalButton.addEventListener("click", openArsenal);
@@ -9145,6 +10780,7 @@
       closeDebugMode();
       closeMasteryRecords();
       closeEnemyGallery();
+      closeVersusMode();
       showProfileGate("Enter another player profile.");
     });
     closeArsenalButton.addEventListener("click", closeArsenal);
@@ -9152,6 +10788,8 @@
     closeArchiveButton.addEventListener("click", closeArchives);
     closeDebugButton.addEventListener("click", closeDebugMode);
     closeEnemyGalleryButton.addEventListener("click", closeEnemyGallery);
+    closeVersusButton.addEventListener("click", closeVersusMode);
+    document.addEventListener("keydown", handleVersusKeydown);
     arsenal.addEventListener("click", (event) => {
       if (event.target === arsenal) closeArsenal();
     });
@@ -9188,6 +10826,11 @@
       if (!button) return;
       chooseSupplyAnswer(button);
     });
+    masteredWordGrid.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-hanzi]");
+      if (!button) return;
+      playMasteredWordCard(button);
+    });
     debugGrid.addEventListener("click", (event) => {
       const button = event.target.closest("[data-debug-stage]");
       if (!button) return;
@@ -9215,4 +10858,3 @@
   </script>
 </body>
 </html>
-

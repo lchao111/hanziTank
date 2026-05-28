@@ -10,6 +10,7 @@ const outputDir = join(rootDir, ".deploy", "site");
 const outputAssetsDir = join(outputDir, "assets");
 const phaserSourcePath = join(rootDir, "node_modules", "phaser", "dist", "phaser.min.js");
 const phaserOutputPath = "assets/vendor/phaser.min.js";
+const leaderboardApiBase = process.env.HANZI_TANK_LEADERBOARD_API || "";
 
 const localScriptPattern = /\n?\s*<script src="(src\/[^"]+\.js)"><\/script>/g;
 const inlineScriptPattern = /\n?\s*<script>\s*([\s\S]*?)\s*<\/script>\s*\n<\/body>/;
@@ -114,6 +115,10 @@ async function build() {
   productionHtml = productionHtml.replace(
     phaserCdnScriptPattern,
     `<script src="${phaserOutputPath}"></script>`
+  );
+  productionHtml = productionHtml.replace(
+    /<meta name="hanzi-tank-leaderboard-api" content="[^"]*">/,
+    `<meta name="hanzi-tank-leaderboard-api" content="${leaderboardApiBase.replace(/&/g, "&amp;").replace(/"/g, "&quot;")}">`
   );
   productionHtml = productionHtml.replace(
     inlineScriptPattern,

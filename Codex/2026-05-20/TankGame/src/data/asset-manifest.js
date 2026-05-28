@@ -4,8 +4,8 @@
   root.HanziTankAssets = api;
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   const assetSourceGuidelines = {
-    preferredSources: ["Itch.io", "OpenGameArt.org"],
-    preferredSearches: ["Top down Tank Sprite", "WW2 tank sprites", "top down vehicle pack", "orthographic tank"],
+    preferredSources: ["Itch.io", "OpenGameArt.org", "Kenney.nl CC0", "Itch.io free/CC0 packs", "Pixabay sound effects", "Freesound CC0", "Sonniss GDC free archive"],
+    preferredSearches: ["Top down Tank Sprite", "WW2 tank sprites", "top down vehicle pack", "orthographic tank", "CC0 artillery explosion", "CC0 cannon fire", "war UI medal icon"],
     requiredLicenseNoteFolder: "assets/licenses/",
     preferredFormats: ["transparent PNG spritesheet", "Phaser texture atlas", "separate hull and turret sprites"],
     importStrategy: "Import one actor or equipment category at a time and keep existing SVGs as fallback until verified."

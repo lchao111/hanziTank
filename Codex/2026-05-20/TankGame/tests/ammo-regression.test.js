@@ -44,6 +44,10 @@ const renderShopGrid = bodyOf('renderShopGrid');
 assert.match(renderShopGrid, /data-action="buy"/, 'Ammo cards should support buy action.');
 assert.match(renderShopGrid, /data-action="\$\{ammoEquipped \? "unequip" : "equip"\}"/, 'Ammo cards should support equip/unequip actions.');
 assert.match(renderShopGrid, /data-action="sell"/, 'Ammo cards should support sell action.');
+assert.match(renderShopGrid, /Special ammo loaded \$\{equippedAmmoCount\}\/2/, 'Ammo cards should explain that two special ammo types can be loaded.');
+
+const getSpecialAmmoLoadoutText = bodyOf('getSpecialAmmoLoadoutText');
+assert.match(getSpecialAmmoLoadoutText, /You can equip two special ammo types/, 'Loadout should remind players that two special ammo types can be equipped.');
 
 const completeLevel = bodyOf('completeLevel');
 assert.match(completeLevel, /warShopAvailable = true/, 'War prep should open after every cleared stage.');

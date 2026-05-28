@@ -10,9 +10,20 @@ assert.match(source, /\$\{escapeHtml\(word\.hanzi\)\}/, "Mastered-word Hanzi mus
 assert.match(source, /\$\{escapeHtml\(word\.phrase \|\| word\.meaning \|\| "mastered"\)\}/, "Mastered-word metadata must be escaped before innerHTML rendering.");
 assert.match(source, /\.map\(escapeHtml\)\.join\(" · "\)/, "War archive upgrade labels must be escaped before innerHTML rendering.");
 assert.match(source, /<button class="primary" id="debugButton" type="button" hidden>Debug Mode<\/button>/, "Debug mode button should be hidden until an authorized profile enters.");
+assert.match(source, /<button class="primary" id="adminButton" type="button" hidden>Admin<\/button>/, "Admin button should be hidden until an authorized profile enters.");
+assert.match(source, /id="recoverChaoButton" type="button" hidden/, "Chao recovery button should be hidden by default.");
 assert.match(source, /const debugProfileId = "chao"/, "Debug mode should be reserved for the Chao profile id.");
 assert.match(source, /function canUseDebugMode\(\)[\s\S]*activeProfileId === debugProfileId/, "Debug mode access should depend on the active Chao profile.");
+assert.match(source, /function canUseAdminMode\(\)[\s\S]*activeProfileId === debugProfileId/, "Admin access should depend on the active Chao profile.");
 assert.match(source, /function openDebugMode\(\)[\s\S]*if \(!canUseDebugMode\(\)\)/, "Opening debug mode should be guarded by the Chao profile check.");
 assert.match(source, /function startDebugBattle\(stage\)[\s\S]*if \(!canUseDebugMode\(\)\)/, "Starting a debug battle should be guarded by the Chao profile check.");
+assert.match(source, /function openAdminPanel\(\)[\s\S]*if \(!canUseAdminMode\(\)\)/, "Opening admin tools should be guarded by the Chao profile check.");
+assert.match(source, /function resetSelectedProfilePassword\(\)[\s\S]*if \(!canUseAdminMode\(\)\) return/, "Password reset should be guarded by the Chao profile check.");
+assert.match(source, /function recoverChaoProfilePassword\(\)[\s\S]*profileId !== debugProfileId/, "Chao recovery should only run for the Chao profile.");
+assert.match(source, /passwordResetBy: "local-recovery"/, "Chao local recovery should mark local recovery as the reset source.");
+assert.match(source, /passwordHash: hashPassword\(newPassword, salt\)/, "Admin password reset should store only a password hash.");
+assert.doesNotMatch(source, /recordTelemetryEvent\([^\)]*password: newPassword/, "Telemetry must not store raw reset passwords.");
+assert.match(source, /const telemetryStorageKey = "hanziTankTelemetry"/, "Telemetry should use a dedicated localStorage key.");
+assert.match(source, /recordTelemetryEvent\("battle-answer"/, "Game answers should emit local telemetry.");
 
 console.log("security regression tests passed");

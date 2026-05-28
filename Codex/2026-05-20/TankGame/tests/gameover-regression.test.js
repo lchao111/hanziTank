@@ -55,6 +55,31 @@ assert.match(resetRunForProfile, /cancelStageAdvance\(\)/, 'Profile run reset sh
 assert.match(resetRunForProfile, /isGameOver = false/, 'Profile run reset should clear game-over state.');
 assert.match(resetRunForProfile, /isLevelCleared = false/, 'Profile run reset should clear level-clear state.');
 
+const saveState = bodyOf('saveState');
+assert.match(saveState, /syncRunProgressToState\(\)/, 'Saving should autosync current run progress.');
+
+const saveRunProgressNow = bodyOf('saveRunProgressNow');
+assert.match(saveRunProgressNow, /if \(!activeProfileId \|\| !playerState \|\| isGameOver\) return/, 'Lifecycle autosave should skip missing profiles and defeated runs.');
+assert.match(saveRunProgressNow, /saveState\(\)/, 'Lifecycle autosave should persist the current run.');
+
+const takeDamage = bodyOf('takeDamage');
+assert.match(takeDamage, /saveState\(\)/, 'Damage and defense changes should be persisted immediately.');
+
+assert.match(source, /window\.addEventListener\("pagehide", saveRunProgressNow\)/, 'Page hide should flush run progress for refresh or shutdown.');
+assert.match(source, /window\.addEventListener\("beforeunload", saveRunProgressNow\)/, 'Before unload should flush run progress for refresh or shutdown.');
+assert.match(source, /document\.visibilityState === "hidden"\) saveRunProgressNow\(\)/, 'Backgrounding the tab should flush run progress.');
+
+const restoreRunProgress = bodyOf('restoreRunProgress');
+assert.match(restoreRunProgress, /levelNumber = stage/, 'Restoring progress should resume the saved stage.');
+assert.match(restoreRunProgress, /renderStageOpeningQuestion\(levelNumber\)/, 'Restoring progress should continue the saved stage flow.');
+assert.match(restoreRunProgress, /catch \(error\)[\s\S]*playerState\.runProgress = null;[\s\S]*saveStoredState\(localStorage, activeProfileId, playerState\)/, 'Corrupt run progress should be cleared instead of blocking play.');
+
+const startAdventureMode = bodyOf('startAdventureMode');
+assert.match(startAdventureMode, /if \(!restoreRunProgress\(\)\) resetRunForProfile\(\)/, 'Adventure mode should restore saved run progress before resetting to stage 1.');
+
+const enterProfile = bodyOf('enterProfile');
+assert.match(enterProfile, /showModeGate\(\)/, 'Profile entry should show game mode selection before starting play.');
+
 const startDebugBattle = bodyOf('startDebugBattle');
 assert.match(startDebugBattle, /cancelStageAdvance\(\)/, 'Debug battle should cancel any stage-clear advance animation.');
 assert.match(startDebugBattle, /isGameOver = false/, 'Debug battle should clear game-over state.');
