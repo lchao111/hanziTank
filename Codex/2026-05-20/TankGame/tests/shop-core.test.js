@@ -16,6 +16,9 @@ assert.strictEqual(shop.getShopItem('shell_he').projectileWidth, 48, 'High-Explo
 assert.strictEqual(shop.getShopItem('shell_he').projectileHeight, 22, 'High-Explosive Shell should use a taller projectile body.');
 assert.strictEqual(shop.getShopItem('shell_he').explosionVariant, 'massive', 'High-Explosive Shell should use the largest explosion VFX.');
 assert.strictEqual(shop.getShopItem('shell_arcane').damageBonus, 1);
+assert.strictEqual(shop.getShopItem('shell_arcane').projectileSheet, 'arcaneSparkShell');
+assert.strictEqual(shop.getShopItem('shell_arcane').projectileDuration, 2200);
+assert.strictEqual(shop.getShopItem('shell_arcane').projectileWidth, 110);
 assert.strictEqual(shop.getShopItem('weapon_cannon').damageBonus, 3);
 assert.strictEqual(shop.getShopItem('shell_he').ammoPerPurchase, 1);
 assert.ok(shop.shopItems.filter(shop.isAmmoItem).every((item) => item.ammoPerPurchase === 1), 'All special ammo should be one-shot purchases.');

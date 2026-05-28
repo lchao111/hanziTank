@@ -192,7 +192,10 @@
       damageBonus: 1,
       bulletClass: "arcane-shell",
       projectileColor: 0xa78bfa,
-      projectileHeight: 14,
+      projectileWidth: 110,
+      projectileHeight: 44,
+      projectileDuration: 2200,
+      projectileSheet: "arcaneSparkShell",
       desc: "Consumable magic ammo. +1 attack with bright arcane impact. Buy 1 round."
     },
     {

@@ -75,6 +75,19 @@ assert.match(projectile, /addPhaserProjectileTrail\(/, 'Projectile should trigge
 assert.match(projectile, /addPhaserImpactGlint\(/, 'Projectile should trigger impact glint.');
 assert.match(projectile, /options\.onImpact\?\.\(\)/, 'Projectile impact callbacks should run only after the projectile reaches the target.');
 
+assert.match(projectile, /options\.effectSheet === "arcaneSparkShell"/, 'Arcane Spark Shell should use its projectile spritesheet path.');
+assert.match(projectile, /addPhaserArcaneSpark\(/, 'Arcane Spark Shell should render as a Phaser spritesheet projectile.');
+
+const arcaneProjectile = bodyOf('addPhaserArcaneSpark');
+assert.match(arcaneProjectile, /scene\.add\.sprite\(start\.x, start\.y, "arcaneSparkShell", 0\)/, 'Arcane projectile should be created from the spritesheet.');
+assert.match(arcaneProjectile, /sprite\.play\("arcane-spark-shell-fire", true\)/, 'Arcane projectile should animate while flying.');
+assert.match(arcaneProjectile, /setDisplaySize\(260, 162\)/, 'Arcane projectile should be large enough to notice in flight.');
+assert.match(arcaneProjectile, /addPhaserArcaneImpact\(/, 'Arcane projectile should trigger a dedicated oversized impact effect.');
+
+const arcaneImpact = bodyOf('addPhaserArcaneImpact');
+assert.match(arcaneImpact, /setDisplaySize\(460, 288\)/, 'Arcane impact should use an oversized explosion sheet frame.');
+assert.match(arcaneImpact, /scene\.add\.rectangle/, 'Arcane impact should include a visible magic pillar.');
+
 const fire = bodyOf('fire');
 assert.match(fire, /duration: projectileDuration,[\s\S]*onImpact: explodeOnImpact/, 'Player shell explosions should be tied to projectile impact completion.');
 assert.doesNotMatch(fire, /setTimeout\(\(\) => \{[\s\S]*playPhaserExplosion\(enemyTank/, 'Player shell explosions should not use a fixed early timeout.');
@@ -86,6 +99,7 @@ assert.match(initPhaserEffects, /this\.load\.image\("kenney:enemyHull"/, 'Phaser
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("playerTankBattle"/, 'Phaser should preload the player tank battle spritesheet.');
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("playerTankIs2Battle"/, 'Phaser should preload the IS-2 player tank battle spritesheet.');
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("playerTankCromwellBattle"/, 'Phaser should preload the Cromwell player tank battle spritesheet.');
+assert.match(initPhaserEffects, /this\.load\.spritesheet\("arcaneSparkShell"/, 'Phaser should preload the Arcane Spark Shell effect spritesheet.');
 assert.match(initPhaserEffects, /frameWidth: 224[\s\S]*frameHeight: 144/, 'Player tank spritesheet should use fixed frame dimensions.');
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("bossTankDismantler"/, 'Phaser should preload the Tank Dismantler boss spritesheet.');
 assert.match(initPhaserEffects, /frameWidth: 224/, 'Tank Dismantler spritesheet should use fixed frame width.');
@@ -95,6 +109,7 @@ assert.match(initPhaserEffects, /frameWidth: 469[\s\S]*frameHeight: 300/, 'Regul
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("regularEnemyTank"/, 'Phaser should preload the regular enemy tank spritesheet.');
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("grenadier"/, 'Phaser should preload the grenadier spritesheet.');
 assert.match(initPhaserEffects, /phaserPlayerSprite = this\.add\.sprite/, 'Player actor should be a Phaser sprite so it can play animations.');
+assert.match(initPhaserEffects, /buildPhaserAmmoEffects\(this\)/, 'Phaser should build ammo effect animations after preload.');
 assert.match(initPhaserEffects, /phaserPlayerTurretSprite = this\.add\.image/, 'Phaser should create a player turret actor.');
 assert.match(initPhaserEffects, /phaserPlayerSprite\.setVisible\(false\)/, 'Kenney actor trial should stay hidden until a full top-down scene migration is ready.');
 assert.doesNotMatch(source, /kenney-actors-ready/, 'Kenney trial sprites should not hide DOM battle sprites yet.');
@@ -323,8 +338,15 @@ assert.match(laneEnemyAttack, /const windupTime = 220/, 'Lane soldiers should ha
 assert.match(laneEnemyAttack, /playLaneProjectile\(lane\.element, playerTank/, 'Lane soldiers should fire from their current frontline position.');
 assert.match(laneEnemyAttack, /lane\.progress = 0;[\s\S]*lane\.attacking = false;[\s\S]*syncLaneHud\(\)/, 'Lane soldiers should reset position only after the attack resolves.');
 
+const shootLaneTargetFunction = bodyOf('shootLaneTarget');
+assert.match(shootLaneTargetFunction, /ammo\?\.projectileSheet[\s\S]*playPhaserProjectile\(playerTank, lane\.element/, 'Multi-lane Arcane shots should use the Phaser projectile spritesheet path.');
+assert.match(shootLaneTargetFunction, /projectileDuration = ammo\?\.projectileDuration \|\| 560/, 'Multi-lane projectile cleanup should respect slow special ammo travel time.');
+
 const fireFunction = bodyOf('fire');
 assert.match(fireFunction, /playPhaserPlayerState\(ammo\?\.id === "shell_he" \? "heavy-fire" : "fire", true\)/, 'Player fire should trigger the Phaser fire animation.');
+assert.match(fireFunction, /effectSheet: ammo\?\.projectileSheet/, 'Player fire should pass ammo projectile spritesheet config to Phaser.');
+assert.match(source, /const impactDelay = \(shotAmmo\?\.projectileDuration \|\| 900\) \+ \(shotAmmo\?\.projectileSheet \? 1050 : 0\)/, 'Multi-lane damage resolution should wait for slow Arcane projectile impact.');
+assert.match(fireFunction, /const projectileDuration = ammo\?\.projectileDuration \|\| 560/, 'Special ammo should be able to slow down projectile travel for visibility.');
 
 const gameOverFunction = bodyOf('showGameOver');
 assert.match(gameOverFunction, /playPhaserPlayerState\("destroyed", true\)/, 'Game over should trigger the Phaser destroyed animation.');

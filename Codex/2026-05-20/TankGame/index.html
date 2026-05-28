@@ -1350,10 +1350,36 @@
     }
 
     .bullet.arcane-shell {
-      width: 32px;
-      height: 14px;
-      background: linear-gradient(90deg, #3b0764, #ddd6fe 30% 68%, #a855f7);
-      box-shadow: 0 0 20px rgba(168, 85, 247, 0.78);
+      width: 110px;
+      height: 44px;
+      border: 2px solid #f5d0fe;
+      background:
+        radial-gradient(circle at 72% 50%, #ffffff 0 8px, transparent 9px),
+        linear-gradient(90deg, #2e1065 0 20%, #67e8f9 21% 44%, #f5d0fe 45% 74%, #a855f7 75% 100%);
+      box-shadow: 0 0 34px rgba(168, 85, 247, 0.98), 0 0 68px rgba(103, 232, 249, 0.58);
+      animation-duration: 2200ms;
+    }
+
+    .bullet.arcane-shell::before {
+      left: -72px;
+      top: 10px;
+      width: 82px;
+      height: 20px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(103, 232, 249, 0.72), rgba(245, 208, 254, 0.92));
+      opacity: 1;
+      filter: blur(1px);
+    }
+
+    .bullet.arcane-shell::after {
+      right: -22px;
+      top: 50%;
+      width: 38px;
+      height: 38px;
+      border: 2px solid rgba(245, 208, 254, 0.92);
+      border-radius: 50%;
+      opacity: 1;
+      transform: translateY(-50%);
     }
 
     .bullet.flash-shell {
@@ -5087,7 +5113,6 @@
       </label>
       <div class="profile-actions">
         <button class="profile-submit" type="submit">Enter Game</button>
-        <button class="profile-submit admin-recovery" id="recoverChaoButton" type="button" hidden>Recover Chao</button>
       </div>
       <div class="profile-message" id="profileMessage" aria-live="polite"></div>
     </form>
@@ -5124,7 +5149,7 @@
   <script src="src/core/question-core.js"></script>
   <script src="src/core/mastery-core.js"></script>
   <script>
-    const appVersion = "2026.05.27.01";
+    const appVersion = "2026.05.28.01";
     function escapeHtml(value) {
       return String(value ?? "").replace(/[&<>"']/g, (character) => ({
         "&": "&amp;",
@@ -5402,7 +5427,6 @@
     const profileNameInput = document.querySelector("#profileNameInput");
     const profilePasswordInput = document.querySelector("#profilePasswordInput");
     const profileMessage = document.querySelector("#profileMessage");
-    const recoverChaoButton = document.querySelector("#recoverChaoButton");
 
     const {
       masteryGoal,
@@ -5619,6 +5643,10 @@
               frameWidth: 224,
               frameHeight: 144
             });
+            this.load.spritesheet("arcaneSparkShell", "assets/sprites/effects/arcane-spark-shell-spritesheet.png?v=20260528", {
+              frameWidth: 256,
+              frameHeight: 160
+            });
             this.load.spritesheet("bossTankDismantler", "assets/sprites/enemies/tank-dismantler-spritesheet.png?v=20260525", {
               frameWidth: 224,
               frameHeight: 224
@@ -5647,6 +5675,7 @@
             phaserPlayerTurretSprite = this.add.image(0, 0, "kenney:playerTurret").setOrigin(0.5, 0.5).setDepth(12).setAngle(90);
             phaserEnemyTurretSprite = this.add.image(0, 0, "kenney:enemyTurret").setOrigin(0.5, 0.5).setDepth(12).setAngle(-90);
             buildPhaserPlayerTank(this);
+            buildPhaserAmmoEffects(this);
             buildPhaserBossDismantler(this);
             buildPhaserRegularInfantry(this);
             buildPhaserLaneInfantry(this);
@@ -6573,6 +6602,95 @@
       }
     }
 
+    function buildPhaserAmmoEffects(scene) {
+      if (!scene.textures.exists("arcaneSparkShell") || scene.anims.exists("arcane-spark-shell-fire")) return;
+      scene.anims.create({
+        key: "arcane-spark-shell-fire",
+        frames: scene.anims.generateFrameNumbers("arcaneSparkShell", { start: 0, end: 3 }),
+        frameRate: 12,
+        repeat: -1
+      });
+    }
+
+    function addPhaserArcaneSpark(scene, start, end, duration, angle) {
+      if (!scene.textures.exists("arcaneSparkShell")) return null;
+      const charge = scene.add.sprite(start.x, start.y, "arcaneSparkShell", 0)
+        .setOrigin(0.5, 0.5)
+        .setDepth(25)
+        .setRotation(angle)
+        .setDisplaySize(190, 118)
+        .setAlpha(0.96);
+      const chargeRing = scene.add.circle(start.x, start.y, 62, 0xa78bfa, 0.12)
+        .setStrokeStyle(6, 0xf5d0fe, 0.95)
+        .setDepth(24);
+      const sprite = scene.add.sprite(start.x, start.y, "arcaneSparkShell", 0)
+        .setOrigin(0.5, 0.5)
+        .setDepth(24)
+        .setRotation(angle)
+        .setDisplaySize(260, 162);
+      sprite.play("arcane-spark-shell-fire", true);
+      const glow = scene.add.circle(start.x, start.y, 88, 0xa78bfa, 0.32).setDepth(23);
+      const coreTrail = scene.add.line(0, 0, start.x, start.y, start.x, start.y, 0xf5d0fe, 0.48)
+        .setOrigin(0, 0)
+        .setDepth(22)
+        .setLineWidth(12);
+      scene.tweens.add({
+        targets: [charge, chargeRing],
+        scale: 1.45,
+        alpha: 0,
+        duration: 360,
+        ease: "Quad.easeOut",
+        onComplete: () => {
+          charge.destroy();
+          chargeRing.destroy();
+        }
+      });
+      scene.tweens.add({
+        targets: [sprite, glow],
+        x: end.x,
+        y: end.y,
+        duration,
+        ease: "Sine.easeInOut",
+        onUpdate: () => {
+          coreTrail.setTo(start.x, start.y, sprite.x, sprite.y);
+        },
+        onComplete: () => {
+          coreTrail.destroy();
+          addPhaserArcaneImpact(scene, end.x, end.y);
+          sprite.setFrame(3).setRotation(0).setDisplaySize(380, 238).setAlpha(0.98);
+          glow.destroy();
+          scene.tweens.add({
+            targets: sprite,
+            scale: 1.75,
+            alpha: 0,
+            duration: 760,
+            ease: "Quad.easeOut",
+            onComplete: () => sprite.destroy()
+          });
+        }
+      });
+      return sprite;
+    }
+
+    function addPhaserArcaneImpact(scene, x, y) {
+      const blast = scene.add.sprite(x, y, "arcaneSparkShell", 3)
+        .setOrigin(0.5, 0.5)
+        .setDepth(31)
+        .setDisplaySize(460, 288)
+        .setAlpha(0.96);
+      const pillar = scene.add.rectangle(x, y - 96, 48, 240, 0xf5d0fe, 0.6).setDepth(30);
+      const ring = scene.add.circle(x, y, 62, 0xa78bfa, 0.14)
+        .setStrokeStyle(7, 0xf5d0fe, 0.98)
+        .setDepth(32);
+      const shock = scene.add.circle(x, y, 104, 0x67e8f9, 0.1)
+        .setStrokeStyle(5, 0x67e8f9, 0.72)
+        .setDepth(29);
+      scene.tweens.add({ targets: blast, scale: 1.52, alpha: 0, duration: 900, ease: "Quad.easeOut", onComplete: () => blast.destroy() });
+      scene.tweens.add({ targets: pillar, scaleY: 1.5, alpha: 0, duration: 860, ease: "Quad.easeOut", onComplete: () => pillar.destroy() });
+      scene.tweens.add({ targets: ring, scale: 3.8, alpha: 0, duration: 980, ease: "Cubic.easeOut", onComplete: () => ring.destroy() });
+      scene.tweens.add({ targets: shock, scale: 2.8, alpha: 0, duration: 1080, ease: "Cubic.easeOut", onComplete: () => shock.destroy() });
+    }
+
     function addPhaserImpactGlint(scene, x, y, color) {
       const glint = scene.add.circle(x, y, 10, color, 0.58)
         .setStrokeStyle(2, 0xffffff, 0.88)
@@ -6621,10 +6739,19 @@
       const start = getBattlefieldPoint(fromEl, options.fromX ?? 0.78, options.fromY ?? 0.48);
       const end = getBattlefieldPoint(toEl, options.toX ?? 0.28, options.toY ?? 0.48);
       const color = options.color || 0xf3b23c;
-      const duration = options.duration || 540;
+      const duration = options.duration || (options.effectSheet === "arcaneSparkShell" ? 2200 : 540);
       const angle = Math.atan2(end.y - start.y, end.x - start.x);
       addPhaserMuzzleFlash(phaserEffects, start.x, start.y, angle, color);
       addPhaserProjectileTrail(phaserEffects, start, end, color, duration);
+      if (options.effectSheet === "arcaneSparkShell") {
+        const arcaneSprite = addPhaserArcaneSpark(phaserEffects, start, end, duration, angle);
+        if (!arcaneSprite) return false;
+        phaserEffects.time.delayedCall(duration, () => {
+          addPhaserImpactGlint(phaserEffects, end.x, end.y, color);
+          options.onImpact?.();
+        });
+        return true;
+      }
       const projectile = phaserEffects.add.ellipse(start.x, start.y, options.width || 24, options.height || 10, color, 1)
         .setDepth(22)
         .setRotation(angle);
@@ -6956,12 +7083,6 @@
       return activeProfileId === debugProfileId;
     }
 
-    function syncChaoRecoveryAccess() {
-      const profileId = getProfileId(profileNameInput.value);
-      const profiles = getProfiles();
-      recoverChaoButton.hidden = !(profileId === debugProfileId && Boolean(profiles[debugProfileId]));
-    }
-
     function syncDebugModeAccess() {
       const allowed = canUseDebugMode();
       debugButton.hidden = !allowed;
@@ -7005,7 +7126,6 @@
       profilePasswordInput.value = "";
       profileNameInput.value = activeProfileName || localStorage.getItem("hanziTankLastProfile") || "";
       renderProfileSelect(profileNameInput.value);
-      syncChaoRecoveryAccess();
       setTimeout(() => {
         (profileNameInput.value ? profilePasswordInput : profileNameInput).focus();
       }, 0);
@@ -7369,39 +7489,11 @@
       }
 
       if (profile.passwordHash !== hashPassword(password, profile.salt)) {
-        profileMessage.textContent = profileId === debugProfileId ? "Wrong Chao password. Use Recover Chao to reset this local admin password." : "Wrong password for this player.";
-        syncChaoRecoveryAccess();
+        profileMessage.textContent = "Wrong password for this player.";
         profilePasswordInput.select();
         return;
       }
       enterProfile(profileId, profile);
-    }
-
-    function recoverChaoProfilePassword() {
-      const profileId = getProfileId(profileNameInput.value);
-      const newPassword = profilePasswordInput.value;
-      const profiles = getProfiles();
-      const profile = profiles[debugProfileId];
-      if (profileId !== debugProfileId || !profile) return;
-      if (newPassword.length < 3) {
-        profileMessage.textContent = "Enter a new Chao password with at least 3 characters, then click Recover Chao.";
-        profilePasswordInput.focus();
-        return;
-      }
-      const salt = createSalt();
-      profiles[debugProfileId] = {
-        ...profile,
-        salt,
-        passwordHash: hashPassword(newPassword, salt),
-        passwordResetAt: new Date().toISOString(),
-        passwordResetBy: "local-recovery"
-      };
-      saveProfiles(profiles);
-      const state = loadState(debugProfileId);
-      state.runProgress = null;
-      saveStoredState(localStorage, debugProfileId, state);
-      profileMessage.textContent = "Chao password recovered locally. Enter Game with this password.";
-      syncChaoRecoveryAccess();
     }
 
     function handleProfileSelectChange() {
@@ -7410,7 +7502,6 @@
       if (!profile) return;
       profileNameInput.value = profile.name;
       profileMessage.textContent = "";
-      syncChaoRecoveryAccess();
       profilePasswordInput.focus();
     }
 
@@ -7915,7 +8006,22 @@
       playPhaserPlayerState(ammo?.id === "shell_he" ? "heavy-fire" : "fire", true);
       tweenPhaserSprite(phaserPlayerSprite, { x: playerStartX + 10, yoyo: true }, 150);
       requestAnimationFrame(() => playerTank.classList.add("fire"));
-      playLaneProjectile(playerTank, lane.element, {
+      const projectileDuration = ammo?.projectileDuration || 560;
+      if (ammo?.projectileSheet) {
+        playPhaserProjectile(playerTank, lane.element, {
+          color: ammo.projectileColor || 0xa78bfa,
+          width: ammo.projectileWidth || 76,
+          height: ammo.projectileHeight || 30,
+          effectSheet: ammo.projectileSheet,
+          duration: projectileDuration,
+          onImpact: () => {
+            playExplosionSound();
+            lane.element.classList.add("hit");
+            flashPhaserLaneInfantry(laneStates.indexOf(lane));
+          }
+        });
+      } else {
+        playLaneProjectile(playerTank, lane.element, {
         color: ammo?.projectileColor || (ammo?.id === "shell_he" ? "#ff7a2f" : ammo?.id === "weapon_cannon" ? "#dbeafe" : ammo?.id === "shell_ap" ? "#fff2a1" : "#f3b23c"),
         glow: ammo?.id === "shell_he" ? "rgba(255, 111, 61, 0.9)" : undefined,
         impact: ammo?.id === "shell_he" ? "heavy" : "normal",
@@ -7924,11 +8030,12 @@
           lane.element.classList.add("hit");
           flashPhaserLaneInfantry(laneStates.indexOf(lane));
         }
-      });
+        });
+      }
       setTimeout(() => {
         playerTank.classList.remove("fire");
         lane.element?.classList.remove("hit");
-      }, 900);
+      }, projectileDuration + 320);
     }
 
     function flashPhaserLaneInfantry(laneIndex) {
@@ -9422,6 +9529,7 @@
           messageEl.textContent += ` ${shotAmmo.name} used (${getAmmoCount(shotAmmo.id)} left).`;
         }
         fire(shotAmmo);
+        const impactDelay = (shotAmmo?.projectileDuration || 900) + (shotAmmo?.projectileSheet ? 1050 : 0);
         setTimeout(() => {
           if (isGameOver || isLevelCleared) return;
           const shotDamage = getShotDamage(shotAmmo);
@@ -9524,6 +9632,7 @@
           messageEl.textContent += ` ${shotAmmo.name} used (${getAmmoCount(shotAmmo.id)} left).`;
         }
         shootLaneTarget(lane, shotAmmo);
+        const impactDelay = (shotAmmo?.projectileDuration || 900) + (shotAmmo?.projectileSheet ? 220 : 0);
         setTimeout(() => {
           if (isGameOver || isLevelCleared) return;
           const shotDamage = getShotDamage(shotAmmo);
@@ -9564,7 +9673,7 @@
           const nextLane = laneStates.findIndex(isLaneLive);
           if (lane.defeated && nextLane >= 0) activeLaneIndex = nextLane;
           renderMultiLaneQuestion({ preserveAdvance: true });
-        }, 900);
+        }, impactDelay);
         return;
       }
 
@@ -9672,7 +9781,7 @@
       playPhaserPlayerState(ammo?.id === "shell_he" ? "heavy-fire" : "fire", true);
       tweenPhaserSprite(phaserPlayerSprite, { x: playerStartX + 10, yoyo: true }, 150);
       tweenPhaserSprite(phaserPlayerTurretSprite, { x: playerStartX + 10, yoyo: true }, 150);
-      const projectileDuration = 560;
+      const projectileDuration = ammo?.projectileDuration || 560;
       const explodeOnImpact = () => {
         playExplosionSound();
         playPhaserExplosion(enemyTank, ammo?.id === "shell_he" ? "heavy" : "normal");
@@ -9686,6 +9795,7 @@
         color: ammo?.projectileColor || (ammo?.id === "shell_he" ? 0xff7a2f : ammo?.id === "weapon_cannon" ? 0xdbeafe : ammo?.id === "shell_ap" ? 0xfff2a1 : 0xf3b23c),
         width: ammo ? 34 : 24,
         height: ammo?.projectileHeight || (ammo?.id === "shell_he" ? 16 : 10),
+        effectSheet: ammo?.projectileSheet,
         duration: projectileDuration,
         onImpact: explodeOnImpact
       });
@@ -10814,10 +10924,8 @@
     });
     profileForm.addEventListener("submit", handleProfileSubmit);
     profileSelect.addEventListener("change", handleProfileSelectChange);
-    recoverChaoButton.addEventListener("click", recoverChaoProfilePassword);
     profileNameInput.addEventListener("input", () => {
       renderProfileSelect(profileNameInput.value);
-      syncChaoRecoveryAccess();
     });
     adventureModeButton.addEventListener("click", startAdventureMode);
     versusModeButton.addEventListener("click", startVersusFromModeGate);

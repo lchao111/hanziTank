@@ -126,6 +126,16 @@
       fallbackSvg: "assets/enemy-infantry.svg"
     },
     {
+      id: "arcane-spark-shell-spritesheet",
+      source: "User-provided Gemini Arcane Spark Shell green-screen animation sheet, chroma-keyed into Phaser frames",
+      license: "User-provided reference asset; source stored at assets/source/arcane-spark-shell-reference.png",
+      texture: "arcaneSparkShell",
+      spritesheetPath: "assets/sprites/effects/arcane-spark-shell-spritesheet.png",
+      frameWidth: 256,
+      frameHeight: 160,
+      effectFrames: [0, 1, 2, 3]
+    },
+    {
       id: "regular-enemy-tank-spritesheet",
       source: "User-provided regular enemy tank spritesheet, green-screen removed into Phaser frames",
       license: "User-provided reference asset; source file from Downloads/普通敌方坦克.png",

@@ -56,5 +56,6 @@ const fire = bodyOf('fire');
 assert.doesNotMatch(fire, /announceHighExplosiveFire/, 'Firing high-explosive ammo should not announce a launch voice line.');
 
 assert.match(source, /\.bullet\.he-shell \{[\s\S]*width: 48px;[\s\S]*height: 22px;/, 'High-Explosive Shell should render as a visibly larger DOM projectile.');
+assert.match(source, /\.bullet\.arcane-shell \{[\s\S]*width: 110px;[\s\S]*height: 44px;[\s\S]*animation-duration: 2200ms;/, 'Arcane Spark Shell should render as a large slow DOM projectile fallback.');
 
 console.log('ammo regression tests passed');
