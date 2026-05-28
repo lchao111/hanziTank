@@ -5430,6 +5430,15 @@
     let versusTimerId = 0;
     let versusSoldierId = 0;
     let versusState = null;
+    const playerTankBattleTextureMap = {
+      tank_is2: "playerTankIs2Battle",
+      tank_cromwell: "playerTankCromwellBattle"
+    };
+    const playerTankAnimationPrefixMap = {
+      playerTankBattle: "player-tank",
+      playerTankIs2Battle: "player-tank-is2",
+      playerTankCromwellBattle: "player-tank-cromwell"
+    };
     let currentWord = words[0];
     let playerState = cloneDefaultState();
     let score = 0;
@@ -5599,6 +5608,14 @@
             this.load.image("kenney:enemyHull", "assets/sprites/tanks/kenney/tankBody_red.png");
             this.load.image("kenney:enemyTurret", "assets/sprites/tanks/kenney/tankRed_barrel1.png");
             this.load.spritesheet("playerTankBattle", "assets/sprites/tanks/player-tank-spritesheet.png?v=20260525", {
+              frameWidth: 224,
+              frameHeight: 144
+            });
+            this.load.spritesheet("playerTankIs2Battle", "assets/sprites/tanks/is2-player-tank-spritesheet.png?v=20260528", {
+              frameWidth: 224,
+              frameHeight: 144
+            });
+            this.load.spritesheet("playerTankCromwellBattle", "assets/sprites/tanks/cromwell-player-tank-spritesheet.png?v=20260528", {
               frameWidth: 224,
               frameHeight: 144
             });
@@ -5812,17 +5829,42 @@
     }
 
     function buildPhaserPlayerTank(scene) {
-      const playerTexture = scene.textures.get("playerTankBattle");
-      phaserPlayerTextureReady = scene.textures.exists("playerTankBattle") && playerTexture?.key === "playerTankBattle" && (playerTexture.source?.[0]?.width || 0) >= 1344;
+      createPhaserPlayerTankAnimations(scene, "playerTankBattle", "player-tank");
+      createPhaserPlayerTankAnimations(scene, "playerTankIs2Battle", "player-tank-is2");
+      createPhaserPlayerTankAnimations(scene, "playerTankCromwellBattle", "player-tank-cromwell");
+      phaserPlayerTextureReady = isPhaserPlayerTankTextureReady(getEquippedPlayerTankTextureKey());
       if (!phaserPlayerTextureReady) return;
-      scene.anims.create({ key: "player-tank-idle", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 0, end: 5 }), frameRate: 8, repeat: -1 });
-      scene.anims.create({ key: "player-tank-fire", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 6, end: 11 }), frameRate: 12, repeat: 0 });
-      scene.anims.create({ key: "player-tank-heavy-fire", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 12, end: 17 }), frameRate: 12, repeat: 0 });
-      scene.anims.create({ key: "player-tank-hit", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 18, end: 23 }), frameRate: 12, repeat: 0 });
-      scene.anims.create({ key: "player-tank-weak", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 18, end: 23 }), frameRate: 6, repeat: -1 });
-      scene.anims.create({ key: "player-tank-destroyed", frames: scene.anims.generateFrameNumbers("playerTankBattle", { start: 24, end: 29 }), frameRate: 8, repeat: 0 });
-      phaserPlayerSprite.setTexture("playerTankBattle", 0).setOrigin(0.5, 0.72).setDepth(14).setAngle(0).setFlipX(false);
+      phaserPlayerKey = getEquippedPlayerTankTextureKey();
+      phaserPlayerSprite.setTexture(phaserPlayerKey, 0).setOrigin(0.5, 0.72).setDepth(14).setAngle(0).setFlipX(false);
       phaserPlayerTurretSprite?.setVisible(false);
+    }
+
+    function createPhaserPlayerTankAnimations(scene, textureKey, animationPrefix) {
+      if (!isPhaserPlayerTankTextureReady(textureKey)) return;
+      const createAnimation = (stateName, start, end, frameRate, repeat) => {
+        const key = `${animationPrefix}-${stateName}`;
+        if (scene.anims.exists(key)) return;
+        scene.anims.create({ key, frames: scene.anims.generateFrameNumbers(textureKey, { start, end }), frameRate, repeat });
+      };
+      createAnimation("idle", 0, 5, 8, -1);
+      createAnimation("fire", 6, 11, 12, 0);
+      createAnimation("heavy-fire", 12, 17, 12, 0);
+      createAnimation("hit", 18, 23, 12, 0);
+      createAnimation("weak", 18, 23, 6, -1);
+      createAnimation("destroyed", 24, 29, 8, 0);
+    }
+
+    function getEquippedPlayerTankTextureKey() {
+      return playerTankBattleTextureMap[playerState?.equipped?.tank] || "playerTankBattle";
+    }
+
+    function getEquippedPlayerTankAnimationPrefix() {
+      return playerTankAnimationPrefixMap[getEquippedPlayerTankTextureKey()] || "player-tank";
+    }
+
+    function isPhaserPlayerTankTextureReady(textureKey) {
+      const texture = phaserEffects?.textures?.get(textureKey);
+      return Boolean(phaserEffects?.textures?.exists(textureKey) && texture?.key === textureKey && (texture.source?.[0]?.width || 0) >= 1344);
     }
 
     function getPlayerTankPhaserState() {
@@ -5860,9 +5902,16 @@
     }
 
     function updatePhaserPlayerTank() {
+      const textureKey = getEquippedPlayerTankTextureKey();
+      phaserPlayerTextureReady = isPhaserPlayerTankTextureReady(textureKey);
       const active = Boolean(phaserPlayerTextureReady && phaserPlayerSprite && (!playerTank.classList.contains("fragmented") || playerTank.classList.contains("destroyed")));
       playerTank.classList.toggle("phaser-player-active", active);
       if (!active) return;
+      if (phaserPlayerKey !== textureKey) {
+        phaserPlayerKey = textureKey;
+        phaserPlayerSprite.stop();
+        phaserPlayerSprite.setTexture(textureKey, 0);
+      }
       const rect = playerTank.getBoundingClientRect();
       const point = getPhaserPlayerPoint(rect);
       phaserPlayerSprite.setVisible(true).setPosition(point.x, point.y).setDisplaySize(rect.width * 1.18, rect.width * 1.18 * (144 / 224)).setAlpha(playerTank.classList.contains("destroyed") ? 0.78 : 1);
@@ -5871,7 +5920,7 @@
 
     function playPhaserPlayerState(stateName, force = false) {
       if (!phaserPlayerTextureReady || !phaserPlayerSprite?.visible) return;
-      const key = `player-tank-${stateName}`;
+      const key = `${getEquippedPlayerTankAnimationPrefix()}-${stateName}`;
       if (!force && phaserPlayerSprite.anims.currentAnim?.key === key && phaserPlayerSprite.anims.isPlaying) return;
       phaserPlayerSprite.play(key, true);
       if (["fire", "heavy-fire", "hit"].includes(stateName)) {
@@ -6791,6 +6840,7 @@
 
     function saveRunProgressNow() {
       if (!activeProfileId || !playerState || isGameOver) return;
+      if (!profileGate.classList.contains("hidden") || !modeGate.classList.contains("hidden")) return;
       saveState();
     }
 
@@ -6861,6 +6911,10 @@
         bossIntroToken += 1;
         locked = false;
         syncHud();
+        if (progress.phase === "stageClear") {
+          restoreStageClearProgress();
+          return true;
+        }
         renderStageOpeningQuestion(levelNumber);
         return true;
       } catch (error) {
@@ -6869,6 +6923,29 @@
         saveStoredState(localStorage, activeProfileId, playerState);
         return false;
       }
+    }
+
+    function restoreStageClearProgress() {
+      isLevelCleared = true;
+      locked = true;
+      warShopAvailable = true;
+      trainingCamp.classList.remove("show");
+      trainingCamp.setAttribute("aria-hidden", "true");
+      gameOver.classList.remove("show");
+      gameOver.setAttribute("aria-hidden", "true");
+      supplyScreen.classList.remove("show");
+      supplyScreen.setAttribute("aria-hidden", "true");
+      perkScreen.classList.remove("show");
+      perkScreen.setAttribute("aria-hidden", "true");
+      bossIdiomScreen.classList.remove("show");
+      bossIdiomScreen.setAttribute("aria-hidden", "true");
+      messageEl.textContent = `Stage ${levelNumber} clear. Choose your next upgrade to continue.`;
+      syncHud();
+      if (levelNumber % 5 === 0) {
+        showSupplyChallenge();
+        return;
+      }
+      showPerkChoices();
     }
 
     function canUseDebugMode() {
@@ -8576,6 +8653,7 @@
       playerState.equipped[item.type] = item.id;
       if (item.type === "tank") {
         lives = getMaxLives();
+        phaserPlayerKey = "";
       }
       saveState();
       renderShop();

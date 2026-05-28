@@ -60,6 +60,7 @@ assert.match(saveState, /syncRunProgressToState\(\)/, 'Saving should autosync cu
 
 const saveRunProgressNow = bodyOf('saveRunProgressNow');
 assert.match(saveRunProgressNow, /if \(!activeProfileId \|\| !playerState \|\| isGameOver\) return/, 'Lifecycle autosave should skip missing profiles and defeated runs.');
+assert.match(saveRunProgressNow, /profileGate\.classList\.contains\("hidden"\)[\s\S]*modeGate\.classList\.contains\("hidden"\)/, 'Lifecycle autosave should not overwrite saved runs while profile or mode gates are open.');
 assert.match(saveRunProgressNow, /saveState\(\)/, 'Lifecycle autosave should persist the current run.');
 
 const takeDamage = bodyOf('takeDamage');
@@ -72,7 +73,13 @@ assert.match(source, /document\.visibilityState === "hidden"\) saveRunProgressNo
 const restoreRunProgress = bodyOf('restoreRunProgress');
 assert.match(restoreRunProgress, /levelNumber = stage/, 'Restoring progress should resume the saved stage.');
 assert.match(restoreRunProgress, /renderStageOpeningQuestion\(levelNumber\)/, 'Restoring progress should continue the saved stage flow.');
+assert.match(restoreRunProgress, /if \(progress\.phase === "stageClear"\)[\s\S]*restoreStageClearProgress\(\)/, 'Restoring a stage-clear checkpoint should show the continue UI instead of re-entering a terminal battle state.');
 assert.match(restoreRunProgress, /catch \(error\)[\s\S]*playerState\.runProgress = null;[\s\S]*saveStoredState\(localStorage, activeProfileId, playerState\)/, 'Corrupt run progress should be cleared instead of blocking play.');
+
+const restoreStageClearProgress = bodyOf('restoreStageClearProgress');
+assert.match(restoreStageClearProgress, /warShopAvailable = true/, 'Stage-clear restore should reopen war prep availability.');
+assert.match(restoreStageClearProgress, /showSupplyChallenge\(\)/, 'Stage-clear restore should resume supply challenge stages.');
+assert.match(restoreStageClearProgress, /showPerkChoices\(\)/, 'Stage-clear restore should resume upgrade choice stages.');
 
 const startAdventureMode = bodyOf('startAdventureMode');
 assert.match(startAdventureMode, /if \(!restoreRunProgress\(\)\) resetRunForProfile\(\)/, 'Adventure mode should restore saved run progress before resetting to stage 1.');

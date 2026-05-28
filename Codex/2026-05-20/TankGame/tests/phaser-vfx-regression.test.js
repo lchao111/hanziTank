@@ -84,6 +84,8 @@ assert.match(initPhaserEffects, /this\.load\.image\("kenney:playerHull"/, 'Phase
 assert.match(initPhaserEffects, /this\.load\.image\("kenney:playerTurret"/, 'Phaser should preload Kenney player turret PNG.');
 assert.match(initPhaserEffects, /this\.load\.image\("kenney:enemyHull"/, 'Phaser should preload Kenney enemy hull PNG.');
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("playerTankBattle"/, 'Phaser should preload the player tank battle spritesheet.');
+assert.match(initPhaserEffects, /this\.load\.spritesheet\("playerTankIs2Battle"/, 'Phaser should preload the IS-2 player tank battle spritesheet.');
+assert.match(initPhaserEffects, /this\.load\.spritesheet\("playerTankCromwellBattle"/, 'Phaser should preload the Cromwell player tank battle spritesheet.');
 assert.match(initPhaserEffects, /frameWidth: 224[\s\S]*frameHeight: 144/, 'Player tank spritesheet should use fixed frame dimensions.');
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("bossTankDismantler"/, 'Phaser should preload the Tank Dismantler boss spritesheet.');
 assert.match(initPhaserEffects, /frameWidth: 224/, 'Tank Dismantler spritesheet should use fixed frame width.');
@@ -160,22 +162,29 @@ assert.match(updatePhaserActors, /updatePhaserRegularEnemyTank\(\)/, 'Regular en
 assert.match(updatePhaserActors, /updatePhaserGrenadier\(\)/, 'Grenadier spritesheet should stay aligned with the DOM enemy slot.');
 
 const playerBuilder = bodyOf('buildPhaserPlayerTank');
-assert.match(playerBuilder, /scene\.textures\.exists\("playerTankBattle"\)/, 'Player tank builder should verify that the spritesheet loaded.');
-assert.match(playerBuilder, /key: "player-tank-idle"/, 'Player tank should define an idle animation.');
-assert.match(playerBuilder, /start: 0, end: 5/, 'Player idle animation should use row 1.');
-assert.match(playerBuilder, /key: "player-tank-fire"/, 'Player tank should define a fire animation.');
-assert.match(playerBuilder, /start: 6, end: 11/, 'Player fire animation should use row 2.');
-assert.match(playerBuilder, /key: "player-tank-heavy-fire"/, 'Player tank should define a heavy fire animation.');
-assert.match(playerBuilder, /key: "player-tank-hit"/, 'Player tank should define a hit animation.');
-assert.match(playerBuilder, /start: 18, end: 23/, 'Player hit animation should use the smoking row.');
-assert.match(playerBuilder, /key: "player-tank-weak"/, 'Player tank should define a weak animation.');
-assert.match(playerBuilder, /start: 18, end: 23/, 'Player weak animation should use row 4.');
-assert.match(playerBuilder, /key: "player-tank-destroyed"/, 'Player tank should define a destroyed animation.');
-assert.match(playerBuilder, /start: 24, end: 29/, 'Player destroyed animation should use row 5.');
+const playerTextureReady = bodyOf('isPhaserPlayerTankTextureReady');
+assert.match(playerTextureReady, /textures\?\.exists\(textureKey\)/, 'Player tank texture helper should verify that the selected spritesheet loaded.');
+assert.match(source, /tank_is2:\s*"playerTankIs2Battle"/, 'Equipping Soviet: IS-2 should switch the Phaser player tank texture.');
+assert.match(source, /tank_cromwell:\s*"playerTankCromwellBattle"/, 'Equipping Britain: Cromwell should switch the Phaser player tank texture.');
+assert.match(source, /createPhaserPlayerTankAnimations\(scene, "playerTankIs2Battle", "player-tank-is2"\)/, 'IS-2 should have its own Phaser animation keys.');
+assert.match(source, /createPhaserPlayerTankAnimations\(scene, "playerTankCromwellBattle", "player-tank-cromwell"\)/, 'Cromwell should have its own Phaser animation keys.');
+const playerAnimationFactory = bodyOf('createPhaserPlayerTankAnimations');
+assert.match(playerAnimationFactory, /`\$\{animationPrefix\}-\$\{stateName\}`/, 'Player tank animations should use the selected texture animation prefix.');
+assert.match(playerAnimationFactory, /"idle", 0, 5/, 'Player idle animation should use row 1.');
+assert.match(playerAnimationFactory, /"fire", 6, 11/, 'Player tank should define a fire animation.');
+assert.match(playerAnimationFactory, /"fire", 6, 11/, 'Player fire animation should use row 2.');
+assert.match(playerAnimationFactory, /"heavy-fire", 12, 17/, 'Player tank should define a heavy fire animation.');
+assert.match(playerAnimationFactory, /"hit", 18, 23/, 'Player tank should define a hit animation.');
+assert.match(playerAnimationFactory, /"hit", 18, 23/, 'Player hit animation should use the smoking row.');
+assert.match(playerAnimationFactory, /"weak", 18, 23/, 'Player tank should define a weak animation.');
+assert.match(playerAnimationFactory, /"weak", 18, 23/, 'Player weak animation should use row 4.');
+assert.match(playerAnimationFactory, /"destroyed", 24, 29/, 'Player tank should define a destroyed animation.');
+assert.match(playerAnimationFactory, /"destroyed", 24, 29/, 'Player destroyed animation should use row 5.');
 
 const playerUpdater = bodyOf('updatePhaserPlayerTank');
 assert.match(playerUpdater, /phaser-player-active/, 'DOM player fallback should hide only while the Phaser player tank is active.');
 assert.match(playerUpdater, /setDisplaySize\(rect\.width \* 1\.18/, 'Player spritesheet should scale from the player DOM slot.');
+assert.match(playerUpdater, /phaserPlayerKey !== textureKey[\s\S]*phaserPlayerSprite\.setTexture\(textureKey, 0\)/, 'Player spritesheet should change when a purchased tank skin is equipped.');
 
 const playerState = bodyOf('getPlayerTankPhaserState');
 assert.match(playerState, /return "destroyed"/, 'Player state should include destroyed.');
@@ -186,7 +195,8 @@ const playerWeak = bodyOf('isPlayerTankWeak');
 assert.match(playerWeak, /lives > 0 && lives <= 1/, 'Player weak state should only trigger when the tank has 1 HP left.');
 
 const playerStatePlayer = bodyOf('playPhaserPlayerState');
-assert.match(playerStatePlayer, /player-tank-\$\{stateName\}/, 'Player animation helper should play named player tank states.');
+assert.match(playerStatePlayer, /getEquippedPlayerTankAnimationPrefix\(\)/, 'Player animation helper should use the equipped tank animation prefix.');
+assert.match(playerStatePlayer, /\$\{stateName\}/, 'Player animation helper should play named player tank states.');
 
 const bossBuilder = bodyOf('buildPhaserBossDismantler');
 assert.match(bossBuilder, /scene\.textures\.exists\("bossTankDismantler"\)/, 'Boss builder should verify that the spritesheet texture loaded.');

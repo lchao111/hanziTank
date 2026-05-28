@@ -81,6 +81,38 @@
       fallbackSvg: "assets/tank-sherman.svg"
     },
     {
+      id: "cromwell-player-tank-battle-spritesheet",
+      source: "User-provided Gemini Cromwell green-screen spritesheet, chroma-keyed into Phaser frames",
+      license: "User-provided reference asset; source stored at assets/source/cromwell-player-reference.png",
+      texture: "playerTankCromwellBattle",
+      spritesheetPath: "assets/sprites/tanks/cromwell-player-tank-spritesheet.png",
+      frameWidth: 224,
+      frameHeight: 144,
+      idleFrames: [0, 1, 2, 3, 4, 5],
+      fireFrames: [6, 7, 8, 9, 10, 11],
+      heavyFireFrames: [12, 13, 14, 15, 16, 17],
+      hitFrames: [18, 19, 20, 21, 22, 23],
+      weakFrames: [18, 19, 20, 21, 22, 23],
+      destroyedFrames: [24, 25, 26, 27, 28, 29],
+      fallbackSvg: "assets/tank-cromwell.svg"
+    },
+    {
+      id: "is2-player-tank-battle-spritesheet",
+      source: "User-provided Gemini IS-2 green-screen spritesheet, chroma-keyed into Phaser frames",
+      license: "User-provided reference asset; source stored at assets/source/is2-player-reference.png",
+      texture: "playerTankIs2Battle",
+      spritesheetPath: "assets/sprites/tanks/is2-player-tank-spritesheet.png",
+      frameWidth: 224,
+      frameHeight: 144,
+      idleFrames: [0, 1, 2, 3, 4, 5],
+      fireFrames: [6, 7, 8, 9, 10, 11],
+      heavyFireFrames: [12, 13, 14, 15, 16, 17],
+      hitFrames: [18, 19, 20, 21, 22, 23],
+      weakFrames: [18, 19, 20, 21, 22, 23],
+      destroyedFrames: [24, 25, 26, 27, 28, 29],
+      fallbackSvg: "assets/tank-is2.svg"
+    },
+    {
       id: "regular-infantry-spritesheet",
       source: "User-provided regular soldier spritesheet, green-screen removed into Phaser frames",
       license: "User-provided reference asset; source file from Downloads/普通士兵.png",
