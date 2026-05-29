@@ -1,0 +1,43 @@
+{
+  "purpose": "Candidate prompt/spec pack for immersive modal UI art.",
+  "bitmapStatus": "No bitmap assets generated in this session; image generation tool was unavailable.",
+  "artGuide": "ART_STYLE_GUIDE.md",
+  "outputPreference": {
+    "source": "2048x2048 transparent PNG",
+    "uiIcon": "512x512 transparent PNG",
+    "fallbackBackground": "flat chroma-key background only when native transparency is unavailable"
+  },
+  "candidates": [
+    {
+      "id": "enemy-field-guide-book",
+      "spec": "enemy-field-guide-book.prompt.md",
+      "recommendedFinalPath": "assets/sprites/ui/enemy-field-guide-book.png",
+      "role": "Enemy field guide or enemy gallery modal opener"
+    },
+    {
+      "id": "password-codex-book",
+      "spec": "password-codex-book.prompt.md",
+      "recommendedFinalPath": "assets/sprites/ui/codex-book-spritesheet.png",
+      "role": "Password/codex mastery records modal opener"
+    },
+    {
+      "id": "war-dossier-folder",
+      "spec": "war-dossier-folder.prompt.md",
+      "recommendedFinalPath": "assets/sprites/ui/war-dossier-folder.png",
+      "role": "War archives or campaign dossier modal opener"
+    },
+    {
+      "id": "war-supply-crate",
+      "spec": "war-supply-crate.prompt.md",
+      "recommendedFinalPath": "assets/sprites/ui/war-supply-crate.png",
+      "role": "Supply reward crate modal artwork"
+    },
+    {
+      "id": "quartermaster-war-prep-icon",
+      "spec": "quartermaster-war-prep-icon.prompt.md",
+      "recommendedFinalPath": "assets/sprites/ui/war-prep-button.png",
+      "role": "Quartermaster or war prep button icon"
+    }
+  ],
+  "negativePrompt": "photorealistic, realistic war photo, gore, blood, horror, skull emblem, national flag, propaganda poster, political symbol, neon cyberpunk, purple gradient, glossy 3D render, tiny unreadable text, cluttered detail, low contrast, cropped subject, inconsistent framing, blurry icon"
+}

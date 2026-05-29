@@ -33,6 +33,22 @@ assert.strictEqual(boss.hp, 1, 'Boss HP should not receive regular enemy HP bonu
 assert.strictEqual(boss.armor, 5);
 assert.strictEqual(boss.maxArmor, 5);
 
+const springSoldier = combat.createEnemyById('springSoldier', enemies.levelTypes, enemies.bossTemplate, enemies.eliteTypes, 21);
+assert.strictEqual(springSoldier.id, 'springSoldier');
+assert.strictEqual(springSoldier.hp, 2, 'Direct elite debug enemies should use their balanced base HP.');
+assert.strictEqual(springSoldier.maxHp, 2);
+assert.strictEqual(springSoldier.attackStyle, 'springHop');
+assert.strictEqual(springSoldier.attackInterval, 4);
+assert.strictEqual(springSoldier.deathVfx, 'springScatter');
+
+const directTruck = combat.createEnemyById('truck', enemies.levelTypes, enemies.bossTemplate, enemies.eliteTypes, 12);
+assert.strictEqual(directTruck.id, 'truck');
+assert.strictEqual(directTruck.attackStyle, 'selfDestruct');
+assert.strictEqual(directTruck.damage, 2);
+
+const unknownDirectEnemy = combat.createEnemyById('missingEnemy', enemies.levelTypes, enemies.bossTemplate, enemies.eliteTypes, 3);
+assert.strictEqual(unknownDirectEnemy.id, 'armor', 'Unknown direct enemy ids should fall back to normal stage creation.');
+
 const absolute = combat.applyDamageToDefender({ hp: 2, armor: 3, absoluteDefense: 1 }, 99);
 assert.deepStrictEqual(absolute.result, { absoluteBlocked: true, armorDamage: 0, hpDamage: 0, totalDamage: 0 });
 assert.strictEqual(absolute.defender.absoluteDefense, 0);

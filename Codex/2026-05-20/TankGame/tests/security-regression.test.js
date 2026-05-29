@@ -16,7 +16,7 @@ assert.match(source, /const debugProfileId = "chao"/, "Debug mode should be rese
 assert.match(source, /function canUseDebugMode\(\)[\s\S]*activeProfileId === debugProfileId/, "Debug mode access should depend on the active Chao profile.");
 assert.match(source, /function canUseAdminMode\(\)[\s\S]*activeProfileId === debugProfileId/, "Admin access should depend on the active Chao profile.");
 assert.match(source, /function openDebugMode\(\)[\s\S]*if \(!canUseDebugMode\(\)\)/, "Opening debug mode should be guarded by the Chao profile check.");
-assert.match(source, /function startDebugBattle\(stage\)[\s\S]*if \(!canUseDebugMode\(\)\)/, "Starting a debug battle should be guarded by the Chao profile check.");
+assert.match(source, /function startDebugBattle\([^)]*\)[\s\S]*if \(!canUseDebugMode\(\)\)/, "Starting a debug battle should be guarded by the Chao profile check.");
 assert.match(source, /function openAdminPanel\(\)[\s\S]*if \(!canUseAdminMode\(\)\)/, "Opening admin tools should be guarded by the Chao profile check.");
 assert.match(source, /function resetSelectedProfilePassword\(\)[\s\S]*if \(!canUseAdminMode\(\)\) return/, "Password reset should be guarded by the Chao profile check.");
 assert.match(source, /passwordHash: hashPassword\(newPassword, salt\)/, "Admin password reset should store only a password hash.");

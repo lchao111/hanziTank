@@ -121,7 +121,7 @@
       height: 100%;
       overflow: hidden;
       background:
-        url("assets/sprites/environment/battlefield-background.png?v=20260525") center center / cover no-repeat,
+        var(--battlefield-image, url("assets/sprites/environment/battlefield-background.png?v=20260525")) center center / cover no-repeat,
         linear-gradient(#90988d 0 42%, #c3b79c 42% 54%, #806f56 54% 68%, #4d3e31 68% 100%);
       background-size: cover;
       background-position: center bottom;
@@ -133,7 +133,7 @@
 
     .phaser-layer {
       position: absolute;
-      z-index: 3;
+      z-index: 7;
       inset: 0;
       pointer-events: none;
     }
@@ -511,11 +511,11 @@
     }
 
     .tank.enemy.boss-slam {
-      animation: boss-hammer-slam 1120ms cubic-bezier(.18,.82,.2,1) forwards;
+      animation: boss-hammer-slam 1240ms cubic-bezier(.18,.82,.2,1) forwards;
     }
 
     .tank.enemy.boss-attack-approach {
-      animation: boss-attack-approach 520ms cubic-bezier(.18,.82,.2,1) forwards;
+      animation: boss-attack-approach 420ms cubic-bezier(.18,.82,.2,1) forwards;
     }
 
     .tank.player.destroyed {
@@ -594,6 +594,88 @@
 
     .tank.enemy-melee.melee-strike {
       animation: melee-strike-attack 860ms cubic-bezier(.16,.84,.24,1) forwards;
+    }
+
+    .tank.enemy-spring-soldier.reloading {
+      animation: spring-hop-menace 5000ms cubic-bezier(.2,.78,.24,1) forwards;
+    }
+
+    .tank.enemy-spring-soldier.spring-bounce-attack {
+      animation: spring-bounce-attack 900ms cubic-bezier(.18,.92,.24,1) forwards;
+    }
+
+    .tank.enemy-drone-swarm.reloading {
+      animation: drone-orbit-menace 5000ms ease-in-out forwards;
+    }
+
+    .tank.enemy-drone-swarm.swarm-volley {
+      animation: drone-volley-attack 760ms ease-in-out forwards;
+    }
+
+    .tank.enemy-wolf-pack.reloading {
+      animation: wolf-flank-menace 5000ms cubic-bezier(.25,.7,.2,1) forwards;
+    }
+
+    .tank.enemy-wolf-pack.pack-pounce {
+      animation: wolf-pack-pounce 980ms cubic-bezier(.18,.84,.22,1) forwards;
+    }
+
+    .tank.enemy-mechanical-fleas.reloading {
+      animation: flea-hop-menace 3000ms steps(6, end) forwards;
+    }
+
+    .tank.enemy-mechanical-fleas.flea-burst-attack {
+      animation: flea-burst-attack 700ms cubic-bezier(.2,.86,.28,1) forwards;
+    }
+
+    .tank.enemy-drone-swarm::before,
+    .tank.enemy-drone-swarm::after,
+    .tank.enemy-mechanical-fleas::before,
+    .tank.enemy-mechanical-fleas::after {
+      content: "";
+      position: absolute;
+      z-index: 3;
+      pointer-events: none;
+      border-radius: 50%;
+    }
+
+    .tank.enemy-drone-swarm::before {
+      inset: 5% 10% 42%;
+      border: 3px dashed rgba(250, 204, 21, 0.68);
+      box-shadow: 0 0 18px rgba(250, 204, 21, 0.28);
+      animation: drone-orbit-ring 1600ms linear infinite;
+    }
+
+    .tank.enemy-drone-swarm::after {
+      left: 18%;
+      top: 4%;
+      width: 18px;
+      height: 18px;
+      background:
+        radial-gradient(circle at 50% 50%, #fff7ad 0 4px, #f59e0b 5px 8px, transparent 9px),
+        radial-gradient(circle, rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0));
+      box-shadow: 56px 12px 0 -2px rgba(250, 204, 21, 0.9), 28px 44px 0 -3px rgba(251, 146, 60, 0.84);
+      animation: drone-node-pulse 900ms ease-in-out infinite;
+    }
+
+    .tank.enemy-mechanical-fleas::before {
+      left: 18%;
+      top: 30%;
+      width: 12px;
+      height: 12px;
+      background: #facc15;
+      box-shadow: 32px -16px 0 -1px #fb923c, 62px 3px 0 -2px #f59e0b, 88px -20px 0 -3px #fee2b3;
+      animation: flea-node-hop 520ms ease-in-out infinite;
+    }
+
+    .tank.enemy-mechanical-fleas::after {
+      left: 20%;
+      bottom: 14%;
+      width: 74px;
+      height: 12px;
+      background: rgba(33, 29, 24, 0.34);
+      filter: blur(3px);
+      transform: scaleX(1.2);
     }
 
     .tank-sprite {
@@ -1272,6 +1354,26 @@
       width: clamp(102px, 21vw, 178px);
     }
 
+    .tank.enemy-spring-soldier {
+      width: clamp(104px, 21vw, 184px);
+      bottom: clamp(32px, 7vh, 48px);
+    }
+
+    .tank.enemy-drone-swarm {
+      width: clamp(112px, 20vw, 176px);
+      bottom: clamp(92px, 18vh, 150px);
+    }
+
+    .tank.enemy-wolf-pack {
+      width: clamp(132px, 26vw, 226px);
+      bottom: clamp(28px, 6vh, 44px);
+    }
+
+    .tank.enemy-mechanical-fleas {
+      width: clamp(82px, 16vw, 138px);
+      bottom: clamp(28px, 6vh, 42px);
+    }
+
     .tank.enemy-rpg-infantry {
       width: clamp(108px, 23vw, 198px);
     }
@@ -1666,6 +1768,66 @@
       animation: phase-banner-pop 1200ms ease forwards;
     }
 
+    .pause-overlay {
+      position: absolute;
+      z-index: 11;
+      inset: 0;
+      display: none;
+      place-items: center;
+      background: rgba(18, 21, 20, 0.34);
+      pointer-events: none;
+    }
+
+    .pause-overlay.show {
+      display: grid;
+    }
+
+    .pause-card {
+      width: min(360px, calc(100vw - 42px));
+      padding: 20px 18px;
+      border: 3px solid #2b2520;
+      border-radius: 8px;
+      background: #fff4d6;
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.34);
+      text-align: center;
+      animation: pause-card-breathe 1400ms ease-in-out infinite;
+    }
+
+    .pause-title {
+      color: #2f3428;
+      font-size: clamp(34px, 10vw, 58px);
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .pause-subtitle {
+      margin-top: 6px;
+      color: #6b4a25;
+      font-size: clamp(18px, 5vw, 28px);
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .pause-meter {
+      width: min(220px, 72%);
+      height: 10px;
+      margin: 16px auto 0;
+      border: 2px solid #3a2717;
+      border-radius: 8px;
+      background: #4e3a26;
+      overflow: hidden;
+    }
+
+    .pause-meter::before {
+      content: "";
+      display: block;
+      width: 42%;
+      height: 100%;
+      background: linear-gradient(90deg, #f7b733, #ffe28a);
+      animation: pause-meter-scan 1200ms ease-in-out infinite alternate;
+    }
+
     .phase-banner.training {
       border-color: #2f6f2f;
       background: rgba(245, 255, 230, 0.96);
@@ -1687,6 +1849,16 @@
       14% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
       72% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
       100% { opacity: 0; transform: translate(-50%, -50%) scale(1.03); }
+    }
+
+    @keyframes pause-card-breathe {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-2px) scale(1.015); }
+    }
+
+    @keyframes pause-meter-scan {
+      from { transform: translateX(-80%); }
+      to { transform: translateX(220%); }
     }
 
     .training-camp {
@@ -1925,7 +2097,10 @@
       display: none;
       place-items: center;
       padding: 18px;
-      background: rgba(23, 28, 27, 0.76);
+      background:
+        radial-gradient(circle at 50% 44%, rgba(255, 222, 112, 0.28), transparent 32%),
+        linear-gradient(rgba(20, 24, 21, 0.66), rgba(22, 24, 22, 0.86)),
+        url("assets/sprites/environment/battlefield-background.png?v=20260525") center bottom / cover no-repeat;
     }
 
     .supply-screen.show {
@@ -2570,13 +2745,40 @@
     }
 
     .supply-panel {
-      width: min(620px, calc(100vw - 28px));
+      position: relative;
+      width: min(680px, calc(100vw - 28px));
       padding: 18px;
-      border: 3px solid #2b2520;
+      border: 4px solid #241b14;
       border-radius: 8px;
-      background: #fff7e6;
-      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.38);
+      background:
+        linear-gradient(90deg, rgba(67, 49, 31, 0.18) 0 18px, transparent 18px calc(100% - 18px), rgba(67, 49, 31, 0.18) calc(100% - 18px) 100%),
+        radial-gradient(circle at 50% 31%, rgba(255, 219, 112, 0.18), transparent 34%),
+        url("assets/sprites/ui/modal-supply-depot-texture.png?v=20260529") center / cover no-repeat,
+        #f7ead2;
+      box-shadow: 0 24px 58px rgba(0, 0, 0, 0.46), inset 0 0 0 2px rgba(255, 255, 255, 0.34);
       text-align: center;
+      overflow: hidden;
+    }
+
+    .supply-panel::before,
+    .supply-panel::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .supply-panel::before {
+      inset: 12px;
+      border: 2px dashed rgba(91, 67, 40, 0.26);
+      border-radius: 8px;
+    }
+
+    .supply-panel::after {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 20px;
+      background: repeating-linear-gradient(90deg, rgba(78, 56, 32, 0.28) 0 18px, rgba(78, 56, 32, 0.08) 18px 36px);
     }
 
     .supply-title {
@@ -2595,36 +2797,32 @@
 
     .supply-chest {
       position: relative;
-      width: 150px;
-      height: 94px;
-      margin: 8px auto 14px;
-      border: 4px solid #3a2717;
+      width: 166px;
+      height: 166px;
+      margin: 4px auto 12px;
       border-radius: 8px;
-      background:
-        linear-gradient(90deg, transparent 0 45%, rgba(255, 215, 119, 0.72) 45% 55%, transparent 55% 100%),
-        linear-gradient(#9d5b2f, #5e311c);
-      box-shadow: inset 0 -12px 0 rgba(0, 0, 0, 0.2), 0 12px 22px rgba(0, 0, 0, 0.26);
+      background: url("assets/sprites/ui/war-supply-crate.png?v=20260529") center / contain no-repeat;
+      filter: drop-shadow(0 18px 16px rgba(36, 27, 20, 0.42));
+      transform-origin: 50% 78%;
     }
 
     .supply-chest::before {
       content: "";
       position: absolute;
-      left: -4px;
-      right: -4px;
-      top: -28px;
-      height: 34px;
-      border: 4px solid #3a2717;
-      border-bottom: 0;
-      border-radius: 18px 18px 4px 4px;
-      background:
-        linear-gradient(90deg, transparent 0 45%, rgba(255, 215, 119, 0.72) 45% 55%, transparent 55% 100%),
-        linear-gradient(#b56c39, #7b4024);
-      transform-origin: bottom center;
-      transition: transform 280ms ease;
+      inset: 14%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 232, 122, 0.58), transparent 68%);
+      opacity: 0;
+      transform: scale(0.5);
+      pointer-events: none;
+    }
+
+    .supply-chest.open {
+      animation: supply-chest-reward 820ms cubic-bezier(.18,.82,.2,1) both;
     }
 
     .supply-chest.open::before {
-      transform: rotateX(58deg) translateY(-10px);
+      animation: supply-crate-glow 820ms ease-out both;
     }
 
     .supply-word {
@@ -2677,6 +2875,38 @@
       color: #36506a;
       font-weight: 900;
       line-height: 1.35;
+    }
+
+    .supply-reward {
+      min-height: 28px;
+      margin-top: 8px;
+      color: #6b3f10;
+      font-size: 17px;
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    .supply-reward.pop {
+      animation: supply-reward-pop 760ms cubic-bezier(.18,.82,.2,1) both;
+    }
+
+    @keyframes supply-chest-reward {
+      0% { transform: translateY(0) scale(1); filter: drop-shadow(0 18px 16px rgba(36, 27, 20, 0.42)); }
+      28% { transform: translateY(-14px) scale(1.08) rotate(-2deg); filter: drop-shadow(0 24px 18px rgba(36, 27, 20, 0.48)); }
+      58% { transform: translateY(3px) scale(0.98) rotate(2deg); }
+      100% { transform: translateY(0) scale(1.03); filter: drop-shadow(0 0 22px rgba(255, 213, 84, 0.48)) drop-shadow(0 18px 16px rgba(36, 27, 20, 0.42)); }
+    }
+
+    @keyframes supply-crate-glow {
+      0% { opacity: 0; transform: scale(0.5); }
+      40% { opacity: 1; transform: scale(1.65); }
+      100% { opacity: 0; transform: scale(2.1); }
+    }
+
+    @keyframes supply-reward-pop {
+      0% { opacity: 0; transform: translateY(10px) scale(0.92); }
+      54% { opacity: 1; transform: translateY(-2px) scale(1.04); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .wreck {
@@ -2891,6 +3121,15 @@
       display: grid;
     }
 
+    .archive-modal.dossier-opening,
+    .archive-modal.codex-opening,
+    .archive-modal.intel-opening,
+    .archive-modal.medal-opening {
+      background:
+        radial-gradient(circle at 50% 38%, rgba(245, 203, 108, 0.18), transparent 34%),
+        rgba(18, 21, 21, 0.76);
+    }
+
     .arsenal-panel {
       width: min(920px, calc(100vw - 24px));
       max-height: calc(100dvh - 32px);
@@ -2901,7 +3140,17 @@
       box-shadow: 0 20px 48px rgba(0, 0, 0, 0.36);
     }
 
+    .quartermaster-panel {
+      border-width: 4px;
+      background:
+        linear-gradient(90deg, rgba(54, 64, 42, 0.18) 0 24px, transparent 24px calc(100% - 24px), rgba(54, 64, 42, 0.18) calc(100% - 24px)),
+        radial-gradient(circle at 18% 16%, rgba(255, 219, 117, 0.18), transparent 26%),
+        url("assets/sprites/ui/modal-quartermaster-texture.png?v=20260529") center / cover no-repeat,
+        #f2e5cd;
+    }
+
     .archive-panel {
+      position: relative;
       width: min(920px, calc(100vw - 24px));
       max-height: calc(100dvh - 32px);
       overflow: auto;
@@ -2909,6 +3158,64 @@
       border-radius: 8px;
       background: #f7efe1;
       box-shadow: 0 20px 48px rgba(0, 0, 0, 0.36);
+    }
+
+    .archive-panel::before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border: 2px solid rgba(97, 72, 42, 0.16);
+      border-radius: 7px;
+      pointer-events: none;
+    }
+
+    .war-dossier-panel {
+      background:
+        linear-gradient(90deg, rgba(120, 84, 38, 0.18) 0 34px, transparent 34px),
+        repeating-linear-gradient(0deg, rgba(82, 61, 38, 0.08) 0 2px, transparent 2px 30px),
+        url("assets/sprites/ui/modal-war-dossier-texture.png?v=20260529") center / cover no-repeat,
+        #f4e6ca;
+    }
+
+    .war-dossier-panel::after {
+      content: "";
+      position: absolute;
+      top: 22px;
+      left: 20px;
+      width: 96px;
+      height: 28px;
+      border: 3px solid rgba(92, 56, 28, 0.62);
+      border-radius: 8px 8px 0 0;
+      background: #d7b56f;
+      transform: translateY(-100%);
+      pointer-events: none;
+    }
+
+    .password-book-panel {
+      background:
+        linear-gradient(90deg, rgba(62, 38, 24, 0.28) 0 46px, rgba(255, 249, 230, 0.18) 47px 49px, transparent 50px),
+        radial-gradient(circle at 78% 16%, rgba(255, 224, 132, 0.18), transparent 24%),
+        url("assets/sprites/ui/modal-password-book-texture.png?v=20260529") center / cover no-repeat,
+        #efe0c3;
+      box-shadow: 0 24px 58px rgba(0, 0, 0, 0.42), inset 10px 0 0 rgba(66, 42, 26, 0.22);
+    }
+
+    .enemy-field-guide-panel {
+      width: min(1480px, calc(100vw - 16px));
+      background:
+        linear-gradient(90deg, transparent 0 calc(50% - 2px), rgba(104, 80, 50, 0.24) calc(50% - 2px) calc(50% + 2px), transparent calc(50% + 2px)),
+        radial-gradient(circle at 26% 20%, rgba(255, 224, 130, 0.14), transparent 28%),
+        url("assets/sprites/ui/modal-enemy-field-guide-texture.png?v=20260529") center / cover no-repeat,
+        #f1e2c4;
+      box-shadow: 0 24px 58px rgba(0, 0, 0, 0.44), inset 0 0 0 4px rgba(255, 250, 235, 0.28);
+    }
+
+    .leaderboard-board-panel {
+      background:
+        radial-gradient(circle at 16% 18%, rgba(255, 215, 119, 0.22), transparent 26%),
+        linear-gradient(90deg, rgba(88, 69, 45, 0.16), transparent 24% 76%, rgba(88, 69, 45, 0.16)),
+        url("assets/sprites/ui/modal-medal-board-texture.png?v=20260529") center / cover no-repeat,
+        #f5e6cc;
     }
 
     .enemy-gallery-panel {
@@ -2955,6 +3262,29 @@
       line-height: 1.35;
     }
 
+    .leaderboard-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      padding: 12px 12px 0;
+    }
+
+    .leaderboard-tab {
+      min-height: 42px;
+      border: 2px solid #9b7b42;
+      border-radius: 8px;
+      background: #fff4cf;
+      color: #3d2d1d;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .leaderboard-tab.active {
+      border-color: #4f5f39;
+      background: #e7f2d2;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.42);
+    }
+
     .archive-list,
     .leaderboard-list {
       display: grid;
@@ -2987,6 +3317,12 @@
       font-size: 14px;
       font-weight: 800;
       line-height: 1.35;
+    }
+
+    .leaderboard-card-rank {
+      color: #7a5217;
+      font-size: 18px;
+      font-weight: 900;
     }
 
     .archive-empty {
@@ -3388,6 +3724,53 @@
       background: #f1ffe8;
     }
 
+    .shop-preview {
+      width: 100%;
+      height: 72px;
+      border: 2px solid rgba(62, 50, 39, 0.22);
+      border-radius: 8px;
+      background-color: rgba(49, 61, 45, 0.1);
+      background-image: var(--preview-image);
+      background-repeat: no-repeat;
+      background-size: calc(var(--preview-columns, 1) * 100%) 100%;
+      background-position: 0 50%;
+      overflow: hidden;
+    }
+
+    .shop-preview.shell-preview {
+      height: 64px;
+      background-color: rgba(25, 34, 30, 0.16);
+      background-size: calc(var(--preview-columns, 1) * 100%) 100%;
+      background-position: 0 50%;
+      box-shadow: inset 0 0 18px rgba(65, 50, 36, 0.16);
+    }
+
+    .shop-preview.ammo-sprite-preview {
+      border-color: rgba(88, 65, 38, 0.34);
+    }
+
+    .shop-preview.animated-preview {
+      animation: shop-preview-sheet-play 1300ms steps(var(--preview-steps, 3)) infinite;
+    }
+
+    .shop-preview.tank-bitmap-preview,
+    .shop-preview.tank-svg-preview {
+      height: 78px;
+      background-size: contain;
+      background-position: center;
+    }
+
+    @keyframes shop-preview-sheet-play {
+      from { background-position: 0 50%; }
+      to { background-position: 100% 50%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .shop-preview.animated-preview {
+        animation: none;
+      }
+    }
+
     .shop-type {
       color: #75624e;
       font-size: 13px;
@@ -3457,14 +3840,336 @@
       cursor: pointer;
     }
 
+    .primary.icon-square-button {
+      position: relative;
+      width: 66px;
+      min-width: 66px;
+      height: 66px;
+      min-height: 66px;
+      overflow: visible;
+      padding: 0;
+      border-color: #2d2f31;
+      background: #202326;
+      color: transparent;
+      font-size: 0;
+      line-height: 0;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.18);
+      isolation: isolate;
+      transition: transform 120ms ease-out, box-shadow 120ms ease-out;
+      z-index: 1;
+    }
+
+    .primary.icon-square-button:hover,
+    .primary.icon-square-button:focus,
+    .primary.icon-square-button:focus-visible,
+    .primary.icon-square-button.is-enlarged,
+    .primary.icon-square-button.is-activating {
+      transform: translateY(-1px) scale(1.06);
+      box-shadow: 0 5px 8px rgba(0, 0, 0, 0.28), inset 0 0 0 2px rgba(255, 255, 255, 0.24);
+      z-index: 4;
+    }
+
+    .primary.icon-square-button:active {
+      transform: translateY(2px) scale(0.96);
+    }
+
+    .primary.icon-square-button[data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 10px);
+      width: max-content;
+      max-width: 220px;
+      padding: 7px 10px;
+      border: 2px solid #2d2f31;
+      border-radius: 6px;
+      background: rgba(255, 250, 240, 0.97);
+      color: #2d2f31;
+      font-size: 12px;
+      line-height: 1.25;
+      font-weight: 900;
+      text-align: center;
+      white-space: pre-line;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 4px) scale(0.96);
+      transition: opacity 120ms ease-out, transform 120ms ease-out;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.26);
+      z-index: 10;
+    }
+
+    .primary.icon-square-button[data-tooltip]:hover::after,
+    .primary.icon-square-button[data-tooltip]:focus::after,
+    .primary.icon-square-button[data-tooltip]:focus-visible::after {
+      opacity: 1;
+      transform: translate(-50%, 0) scale(1);
+    }
+
+    .primary.sound-icon-button {
+      transition: transform 120ms ease-out, box-shadow 120ms ease-out;
+    }
+
+    .primary.sound-icon-button::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("assets/sprites/ui/sound-button-spritesheet.png?v=20260528");
+      background-repeat: no-repeat;
+      background-size: 200% 100%;
+      background-position: 0 0;
+      border-radius: 5px;
+      transition: background-position 120ms ease-out, filter 120ms ease-out, transform 120ms ease-out;
+    }
+
+    .primary.sound-icon-button[aria-pressed="false"]::before {
+      background-position: 100% 0;
+    }
+
+    .primary.sound-icon-button:hover::before,
+    .primary.sound-icon-button:focus-visible::before {
+      filter: brightness(1.08) saturate(1.08);
+    }
+
+    .primary.pause-icon-button::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("assets/sprites/ui/pause-button-spritesheet.png?v=20260528");
+      background-repeat: no-repeat;
+      background-size: 200% 100%;
+      background-position: 0 0;
+      border-radius: 5px;
+      transition: background-position 120ms ease-out, filter 120ms ease-out, transform 120ms ease-out;
+    }
+
+    .primary.pause-icon-button:hover::before,
+    .primary.pause-icon-button:focus-visible::before,
+    .primary.pause-icon-button.is-activating::before,
+    .primary.pause-icon-button[aria-pressed="true"]::before {
+      background-position: 100% 0;
+      filter: brightness(1.08) saturate(1.08);
+    }
+
+    .primary.enemy-gallery-button {
+      transition: transform 140ms ease-out, box-shadow 140ms ease-out;
+      --enemy-gallery-button-x: 0;
+    }
+
+    .primary.enemy-gallery-button::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("assets/sprites/ui/enemy-gallery-button-spritesheet.png?v=20260528");
+      background-repeat: no-repeat;
+      background-size: 200% 200%;
+      background-position: var(--enemy-gallery-button-x) 0;
+      border-radius: 5px;
+      transition: background-position 140ms ease-out;
+    }
+
+    .primary.enemy-gallery-button:hover,
+    .primary.enemy-gallery-button:focus,
+    .primary.enemy-gallery-button.is-enlarged,
+    .primary.enemy-gallery-button:focus-visible {
+      --enemy-gallery-button-x: 100%;
+    }
+
+    .primary.enemy-gallery-button:hover::before,
+    .primary.enemy-gallery-button:focus::before,
+    .primary.enemy-gallery-button.is-enlarged::before,
+    .primary.enemy-gallery-button:focus-visible::before {
+      background-position: var(--enemy-gallery-button-x) 0;
+    }
+
+    .primary.switch-general-button {
+      transition: transform 140ms ease-out, box-shadow 140ms ease-out;
+    }
+
+    .primary.switch-general-button::before {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      background-image: url("assets/sprites/ui/switch-general-button.png?v=20260528");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      border-radius: 5px;
+      transition: transform 140ms ease-out, filter 140ms ease-out;
+    }
+
+    .primary.switch-general-button:hover::before,
+    .primary.switch-general-button:focus::before,
+    .primary.switch-general-button.is-enlarged::before,
+    .primary.switch-general-button:focus-visible::before {
+      filter: brightness(1.08) saturate(1.08);
+      transform: scale(1.04);
+    }
+
+    .primary.archive-book-button {
+      transition: transform 140ms ease-out, box-shadow 140ms ease-out;
+    }
+
+    .primary.archive-book-button::before {
+      content: "";
+      position: absolute;
+      inset: -3px;
+      background-image: url("assets/sprites/ui/war-archives-button-spritesheet.png?v=20260528");
+      background-repeat: no-repeat;
+      background-size: 200% 200%;
+      background-position: 0 0;
+    }
+
+    .primary.archive-book-button:hover::before,
+    .primary.archive-book-button:focus-visible::before {
+      background-position: 100% 0;
+    }
+
+    .primary.archive-book-button:active::before,
+    .primary.archive-book-button[aria-pressed="true"]::before {
+      background-position: 0 100%;
+    }
+
+    .primary.codex-book-button {
+      transition: transform 140ms ease-out, box-shadow 140ms ease-out;
+      --codex-book-frame: 0;
+    }
+
+    .primary.codex-book-button::before {
+      content: "";
+      position: absolute;
+      inset: -3px;
+      background-image: url("assets/sprites/ui/codex-book-spritesheet.png?v=20260528");
+      background-repeat: no-repeat;
+      background-size: 600% 100%;
+      background-position: calc(var(--codex-book-frame) * -100%) 0;
+      border-radius: 5px;
+      transition: background-position 110ms steps(1, end), filter 140ms ease-out;
+    }
+
+    .primary.codex-book-button:hover,
+    .primary.codex-book-button:focus,
+    .primary.codex-book-button:focus-visible {
+      --codex-book-frame: 1;
+    }
+
+    .primary.codex-book-button:active {
+      --codex-book-frame: 2;
+    }
+
+    .primary.codex-book-button.is-opening {
+      --codex-book-frame: 3;
+    }
+
+    .primary.codex-book-button.is-opening::before {
+      animation: codex-button-open 480ms steps(3, end) forwards;
+    }
+
+    .primary.codex-book-button[aria-pressed="true"] {
+      --codex-book-frame: 5;
+    }
+
+    @keyframes codex-button-open {
+      from { background-position: -300% 0; }
+      to { background-position: -500% 0; }
+    }
+
+    .archive-modal.codex-opening .archive-panel {
+      animation: codex-panel-open 360ms cubic-bezier(.18,.82,.2,1) both;
+    }
+
+    .archive-modal.dossier-opening .archive-panel {
+      animation: dossier-panel-open 360ms cubic-bezier(.18,.82,.2,1) both;
+    }
+
+    .archive-modal.intel-opening .archive-panel {
+      animation: intel-panel-open 380ms cubic-bezier(.18,.82,.2,1) both;
+    }
+
+    .archive-modal.medal-opening .archive-panel {
+      animation: medal-panel-open 380ms cubic-bezier(.18,.82,.2,1) both;
+    }
+
+    .arsenal.crate-opening .arsenal-panel {
+      animation: crate-panel-open 360ms cubic-bezier(.18,.82,.2,1) both;
+    }
+
+    .profile-gate.appointment-opening .profile-panel {
+      animation: appointment-panel-open 360ms cubic-bezier(.18,.82,.2,1) both;
+    }
+
+    @keyframes codex-panel-open {
+      from { opacity: 0; transform: translateY(18px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes dossier-panel-open {
+      from { opacity: 0; transform: translateY(-14px) rotate(-1.2deg) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+    }
+
+    @keyframes intel-panel-open {
+      from { opacity: 0; transform: translateX(18px) rotate(0.8deg) scale(0.97); filter: saturate(0.7); }
+      to { opacity: 1; transform: translateX(0) rotate(0deg) scale(1); filter: saturate(1); }
+    }
+
+    @keyframes medal-panel-open {
+      from { opacity: 0; transform: translateY(18px) scale(0.94); }
+      60% { opacity: 1; transform: translateY(-2px) scale(1.02); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes crate-panel-open {
+      from { opacity: 0; transform: translateY(24px) scale(0.94); }
+      62% { opacity: 1; transform: translateY(-3px) scale(1.02); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes appointment-panel-open {
+      from { opacity: 0; transform: translateY(18px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
     .war-shop-button {
       display: none;
       border-color: #7a4f12;
-      background: #ffd166;
+      background: #202326;
     }
 
     .war-shop-button.show {
       display: inline-block;
+    }
+
+    .primary.war-shop-button::before {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border-radius: 5px;
+      background: url("assets/sprites/ui/war-prep-button.png?v=20260529") center / contain no-repeat;
+      transition: filter 140ms ease-out, transform 140ms ease-out;
+    }
+
+    .primary.war-shop-button:hover::before,
+    .primary.war-shop-button:focus::before,
+    .primary.war-shop-button:focus-visible::before {
+      filter: brightness(1.1) saturate(1.12);
+      transform: rotate(-3deg) scale(1.04);
+    }
+
+    .primary.leaderboard-medal-button::before {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border-radius: 5px;
+      background:
+        radial-gradient(circle at 50% 54%, rgba(255, 236, 148, 0.34), transparent 46%),
+        url("assets/sprites/ranks/captain.png?v=20260528") center / contain no-repeat;
+      transition: filter 140ms ease-out, transform 140ms ease-out;
+    }
+
+    .primary.leaderboard-medal-button:hover::before,
+    .primary.leaderboard-medal-button:focus-visible::before {
+      filter: brightness(1.08) saturate(1.08);
+      transform: scale(1.05);
     }
 
     .level {
@@ -3986,14 +4691,14 @@
       0% {
         transform: scaleX(-1) translateX(clamp(300px, 44vw, 760px)) translateY(0) rotate(0deg) scale(1.12);
       }
-      24% {
-        transform: scaleX(-1) translateX(clamp(330px, 48vw, 820px)) translateY(-7px) rotate(-5deg) scale(1.14);
+      28% {
+        transform: scaleX(-1) translateX(clamp(318px, 46vw, 800px)) translateY(-10px) rotate(-7deg) scale(1.15);
       }
-      46% {
-        transform: scaleX(-1) translateX(clamp(360px, 54vw, 900px)) translateY(10px) rotate(11deg) scale(1.18);
+      58% {
+        transform: scaleX(-1) translateX(clamp(366px, 55vw, 920px)) translateY(12px) rotate(12deg) scale(1.2);
       }
-      64% {
-        transform: scaleX(-1) translateX(clamp(340px, 50vw, 840px)) translateY(0) rotate(-3deg) scale(1.14);
+      76% {
+        transform: scaleX(-1) translateX(clamp(340px, 50vw, 840px)) translateY(1px) rotate(-3deg) scale(1.14);
       }
       100% {
         transform: scaleX(-1) translateX(0) translateY(0) rotate(0deg);
@@ -4062,6 +4767,128 @@
       100% {
         transform: scaleX(-1) translateX(0) translateY(0) scale(1) rotate(0deg);
       }
+    }
+
+    @keyframes spring-hop-menace {
+      0% {
+        transform: scaleX(-1) translateX(0) translateY(0) scale(1);
+      }
+      28% {
+        transform: scaleX(-1) translateX(clamp(44px, 8vw, 120px)) translateY(-26px) scale(1.04, 0.94);
+      }
+      58% {
+        transform: scaleX(-1) translateX(clamp(128px, 22vw, 340px)) translateY(10px) scale(0.96, 1.08);
+      }
+      100% {
+        transform: scaleX(-1) translateX(clamp(220px, 34vw, 620px)) translateY(0) scale(1.08);
+      }
+    }
+
+    @keyframes spring-bounce-attack {
+      0% {
+        transform: scaleX(-1) translateX(clamp(220px, 34vw, 620px)) translateY(0) scale(1.08);
+      }
+      38% {
+        transform: scaleX(-1) translateX(clamp(280px, 43vw, 740px)) translateY(-38px) rotate(-8deg) scale(1.12, 0.92);
+      }
+      62% {
+        transform: scaleX(-1) translateX(clamp(326px, 51vw, 840px)) translateY(8px) rotate(8deg) scale(0.92, 1.16);
+      }
+      100% {
+        transform: scaleX(-1) translateX(0) translateY(0) rotate(0deg) scale(1);
+      }
+    }
+
+    @keyframes drone-orbit-menace {
+      0% {
+        transform: scaleX(-1) translateX(0) translateY(0) scale(1);
+        filter: drop-shadow(0 12px 10px rgba(12, 8, 6, 0.38));
+      }
+      50% {
+        transform: scaleX(-1) translateX(clamp(34px, 6vw, 86px)) translateY(-8px) scale(1.04);
+      }
+      100% {
+        transform: scaleX(-1) translateX(clamp(70px, 12vw, 150px)) translateY(-14px) scale(1.08);
+        filter: drop-shadow(0 0 18px rgba(250, 204, 21, 0.48));
+      }
+    }
+
+    @keyframes drone-volley-attack {
+      0%, 100% {
+        transform: scaleX(-1) translateX(0) translateY(0) scale(1);
+      }
+      30% {
+        transform: scaleX(-1) translateX(clamp(54px, 10vw, 130px)) translateY(-18px) scale(1.12);
+      }
+      58% {
+        transform: scaleX(-1) translateX(clamp(30px, 6vw, 90px)) translateY(10px) scale(0.98);
+      }
+    }
+
+    @keyframes wolf-flank-menace {
+      0% {
+        transform: scaleX(-1) translateX(0) translateY(0) scale(1);
+      }
+      42% {
+        transform: scaleX(-1) translateX(clamp(110px, 18vw, 260px)) translateY(-16px) rotate(-3deg) scale(1.06);
+      }
+      100% {
+        transform: scaleX(-1) translateX(clamp(230px, 36vw, 640px)) translateY(8px) rotate(3deg) scale(1.1);
+      }
+    }
+
+    @keyframes wolf-pack-pounce {
+      0% {
+        transform: scaleX(-1) translateX(clamp(230px, 36vw, 640px)) translateY(8px) scale(1.1);
+      }
+      34% {
+        transform: scaleX(-1) translateX(clamp(310px, 48vw, 800px)) translateY(-34px) rotate(-5deg) scale(1.16);
+      }
+      62% {
+        transform: scaleX(-1) translateX(clamp(350px, 54vw, 880px)) translateY(8px) rotate(7deg) scale(1.18);
+      }
+      100% {
+        transform: scaleX(-1) translateX(0) translateY(0) rotate(0deg) scale(1);
+      }
+    }
+
+    @keyframes flea-hop-menace {
+      0% {
+        transform: scaleX(-1) translateX(0) translateY(0) scale(1);
+      }
+      100% {
+        transform: scaleX(-1) translateX(clamp(176px, 30vw, 540px)) translateY(-16px) scale(1.06);
+      }
+    }
+
+    @keyframes flea-burst-attack {
+      0% {
+        transform: scaleX(-1) translateX(clamp(176px, 30vw, 540px)) translateY(-16px) scale(1.06);
+      }
+      38% {
+        transform: scaleX(-1) translateX(clamp(246px, 41vw, 690px)) translateY(-44px) scale(1.14, 0.88);
+      }
+      70% {
+        transform: scaleX(-1) translateX(clamp(280px, 46vw, 750px)) translateY(4px) scale(0.9, 1.18);
+      }
+      100% {
+        transform: scaleX(-1) translateX(0) translateY(0) scale(1);
+      }
+    }
+
+    @keyframes drone-orbit-ring {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes drone-node-pulse {
+      0%, 100% { transform: translateY(0) scale(1); opacity: 0.86; }
+      50% { transform: translateY(-8px) scale(1.16); opacity: 1; }
+    }
+
+    @keyframes flea-node-hop {
+      0%, 100% { transform: translateY(0); }
+      45% { transform: translateY(-16px); }
     }
 
     @keyframes boss-intro-fade {
@@ -4620,6 +5447,27 @@
         inset: 46px 0 54px;
       }
 
+      .battlefield.training-mode .lane-layer {
+        inset: 92px 0 34px;
+      }
+
+      .battlefield.training-mode .lane-track {
+        height: 28px;
+      }
+
+      .battlefield.training-mode .lane-enemy {
+        width: clamp(46px, 12vw, 66px);
+      }
+
+      .battlefield.training-mode .lane-dummy {
+        width: 48%;
+        height: 72%;
+      }
+
+      .battlefield.training-mode .lane-enemy .unit-hud {
+        display: none;
+      }
+
       .prompt {
         top: 4px;
         width: min(720px, calc(100vw - 12px));
@@ -4819,6 +5667,14 @@
 
       <div class="phase-banner" id="phaseBanner" aria-live="polite"></div>
 
+      <div class="pause-overlay" id="pauseOverlay" aria-hidden="true">
+        <div class="pause-card">
+          <div class="pause-title">暂停</div>
+          <div class="pause-subtitle">PAUSED</div>
+          <div class="pause-meter" aria-hidden="true"></div>
+        </div>
+      </div>
+
       <div class="game-over" id="gameOver" aria-hidden="true">
         <div class="wreck">
           <div class="wreck-title">War Summary</div>
@@ -4904,6 +5760,7 @@
           <div class="supply-word" id="supplyWord">天</div>
           <div class="supply-options" id="supplyOptions"></div>
           <div class="supply-message" id="supplyMessage" aria-live="polite"></div>
+          <div class="supply-reward" id="supplyReward" aria-live="polite"></div>
         </div>
       </div>
 
@@ -4930,15 +5787,16 @@
     </section>
 
     <footer class="controls">
-      <button class="primary" id="soundButton" type="button" aria-pressed="true">Sound On</button>
-      <button class="primary" id="pauseButton" type="button" aria-pressed="false">Pause</button>
-      <button class="primary" id="masteryButton" type="button">Mastery Records</button>
-      <button class="primary war-shop-button" id="arsenalButton" type="button">War Prep</button>
-      <button class="primary" id="archiveButton" type="button">War Archives</button>
+      <button class="primary icon-square-button sound-icon-button" id="soundButton" type="button" aria-label="Sound On" aria-pressed="true" title="声音开启 / Sound On" data-tooltip="声音开启 / Sound On">Sound On</button>
+      <button class="primary icon-square-button pause-icon-button" id="pauseButton" type="button" aria-pressed="false" aria-label="Pause" title="暂停 / Pause" data-tooltip="暂停 / Pause">Pause</button>
+      <button class="primary icon-square-button codex-book-button" id="masteryButton" type="button" aria-label="密码簿 / Mastery Records" aria-pressed="false" title="密码簿 / Mastery Records" data-tooltip="密码簿 / Mastery Records">密码簿</button>
+      <button class="primary icon-square-button war-shop-button" id="arsenalButton" type="button" aria-label="战备补给 / War Prep" title="战备补给 / War Prep" data-tooltip="战备补给 / War Prep">War Prep</button>
+      <button class="primary icon-square-button archive-book-button" id="archiveButton" type="button" aria-label="战史档案 / War Archives" aria-pressed="false" title="战史档案 / War Archives" data-tooltip="战史档案 / War Archives">War Archives</button>
+      <button class="primary icon-square-button leaderboard-medal-button" id="leaderboardButton" type="button" aria-label="排行榜 / Leaderboard" aria-pressed="false" title="排行榜 / Leaderboard" data-tooltip="排行榜 / Leaderboard">Leaderboard</button>
       <button class="primary" id="debugButton" type="button" hidden>Debug Mode</button>
       <button class="primary" id="adminButton" type="button" hidden>Admin</button>
-      <button class="primary" id="enemyGalleryButton" type="button">Enemy Gallery</button>
-      <button class="primary" id="switchProfileButton" type="button">Switch Player</button>
+      <button class="primary icon-square-button enemy-gallery-button" id="enemyGalleryButton" type="button" aria-label="敌军图鉴 / Enemy Gallery" title="敌军图鉴 / Enemy Gallery" data-tooltip="敌军图鉴 / Enemy Gallery">Enemy Gallery</button>
+      <button class="primary icon-square-button switch-general-button" id="switchProfileButton" type="button" aria-label="换将 / Switch General" title="换将 / Switch General" data-tooltip="换将 / Switch General">换将</button>
       <span class="level" id="wordCount">Loading word bank</span>
       <span class="level" id="appVersion">Build loading</span>
     </footer>
@@ -4967,10 +5825,10 @@
     </div>
 
     <div class="arsenal" id="arsenal" aria-hidden="true">
-      <section class="arsenal-panel" aria-label="War Shop">
+      <section class="arsenal-panel quartermaster-panel" aria-label="War Shop">
         <div class="arsenal-head">
           <div>
-            <div class="arsenal-title">War Prep</div>
+            <div class="arsenal-title">战备补给 / Quartermaster</div>
             <div class="arsenal-meta">
               War Coins <span id="shopCoins">0</span> · Today <span id="dailyScore">0</span> pts
             </div>
@@ -4983,10 +5841,10 @@
     </div>
 
     <div class="archive-modal" id="archiveModal" aria-hidden="true">
-      <section class="archive-panel" aria-label="War Archives">
+      <section class="archive-panel war-dossier-panel" aria-label="War Archives">
         <div class="arsenal-head">
           <div>
-            <div class="arsenal-title">War Archives</div>
+            <div class="arsenal-title">战史档案 / War Dossier</div>
             <div class="arsenal-meta" id="archiveMeta">Review battle records and player best stages.</div>
           </div>
           <button class="close-shop" id="closeArchiveButton" type="button" aria-label="Close war archives">×</button>
@@ -4997,24 +5855,18 @@
             <div class="archive-empty" id="archiveEmpty">No war archive yet. Complete a run to create one.</div>
             <div class="archive-list" id="archiveList"></div>
           </section>
-          <section class="archive-section">
-            <div class="archive-section-title">Player Best Stage Leaderboard</div>
-            <div class="leaderboard-status" id="leaderboardStatus">Local records only.</div>
-            <div class="archive-empty" id="leaderboardEmpty">No player records yet.</div>
-            <div class="leaderboard-list" id="leaderboardList"></div>
-          </section>
         </div>
       </section>
     </div>
 
     <div class="archive-modal" id="masteryModal" aria-hidden="true">
-      <section class="archive-panel" aria-label="Mastery Records">
+      <section class="archive-panel password-book-panel" aria-label="密码簿">
         <div class="arsenal-head">
           <div>
-            <div class="arsenal-title">Mastery Records</div>
-            <div class="arsenal-meta" id="masteryMeta">Track learned Hanzi and rank progress toward 3000 characters.</div>
+            <div class="arsenal-title">密码簿</div>
+            <div class="arsenal-meta" id="masteryMeta">Track learned Hanzi and rank progress toward 3000 characters. / 记录已学汉字和 3000 字军衔进度。</div>
           </div>
-          <button class="close-shop" id="closeMasteryButton" type="button" aria-label="Close mastery records">×</button>
+          <button class="close-shop" id="closeMasteryButton" type="button" aria-label="关闭密码簿">×</button>
         </div>
         <div class="archive-body mastery-dashboard">
           <section class="rank-hero">
@@ -5031,12 +5883,12 @@
             </div>
           </section>
           <section class="archive-section">
-            <div class="archive-section-title">Rank Ladder</div>
+            <div class="archive-section-title">Rank Ladder / 军衔阶梯</div>
             <div class="rank-grid" id="rankGrid"></div>
           </section>
           <section class="archive-section">
-            <div class="archive-section-title">Mastered Hanzi</div>
-            <div class="archive-empty" id="masteredEmpty">No mastered Hanzi yet. Win answers to build this archive.</div>
+            <div class="archive-section-title">Mastered Hanzi / 已掌握汉字</div>
+            <div class="archive-empty" id="masteredEmpty">No mastered Hanzi yet. Win answers to build this archive. / 还没有掌握的汉字，答对题目来填充密码簿。</div>
             <div class="mastered-word-grid" id="masteredWordGrid"></div>
           </section>
         </div>
@@ -5062,11 +5914,11 @@
     </div>
 
     <div class="archive-modal" id="enemyGalleryModal" aria-hidden="true">
-      <section class="archive-panel enemy-gallery-panel" aria-label="Enemy Gallery">
+      <section class="archive-panel enemy-gallery-panel enemy-field-guide-panel" aria-label="Enemy Gallery">
         <div class="arsenal-head">
           <div>
-            <div class="arsenal-title">Enemy Gallery</div>
-            <div class="arsenal-meta">Phaser preview of every in-game enemy portrait.</div>
+            <div class="arsenal-title">敌军图鉴 / Field Guide</div>
+            <div class="arsenal-meta">Animated field notes for every in-game enemy.</div>
           </div>
           <button class="close-shop" id="closeEnemyGalleryButton" type="button" aria-label="Close enemy gallery">×</button>
         </div>
@@ -5089,6 +5941,27 @@
               </div>
               <div class="enemy-gallery-list" id="enemyGalleryList"></div>
             </div>
+          </section>
+        </div>
+      </section>
+    </div>
+
+    <div class="archive-modal" id="leaderboardModal" aria-hidden="true">
+      <section class="archive-panel leaderboard-board-panel" aria-label="Leaderboard">
+        <div class="arsenal-head">
+          <div>
+            <div class="arsenal-title">排行榜 / Medal Board</div>
+            <div class="arsenal-meta">Compare Hanzi mastery, stage records, defeats, and damage.</div>
+          </div>
+          <button class="close-shop" id="closeLeaderboardButton" type="button" aria-label="Close leaderboard">×</button>
+        </div>
+        <div class="archive-body">
+          <section class="archive-section">
+            <div class="archive-section-title">Player Rankings</div>
+            <div class="leaderboard-tabs" id="leaderboardTabs" role="tablist" aria-label="Leaderboard rankings"></div>
+            <div class="leaderboard-status" id="leaderboardStatus">Local records only.</div>
+            <div class="archive-empty" id="leaderboardEmpty">No player records yet.</div>
+            <div class="leaderboard-list" id="leaderboardList"></div>
           </section>
         </div>
       </section>
@@ -5148,8 +6021,11 @@
   <script src="src/core/training-core.js"></script>
   <script src="src/core/question-core.js"></script>
   <script src="src/core/mastery-core.js"></script>
+  <script src="src/core/leaderboard-core.js"></script>
+  <script src="src/core/bgm-manager.js"></script>
+  <script src="src/core/sfx-helper.js"></script>
   <script>
-    const appVersion = "2026.05.28.01";
+    const appVersion = "2026.05.29.02";
     function escapeHtml(value) {
       return String(value ?? "").replace(/[&<>"']/g, (character) => ({
         "&": "&amp;",
@@ -5170,13 +6046,34 @@
     const wordByHanzi = createWordMap(words);
     const { shopItems, isAmmoItem: isShopAmmoItem } = window.HanziTankShop;
 
+    const shopPreviewSheetMap = {
+      tank_sherman: { url: "assets/sprites/tanks/war-prep/sherman.png?v=20260529", columns: 1, className: "tank-bitmap-preview" },
+      tank_tiger: { url: "assets/sprites/tanks/war-prep/tiger-i.png?v=20260529", columns: 1, className: "tank-bitmap-preview" },
+      tank_panzer4: { url: "assets/sprites/tanks/war-prep/panzer-iv.png?v=20260529", columns: 1, className: "tank-bitmap-preview" },
+      tank_is2: { url: "assets/sprites/tanks/war-prep/is-2.png?v=20260529", columns: 1, className: "tank-bitmap-preview" },
+      tank_t34: { url: "assets/sprites/tanks/war-prep/t-34.png?v=20260529", columns: 1, className: "tank-bitmap-preview" },
+      tank_cromwell: { url: "assets/sprites/tanks/war-prep/cromwell.png?v=20260529", columns: 1, className: "tank-bitmap-preview" },
+      tank_churchill: { url: "assets/sprites/tanks/war-prep/churchill.png?v=20260529", columns: 1, className: "tank-bitmap-preview" },
+      shell_ap: { url: "assets/sprites/effects/armor-piercing-shell-spritesheet.png?v=20260529", columns: 4, className: "shell-preview ammo-sprite-preview", animate: true },
+      shell_smoke: { url: "assets/sprites/effects/smoke-shell-spritesheet.png?v=20260529", columns: 4, className: "shell-preview ammo-sprite-preview", animate: true },
+      shell_repair: { url: "assets/sprites/effects/repair-capsule-shell-spritesheet.png?v=20260529", columns: 4, className: "shell-preview ammo-sprite-preview", animate: true },
+      shell_flash: { url: "assets/sprites/effects/flash-flare-shell-spritesheet.png?v=20260529", columns: 4, className: "shell-preview ammo-sprite-preview", animate: true },
+      shell_plating: { url: "assets/sprites/effects/armor-plate-shell-spritesheet.png?v=20260529", columns: 4, className: "shell-preview ammo-sprite-preview", animate: true },
+      shell_he: { url: "assets/sprites/effects/high-explosive-shell-spritesheet.png?v=20260529", columns: 4, className: "shell-preview ammo-sprite-preview", animate: true },
+      shell_arcane: { url: "assets/sprites/effects/arcane-spark-shell-spritesheet.png?v=20260529", columns: 4, className: "shell-preview ammo-sprite-preview", animate: true },
+      weapon_cannon: { url: "assets/sprites/effects/long-barrel-shot-spritesheet.png?v=20260529", columns: 4, className: "shell-preview ammo-sprite-preview", animate: true }
+    };
+
     const todayKey = new Date().toLocaleDateString("en-CA");
     const {
       levelTypes,
+      eliteTypes = [],
       bossTemplate,
       enemyPortraitDetails,
       tankSpriteMap,
       enemySpriteMap,
+      enemyGallerySpriteSheets: enemyGallerySpriteSheetsFromData = {},
+      enemyGalleryPreviewMap = {},
       debugTargets
     } = window.HanziTankEnemies;
 
@@ -5188,6 +6085,15 @@
       3: "上",
       4: "跑"
     };
+    const battlefieldEnvironments = [
+      { id: "sunny", image: "assets/sprites/environment/battlefield-sunny.png?v=20260529", weather: "dust" },
+      { id: "desert", image: "assets/sprites/environment/battlefield-desert.png?v=20260529", weather: "dust" },
+      { id: "snow-mountain", image: "assets/sprites/environment/battlefield-snow-mountain.png?v=20260529", weather: "mist" },
+      { id: "rain", image: "assets/sprites/environment/battlefield-rain.png?v=20260529", weather: "rain" },
+      { id: "night", image: "assets/sprites/environment/battlefield-night.png?v=20260529", weather: "mist" },
+      { id: "storm", image: "assets/sprites/environment/battlefield-storm.png?v=20260529", weather: "storm" },
+      { id: "snowfall", image: "assets/sprites/environment/battlefield-snowfall.png?v=20260529", weather: "snow" }
+    ];
     const {
       createDefaultState,
       cloneDefaultState: cloneStateTemplate,
@@ -5202,6 +6108,7 @@
       saveState: saveStoredState
     } = window.HanziTankStorage;
     const {
+      createEnemyById: createCombatEnemyById,
       createEnemyForStage,
       applyDamageToDefender,
       applyPlayerDamage,
@@ -5344,6 +6251,7 @@
     const supplyWordEl = document.querySelector("#supplyWord");
     const supplyOptions = document.querySelector("#supplyOptions");
     const supplyMessage = document.querySelector("#supplyMessage");
+    const supplyReward = document.querySelector("#supplyReward");
     const bossIdiomScreen = document.querySelector("#bossIdiomScreen");
     const bossIdiomSubtitle = document.querySelector("#bossIdiomSubtitle");
     const bossIdiomTiles = document.querySelector("#bossIdiomTiles");
@@ -5356,8 +6264,10 @@
     const restartButton = document.querySelector("#restartButton");
     const soundButton = document.querySelector("#soundButton");
     const pauseButton = document.querySelector("#pauseButton");
+    const pauseOverlay = document.querySelector("#pauseOverlay");
     const masteryButton = document.querySelector("#masteryButton");
     const archiveButton = document.querySelector("#archiveButton");
+    const leaderboardButton = document.querySelector("#leaderboardButton");
     const debugButton = document.querySelector("#debugButton");
     const adminButton = document.querySelector("#adminButton");
     const enemyGalleryButton = document.querySelector("#enemyGalleryButton");
@@ -5372,6 +6282,9 @@
     const leaderboardStatus = document.querySelector("#leaderboardStatus");
     const leaderboardEmpty = document.querySelector("#leaderboardEmpty");
     const leaderboardList = document.querySelector("#leaderboardList");
+    const leaderboardModal = document.querySelector("#leaderboardModal");
+    const closeLeaderboardButton = document.querySelector("#closeLeaderboardButton");
+    const leaderboardTabs = document.querySelector("#leaderboardTabs");
     const masteryModal = document.querySelector("#masteryModal");
     const closeMasteryButton = document.querySelector("#closeMasteryButton");
     const masteryMeta = document.querySelector("#masteryMeta");
@@ -5437,6 +6350,11 @@
       getMasteredEntries,
       countMasteredHanzi
     } = window.HanziTankMastery;
+    const {
+      LEADERBOARD_TYPES,
+      extractLeaderboardStats,
+      getProfileLeaderboardRecords
+    } = window.HanziTankLeaderboard;
 
     let activeProfileId = "";
     let activeProfileName = "";
@@ -5446,6 +6364,12 @@
     const leaderboardApiMeta = document.querySelector('meta[name="hanzi-tank-leaderboard-api"]')?.content || "";
     const leaderboardApiBase = String(window.HANZI_TANK_LEADERBOARD_API || localStorage.getItem("hanziTankLeaderboardApi") || leaderboardApiMeta || "").replace(/\/$/, "");
     const leaderboardSyncIntervalMs = 300000;
+    const leaderboardRankings = [
+      { key: "mostHanzi", label: "认最多字", metric: "Mastered Hanzi" },
+      { key: "highestStage", label: "最高关卡", metric: "Best Stage" },
+      { key: "mostDeaths", label: "死最多次", metric: "Defeats" },
+      { key: "highestDamage", label: "最高伤害", metric: "Max Damage" }
+    ];
     const versusHqMaxHp = 5;
     const versusBaseWordCount = 48;
     const versusTickMs = 520;
@@ -5465,6 +6389,8 @@
     };
     let currentWord = words[0];
     let playerState = cloneDefaultState();
+    let activeLeaderboardRanking = "mostHanzi";
+    let enemyMeleePoseHeldForAttack = false;
     let score = 0;
     let runUpgrades = {
       maxLives: 0,
@@ -5477,6 +6403,7 @@
     let locked = true;
     let reviewMode = false;
     let levelNumber = 1;
+    let debugSingleEnemyId = "";
     let currentEnemy = createEnemy(levelNumber);
     let battleWordPool = [];
     let trainingWords = [];
@@ -5521,6 +6448,8 @@
     let voicesReady = false;
     let audioContext = null;
     let soundEnabled = localStorage.getItem("hanziTankSound") !== "off";
+    const bgmManager = new window.HanziTankBgm.BgmManager({ contextProvider: () => getAudioContext() });
+    const sfxHelper = new window.HanziTankSfx.SfxHelper({ contextProvider: () => getAudioContext(), soundOn: soundEnabled });
     let speechRequestToken = 0;
     let pendingSpeechText = "";
     let queuedSpeechRequest = null;
@@ -5549,6 +6478,7 @@
     let phaserTargetDummySprites = [];
     let phaserBurnedTreeTextureReady = false;
     let phaserBurnedTreeSprites = [];
+    let phaserWeatherVfx = [];
     let phaserEnvironmentTextureReady = false;
     let phaserRuinSprites = [];
     let phaserTrenchSprites = [];
@@ -5558,54 +6488,18 @@
     let phaserRegularEnemyTankTextureReady = false;
     let phaserGrenadier = null;
     let phaserGrenadierTextureReady = false;
+    let activeBattlefieldEnvironmentId = "";
     let enemyGalleryGame = null;
     let enemyGalleryScene = null;
     let enemyGallerySprite = null;
     let enemyGalleryFrameTimer = 0;
     let selectedEnemyGalleryId = "truck";
-    const enemyGallerySpriteSheets = {
-      enemyTank: {
-        url: "assets/sprites/enemies/enemy-tank-spritesheet.png?v=20260525",
-        frameWidth: 224,
-        frameHeight: 144,
-        columns: 4
-      },
-      regularEnemyTank: {
-        url: "assets/sprites/enemies/regular-enemy-tank-spritesheet.png?v=20260525",
-        frameWidth: 469,
-        frameHeight: 300,
-        columns: 6
-      },
-      regularInfantry: {
-        url: "assets/sprites/enemies/regular-infantry-spritesheet.png?v=20260525",
-        frameWidth: 469,
-        frameHeight: 300,
-        columns: 6
-      },
-      grenadier: {
-        url: "assets/sprites/enemies/grenadier-spritesheet.png?v=20260525",
-        frameWidth: 469,
-        frameHeight: 300,
-        columns: 6
-      },
-      bossTankDismantler: {
-        url: "assets/sprites/enemies/tank-dismantler-spritesheet.png?v=20260525",
-        frameWidth: 224,
-        frameHeight: 224,
-        columns: 6
-      }
-    };
-    const enemyGalleryAnimationMap = {
-      tank: { sheet: "enemyTank", start: 0, end: 3, frameRate: 6, attackStart: 4, attackEnd: 7, attackFrameRate: 10, maxHeight: 205, y: 198 },
-      armor: { sheet: "regularEnemyTank", start: 0, end: 5, frameRate: 8, attackStart: 6, attackEnd: 11, attackFrameRate: 10, maxHeight: 230, y: 198 },
-      scout: { sheet: "enemyTank", start: 0, end: 3, frameRate: 9, attackStart: 4, attackEnd: 7, attackFrameRate: 12, maxHeight: 195, displayScale: 0.92, y: 198 },
-      truck: { sheet: "enemyTank", start: 0, end: 3, frameRate: 7, attackStart: 4, attackEnd: 7, attackFrameRate: 10, maxHeight: 205, displayScale: 1.04, y: 198 },
-      infantry: { sheet: "regularInfantry", start: 0, end: 5, frameRate: 8, attackStart: 6, attackEnd: 11, attackFrameRate: 10, maxHeight: 235, y: 214 },
-      heavyInfantry: { sheet: "regularInfantry", start: 0, end: 5, frameRate: 7, attackStart: 6, attackEnd: 11, attackFrameRate: 9, maxHeight: 245, displayScale: 1.04, y: 214 },
-      rpgInfantry: { sheet: "grenadier", start: 0, end: 5, frameRate: 8, attackStart: 6, attackEnd: 11, attackFrameRate: 10, maxHeight: 235, y: 214 },
-      grenadier: { sheet: "grenadier", start: 0, end: 5, frameRate: 8, attackStart: 6, attackEnd: 11, attackFrameRate: 10, maxHeight: 235, y: 214 },
-      boss: { sheet: "bossTankDismantler", start: 0, end: 5, frameRate: 8, attackStart: 6, attackEnd: 11, attackFrameRate: 10, maxHeight: 210, y: 154 }
-    };
+    const enemyGallerySpriteSheets = enemyGallerySpriteSheetsFromData;
+    const enemyGalleryAnimationMap = Object.fromEntries(
+      Object.entries(enemyGalleryPreviewMap)
+        .filter(([, preview]) => preview.sheet && preview.animation)
+        .map(([id, preview]) => [id, { sheet: preview.sheet, ...preview.animation }])
+    );
 
     function initPhaserEffects() {
       if (!window.Phaser || !phaserLayer || phaserGame) return;
@@ -5631,6 +6525,15 @@
             this.load.image("kenney:playerTurret", "assets/sprites/tanks/kenney/tankGreen_barrel1.png");
             this.load.image("kenney:enemyHull", "assets/sprites/tanks/kenney/tankBody_red.png");
             this.load.image("kenney:enemyTurret", "assets/sprites/tanks/kenney/tankRed_barrel1.png");
+            this.load.image("kenney:shotLarge", "assets/sprites/effects/kenney/shotLarge.png");
+            this.load.image("kenney:shotOrange", "assets/sprites/effects/kenney/shotOrange.png");
+            this.load.image("kenney:shotRed", "assets/sprites/effects/kenney/shotRed.png");
+            this.load.image("kenney:shotThin", "assets/sprites/effects/kenney/shotThin.png");
+            [1, 2, 3, 4, 5].forEach((frame) => {
+              this.load.image(`kenney:explosion${frame}`, `assets/sprites/effects/kenney/explosion${frame}.png`);
+              this.load.image(`kenney:explosionSmoke${frame}`, `assets/sprites/effects/kenney/explosionSmoke${frame}.png`);
+            });
+            battlefieldEnvironments.forEach((environment) => this.load.image(`battlefield:${environment.id}`, environment.image));
             this.load.spritesheet("playerTankBattle", "assets/sprites/tanks/player-tank-spritesheet.png?v=20260525", {
               frameWidth: 224,
               frameHeight: 144
@@ -5643,9 +6546,37 @@
               frameWidth: 224,
               frameHeight: 144
             });
-            this.load.spritesheet("arcaneSparkShell", "assets/sprites/effects/arcane-spark-shell-spritesheet.png?v=20260528", {
+            this.load.spritesheet("armorPiercingShell", "assets/sprites/effects/armor-piercing-shell-spritesheet.png?v=20260529", {
+              frameWidth: 320,
+              frameHeight: 192
+            });
+            this.load.spritesheet("smokeShell", "assets/sprites/effects/smoke-shell-spritesheet.png?v=20260529", {
+              frameWidth: 320,
+              frameHeight: 192
+            });
+            this.load.spritesheet("repairCapsuleShell", "assets/sprites/effects/repair-capsule-shell-spritesheet.png?v=20260529", {
+              frameWidth: 320,
+              frameHeight: 192
+            });
+            this.load.spritesheet("flashFlareShell", "assets/sprites/effects/flash-flare-shell-spritesheet.png?v=20260529", {
+              frameWidth: 320,
+              frameHeight: 192
+            });
+            this.load.spritesheet("arcaneSparkShell", "assets/sprites/effects/arcane-spark-shell-spritesheet.png?v=20260529", {
               frameWidth: 256,
               frameHeight: 160
+            });
+            this.load.spritesheet("highExplosiveShell", "assets/sprites/effects/high-explosive-shell-spritesheet.png?v=20260529", {
+              frameWidth: 320,
+              frameHeight: 192
+            });
+            this.load.spritesheet("armorPlateShell", "assets/sprites/effects/armor-plate-shell-spritesheet.png?v=20260529", {
+              frameWidth: 320,
+              frameHeight: 192
+            });
+            this.load.spritesheet("longBarrelShot", "assets/sprites/effects/long-barrel-shot-spritesheet.png?v=20260529", {
+              frameWidth: 320,
+              frameHeight: 192
             });
             this.load.spritesheet("bossTankDismantler", "assets/sprites/enemies/tank-dismantler-spritesheet.png?v=20260525", {
               frameWidth: 224,
@@ -5667,6 +6598,22 @@
               frameWidth: 469,
               frameHeight: 300
             });
+            this.load.spritesheet("ruinedHouses", "assets/sprites/environment/ruined-houses-spritesheet.png?v=20260528", {
+              frameWidth: 938,
+              frameHeight: 768
+            });
+            this.load.spritesheet("trenchStrips", "assets/sprites/environment/trench-strips-spritesheet.png?v=20260528", {
+              frameWidth: 2816,
+              frameHeight: 512
+            });
+            this.load.spritesheet("craterTracks", "assets/sprites/environment/crater-tracks-spritesheet.png?v=20260528", {
+              frameWidth: 938,
+              frameHeight: 768
+            });
+            this.load.spritesheet("forestClusters", "assets/sprites/environment/forest-clusters-spritesheet.png?v=20260528", {
+              frameWidth: 1408,
+              frameHeight: 768
+            });
           },
           create() {
             phaserEffects = this;
@@ -5682,6 +6629,7 @@
             buildPhaserTargetDummies(this);
             buildPhaserRegularEnemyTank(this);
             buildPhaserGrenadier(this);
+            buildPhaserEnvironmentScenery(this);
             phaserPlayerSprite.setVisible(false);
             phaserEnemySprite.setVisible(false);
             phaserPlayerTurretSprite.setVisible(false);
@@ -5720,7 +6668,7 @@
       phaserPlayerSprite.setAngle(phaserPlayerTextureReady ? 0 : playerTank.classList.contains("destroyed") ? 82 : 90);
       phaserPlayerTurretSprite?.setAngle(playerTank.classList.contains("destroyed") ? 82 : 90);
       updatePhaserPlayerTank();
-      hidePhaserBattlefieldScenery();
+      updatePhaserEnvironmentScenery();
       if (isMultiLaneStage()) {
         hideSingleEnemyPhaserActors();
         updatePhaserLaneInfantry();
@@ -5855,6 +6803,144 @@
       phaserTrenchSprites.forEach((sprite) => sprite.setVisible(false));
       phaserCraterSprites.forEach((sprite) => sprite.setVisible(false));
       phaserForestSprites.forEach((sprite) => sprite.setVisible(false));
+    }
+
+    function getBattlefieldEnvironment(stage = levelNumber) {
+      return battlefieldEnvironments[Math.max(0, (Math.floor(Number(stage) || 1) - 1) % battlefieldEnvironments.length)];
+    }
+
+    function applyBattlefieldEnvironment(stage = levelNumber) {
+      const environment = getBattlefieldEnvironment(stage);
+      setBattleMusicEnvironment(environment);
+      if (activeBattlefieldEnvironmentId === environment.id) {
+        updatePhaserEnvironmentScenery();
+        return;
+      }
+      activeBattlefieldEnvironmentId = environment.id;
+      battlefieldEl.style.setProperty("--battlefield-image", `url("${environment.image}")`);
+      playPhaserEnvironmentWeather(environment);
+      updatePhaserEnvironmentScenery();
+    }
+
+    function clearPhaserWeatherVfx() {
+      phaserWeatherVfx.forEach((item) => {
+        item?.remove?.();
+        item?.destroy?.();
+      });
+      phaserWeatherVfx = [];
+    }
+
+    function playPhaserEnvironmentWeather(environment) {
+      clearPhaserWeatherVfx();
+      if (!phaserEffects || !environment) return;
+      const width = Math.max(1, phaserLayer.clientWidth || battlefieldEl.clientWidth || 800);
+      const height = Math.max(1, phaserLayer.clientHeight || battlefieldEl.clientHeight || 520);
+      const weather = environment.weather;
+      if (weather === "rain" || weather === "storm") {
+        const rainEvent = phaserEffects.time.addEvent({
+          delay: weather === "storm" ? 46 : 72,
+          loop: true,
+          callback: () => {
+            const x = Math.random() * width;
+            const drop = phaserEffects.add.line(0, 0, x, -20, x - 18, 58, 0xb9d7e8, weather === "storm" ? 0.42 : 0.32).setDepth(4).setLineWidth(2);
+            phaserWeatherVfx.push(drop);
+            phaserEffects.tweens.add({
+              targets: drop,
+              y: height + 40,
+              alpha: 0,
+              duration: weather === "storm" ? 520 : 700,
+              onComplete: () => drop.destroy()
+            });
+          }
+        });
+        phaserWeatherVfx.push(rainEvent);
+      }
+      if (weather === "snow") {
+        const snowEvent = phaserEffects.time.addEvent({
+          delay: 115,
+          loop: true,
+          callback: () => {
+            const flake = phaserEffects.add.circle(Math.random() * width, -12, 2 + Math.random() * 3, 0xf8fafc, 0.74).setDepth(4);
+            phaserWeatherVfx.push(flake);
+            phaserEffects.tweens.add({
+              targets: flake,
+              x: flake.x + 26 - Math.random() * 52,
+              y: height + 24,
+              alpha: 0,
+              duration: 1800 + Math.random() * 700,
+              onComplete: () => flake.destroy()
+            });
+          }
+        });
+        phaserWeatherVfx.push(snowEvent);
+      }
+      if (weather === "dust" || weather === "mist") {
+        const dustEvent = phaserEffects.time.addEvent({
+          delay: 360,
+          loop: true,
+          callback: () => {
+            const haze = phaserEffects.add.ellipse(-80, height * (0.42 + Math.random() * 0.32), 120, 28, weather === "mist" ? 0xd9e7dd : 0xd1b175, 0.12).setDepth(3);
+            phaserWeatherVfx.push(haze);
+            phaserEffects.tweens.add({
+              targets: haze,
+              x: width + 90,
+              alpha: 0,
+              duration: 2600 + Math.random() * 900,
+              onComplete: () => haze.destroy()
+            });
+          }
+        });
+        phaserWeatherVfx.push(dustEvent);
+      }
+    }
+
+    function playPhaserIceVfx(targetEl = enemyTank) {
+      if (!phaserEffects) return;
+      const scene = phaserEffects;
+      const { x, y } = getBattlefieldPoint(targetEl, 0.5, 0.5);
+      for (let index = 0; index < 7; index += 1) {
+        const shard = scene.add.triangle(x, y, 0, -18, 10, 12, -10, 12, 0xb7e6ff, 0.7).setDepth(32).setRotation(index);
+        scene.tweens.add({ targets: shard, y: y - 58 - index * 3, alpha: 0, duration: 620, onComplete: () => shard.destroy() });
+      }
+    }
+
+    function playPhaserFireVfx(targetEl = enemyTank) {
+      if (!phaserEffects) return;
+      const { x, y } = getBattlefieldPoint(targetEl, 0.5, 0.52);
+      for (let index = 0; index < 6; index += 1) {
+        const ember = phaserEffects.add.image(x, y, "kenney:shotOrange").setDepth(33).setDisplaySize(18, 18).setAlpha(0.78);
+        phaserEffects.tweens.add({ targets: ember, x: x - 26 + index * 10, y: y - 44 - Math.random() * 28, alpha: 0, duration: 520, onComplete: () => ember.destroy() });
+      }
+    }
+
+    function playPhaserWaterFlood(targetEl = enemyTank) {
+      if (!phaserEffects) return;
+      const { x, y } = getBattlefieldPoint(targetEl, 0.5, 0.76);
+      const wave = phaserEffects.add.ellipse(x, y, 38, 12, 0x60a5fa, 0.22).setDepth(30);
+      phaserEffects.tweens.add({ targets: wave, scaleX: 5.2, scaleY: 2.1, alpha: 0, duration: 760, onComplete: () => wave.destroy() });
+    }
+
+    function playPhaserFogOfWar(targetEl = enemyTank) {
+      if (!phaserEffects) return;
+      const { x, y } = getBattlefieldPoint(targetEl, 0.5, 0.5);
+      const fog = phaserEffects.add.ellipse(x, y, 170, 90, 0xd6d3c6, 0.18).setDepth(31);
+      phaserEffects.tweens.add({ targets: fog, scale: 1.7, alpha: 0, duration: 900, onComplete: () => fog.destroy() });
+    }
+
+    function playPhaserStun(targetEl = enemyTank) {
+      if (!phaserEffects) return;
+      const { x, y } = getBattlefieldPoint(targetEl, 0.5, 0.22);
+      for (let index = 0; index < 4; index += 1) {
+        const star = phaserEffects.add.star(x + index * 18 - 27, y, 5, 7, 16, 0xfde047, 0.86).setDepth(34);
+        phaserEffects.tweens.add({ targets: star, angle: 180, y: y - 22, alpha: 0, duration: 700, onComplete: () => star.destroy() });
+      }
+    }
+
+    function playPhaserSlowVfx(targetEl = enemyTank) {
+      if (!phaserEffects) return;
+      const { x, y } = getBattlefieldPoint(targetEl, 0.5, 0.46);
+      const hand = phaserEffects.add.line(0, 0, x, y, x, y - 48, 0x93c5fd, 0.8).setDepth(34).setLineWidth(5);
+      phaserEffects.tweens.add({ targets: hand, angle: 300, alpha: 0, duration: 820, onComplete: () => hand.destroy() });
     }
 
     function buildPhaserPlayerTank(scene) {
@@ -6021,7 +7107,7 @@
       scene.anims.create({
         key: "regular-infantry-walk",
         frames: scene.anims.generateFrameNumbers("regularInfantry", { start: 0, end: 5 }),
-        frameRate: 8,
+        frameRate: 10,
         repeat: -1
       });
       scene.anims.create({
@@ -6045,6 +7131,7 @@
 
     function updatePhaserRegularInfantry() {
       const active = Boolean(phaserRegularInfantryTextureReady && phaserRegularInfantry && currentEnemy.id === "infantry" && !enemyTank.classList.contains("fragmented") && !isGameOver);
+      const wasVisible = Boolean(phaserRegularInfantry?.visible);
       if (phaserRegularInfantry) phaserRegularInfantry.setVisible(active);
       enemyTank.classList.toggle("phaser-infantry-active", active);
       if (!active || !phaserRegularInfantry) return;
@@ -6054,6 +7141,7 @@
       phaserRegularInfantry.setDisplaySize(rect.width * 1.18, rect.height * 1.42);
       phaserRegularInfantry.setFlipX(true);
       phaserRegularInfantry.setAlpha(1);
+      if (!wasVisible) phaserRegularInfantry.setFrame(0);
       if (phaserRegularInfantry.anims.currentAnim?.key !== "regular-infantry-fire" && phaserRegularInfantry.anims.currentAnim?.key !== "regular-infantry-hit") {
         playPhaserRegularInfantryIdle();
       }
@@ -6067,6 +7155,7 @@
 
     function playPhaserRegularInfantryState(stateName) {
       if (!phaserRegularInfantry?.visible) return;
+      phaserRegularInfantry.off(`animationcomplete-regular-infantry-${stateName}`);
       phaserRegularInfantry.play(`regular-infantry-${stateName}`, true);
       phaserRegularInfantry.once(`animationcomplete-regular-infantry-${stateName}`, () => {
         if (currentEnemy.id === "infantry" && !isGameOver && !isLevelCleared && currentEnemy.hp > 0) playPhaserRegularInfantryIdle();
@@ -6304,7 +7393,7 @@
     }
 
     function startPhaserEnemyApproach() {
-      if (!phaserEffects || !phaserEnemySprite || currentEnemy.attackStyle !== "melee") return;
+      if (!phaserEffects || !phaserEnemySprite || !enemyUsesReloadApproach(currentEnemy)) return;
       stopPhaserEnemyApproach(true);
       const distance = getEnemyApproachDistance();
       const actor = currentEnemy.id === "boss" && phaserBossDismantler?.visible ? phaserBossDismantler : phaserEnemySprite;
@@ -6313,7 +7402,7 @@
         x: actor.x - distance,
         scaleX: actor.scaleX * (currentEnemy.id === "boss" ? 1.08 : 1.07),
         scaleY: actor.scaleY * (currentEnemy.id === "boss" ? 1.08 : 1.07),
-        duration: enemyAttackInterval * 1000,
+        duration: getEnemyAttackInterval() * 1000,
         ease: "Linear",
         onComplete: () => {
           phaserEnemyReloadTween = null;
@@ -6335,6 +7424,7 @@
       targets.forEach((target) => phaserEffects.tweens.killTweensOf(target));
       const basePoint = getBattlefieldPoint(enemyTank, 0.5, 0.54);
       const closeX = basePoint.x - distance;
+      const outDuration = typeof windup.outDuration === "number" ? windup.outDuration : 360;
       phaserEffects.tweens.add({
         targets,
         x: closeX,
@@ -6342,11 +7432,12 @@
         duration: windup.inDuration || 520,
         ease: "Cubic.easeIn",
         onComplete: () => {
+          if (outDuration <= 0) return;
           phaserEffects.tweens.add({
             targets,
             x: basePoint.x,
             angle: 0,
-            duration: windup.outDuration || 360,
+            duration: outDuration,
             ease: "Cubic.easeOut",
             onComplete: updatePhaserActors
           });
@@ -6533,6 +7624,37 @@
       const heavy = variant === "heavy";
       kickPhaserCamera(heavy ? "heavy" : "normal");
       addPhaserShockwave(scene, x, y, heavy ? 0xffd166 : 0xffb84d, heavy);
+      const explosionTexture = heavy ? "kenney:explosion5" : "kenney:explosion3";
+      const smokeTexture = heavy ? "kenney:explosionSmoke5" : "kenney:explosionSmoke3";
+      if (scene.textures.exists(explosionTexture)) {
+        const bitmapBlast = scene.add.image(x, y, explosionTexture)
+          .setDepth(36)
+          .setAlpha(0.94)
+          .setDisplaySize(heavy ? 172 : 118, heavy ? 172 : 118);
+        scene.tweens.add({
+          targets: bitmapBlast,
+          scale: heavy ? 1.5 : 1.35,
+          alpha: 0,
+          duration: heavy ? 780 : 560,
+          ease: "Quad.easeOut",
+          onComplete: () => bitmapBlast.destroy()
+        });
+      }
+      if (scene.textures.exists(smokeTexture)) {
+        const bitmapSmoke = scene.add.image(x + (heavy ? 18 : 10), y + (heavy ? 12 : 8), smokeTexture)
+          .setDepth(34)
+          .setAlpha(0.62)
+          .setDisplaySize(heavy ? 210 : 142, heavy ? 210 : 142);
+        scene.tweens.add({
+          targets: bitmapSmoke,
+          y: bitmapSmoke.y - (heavy ? 34 : 22),
+          scale: heavy ? 1.38 : 1.24,
+          alpha: 0,
+          duration: heavy ? 980 : 720,
+          ease: "Sine.easeOut",
+          onComplete: () => bitmapSmoke.destroy()
+        });
+      }
       const whiteFlash = scene.add.circle(x, y, heavy ? 28 : 18, 0xffffff, 0.95).setDepth(38);
       const core = scene.add.circle(x, y, heavy ? 42 : 26, 0xfff0a3, 0.92).setDepth(37);
       const fire = scene.add.circle(x, y, heavy ? 62 : 40, 0xff6b2f, 0.62).setDepth(35);
@@ -6603,13 +7725,380 @@
     }
 
     function buildPhaserAmmoEffects(scene) {
-      if (!scene.textures.exists("arcaneSparkShell") || scene.anims.exists("arcane-spark-shell-fire")) return;
-      scene.anims.create({
-        key: "arcane-spark-shell-fire",
-        frames: scene.anims.generateFrameNumbers("arcaneSparkShell", { start: 0, end: 3 }),
-        frameRate: 12,
-        repeat: -1
+      if (scene.textures.exists("armorPiercingShell") && !scene.anims.exists("armor-piercing-shell-fire")) {
+        scene.anims.create({
+          key: "armor-piercing-shell-fire",
+          frames: scene.anims.generateFrameNumbers("armorPiercingShell", { start: 0, end: 3 }),
+          frameRate: 12,
+          repeat: -1
+        });
+      }
+      if (scene.textures.exists("smokeShell") && !scene.anims.exists("smoke-shell-fire")) {
+        scene.anims.create({
+          key: "smoke-shell-fire",
+          frames: scene.anims.generateFrameNumbers("smokeShell", { start: 0, end: 3 }),
+          frameRate: 10,
+          repeat: -1
+        });
+      }
+      if (scene.textures.exists("repairCapsuleShell") && !scene.anims.exists("repair-capsule-shell-fire")) {
+        scene.anims.create({
+          key: "repair-capsule-shell-fire",
+          frames: scene.anims.generateFrameNumbers("repairCapsuleShell", { start: 0, end: 3 }),
+          frameRate: 10,
+          repeat: -1
+        });
+      }
+      if (scene.textures.exists("flashFlareShell") && !scene.anims.exists("flash-flare-shell-fire")) {
+        scene.anims.create({
+          key: "flash-flare-shell-fire",
+          frames: scene.anims.generateFrameNumbers("flashFlareShell", { start: 0, end: 3 }),
+          frameRate: 12,
+          repeat: -1
+        });
+      }
+      if (scene.textures.exists("arcaneSparkShell") && !scene.anims.exists("arcane-spark-shell-fire")) {
+        scene.anims.create({
+          key: "arcane-spark-shell-fire",
+          frames: scene.anims.generateFrameNumbers("arcaneSparkShell", { start: 0, end: 3 }),
+          frameRate: 12,
+          repeat: -1
+        });
+      }
+      if (scene.textures.exists("highExplosiveShell") && !scene.anims.exists("high-explosive-shell-fire")) {
+        scene.anims.create({
+          key: "high-explosive-shell-fire",
+          frames: scene.anims.generateFrameNumbers("highExplosiveShell", { start: 0, end: 3 }),
+          frameRate: 14,
+          repeat: -1
+        });
+      }
+      if (scene.textures.exists("armorPlateShell") && !scene.anims.exists("armor-plate-shell-fire")) {
+        scene.anims.create({
+          key: "armor-plate-shell-fire",
+          frames: scene.anims.generateFrameNumbers("armorPlateShell", { start: 0, end: 3 }),
+          frameRate: 10,
+          repeat: -1
+        });
+      }
+      if (scene.textures.exists("longBarrelShot") && !scene.anims.exists("long-barrel-shot-fire")) {
+        scene.anims.create({
+          key: "long-barrel-shot-fire",
+          frames: scene.anims.generateFrameNumbers("longBarrelShot", { start: 0, end: 3 }),
+          frameRate: 12,
+          repeat: -1
+        });
+      }
+    }
+
+    const phaserShellEffectMap = {
+      armorPiercingShell: {
+        animation: "armor-piercing-shell-fire",
+        displayWidth: 150,
+        displayHeight: 90,
+        impactWidth: 214,
+        impactHeight: 128,
+        glowColor: 0xfff2a1,
+        glowRadius: 34,
+        ringColor: 0xfde68a,
+        trailAlpha: 0.46,
+        trailLength: 118,
+        trailWidth: 7,
+        impactKind: "pierce"
+      },
+      smokeShell: {
+        animation: "smoke-shell-fire",
+        displayWidth: 180,
+        displayHeight: 108,
+        impactWidth: 280,
+        impactHeight: 168,
+        glowColor: 0xcbd5e1,
+        glowRadius: 54,
+        ringColor: 0xe2e8f0,
+        trailAlpha: 0.3,
+        trailLength: 68,
+        trailWidth: 13,
+        impactKind: "smoke"
+      },
+      repairCapsuleShell: {
+        animation: "repair-capsule-shell-fire",
+        displayWidth: 176,
+        displayHeight: 106,
+        impactWidth: 260,
+        impactHeight: 156,
+        glowColor: 0x22c55e,
+        glowRadius: 52,
+        ringColor: 0xbbf7d0,
+        trailAlpha: 0.4,
+        trailLength: 74,
+        trailWidth: 10,
+        impactKind: "repair"
+      },
+      flashFlareShell: {
+        animation: "flash-flare-shell-fire",
+        displayWidth: 174,
+        displayHeight: 104,
+        impactWidth: 260,
+        impactHeight: 156,
+        glowColor: 0xfef08a,
+        glowRadius: 58,
+        ringColor: 0xffffff,
+        trailAlpha: 0.42,
+        trailLength: 72,
+        trailWidth: 10,
+        impactKind: "flash"
+      },
+      highExplosiveShell: {
+        animation: "high-explosive-shell-fire",
+        displayWidth: 180,
+        displayHeight: 108,
+        impactWidth: 260,
+        impactHeight: 156,
+        glowColor: 0xff7a2f,
+        glowRadius: 42,
+        ringColor: 0xffd15a,
+        trailAlpha: 0.62,
+        trailLength: 92,
+        trailWidth: 14,
+        impactKind: "explosive"
+      },
+      armorPlateShell: {
+        animation: "armor-plate-shell-fire",
+        displayWidth: 310,
+        displayHeight: 186,
+        impactWidth: 430,
+        impactHeight: 258,
+        glowColor: 0xfbbf24,
+        glowRadius: 82,
+        ringColor: 0xfacc15,
+        trailAlpha: 0.34,
+        trailLength: 56,
+        trailWidth: 9,
+        impactKind: "plating"
+      },
+      longBarrelShot: {
+        animation: "long-barrel-shot-fire",
+        displayWidth: 206,
+        displayHeight: 124,
+        impactWidth: 300,
+        impactHeight: 180,
+        glowColor: 0xdbeafe,
+        glowRadius: 48,
+        ringColor: 0xbfdbfe,
+        trailAlpha: 0.58,
+        trailLength: 132,
+        trailWidth: 16,
+        impactKind: "cannon"
+      }
+    };
+
+    function addPhaserPiercingImpact(scene, x, y, angle = 0) {
+      const plate = scene.add.rectangle(x + 16, y, 68, 42, 0x475569, 0.78)
+        .setDepth(32)
+        .setRotation(angle + 0.2)
+        .setStrokeStyle(3, 0xdbeafe, 0.9);
+      const chipCount = 16;
+      for (let index = 0; index < chipCount; index += 1) {
+        const chipAngle = angle + Math.PI + (Math.random() - 0.5) * 1.8;
+        const distance = 28 + Math.random() * 72;
+        const chip = scene.add.rectangle(x, y, 8 + Math.random() * 10, 4, 0x94a3b8, 0.96)
+          .setDepth(34)
+          .setRotation(chipAngle);
+        scene.tweens.add({
+          targets: chip,
+          x: x + Math.cos(chipAngle) * distance,
+          y: y + Math.sin(chipAngle) * distance,
+          alpha: 0,
+          scale: 0.25,
+          duration: 420 + Math.random() * 180,
+          ease: "Cubic.easeOut",
+          onComplete: () => chip.destroy()
+        });
+      }
+      addPhaserSparks(scene, x, y, false);
+      scene.tweens.add({ targets: plate, alpha: 0, scale: 1.18, duration: 420, ease: "Quad.easeOut", onComplete: () => plate.destroy() });
+    }
+
+    function addPhaserSmokeCoverBurst(scene, x, y) {
+      const cue = scene.add.circle(x, y, 48, 0xcbd5e1, 0.08)
+        .setStrokeStyle(4, 0xe2e8f0, 0.72)
+        .setDepth(30);
+      for (let index = 0; index < 14; index += 1) {
+        const puff = scene.add.ellipse(
+          x + (Math.random() - 0.5) * 94,
+          y + (Math.random() - 0.5) * 48,
+          46 + Math.random() * 70,
+          28 + Math.random() * 42,
+          Math.random() > 0.45 ? 0xcbd5e1 : 0x64748b,
+          0.25 + Math.random() * 0.22
+        ).setDepth(31);
+        scene.tweens.add({
+          targets: puff,
+          x: puff.x + (Math.random() - 0.5) * 46,
+          y: puff.y - 18 - Math.random() * 34,
+          scale: 1.55 + Math.random() * 0.52,
+          alpha: 0,
+          duration: 980 + Math.random() * 360,
+          ease: "Sine.easeOut",
+          onComplete: () => puff.destroy()
+        });
+      }
+      scene.tweens.add({ targets: cue, scale: 2.4, alpha: 0, duration: 980, ease: "Cubic.easeOut", onComplete: () => cue.destroy() });
+    }
+
+    function addPhaserRepairPulse(scene, x, y) {
+      const ring = scene.add.circle(x, y, 46, 0x22c55e, 0.12)
+        .setStrokeStyle(5, 0xbbf7d0, 0.88)
+        .setDepth(32);
+      const plusVertical = scene.add.rectangle(x, y, 16, 66, 0xbbf7d0, 0.9).setDepth(33);
+      const plusHorizontal = scene.add.rectangle(x, y, 66, 16, 0xbbf7d0, 0.9).setDepth(33);
+      const wrenchHandle = scene.add.line(0, 0, x - 34, y + 36, x + 28, y - 26, 0x14532d, 0.86)
+        .setOrigin(0, 0)
+        .setDepth(34)
+        .setLineWidth(9);
+      const wrenchHead = scene.add.circle(x + 30, y - 28, 14, 0x22c55e, 0.36)
+        .setStrokeStyle(5, 0xbbf7d0, 0.92)
+        .setDepth(34);
+      scene.tweens.add({
+        targets: [ring, plusVertical, plusHorizontal, wrenchHandle, wrenchHead],
+        scale: 1.55,
+        alpha: 0,
+        duration: 760,
+        ease: "Quad.easeOut",
+        onComplete: () => {
+          ring.destroy();
+          plusVertical.destroy();
+          plusHorizontal.destroy();
+          wrenchHandle.destroy();
+          wrenchHead.destroy();
+        }
       });
+    }
+
+    function addPhaserFlashFlare(scene, x, y) {
+      const flare = scene.add.star(x, y, 10, 16, 64, 0xfef08a, 0.64)
+        .setDepth(35);
+      const core = scene.add.circle(x, y, 26, 0xffffff, 0.42).setDepth(36);
+      const halo = scene.add.circle(x, y, 62, 0xfef08a, 0.1)
+        .setStrokeStyle(5, 0xffffff, 0.56)
+        .setDepth(34);
+      scene.tweens.add({
+        targets: [flare, core, halo],
+        scale: 1.9,
+        alpha: 0,
+        duration: 620,
+        ease: "Quad.easeOut",
+        onComplete: () => {
+          flare.destroy();
+          core.destroy();
+          halo.destroy();
+        }
+      });
+    }
+
+    function addPhaserArmorPlatePulse(scene, x, y) {
+      const shield = scene.add.rectangle(x, y, 74, 88, 0x60a5fa, 0.16)
+        .setStrokeStyle(5, 0xbfdbfe, 0.86)
+        .setDepth(32)
+        .setAngle(-8);
+      const brace = scene.add.rectangle(x, y + 2, 96, 18, 0xfacc15, 0.58)
+        .setDepth(33)
+        .setAngle(-8);
+      addPhaserArmorDebris(scene, x, y, false, -1);
+      scene.tweens.add({
+        targets: [shield, brace],
+        scale: 1.8,
+        alpha: 0,
+        duration: 780,
+        ease: "Cubic.easeOut",
+        onComplete: () => {
+          shield.destroy();
+          brace.destroy();
+        }
+      });
+    }
+
+    function addPhaserCannonImpact(scene, x, y, angle = 0) {
+      const shock = scene.add.circle(x, y, 54, 0xdbeafe, 0.12)
+        .setStrokeStyle(6, 0xbfdbfe, 0.78)
+        .setDepth(31);
+      const line = scene.add.line(0, 0, x - Math.cos(angle) * 116, y - Math.sin(angle) * 116, x, y, 0xdbeafe, 0.46)
+        .setOrigin(0, 0)
+        .setDepth(30)
+        .setLineWidth(16);
+      addPhaserSparks(scene, x, y, true);
+      scene.tweens.add({
+        targets: [shock, line],
+        scale: 2.2,
+        alpha: 0,
+        duration: 760,
+        ease: "Cubic.easeOut",
+        onComplete: () => {
+          shock.destroy();
+          line.destroy();
+        }
+      });
+    }
+
+    function addPhaserSheetShell(scene, start, end, duration, angle, textureKey) {
+      const config = phaserShellEffectMap[textureKey];
+      if (!config || !scene.textures.exists(textureKey)) return null;
+      const sprite = scene.add.sprite(start.x, start.y, textureKey, 0)
+        .setOrigin(0.5, 0.5)
+        .setDepth(24)
+        .setRotation(angle)
+        .setDisplaySize(config.displayWidth, config.displayHeight)
+        .setAlpha(0.98);
+      sprite.play(config.animation, true);
+      const glow = scene.add.circle(start.x, start.y, config.glowRadius, config.glowColor, 0.2).setDepth(23);
+      const flameTrail = scene.add.line(0, 0, start.x, start.y, start.x, start.y, config.glowColor, config.trailAlpha ?? 0.34)
+        .setOrigin(0, 0)
+        .setDepth(22)
+        .setLineWidth(config.trailWidth || 9);
+      scene.tweens.add({
+        targets: [sprite, glow],
+        x: end.x,
+        y: end.y,
+        duration,
+        ease: config.flightEase || "Cubic.easeIn",
+        onUpdate: () => {
+          const trailLength = config.trailLength || 56;
+          flameTrail.setTo(
+            sprite.x - Math.cos(angle) * trailLength,
+            sprite.y - Math.sin(angle) * trailLength,
+            sprite.x,
+            sprite.y
+          );
+        },
+        onComplete: () => {
+          glow.destroy();
+          flameTrail.destroy();
+          addPhaserShellSheetImpact(scene, end.x, end.y, textureKey, angle);
+          sprite.destroy();
+        }
+      });
+      return sprite;
+    }
+
+    function addPhaserShellSheetImpact(scene, x, y, textureKey, angle = 0) {
+      const config = phaserShellEffectMap[textureKey];
+      if (!config || !scene.textures.exists(textureKey)) return;
+      const blast = scene.add.sprite(x, y, textureKey, 3)
+        .setOrigin(0.5, 0.5)
+        .setDepth(31)
+        .setDisplaySize(config.impactWidth, config.impactHeight)
+        .setAlpha(0.96);
+      const ring = scene.add.circle(x, y, 54, config.glowColor, 0.1)
+        .setStrokeStyle(6, config.ringColor, 0.8)
+        .setDepth(30);
+      scene.tweens.add({ targets: blast, scale: 1.36, alpha: 0, duration: 760, ease: "Quad.easeOut", onComplete: () => blast.destroy() });
+      scene.tweens.add({ targets: ring, scale: 3.2, alpha: 0, duration: 840, ease: "Cubic.easeOut", onComplete: () => ring.destroy() });
+      if (config.impactKind === "pierce") addPhaserPiercingImpact(scene, x, y, angle);
+      if (config.impactKind === "smoke") addPhaserSmokeCoverBurst(scene, x, y);
+      if (config.impactKind === "repair") addPhaserRepairPulse(scene, x, y);
+      if (config.impactKind === "flash") addPhaserFlashFlare(scene, x, y);
+      if (config.impactKind === "plating") addPhaserArmorPlatePulse(scene, x, y);
+      if (config.impactKind === "cannon") addPhaserCannonImpact(scene, x, y, angle);
     }
 
     function addPhaserArcaneSpark(scene, start, end, duration, angle) {
@@ -6734,10 +8223,289 @@
       });
     }
 
+    function playPhaserRushWarning(fromEl, toEl) {
+      if (!phaserEffects) return;
+      playPhaserTargetingLine(fromEl, toEl, { color: 0xef4444, width: 6, duration: 720, fromX: 0.12, toX: 0.76 });
+      const warning = getBattlefieldPoint(toEl, 0.74, 0.46);
+      for (let index = 0; index < 3; index += 1) {
+        const triangle = phaserEffects.add.triangle(warning.x - index * 28, warning.y - 42, 0, -18, 16, 14, -16, 14, 0xfacc15, 0.88)
+          .setDepth(35)
+          .setStrokeStyle(2, 0x7f1d1d, 0.8);
+        phaserEffects.tweens.add({
+          targets: triangle,
+          y: triangle.y - 12,
+          alpha: 0,
+          delay: index * 90,
+          duration: 620,
+          ease: "Sine.easeOut",
+          onComplete: () => triangle.destroy()
+        });
+      }
+    }
+
+    function playPhaserSpringCoilTelegraph(targetEl) {
+      if (!phaserEffects) return;
+      const { x, y } = getBattlefieldPoint(targetEl, 0.5, 0.72);
+      for (let index = 0; index < 4; index += 1) {
+        const coil = phaserEffects.add.ellipse(x, y - index * 8, 46 - index * 5, 11, 0xfacc15, 0.08)
+          .setStrokeStyle(3, 0xf59e0b, 0.74)
+          .setDepth(34);
+        phaserEffects.tweens.add({
+          targets: coil,
+          scaleX: 0.62,
+          scaleY: 1.24,
+          y: coil.y + 12,
+          alpha: 0,
+          delay: index * 45,
+          duration: 520,
+          yoyo: true,
+          ease: "Sine.easeInOut",
+          onComplete: () => coil.destroy()
+        });
+      }
+    }
+
+    function playPhaserDroneOrbitCharge(targetEl) {
+      if (!phaserEffects) return;
+      const { x, y } = getBattlefieldPoint(targetEl, 0.5, 0.34);
+      const ring = phaserEffects.add.circle(x, y, 62, 0xfacc15, 0.04)
+        .setStrokeStyle(4, 0xfacc15, 0.72)
+        .setDepth(33);
+      phaserEffects.tweens.add({ targets: ring, scale: 1.5, angle: 180, alpha: 0, duration: 900, ease: "Sine.easeOut", onComplete: () => ring.destroy() });
+      for (let index = 0; index < 4; index += 1) {
+        const angle = (Math.PI * 2 * index) / 4;
+        const drone = phaserEffects.add.circle(x + Math.cos(angle) * 54, y + Math.sin(angle) * 30, 8, 0xfde68a, 0.9)
+          .setStrokeStyle(2, 0x92400e, 0.86)
+          .setDepth(36);
+        phaserEffects.tweens.add({
+          targets: drone,
+          x: x + Math.cos(angle + 1.8) * 76,
+          y: y + Math.sin(angle + 1.8) * 44,
+          scale: 1.25,
+          alpha: 0,
+          delay: index * 55,
+          duration: 760,
+          ease: "Cubic.easeOut",
+          onComplete: () => drone.destroy()
+        });
+      }
+    }
+
+    function playPhaserWolfFlankTelegraph(targetEl) {
+      if (!phaserEffects) return;
+      const base = getBattlefieldPoint(targetEl, 0.52, 0.58);
+      [-1, 0, 1].forEach((laneOffset, index) => {
+        const marker = phaserEffects.add.triangle(base.x + index * 24 - 24, base.y + laneOffset * 36, 0, -12, 26, 0, 0, 12, 0xf97316, 0.58)
+          .setDepth(35)
+          .setStrokeStyle(2, 0x7c2d12, 0.82);
+        phaserEffects.tweens.add({
+          targets: marker,
+          x: marker.x - 92,
+          alpha: 0,
+          delay: index * 85,
+          duration: 620,
+          ease: "Cubic.easeIn",
+          onComplete: () => marker.destroy()
+        });
+      });
+    }
+
+    function playPhaserFleaHopTelegraph(targetEl) {
+      if (!phaserEffects) return;
+      const base = getBattlefieldPoint(targetEl, 0.5, 0.78);
+      for (let index = 0; index < 7; index += 1) {
+        const flea = phaserEffects.add.circle(base.x + index * 10 - 30, base.y, 4 + (index % 2), 0xfacc15, 0.84)
+          .setDepth(36)
+          .setStrokeStyle(1, 0x78350f, 0.8);
+        phaserEffects.tweens.add({
+          targets: flea,
+          x: flea.x - 30 - index * 8,
+          y: flea.y - 26 - (index % 3) * 9,
+          alpha: 0,
+          delay: index * 35,
+          duration: 520,
+          yoyo: true,
+          ease: "Sine.easeOut",
+          onComplete: () => flea.destroy()
+        });
+      }
+    }
+
+    function playPhaserElasticRecoil(targetEl) {
+      if (!phaserEffects) return;
+      getPhaserEnemyAttackTargets().forEach((sprite) => {
+        const startX = sprite.x;
+        phaserEffects.tweens.add({
+          targets: sprite,
+          x: startX + 26,
+          scaleX: sprite.scaleX * 0.92,
+          scaleY: sprite.scaleY * 1.12,
+          duration: 120,
+          yoyo: true,
+          ease: "Back.easeOut"
+        });
+      });
+      playPhaserSpringCoilTelegraph(targetEl);
+    }
+
+    function playPhaserEmStun(targetEl) {
+      if (!phaserEffects) return;
+      const { x, y } = getBattlefieldPoint(targetEl, 0.5, 0.42);
+      playPhaserStun(targetEl);
+      for (let index = 0; index < 3; index += 1) {
+        const ring = phaserEffects.add.circle(x, y, 24 + index * 14, 0x67e8f9, 0.06)
+          .setStrokeStyle(3, 0x67e8f9, 0.82)
+          .setDepth(35);
+        phaserEffects.tweens.add({
+          targets: ring,
+          scale: 2.2,
+          alpha: 0,
+          delay: index * 80,
+          duration: 700,
+          ease: "Cubic.easeOut",
+          onComplete: () => ring.destroy()
+        });
+      }
+    }
+
+    function playPhaserMetalSparks(targetEl) {
+      if (!phaserEffects) return;
+      const { x, y } = getBattlefieldPoint(targetEl, 0.48, 0.5);
+      addPhaserSparks(phaserEffects, x, y, false);
+      getPhaserEnemyAttackTargets().forEach((sprite) => tweenPhaserSprite(sprite, { x: sprite.x + 12, yoyo: true }, 130));
+    }
+
+    function playPhaserFleaSquish(targetEl) {
+      if (!phaserEffects) return;
+      const { x, y } = getBattlefieldPoint(targetEl, 0.5, 0.72);
+      getPhaserEnemyAttackTargets().forEach((sprite) => {
+        phaserEffects.tweens.add({ targets: sprite, scaleY: sprite.scaleY * 0.62, scaleX: sprite.scaleX * 1.18, duration: 90, yoyo: true, ease: "Quad.easeOut" });
+      });
+      for (let index = 0; index < 8; index += 1) {
+        const pop = phaserEffects.add.circle(x, y, 4, index % 2 ? 0xf97316 : 0xfacc15, 0.9).setDepth(36);
+        phaserEffects.tweens.add({
+          targets: pop,
+          x: x + Math.cos(index) * (24 + index * 4),
+          y: y + Math.sin(index) * 20 - 18,
+          alpha: 0,
+          duration: 420,
+          ease: "Cubic.easeOut",
+          onComplete: () => pop.destroy()
+        });
+      }
+    }
+
+    function playPhaserTruckSmokeJolt(targetEl) {
+      if (!phaserEffects) return;
+      const { x, y } = getBattlefieldPoint(targetEl, 0.56, 0.52);
+      addPhaserSmoke(phaserEffects, x, y, false);
+      getPhaserEnemyAttackTargets().forEach((sprite) => tweenPhaserSprite(sprite, { angle: 7, yoyo: true }, 120));
+    }
+
+    function playPhaserSelfDestructDebris(targetEl) {
+      if (!phaserEffects) return;
+      const { x, y } = getBattlefieldPoint(targetEl, 0.5, 0.56);
+      addPhaserArmorDebris(phaserEffects, x, y, true, -1);
+      addPhaserSparks(phaserEffects, x, y, true);
+      addPhaserSmoke(phaserEffects, x, y, true);
+    }
+
+    function playPhaserSpringScatter(targetEl) {
+      if (!phaserEffects) return;
+      const { x, y } = getBattlefieldPoint(targetEl, 0.5, 0.58);
+      for (let index = 0; index < 10; index += 1) {
+        const angle = (Math.PI * 2 * index) / 10;
+        const coil = phaserEffects.add.line(0, 0, x - 8, y, x + 8, y, 0xfacc15, 0.9)
+          .setDepth(38)
+          .setLineWidth(4)
+          .setRotation(angle);
+        phaserEffects.tweens.add({
+          targets: coil,
+          x: Math.cos(angle) * (50 + Math.random() * 70),
+          y: Math.sin(angle) * (30 + Math.random() * 56) - 26,
+          angle: 360,
+          alpha: 0,
+          duration: 820,
+          ease: "Cubic.easeOut",
+          onComplete: () => coil.destroy()
+        });
+      }
+      addPhaserSparks(phaserEffects, x, y, false);
+    }
+
+    function playPhaserSwarmDispersal(targetEl) {
+      if (!phaserEffects) return;
+      const { x, y } = getBattlefieldPoint(targetEl, 0.5, 0.42);
+      for (let index = 0; index < 14; index += 1) {
+        const angle = (Math.PI * 2 * index) / 14;
+        const drone = phaserEffects.add.circle(x, y, 6 + (index % 3), 0xfde68a, 0.92)
+          .setStrokeStyle(2, 0x92400e, 0.72)
+          .setDepth(38);
+        phaserEffects.tweens.add({
+          targets: drone,
+          x: x + Math.cos(angle) * (80 + Math.random() * 140),
+          y: y + Math.sin(angle) * (54 + Math.random() * 90),
+          alpha: 0,
+          scale: 0.32,
+          duration: 900 + Math.random() * 360,
+          ease: "Cubic.easeOut",
+          onComplete: () => drone.destroy()
+        });
+      }
+      playPhaserEmStun(targetEl);
+    }
+
+    function playPhaserPackBreakApart(targetEl) {
+      if (!phaserEffects) return;
+      const base = getBattlefieldPoint(targetEl, 0.5, 0.56);
+      [-42, 0, 42].forEach((offset, index) => {
+        addPhaserArmorDebris(phaserEffects, base.x + offset, base.y + (index - 1) * 12, false, -1);
+      });
+      addPhaserSparks(phaserEffects, base.x, base.y, true);
+    }
+
+    function playPhaserFleaPopBurst(targetEl) {
+      if (!phaserEffects) return;
+      const { x, y } = getBattlefieldPoint(targetEl, 0.5, 0.72);
+      for (let index = 0; index < 18; index += 1) {
+        const angle = Math.random() * Math.PI * 2;
+        const dot = phaserEffects.add.circle(x, y, 3 + Math.random() * 4, index % 3 ? 0xfacc15 : 0xffedd5, 0.9).setDepth(38);
+        phaserEffects.tweens.add({
+          targets: dot,
+          x: x + Math.cos(angle) * (36 + Math.random() * 92),
+          y: y + Math.sin(angle) * (24 + Math.random() * 64) - 20,
+          alpha: 0,
+          duration: 620 + Math.random() * 280,
+          ease: "Back.easeOut",
+          onComplete: () => dot.destroy()
+        });
+      }
+      addPhaserShockwave(phaserEffects, x, y, 0xfacc15, false);
+    }
+
+    function playEnemyDeathVfx(targetEl = enemyTank, enemy = currentEnemy) {
+      if (!enemy) return;
+      const heavy = enemy.id === "boss" || enemy.role === "elite";
+      playPhaserDestruction(targetEl, { heavy, direction: -1 });
+      if (enemy.deathVfx === "selfDestructDebris") {
+        playPhaserExplosion(targetEl, "heavy");
+        playPhaserSelfDestructDebris(targetEl);
+      }
+      if (enemy.deathVfx === "springScatter") playPhaserSpringScatter(targetEl);
+      if (enemy.deathVfx === "swarmDispersal") playPhaserSwarmDispersal(targetEl);
+      if (enemy.deathVfx === "packBreakApart") playPhaserPackBreakApart(targetEl);
+      if (enemy.deathVfx === "popBurst") playPhaserFleaPopBurst(targetEl);
+    }
+
     function playPhaserProjectile(fromEl, toEl, options = {}) {
       if (!phaserEffects) return false;
       const start = getBattlefieldPoint(fromEl, options.fromX ?? 0.78, options.fromY ?? 0.48);
       const end = getBattlefieldPoint(toEl, options.toX ?? 0.28, options.toY ?? 0.48);
+      if (options.effectSheet && battlefieldEl.classList.contains("training-mode") && phaserEffects.scale.height < 220) {
+        const visibleY = Math.min(phaserEffects.scale.height - 34, Math.max(78, phaserEffects.scale.height * 0.62));
+        start.y = Math.max(start.y, visibleY);
+        end.y = Math.max(end.y, visibleY);
+      }
       const color = options.color || 0xf3b23c;
       const duration = options.duration || (options.effectSheet === "arcaneSparkShell" ? 2200 : 540);
       const angle = Math.atan2(end.y - start.y, end.x - start.x);
@@ -6752,9 +8520,20 @@
         });
         return true;
       }
-      const projectile = phaserEffects.add.ellipse(start.x, start.y, options.width || 24, options.height || 10, color, 1)
-        .setDepth(22)
-        .setRotation(angle);
+      if (phaserShellEffectMap[options.effectSheet]) {
+        const sheetSprite = addPhaserSheetShell(phaserEffects, start, end, duration, angle, options.effectSheet);
+        if (!sheetSprite) return false;
+        phaserEffects.time.delayedCall(duration, () => {
+          addPhaserImpactGlint(phaserEffects, end.x, end.y, color);
+          options.onImpact?.();
+        });
+        return true;
+      }
+      const projectileTexture = (options.width || 24) > 30 ? "kenney:shotLarge" : "kenney:shotThin";
+      const projectile = phaserEffects.textures.exists("kenney:shotLarge")
+        ? phaserEffects.add.image(start.x, start.y, projectileTexture).setDisplaySize(options.width || 30, options.height || 14)
+        : phaserEffects.add.ellipse(start.x, start.y, options.width || 24, options.height || 10, color, 1);
+      projectile.setDepth(22).setRotation(angle);
       const glow = phaserEffects.add.ellipse(start.x - 10, start.y, 30, 16, color, 0.22).setDepth(21);
       phaserEffects.tweens.add({
         targets: [projectile, glow],
@@ -6786,8 +8565,78 @@
     }
 
     function syncSoundButton() {
-      soundButton.textContent = soundEnabled ? "Sound On" : "Sound Off";
+      const soundLabel = soundEnabled ? "Sound On" : "Sound Off";
+      const soundTooltip = soundEnabled ? "声音开启 / Sound On" : "声音关闭 / Sound Off";
+      soundButton.textContent = soundLabel;
+      soundButton.setAttribute("aria-label", soundLabel);
       soundButton.setAttribute("aria-pressed", String(soundEnabled));
+      soundButton.title = soundTooltip;
+      soundButton.dataset.tooltip = soundTooltip;
+      sfxHelper.setSoundOn(soundEnabled);
+      bgmManager.setEnabled(soundEnabled);
+    }
+
+    function setBattleMusicEnvironment(environment) {
+      bgmManager.setMood(environment);
+    }
+
+    function startBattleMusic() {
+      setBattleMusicEnvironment(getBattlefieldEnvironment(levelNumber));
+      bgmManager.start();
+    }
+
+    function pauseBattleMusic() {
+      bgmManager.pause();
+    }
+
+    function resumeBattleMusic() {
+      bgmManager.resume();
+    }
+
+    function stopBattleMusic() {
+      bgmManager.stop();
+    }
+
+    function suspendMusicForModal() {
+      bgmManager.suspendForModal();
+    }
+
+    function resumeMusicFromModal() {
+      bgmManager.resumeFromModal();
+    }
+
+    function beginLearningAudio() {
+      bgmManager.duck();
+      sfxHelper.mute();
+    }
+
+    function endLearningAudio() {
+      sfxHelper.unmute();
+      bgmManager.unduck();
+    }
+
+    function withLearningAudio(options = {}) {
+      return {
+        ...options,
+        onStart: () => {
+          beginLearningAudio();
+          options.onStart?.();
+        },
+        onEnd: () => {
+          options.onEnd?.();
+          endLearningAudio();
+        }
+      };
+    }
+
+    function getLearningSpeechOptions(options = {}) {
+      if (options.learningAudio === false || options.onStart || options.onEnd) return options;
+      return withLearningAudio(options);
+    }
+
+    function playTypedUiSound(type = "normal") {
+      if (sfxHelper.play(type)) return;
+      playTone(type === "error" ? 220 : type === "close" ? 420 : 540, 0.06, { type: "sine", volume: 0.035 });
     }
 
     function playTone(frequency, duration, options = {}) {
@@ -6860,7 +8709,27 @@
     }
 
     function playUiSound() {
-      playTone(440, 0.06, { type: "sine", volume: 0.035 });
+      playTypedUiSound("normal");
+    }
+
+    function playConfirmSound() {
+      playTypedUiSound("confirm");
+    }
+
+    function playBuySound() {
+      playTypedUiSound("buy");
+    }
+
+    function playCloseSound() {
+      playTypedUiSound("close");
+    }
+
+    function playErrorSound() {
+      playTypedUiSound("error");
+    }
+
+    function playSpecialPanelSound() {
+      playTypedUiSound("specialPanel");
     }
 
     function cloneDefaultState() {
@@ -7000,6 +8869,7 @@
       const progress = playerState?.runProgress;
       if (!progress || typeof progress !== "object" || progress.phase === "gameOver") return false;
       try {
+        startBattleMusic();
         const stage = Math.max(1, Math.floor(Number(progress.stage) || 0));
         if (!Number.isFinite(stage) || !progress.phase) throw new Error("Invalid run progress");
         cancelStageAdvance();
@@ -7010,6 +8880,7 @@
         isLevelCleared = progress.phase === "stageClear";
         score = Math.max(0, Number(progress.score) || 0);
         levelNumber = stage;
+        debugSingleEnemyId = "";
         currentEnemy = createEnemy(levelNumber);
         runUpgrades = {
           maxLives: Math.max(0, Number(progress.runUpgrades?.maxLives) || 0),
@@ -7068,7 +8939,7 @@
       bossIdiomScreen.setAttribute("aria-hidden", "true");
       messageEl.textContent = `Stage ${levelNumber} clear. Choose your next upgrade to continue.`;
       syncHud();
-      if (levelNumber % 5 === 0) {
+      if (shouldShowSupplyChallenge(levelNumber)) {
         showSupplyChallenge();
         return;
       }
@@ -7122,13 +8993,15 @@
       locked = true;
       hideModeGate();
       profileGate.classList.remove("hidden");
+      profileGate.classList.add("appointment-opening");
       profileMessage.textContent = message;
       profilePasswordInput.value = "";
       profileNameInput.value = activeProfileName || localStorage.getItem("hanziTankLastProfile") || "";
       renderProfileSelect(profileNameInput.value);
       setTimeout(() => {
+        profileGate.classList.remove("appointment-opening");
         (profileNameInput.value ? profilePasswordInput : profileNameInput).focus();
-      }, 0);
+      }, 360);
     }
 
     function hideProfileGate() {
@@ -7389,6 +9262,7 @@
 
     function startAdventureMode() {
       hideModeGate();
+      startBattleMusic();
       if (!restoreRunProgress()) resetRunForProfile();
     }
 
@@ -7410,6 +9284,7 @@
         armor: 0
       };
       levelNumber = 1;
+      debugSingleEnemyId = "";
       currentEnemy = createEnemy(levelNumber);
       laneStates = [];
       activeLaneIndex = 0;
@@ -7439,6 +9314,7 @@
       lives = getMaxLives();
       reviewMode = false;
       locked = false;
+      enemyTank.classList.remove("reloading", "fire", "boss-slam", "boss-attack-approach", "crash-attack", "spring-bounce-attack", "swarm-volley", "pack-pounce", "flea-burst-attack", "melee-strike");
       syncHud();
       renderStageOpeningQuestion();
     }
@@ -7573,6 +9449,45 @@
         .filter((item) => item && !isAmmoItem(item));
     }
 
+    function getTankMasteryEntry(tankId = playerState?.equipped?.tank || "tank_sherman") {
+      playerState.tankMastery = playerState.tankMastery && typeof playerState.tankMastery === "object" ? playerState.tankMastery : {};
+      const current = playerState.tankMastery[tankId] && typeof playerState.tankMastery[tankId] === "object" ? playerState.tankMastery[tankId] : {};
+      const entry = {
+        xp: Math.max(0, Math.floor(Number(current.xp) || 0)),
+        clears: Math.max(0, Math.floor(Number(current.clears) || 0))
+      };
+      playerState.tankMastery[tankId] = entry;
+      return entry;
+    }
+
+    function getTankMasteryLevel(tankId = playerState?.equipped?.tank || "tank_sherman") {
+      const entry = getTankMasteryEntry(tankId);
+      return Math.min(5, Math.floor(entry.xp / 50));
+    }
+
+    function getTankMasteryClearBonus(tankId = playerState?.equipped?.tank || "tank_sherman") {
+      return Math.min(10, getTankMasteryLevel(tankId) * 2);
+    }
+
+    function getTankMasteryText(tankId = playerState?.equipped?.tank || "tank_sherman") {
+      const entry = getTankMasteryEntry(tankId);
+      const level = getTankMasteryLevel(tankId);
+      const nextXp = level >= 5 ? entry.xp : (level + 1) * 50;
+      const bonus = getTankMasteryClearBonus(tankId);
+      return level >= 5
+        ? `Tank Mastery Lv ${level} · ${entry.xp} XP · +${bonus} clear coins`
+        : `Tank Mastery Lv ${level} · ${entry.xp}/${nextXp} XP · +${bonus} clear coins`;
+    }
+
+    function grantEquippedTankXp(stage = levelNumber) {
+      const tankId = playerState?.equipped?.tank || "tank_sherman";
+      const entry = getTankMasteryEntry(tankId);
+      const gainedXp = Math.max(5, 5 + Math.floor(Number(stage) || 1));
+      entry.xp += gainedXp;
+      entry.clears += 1;
+      return { tankId, gainedXp, totalXp: entry.xp, clears: entry.clears };
+    }
+
     function getMaxLives() {
       const tank = getItem(playerState?.equipped?.tank || "tank_sherman") || shopItems[0];
       return (tank.maxLives || 3) + runUpgrades.maxLives;
@@ -7636,6 +9551,7 @@
     }
 
     function createEnemy(number) {
+      if (debugSingleEnemyId) return createCombatEnemyById(debugSingleEnemyId, levelTypes, bossTemplate, eliteTypes, number);
       return createEnemyForStage(number, levelTypes, bossTemplate);
     }
 
@@ -7644,6 +9560,7 @@
     }
 
     function isMultiLaneStage(stage = levelNumber) {
+      if (debugSingleEnemyId) return false;
       return stage >= 1 && !isBossStage(stage);
     }
 
@@ -8003,12 +9920,14 @@
       playerTank.classList.remove("fire");
       lane.element.classList.remove("hit");
       const playerStartX = phaserPlayerSprite?.x || 0;
-      playPhaserPlayerState(ammo?.id === "shell_he" ? "heavy-fire" : "fire", true);
+      const heavyShot = ammo?.id === "shell_he" || ammo?.id === "weapon_cannon";
+      playPhaserPlayerState(heavyShot ? "heavy-fire" : "fire", true);
       tweenPhaserSprite(phaserPlayerSprite, { x: playerStartX + 10, yoyo: true }, 150);
       requestAnimationFrame(() => playerTank.classList.add("fire"));
       const projectileDuration = ammo?.projectileDuration || 560;
-      if (ammo?.projectileSheet) {
-        playPhaserProjectile(playerTank, lane.element, {
+      if (ammo) {
+        const phaserProjectilePlayed = playPhaserProjectile(playerTank, lane.element, {
+          ammoId: ammo.id,
           color: ammo.projectileColor || 0xa78bfa,
           width: ammo.projectileWidth || 76,
           height: ammo.projectileHeight || 30,
@@ -8020,16 +9939,32 @@
             flashPhaserLaneInfantry(laneStates.indexOf(lane));
           }
         });
+        if (phaserProjectilePlayed) {
+          setTimeout(() => {
+            playerTank.classList.remove("fire");
+            lane.element?.classList.remove("hit");
+          }, projectileDuration + 320);
+          return;
+        }
+        playLaneProjectile(playerTank, lane.element, {
+          color: ammo.id === "shell_he" ? "#ff7a2f" : ammo.id === "weapon_cannon" ? "#dbeafe" : ammo.id === "shell_ap" ? "#fff2a1" : "#f3b23c",
+          glow: ammo.id === "shell_he" ? "rgba(255, 111, 61, 0.9)" : undefined,
+          impact: ammo.id === "shell_he" || ammo.id === "weapon_cannon" ? "heavy" : "normal",
+          onImpact: () => {
+            playExplosionSound();
+            lane.element.classList.add("hit");
+            flashPhaserLaneInfantry(laneStates.indexOf(lane));
+          }
+        });
       } else {
         playLaneProjectile(playerTank, lane.element, {
-        color: ammo?.projectileColor || (ammo?.id === "shell_he" ? "#ff7a2f" : ammo?.id === "weapon_cannon" ? "#dbeafe" : ammo?.id === "shell_ap" ? "#fff2a1" : "#f3b23c"),
-        glow: ammo?.id === "shell_he" ? "rgba(255, 111, 61, 0.9)" : undefined,
-        impact: ammo?.id === "shell_he" ? "heavy" : "normal",
-        onImpact: () => {
-          playExplosionSound();
-          lane.element.classList.add("hit");
-          flashPhaserLaneInfantry(laneStates.indexOf(lane));
-        }
+          color: "#f3b23c",
+          impact: "normal",
+          onImpact: () => {
+            playExplosionSound();
+            lane.element.classList.add("hit");
+            flashPhaserLaneInfantry(laneStates.indexOf(lane));
+          }
         });
       }
       setTimeout(() => {
@@ -8129,18 +10064,42 @@
       return Math.max(1, Number(currentEnemy.attackInterval || enemyAttackInterval));
     }
 
+    function enemyUsesReloadApproach(enemy = currentEnemy) {
+      return enemy?.attackStyle === "melee" || enemy?.reloadMotion === "approach" || enemy?.attackStyle === "selfDestruct";
+    }
+
+    function playEnemyReloadTelegraph(enemy = currentEnemy) {
+      if (!enemy || !phaserEffects) return;
+      if (enemy.telegraph === "rushWarning") playPhaserRushWarning(enemyTank, playerTank);
+      if (enemy.telegraph === "coilCompress") playPhaserSpringCoilTelegraph(enemyTank);
+      if (enemy.telegraph === "orbitCharge") playPhaserDroneOrbitCharge(enemyTank);
+      if (enemy.telegraph === "flankPounce") playPhaserWolfFlankTelegraph(enemyTank);
+      if (enemy.telegraph === "rapidHops") playPhaserFleaHopTelegraph(enemyTank);
+    }
+
     function showDamage(targetTank, amount, options = {}) {
       const damage = document.createElement("div");
       damage.className = `damage-float${options.absolute ? " absolute-hit" : ""}${options.armor ? " armor-hit" : ""}${options.miss ? " miss-hit" : ""}`;
       damage.textContent = options.miss ? "MISS" : options.absolute ? "ABS" : `-${amount}`;
       targetTank.appendChild(damage);
       damage.addEventListener("animationend", () => damage.remove(), { once: true });
-      if (targetTank === enemyTank && currentEnemy.id === "armor") playPhaserRegularEnemyTankState("hit");
-      if (targetTank === enemyTank && currentEnemy.id === "grenadier") playPhaserGrenadierState("hit");
+      playEnemyHitReaction(targetTank, options);
       playPhaserImpact(targetTank, options.absolute ? "absolute" : options.armor ? "armor" : "hit");
       if (options.absolute || options.armor) {
         playDefenseEffect(targetTank, options.absolute ? "absolute" : "armor");
       }
+    }
+
+    function playEnemyHitReaction(targetTank, options = {}) {
+      if (targetTank !== enemyTank) return;
+      if (currentEnemy.id === "armor") playPhaserRegularEnemyTankState("hit");
+      if (currentEnemy.id === "grenadier") playPhaserGrenadierState("hit");
+      if (options.absolute) return;
+      if (currentEnemy.hitReaction === "elasticRecoil") playPhaserElasticRecoil(enemyTank);
+      if (currentEnemy.hitReaction === "emStun") playPhaserEmStun(enemyTank);
+      if (currentEnemy.hitReaction === "metalSparks") playPhaserMetalSparks(enemyTank);
+      if (currentEnemy.hitReaction === "squishSpark") playPhaserFleaSquish(enemyTank);
+      if (currentEnemy.hitReaction === "smokeJolt") playPhaserTruckSmokeJolt(enemyTank);
     }
 
     function playDefenseEffect(targetTank, type) {
@@ -8209,8 +10168,11 @@
         countdownId = 0;
       }
       if (!isPaused) pausedCountdownWasActive = false;
-      enemyTank.classList.remove("reloading");
-      stopPhaserEnemyApproach(!options.preserveEnemyPosition);
+      const preserveEnemyPosition = Boolean(options.preserveEnemyPosition);
+      const preserveMeleePose = preserveEnemyPosition && enemyUsesReloadApproach(currentEnemy) && (enemyTank.classList.contains("reloading") || Boolean(phaserEnemyReloadTween));
+      enemyMeleePoseHeldForAttack = preserveMeleePose;
+      if (!preserveMeleePose) enemyTank.classList.remove("reloading");
+      stopPhaserEnemyApproach(!preserveEnemyPosition);
       countdown = 0;
       syncLevelHud();
     }
@@ -8234,7 +10196,8 @@
       const attackInterval = getEnemyAttackInterval();
       countdown = Math.max(1, Math.min(attackInterval, seconds || attackInterval));
       syncLevelHud();
-      enemyTank.classList.toggle("reloading", currentEnemy.attackStyle === "melee");
+      enemyTank.classList.toggle("reloading", enemyUsesReloadApproach(currentEnemy) || currentEnemy.reloadMotion === "orbit");
+      playEnemyReloadTelegraph(currentEnemy);
       startPhaserEnemyApproach();
       countdownId = setInterval(() => {
         if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) {
@@ -8271,13 +10234,28 @@
     }
 
     function syncPauseButton() {
-      pauseButton.textContent = isPaused ? "Resume" : "Pause";
+      const pauseLabel = isPaused ? "Resume" : "Pause";
+      const pauseTooltip = isPaused ? "继续 / Resume" : "暂停 / Pause";
+      pauseButton.textContent = pauseLabel;
+      pauseButton.setAttribute("aria-label", pauseLabel);
       pauseButton.setAttribute("aria-pressed", String(isPaused));
+      pauseButton.title = pauseLabel;
+      pauseButton.dataset.tooltip = pauseTooltip;
+      pauseOverlay.classList.toggle("show", isPaused);
+      pauseOverlay.setAttribute("aria-hidden", String(!isPaused));
+    }
+
+    function playPauseButtonAction() {
+      pauseButton.classList.remove("is-activating");
+      void pauseButton.offsetWidth;
+      pauseButton.classList.add("is-activating");
+      window.setTimeout(() => pauseButton.classList.remove("is-activating"), 220);
     }
 
     function pauseGame() {
       if (isPaused || lives <= 0) return;
       isPaused = true;
+      pauseBattleMusic();
       pausedLockedState = locked;
       pausedMessage = messageEl.textContent;
       locked = true;
@@ -8289,6 +10267,7 @@
     function resumeGame() {
       if (!isPaused) return;
       isPaused = false;
+      resumeBattleMusic();
       locked = pausedLockedState;
       const shouldResumeCountdown = pausedCountdownWasActive && countdown > 0 && lives > 0 && !locked;
       pausedCountdownWasActive = false;
@@ -8302,6 +10281,7 @@
     function togglePause() {
       unlockAudio();
       playUiSound();
+      playPauseButtonAction();
       if (isPaused) {
         resumeGame();
         return;
@@ -8608,7 +10588,7 @@
       inlineShopCoins.textContent = playerState.coins;
       dailyScoreEl.textContent = playerState.dailyScore;
       const equippedNames = getEquippedItems().map((item) => item.name).join(" / ");
-      loadoutEl.textContent = `Loadout: ${equippedNames || "Basic gear"} · ${getSpecialAmmoLoadoutText()}`;
+      loadoutEl.textContent = `Loadout: ${equippedNames || "Basic gear"} · ${getTankMasteryText()} · ${getSpecialAmmoLoadoutText()}`;
       inlineLoadout.textContent = loadoutEl.textContent;
       document.body.dataset.shell = "";
       ["tank-sherman", "tank-tiger", "tank-panzer", "tank-is2", "tank-t34", "tank-cromwell", "tank-churchill"].forEach((className) => {
@@ -8630,14 +10610,19 @@
       enemyTank.classList.toggle("enemy-truck", currentEnemy.id === "truck");
       enemyTank.classList.toggle("enemy-scout", currentEnemy.id === "scout");
       enemyTank.classList.toggle("enemy-armor", currentEnemy.id === "armor" || currentEnemy.id === "boss");
-      enemyTank.classList.toggle("enemy-infantry", ["infantry", "grenadier", "heavyInfantry", "rpgInfantry"].includes(currentEnemy.id));
+      enemyTank.classList.toggle("enemy-infantry", ["infantry", "grenadier", "heavyInfantry", "rpgInfantry", "springSoldier"].includes(currentEnemy.id));
       enemyTank.classList.toggle("enemy-heavy-infantry", currentEnemy.id === "heavyInfantry");
       enemyTank.classList.toggle("enemy-rpg-infantry", currentEnemy.id === "rpgInfantry");
       enemyTank.classList.toggle("enemy-boss", currentEnemy.id === "boss");
       enemyTank.classList.toggle("enemy-regular-infantry", currentEnemy.id === "infantry");
       enemyTank.classList.toggle("enemy-regular-tank", currentEnemy.id === "armor");
       enemyTank.classList.toggle("enemy-grenadier", currentEnemy.id === "grenadier");
-      enemyTank.classList.toggle("enemy-melee", currentEnemy.attackStyle === "melee" && !["boss", "truck"].includes(currentEnemy.id));
+      enemyTank.classList.toggle("enemy-spring-soldier", currentEnemy.id === "springSoldier");
+      enemyTank.classList.toggle("enemy-drone-swarm", currentEnemy.id === "droneSwarm");
+      enemyTank.classList.toggle("enemy-wolf-pack", currentEnemy.id === "wolfPack");
+      enemyTank.classList.toggle("enemy-mechanical-fleas", currentEnemy.id === "mechanicalFleas");
+      enemyTank.classList.toggle("enemy-melee", enemyUsesReloadApproach(currentEnemy) && !["boss", "truck", "springSoldier", "wolfPack", "mechanicalFleas"].includes(currentEnemy.id));
+      applyBattlefieldEnvironment(levelNumber);
       updatePhaserActors();
       wordCountEl.textContent = getRankProgressText();
       appVersionEl.textContent = `Build ${appVersion}`;
@@ -8649,6 +10634,15 @@
       renderShopGrid(shopGrid);
       renderShopGrid(inlineShopGrid);
       syncHud();
+    }
+
+    function getShopPreviewMarkup(item) {
+      const preview = shopPreviewSheetMap[item.id];
+      if (!preview) return "";
+      const columns = preview.columns || 1;
+      const className = ["shop-preview", preview.className || "", preview.animate ? "animated-preview" : ""].filter(Boolean).join(" ");
+      const previewSteps = Math.max(1, columns - 1);
+      return `<div class="${className}" aria-hidden="true" style="--preview-image: url('${preview.url}'); --preview-columns: ${columns}; --preview-steps: ${previewSteps};"></div>`;
     }
 
     function renderShopGrid(targetGrid) {
@@ -8666,6 +10660,7 @@
         if (ammoItem) {
           card.classList.toggle("equipped", ammoEquipped);
           card.innerHTML = `
+            ${getShopPreviewMarkup(item)}
             <div class="shop-type">${item.typeLabel} · ${item.doctrine || "Special"}</div>
             <div class="shop-name">${item.name}</div>
             <div class="shop-desc">${item.desc}</div>
@@ -8680,9 +10675,11 @@
           card.querySelector('[data-action="sell"]').disabled = ammoCount <= 0;
         } else {
           card.innerHTML = `
+            ${getShopPreviewMarkup(item)}
             <div class="shop-type">${item.typeLabel}</div>
             <div class="shop-name">${item.name}</div>
             <div class="shop-desc">${item.desc}</div>
+            <div class="shop-cost">${getTankMasteryText(item.id)}</div>
             <div class="shop-cost">${owned ? "Owned" : `${item.cost} coins`}</div>
             <button class="shop-action" type="button" data-item="${item.id}" data-action="buy-or-equip">
               ${equipped ? "Equipped" : owned ? "Equip" : "Buy"}
@@ -8700,16 +10697,20 @@
       if (!warShopAvailable) return;
       unlockAudio();
       playUiSound();
+      closeOpenWindowsForModal();
+      suspendMusicForModal();
       renderShop();
-      arsenal.classList.add("show");
+      arsenal.classList.add("show", "crate-opening");
       arsenal.setAttribute("aria-hidden", "false");
+      window.setTimeout(() => arsenal.classList.remove("crate-opening"), 520);
       closeArsenalButton.focus();
     }
 
     function closeArsenal() {
-      playUiSound();
-      arsenal.classList.remove("show");
+      playCloseSound();
+      arsenal.classList.remove("show", "crate-opening");
       arsenal.setAttribute("aria-hidden", "true");
+      resumeMusicFromModal();
       if (warShopAvailable) arsenalButton.focus();
     }
 
@@ -8720,15 +10721,15 @@
       if (isAmmoItem(item)) {
         playerState.ammo = playerState.ammo && typeof playerState.ammo === "object" ? playerState.ammo : {};
         if (actionType === "sell") {
-          if (!sellAmmo(item.id)) return;
-          playUiSound();
+          if (!sellAmmo(item.id)) { playErrorSound(); return; }
+          playBuySound();
           saveState();
           renderShop();
           return;
         }
         if (actionType === "equip") {
-          if (!equipAmmo(item.id)) return;
-          playSuccessSound();
+          if (!equipAmmo(item.id)) { playErrorSound(); return; }
+          playBuySound();
           if (item.id === "shell_he") announceHighExplosiveReady();
           saveState();
           renderShop();
@@ -8736,27 +10737,27 @@
         }
         if (actionType === "unequip") {
           unequipAmmo(item.id);
-          playUiSound();
+          playCloseSound();
           saveState();
           renderShop();
           return;
         }
-        if (playerState.coins < item.cost) return;
+        if (playerState.coins < item.cost) { playErrorSound(); return; }
         playerState.coins -= item.cost;
         playerState.ammo[item.id] = getAmmoCount(item.id) + item.ammoPerPurchase;
-        playSuccessSound();
+        playBuySound();
         saveState();
         renderShop();
         return;
       }
 
       if (!playerState.owned.includes(item.id)) {
-        if (playerState.coins < item.cost) return;
+        if (playerState.coins < item.cost) { playErrorSound(); return; }
         playerState.coins -= item.cost;
         playerState.owned.push(item.id);
       }
 
-      playSuccessSound();
+      playBuySound();
       playerState.equipped[item.type] = item.id;
       if (item.type === "tank") {
         lives = getMaxLives();
@@ -8774,22 +10775,29 @@
       stopLaneAdvance();
       locked = true;
       playSuccessSound();
-      const bonus = 12 + levelNumber * 2;
+      const tankXp = grantEquippedTankXp(levelNumber);
+      const tankClearBonus = getTankMasteryClearBonus(tankXp.tankId);
+      const bonus = 12 + levelNumber * 2 + tankClearBonus;
       playerState.coins += bonus;
       playerState.dailyScore += bonus;
+      runUpgradeLog.push(`Tank +${tankXp.gainedXp} XP: ${getItem(tankXp.tankId)?.name || "Tank"} mastery`);
       saveState();
       syncHud();
-      messageEl.textContent = `Stage ${levelNumber} clear! Earned ${bonus} bonus coins.`;
+      messageEl.textContent = `Stage ${levelNumber} clear! Earned ${bonus} bonus coins. Tank +${tankXp.gainedXp} XP.`;
       warShopAvailable = true;
       syncHud();
       stageAdvanceTimeoutId = setTimeout(() => {
         stageAdvanceTimeoutId = 0;
-        if (levelNumber % 5 === 0) {
+        if (shouldShowSupplyChallenge(levelNumber)) {
           showSupplyChallenge();
           return;
         }
         showPerkChoices();
       }, 500);
+    }
+
+    function shouldShowSupplyChallenge(stage = levelNumber) {
+      return false;
     }
 
     function cancelStageAdvance() {
@@ -8803,6 +10811,8 @@
       supplyIndex = 0;
       supplyLocked = false;
       supplyChest.classList.remove("open");
+      supplyReward.classList.remove("pop");
+      supplyReward.textContent = "";
       supplyScreen.classList.add("show");
       supplyScreen.setAttribute("aria-hidden", "false");
       renderSupplyQuestion();
@@ -8816,6 +10826,8 @@
       supplySubtitle.textContent = `Supply check ${supplyIndex + 1}/2. Answer both correctly to open the chest.`;
       supplyWordEl.textContent = word.hanzi;
       supplyMessage.textContent = "Choose the correct meaning.";
+      supplyReward.classList.remove("pop");
+      supplyReward.textContent = "";
       supplyOptions.innerHTML = "";
       const wrongChoices = shuffle(words.filter((item) => item.hanzi !== word.hanzi)).slice(0, 3);
       const answers = shuffle([word, ...wrongChoices]);
@@ -8838,20 +10850,31 @@
     }
 
     function grantSupplyReward() {
-      const rewardCoins = 30 + levelNumber * 4;
+      const rewardCoins = 35 + levelNumber * 5;
+      const repairAmount = 2;
+      const smokeBonus = 1;
+      const ammoRewardId = "shell_ap";
       playerState.coins += rewardCoins;
       playerState.dailyScore += rewardCoins;
-      lives = Math.min(getMaxLives(), lives + 1);
+      lives = Math.min(getMaxLives(), lives + repairAmount);
       runUpgrades.armor += 1;
       playerArmor += 1;
-      runUpgradeLog.push(`War Supply: +${rewardCoins} coins, repair 1 HP, +1 armor`);
+      smokeCoverCharges += smokeBonus;
+      playerState.ammo = playerState.ammo && typeof playerState.ammo === "object" ? playerState.ammo : {};
+      playerState.ammo[ammoRewardId] = getAmmoCount(ammoRewardId) + 1;
+      runUpgradeLog.push(`War Supply: +${rewardCoins} coins, repair ${repairAmount} HP, +1 armor, +${smokeBonus} smoke cover, +1 AP shell`);
       saveState();
       syncHud();
       supplyChest.classList.add("open");
       playSuccessSound();
-      supplySubtitle.textContent = "Supply chest opened.";
-      supplyMessage.textContent = `Extra supply: +${rewardCoins} coins, repair 1 HP, +1 armor.`;
-      setTimeout(closeSupplyChallenge, 1200);
+      window.setTimeout(playBuySound, 160);
+      supplySubtitle.textContent = "Supply crate opened.";
+      supplyMessage.textContent = "Quartermaster rewards loaded for the next push.";
+      supplyReward.textContent = `+${rewardCoins} coins · Repair ${repairAmount} HP · +1 armor · +${smokeBonus} smoke cover · +1 AP shell`;
+      supplyReward.classList.remove("pop");
+      void supplyReward.offsetWidth;
+      supplyReward.classList.add("pop");
+      setTimeout(closeSupplyChallenge, 1700);
     }
 
     function chooseSupplyAnswer(button) {
@@ -8886,6 +10909,7 @@
     }
 
     function showPerkChoices() {
+      playSpecialPanelSound();
       const choices = shuffle(perks).slice(0, 2);
       renderVictoryScene();
       perkSubtitle.textContent = `Stage ${levelNumber} clear. Choose one upgrade for the next stage.`;
@@ -8925,6 +10949,7 @@
       perk.apply();
       runUpgradeLog.push(perk.name);
       levelNumber += 1;
+      debugSingleEnemyId = "";
       currentEnemy = createEnemy(levelNumber);
       isLevelCleared = false;
       warShopAvailable = false;
@@ -9065,17 +11090,33 @@
       }
       const audio = new Audio(src);
       let settled = false;
+      let started = false;
+      const startLearningAudio = () => {
+        if (started) return;
+        started = true;
+        options.onStart?.();
+      };
+      const finishLearningAudio = () => {
+        if (!started) return;
+        started = false;
+        options.onEnd?.();
+      };
       const useFallback = () => {
         if (settled) return;
         settled = true;
+        finishLearningAudio();
         onMissing?.();
         fallback?.();
       };
       audio.volume = options.volume ?? 1;
-      audio.onended = () => options.onEnd?.();
+      audio.onended = () => {
+        if (settled) return;
+        settled = true;
+        finishLearningAudio();
+      };
       audio.onerror = useFallback;
       const playback = audio.play();
-      options.onStart?.();
+      startLearningAudio();
       if (playback?.catch) playback.catch(useFallback);
       return true;
     }
@@ -9083,7 +11124,7 @@
     function speakWord(word) {
       if (!word) return;
       prepareSpokenWord(word);
-      const speechOptions = { preserveMessage: true, autoRetry: true, delay: 80 };
+      const speechOptions = withLearningAudio({ preserveMessage: true, autoRetry: true, delay: 80 });
       const speakFallback = () => queueChineseSpeech(getSpokenWordText(word), speechOptions);
       playCustomVoiceLine(
         getHanziVoiceLine(word),
@@ -9095,13 +11136,14 @@
 
     function speakBossPhrase(phrase, options = {}) {
       if (!phrase) return false;
+      const speechOptions = withLearningAudio(options);
       const word = phrase.word || wordByHanzi[phrase.text];
       const speechText = getBossSpeechText(phrase);
-      if (!word) return queueChineseSpeech(speechText, options);
+      if (!word) return queueChineseSpeech(speechText, speechOptions);
       return playCustomVoiceLine(
         getHanziVoiceLine(word),
-        options,
-        () => queueChineseSpeech(speechText, options),
+        speechOptions,
+        () => queueChineseSpeech(speechText, speechOptions),
         () => queueMissingHanziAudio(word, "background-tts-download", speechText)
       );
     }
@@ -9529,7 +11571,7 @@
           messageEl.textContent += ` ${shotAmmo.name} used (${getAmmoCount(shotAmmo.id)} left).`;
         }
         fire(shotAmmo);
-        const impactDelay = (shotAmmo?.projectileDuration || 900) + (shotAmmo?.projectileSheet ? 1050 : 0);
+        const impactDelay = (shotAmmo?.projectileDuration || 900) + (shotAmmo?.projectileSheet ? 260 : 0);
         setTimeout(() => {
           if (isGameOver || isLevelCleared) return;
           const shotDamage = getShotDamage(shotAmmo);
@@ -9543,7 +11585,7 @@
           if (ammoEffectText) messageEl.textContent += ` ${ammoEffectText}`;
           syncHud();
           if (currentEnemy.hp <= 0) {
-            playPhaserDestruction(enemyTank, { heavy: currentEnemy.id === "boss", direction: -1 });
+            playEnemyDeathVfx(enemyTank, currentEnemy);
             completeLevel();
             return;
           }
@@ -9558,7 +11600,7 @@
               ? `${currentEnemy.name} armor has ${currentEnemy.armor} left. Keep attacking.`
             : `${currentEnemy.name} has ${currentEnemy.hp} armor left. Keep attacking.`;
           renderQuestion(pickWord());
-        }, 1100);
+        }, impactDelay);
         return;
       }
 
@@ -9748,6 +11790,7 @@
         messageEl.textContent += ` ${shotAmmo.name} used (${getAmmoCount(shotAmmo.id)} left).`;
       }
       fire(shotAmmo);
+      const impactDelay = (shotAmmo?.projectileDuration || 900) + (shotAmmo?.projectileSheet ? 260 : 0);
       setTimeout(() => {
         if (isGameOver || isLevelCleared) return;
         const shotDamage = getShotDamage(shotAmmo);
@@ -9763,12 +11806,12 @@
         if (ammoEffectText) messageEl.textContent += ` ${ammoEffectText}`;
         syncHud();
         if (currentEnemy.hp <= 0) {
-          playPhaserDestruction(enemyTank, { heavy: true, direction: -1 });
+          playEnemyDeathVfx(enemyTank, currentEnemy);
           completeLevel();
           return;
         }
         renderBossQuestion();
-      }, 1100);
+      }, impactDelay);
     }
 
     function fire(ammo = null) {
@@ -9778,13 +11821,15 @@
       bullet.classList.remove("fly", "ap-shell", "he-shell", "cannon-shell", "smoke-shell", "repair-shell", "armor-shell", "arcane-shell", "flash-shell");
       burst.classList.remove("show", "he-burst");
       const playerStartX = phaserPlayerSprite?.x || 0;
-      playPhaserPlayerState(ammo?.id === "shell_he" ? "heavy-fire" : "fire", true);
+      const heavyShot = ammo?.id === "shell_he" || ammo?.id === "weapon_cannon";
+      playPhaserPlayerState(heavyShot ? "heavy-fire" : "fire", true);
       tweenPhaserSprite(phaserPlayerSprite, { x: playerStartX + 10, yoyo: true }, 150);
       tweenPhaserSprite(phaserPlayerTurretSprite, { x: playerStartX + 10, yoyo: true }, 150);
       const projectileDuration = ammo?.projectileDuration || 560;
       const explodeOnImpact = () => {
         playExplosionSound();
-        playPhaserExplosion(enemyTank, ammo?.id === "shell_he" ? "heavy" : "normal");
+        const heavyImpact = ammo?.id === "shell_he" || ammo?.explosionVariant === "heavy" || ammo?.explosionVariant === "massive";
+        playPhaserExplosion(enemyTank, heavyImpact ? "heavy" : "normal");
         if (ammo?.id === "shell_he") {
           burst.classList.add("he-burst");
         }
@@ -9792,8 +11837,9 @@
         enemyTank.classList.add("hit");
       };
       const phaserProjectilePlayed = playPhaserProjectile(playerTank, enemyTank, {
+        ammoId: ammo?.id,
         color: ammo?.projectileColor || (ammo?.id === "shell_he" ? 0xff7a2f : ammo?.id === "weapon_cannon" ? 0xdbeafe : ammo?.id === "shell_ap" ? 0xfff2a1 : 0xf3b23c),
-        width: ammo ? 34 : 24,
+        width: ammo?.projectileWidth || (ammo ? 34 : 24),
         height: ammo?.projectileHeight || (ammo?.id === "shell_he" ? 16 : 10),
         effectSheet: ammo?.projectileSheet,
         duration: projectileDuration,
@@ -9863,6 +11909,8 @@
       const archive = Array.isArray(state.warArchive) ? state.warArchive : [];
       const masteredCount = countMasteredHanzi(state.correctBank);
       const rank = getRankForMastery(masteredCount);
+      const leaderboardStats = extractLeaderboardStats(state);
+      const damage = Math.max(0, Math.floor(Number(leaderboardStats.highestDamage) || 0));
       const best = archive.reduce((top, record) => {
         if (!top) return record;
         if ((record.stage || 0) > (top.stage || 0)) return record;
@@ -9876,6 +11924,9 @@
         score: best?.score || 0,
         coins: best?.coins || 0,
         masteredCount,
+        deaths: Math.max(0, Math.floor(Number(leaderboardStats.mostDeaths) || 0)),
+        damage,
+        maxDamage: damage,
         rankName: rank.name,
         rankZh: rank.zh,
         date: best?.date || ""
@@ -9886,13 +11937,14 @@
       const profiles = getProfiles();
       return Object.entries(profiles)
         .map(([profileId, profile]) => getProfileBestRecord(profileId, profile))
-        .filter((record) => record.stage > 0)
-        .sort((a, b) => b.stage - a.stage || b.score - a.score || a.name.localeCompare(b.name));
+        .filter((record) => record.stage > 0 || record.masteredCount > 0 || record.deaths > 0 || record.damage > 0)
+        .sort((a, b) => getLeaderboardValue(b, activeLeaderboardRanking) - getLeaderboardValue(a, activeLeaderboardRanking) || b.stage - a.stage || b.score - a.score || a.name.localeCompare(b.name));
     }
 
     function normalizeLeaderboardRecord(record) {
       const masteredCount = Math.max(0, Number(record?.masteredCount) || 0);
       const fallbackRank = getRankForMastery(masteredCount);
+      const damage = Math.max(0, Math.floor(Number(record?.damage ?? record?.maxDamage) || 0));
       return {
         profileId: String(record?.profileId || "").slice(0, 64),
         name: normalizeProfileName(String(record?.name || "Player")).slice(0, 24) || "Player",
@@ -9900,6 +11952,9 @@
         score: Math.max(0, Math.floor(Number(record?.score) || 0)),
         coins: Math.max(0, Math.floor(Number(record?.coins) || 0)),
         masteredCount,
+        deaths: Math.max(0, Math.floor(Number(record?.deaths) || 0)),
+        damage,
+        maxDamage: damage,
         rankName: String(record?.rankName || fallbackRank.name || "Recruit").slice(0, 32),
         rankZh: String(record?.rankZh || fallbackRank.zh || "新兵").slice(0, 12),
         date: String(record?.date || record?.updatedAt || "").slice(0, 40),
@@ -9920,39 +11975,71 @@
       const bestByProfile = new Map();
       [...cloudRecords, ...localRecords].forEach((record) => {
         const normalized = normalizeLeaderboardRecord(record);
-        if (!normalized.stage) return;
+        if (!normalized.stage && !normalized.masteredCount && !normalized.deaths && !normalized.damage) return;
         const key = normalized.profileId || normalized.name.toLowerCase();
         const current = bestByProfile.get(key);
-        if (!current || normalized.stage > current.stage || (normalized.stage === current.stage && normalized.score > current.score)) {
+        if (!current || getLeaderboardValue(normalized, activeLeaderboardRanking) > getLeaderboardValue(current, activeLeaderboardRanking) || normalized.stage > current.stage || (normalized.stage === current.stage && normalized.score > current.score)) {
           bestByProfile.set(key, normalized);
         }
       });
       return [...bestByProfile.values()]
-        .sort((a, b) => b.stage - a.stage || b.score - a.score || b.masteredCount - a.masteredCount || a.name.localeCompare(b.name))
-        .slice(0, 20);
+        .sort((a, b) => getLeaderboardValue(b, activeLeaderboardRanking) - getLeaderboardValue(a, activeLeaderboardRanking) || b.stage - a.stage || b.score - a.score || b.masteredCount - a.masteredCount || a.name.localeCompare(b.name))
+        .slice(0, 200);
+    }
+
+    function getLeaderboardValue(record, ranking = activeLeaderboardRanking) {
+      if (ranking === "mostHanzi") return record.masteredCount || 0;
+      if (ranking === "highestStage") return record.stage || 0;
+      if (ranking === "mostDeaths") return record.deaths || 0;
+      if (ranking === "highestDamage") return record.damage || record.maxDamage || 0;
+      return record.stage || 0;
+    }
+
+    function getLeaderboardMetricLabel(ranking = activeLeaderboardRanking) {
+      return leaderboardRankings.find((item) => item.key === ranking)?.metric || "Score";
+    }
+
+    function renderLeaderboardTabs() {
+      leaderboardTabs.innerHTML = "";
+      leaderboardRankings.forEach((ranking) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `leaderboard-tab${ranking.key === activeLeaderboardRanking ? " active" : ""}`;
+        button.dataset.ranking = ranking.key;
+        button.textContent = ranking.label;
+        button.title = ranking.metric;
+        leaderboardTabs.appendChild(button);
+      });
     }
 
     function renderLeaderboardRecords(records, statusText) {
       leaderboardStatus.textContent = statusText;
-
+      const sortedRecords = records
+        .map(normalizeLeaderboardRecord)
+        .filter((record) => getLeaderboardValue(record, activeLeaderboardRanking) > 0)
+        .sort((a, b) => getLeaderboardValue(b, activeLeaderboardRanking) - getLeaderboardValue(a, activeLeaderboardRanking) || b.stage - a.stage || b.score - a.score || b.masteredCount - a.masteredCount || a.name.localeCompare(b.name))
+        .slice(0, 200);
       leaderboardList.innerHTML = "";
-      leaderboardEmpty.style.display = records.length > 0 ? "none" : "block";
-      records.forEach((record, index) => {
+      leaderboardEmpty.style.display = sortedRecords.length > 0 ? "none" : "block";
+      const metricLabel = getLeaderboardMetricLabel();
+      sortedRecords.forEach((record, index) => {
         const card = document.createElement("article");
         card.className = "leaderboard-card";
         card.innerHTML = `
           <div class="leaderboard-card-head"><span>#${index + 1} ${escapeHtml(record.name)}</span><span>Stage ${escapeInteger(record.stage)}</span></div>
+          <div class="leaderboard-card-rank">${escapeHtml(metricLabel)} ${escapeInteger(getLeaderboardValue(record))}</div>
           <div class="leaderboard-card-meta">Mastered ${escapeInteger(record.masteredCount)} Hanzi · Rank ${escapeHtml(record.rankZh)} · ${escapeHtml(record.rankName)}</div>
-          <div class="leaderboard-card-meta">Best Score ${escapeInteger(record.score)} · Coins ${escapeInteger(record.coins)} · ${escapeHtml(formatDate(record.date))}</div>
+          <div class="leaderboard-card-meta">Best Score ${escapeInteger(record.score)} · Coins ${escapeInteger(record.coins)} · Defeats ${escapeInteger(record.deaths)} · Max Damage ${escapeInteger(record.damage)} · ${escapeHtml(formatDate(record.date))}</div>
         `;
         leaderboardList.appendChild(card);
       });
     }
 
     function renderLeaderboard() {
+      renderLeaderboardTabs();
       const localRecords = getLocalLeaderboardRecords();
       const cloudRecords = getCachedCloudLeaderboard();
-      const records = leaderboardApiBase && cloudRecords.length > 0 ? cloudRecords.slice(0, 20) : localRecords.slice(0, 20);
+      const records = leaderboardApiBase && cloudRecords.length > 0 ? cloudRecords.slice(0, 200) : localRecords.slice(0, 200);
       const statusText = leaderboardApiBase
         ? cloudRecords.length > 0 ? "Shared leaderboard synced." : "Shared leaderboard loading. Local records are shown until cloud data arrives."
         : "Local records only. Add a leaderboard API URL to share scores across devices.";
@@ -9965,18 +12052,18 @@
         const response = await fetch(`${leaderboardApiBase}/leaderboard`, { headers: { Accept: "application/json" } });
         if (!response.ok) throw new Error(`Leaderboard fetch failed: ${response.status}`);
         const payload = await response.json();
-        const records = Array.isArray(payload?.records) ? payload.records.map(normalizeLeaderboardRecord).filter((record) => record.stage > 0) : [];
-        localStorage.setItem(leaderboardStorageKey, JSON.stringify(records.slice(0, 20)));
-        renderLeaderboardRecords(records.slice(0, 20), `Shared leaderboard updated: ${records.length} records.`);
+        const records = Array.isArray(payload?.records) ? payload.records.map(normalizeLeaderboardRecord).filter((record) => record.stage > 0 || record.masteredCount > 0 || record.deaths > 0 || record.damage > 0) : [];
+        localStorage.setItem(leaderboardStorageKey, JSON.stringify(records.slice(0, 200)));
+        renderLeaderboardRecords(records.slice(0, 200), `Shared leaderboard updated: ${records.length} records.`);
       } catch {
         const cachedRecords = getCachedCloudLeaderboard();
         const fallbackRecords = cachedRecords.length > 0 ? cachedRecords : getLocalLeaderboardRecords();
-        renderLeaderboardRecords(fallbackRecords.slice(0, 20), cachedRecords.length > 0 ? "Shared leaderboard unavailable. Showing cached cloud records." : "Shared leaderboard unavailable. Showing local records.");
+        renderLeaderboardRecords(fallbackRecords.slice(0, 200), cachedRecords.length > 0 ? "Shared leaderboard unavailable. Showing cached cloud records." : "Shared leaderboard unavailable. Showing local records.");
       }
     }
 
     async function submitLeaderboardRecord(record) {
-      if (!leaderboardApiBase || !record?.stage) return;
+      if (!leaderboardApiBase || (!record?.stage && !record?.masteredCount && !record?.deaths && !record?.damage)) return;
       await fetch(`${leaderboardApiBase}/leaderboard`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
@@ -9989,7 +12076,7 @@
       const now = Date.now();
       if (now - Number(playerState.lastLeaderboardSyncAt || 0) < leaderboardSyncIntervalMs) return;
       const record = getProfileBestRecord(activeProfileId, { name: activeProfileName || activeProfileId });
-      if (!record.stage) return;
+      if (!record.stage && !record.masteredCount && !record.deaths && !record.damage) return;
       playerState.lastLeaderboardSyncAt = now;
       submitLeaderboardRecord(record).catch(() => {});
     }
@@ -10080,51 +12167,102 @@
       renderMasteredWords(masteredWords);
     }
 
+    function closeOpenWindowsForModal() {
+      const modalPairs = [
+        [arsenal, arsenalButton, "crate-opening"],
+        [archiveModal, archiveButton, "dossier-opening"],
+        [masteryModal, masteryButton, "codex-opening"],
+        [enemyGalleryModal, enemyGalleryButton, "intel-opening"],
+        [leaderboardModal, leaderboardButton, "medal-opening"]
+      ];
+      modalPairs.forEach(([modal, button, openingClass]) => {
+        if (!modal?.classList.contains("show")) return;
+        modal.classList.remove("show", openingClass);
+        modal.setAttribute("aria-hidden", "true");
+        button?.setAttribute("aria-pressed", "false");
+        resumeMusicFromModal();
+      });
+    }
+
     function openMasteryRecords() {
       unlockAudio();
-      playUiSound();
-      arsenal.classList.remove("show");
-      arsenal.setAttribute("aria-hidden", "true");
-      archiveModal.classList.remove("show");
-      archiveModal.setAttribute("aria-hidden", "true");
+      playSpecialPanelSound();
+      masteryButton.classList.add("is-opening");
+      masteryButton.setAttribute("aria-pressed", "true");
+      closeOpenWindowsForModal();
+      suspendMusicForModal();
       debugModal.classList.remove("show");
       debugModal.setAttribute("aria-hidden", "true");
-      enemyGalleryModal.classList.remove("show");
-      enemyGalleryModal.setAttribute("aria-hidden", "true");
       renderMasteryRecords();
-      masteryModal.classList.add("show");
+      masteryModal.classList.add("show", "codex-opening");
       masteryModal.setAttribute("aria-hidden", "false");
+      setTimeout(() => {
+        masteryButton.classList.remove("is-opening");
+        masteryModal.classList.remove("codex-opening");
+      }, 520);
       closeMasteryButton.focus();
     }
 
     function closeMasteryRecords() {
       const wasOpen = masteryModal.classList.contains("show");
       if (!wasOpen) return;
-      playUiSound();
-      masteryModal.classList.remove("show");
+      playCloseSound();
+      masteryModal.classList.remove("show", "codex-opening");
       masteryModal.setAttribute("aria-hidden", "true");
+      resumeMusicFromModal();
+      masteryButton.classList.remove("is-opening");
+      masteryButton.setAttribute("aria-pressed", "false");
       masteryButton.focus();
     }
 
     function openArchives() {
       unlockAudio();
       playUiSound();
+      closeOpenWindowsForModal();
+      suspendMusicForModal();
       archiveMeta.textContent = activeProfileName
         ? `${activeProfileName}'s archive and all-player best stages.`
         : "Review battle records and player best stages.";
       renderPlayerArchive();
-      renderLeaderboard();
-      refreshCloudLeaderboard();
-      archiveModal.classList.add("show");
+      archiveModal.classList.add("show", "dossier-opening");
       archiveModal.setAttribute("aria-hidden", "false");
+      archiveButton.setAttribute("aria-pressed", "true");
+      window.setTimeout(() => archiveModal.classList.remove("dossier-opening"), 520);
       closeArchiveButton.focus();
     }
 
     function closeArchives() {
       playUiSound();
-      archiveModal.classList.remove("show");
+      archiveModal.classList.remove("show", "dossier-opening");
       archiveModal.setAttribute("aria-hidden", "true");
+      resumeMusicFromModal();
+      archiveButton.setAttribute("aria-pressed", "false");
       archiveButton.focus();
+    }
+
+    function openLeaderboardModal() {
+      unlockAudio();
+      playUiSound();
+      closeOpenWindowsForModal();
+      suspendMusicForModal();
+      renderLeaderboard();
+      refreshCloudLeaderboard();
+      leaderboardModal.classList.add("show", "medal-opening");
+      leaderboardModal.setAttribute("aria-hidden", "false");
+      leaderboardButton.setAttribute("aria-pressed", "true");
+      window.setTimeout(() => leaderboardModal.classList.remove("medal-opening"), 560);
+      closeLeaderboardButton.focus();
+    }
+
+    function closeLeaderboardModal() {
+      const wasOpen = leaderboardModal.classList.contains("show");
+      if (!wasOpen) return;
+      playCloseSound();
+      leaderboardModal.classList.remove("show", "medal-opening");
+      leaderboardModal.setAttribute("aria-hidden", "true");
+      resumeMusicFromModal();
+      leaderboardButton.setAttribute("aria-pressed", "false");
+      leaderboardButton.focus();
     }
 
     function renderDebugTargets() {
@@ -10133,10 +12271,10 @@
         const card = document.createElement("article");
         card.className = "shop-card";
         card.innerHTML = `
-          <div class="shop-type">Stage ${target.stage}</div>
+          <div class="shop-type">${target.category || "Stage"} ${target.stage}</div>
           <div class="shop-name">${target.title}</div>
           <div class="shop-desc">${target.desc}</div>
-          <button class="shop-action" type="button" data-debug-stage="${target.stage}">Start Debug Battle</button>
+          <button class="shop-action" type="button" data-debug-stage="${target.stage}" data-debug-enemy-id="${target.enemyId || ""}">Start Debug Battle</button>
         `;
         debugGrid.appendChild(card);
       });
@@ -10162,23 +12300,39 @@
       (debugButton.hidden ? switchProfileButton : debugButton).focus();
     }
 
+    function getEnemyGalleryPreviewConfig(id) {
+      return enemyGalleryPreviewMap[id] || enemyGalleryPreviewMap.tank || {};
+    }
+
     function getEnemyGalleryItems() {
       const regularEnemies = levelTypes.map((enemy) => ({
         id: enemy.id,
         name: enemy.name,
         hp: enemy.hp,
         damage: enemy.damage || 1,
-        sprite: enemySpriteMap[enemy.id] || enemySpriteMap.tank,
+        cardArt: getEnemyGalleryPreviewConfig(enemy.id).cardArt || enemySpriteMap[enemy.id] || enemySpriteMap.tank,
+        portrait: getEnemyGalleryPreviewConfig(enemy.id).portrait || getEnemyGalleryPreviewConfig(enemy.id).cardArt || enemySpriteMap[enemy.id] || enemySpriteMap.tank,
+        desc: enemyPortraitDetails[enemy.id] || enemy.intro
+      }));
+      const eliteEnemies = eliteTypes.map((enemy) => ({
+        id: enemy.id,
+        name: enemy.name,
+        hp: enemy.hp,
+        damage: enemy.damage || 1,
+        cardArt: getEnemyGalleryPreviewConfig(enemy.id).cardArt || enemy.asset?.galleryPreview || enemySpriteMap[enemy.id] || enemy.asset?.fallback || enemySpriteMap.tank,
+        portrait: getEnemyGalleryPreviewConfig(enemy.id).portrait || getEnemyGalleryPreviewConfig(enemy.id).cardArt || enemy.asset?.galleryPreview || enemySpriteMap[enemy.id] || enemy.asset?.fallback || enemySpriteMap.tank,
         desc: enemyPortraitDetails[enemy.id] || enemy.intro
       }));
       return [
         ...regularEnemies,
+        ...eliteEnemies,
         {
           id: "boss",
           name: bossTemplate.name,
           hp: bossTemplate.hp,
           damage: bossTemplate.damage || 1,
-          sprite: bossTemplate.sprite,
+          cardArt: getEnemyGalleryPreviewConfig("boss").cardArt || bossTemplate.sprite,
+          portrait: getEnemyGalleryPreviewConfig("boss").portrait || getEnemyGalleryPreviewConfig("boss").cardArt || bossTemplate.sprite,
           desc: enemyPortraitDetails.boss
         }
       ];
@@ -10287,7 +12441,7 @@
 
     function resizeEnemyGalleryPreview() {
       if (enemyGalleryGame?.scale) enemyGalleryGame.scale.resize(880, 520);
-      const item = enemyPortraitDetails.find((candidate) => candidate.id === selectedEnemyGalleryId);
+      const item = getEnemyGalleryItem(selectedEnemyGalleryId);
       if (item) fitEnemyGallerySprite(item);
     }
 
@@ -10394,7 +12548,7 @@
     function renderEnemyGalleryPreview(id) {
       const item = getEnemyGalleryItem(id);
       selectedEnemyGalleryId = item.id;
-      enemyGalleryFallback.src = item.sprite;
+      enemyGalleryFallback.src = item.portrait || item.cardArt;
       enemyGalleryName.textContent = item.name;
       enemyGalleryMeta.textContent = `HP ${item.hp} · Damage ${item.damage}`;
       enemyGalleryDesc.textContent = item.desc;
@@ -10418,7 +12572,7 @@
         button.className = `enemy-gallery-choice${item.id === selectedEnemyGalleryId ? " active" : ""}`;
         button.dataset.enemyId = item.id;
         button.innerHTML = `
-          <img class="enemy-gallery-thumb" src="${item.sprite}" alt="">
+          <img class="enemy-gallery-thumb" src="${escapeHtml(item.cardArt)}" alt="">
           <span>
             <span class="enemy-gallery-choice-title">${item.name}</span>
             <span class="enemy-gallery-choice-meta">HP ${item.hp} · Damage ${item.damage}</span>
@@ -10431,18 +12585,17 @@
     function openEnemyGallery() {
       unlockAudio();
       playUiSound();
-      arsenal.classList.remove("show");
-      arsenal.setAttribute("aria-hidden", "true");
-      archiveModal.classList.remove("show");
-      archiveModal.setAttribute("aria-hidden", "true");
+      closeOpenWindowsForModal();
+      suspendMusicForModal();
       debugModal.classList.remove("show");
       debugModal.setAttribute("aria-hidden", "true");
       selectedEnemyGalleryId = "truck";
       renderEnemyGalleryList();
       renderEnemyGalleryPreview(selectedEnemyGalleryId);
-      enemyGalleryModal.classList.add("show");
+      enemyGalleryModal.classList.add("show", "intel-opening");
       enemyGalleryModal.setAttribute("aria-hidden", "false");
       initEnemyGalleryPhaser();
+      window.setTimeout(() => enemyGalleryModal.classList.remove("intel-opening"), 560);
       closeEnemyGalleryButton.focus();
     }
 
@@ -10451,12 +12604,13 @@
       if (!wasOpen) return;
       playUiSound();
       stopEnemyGalleryFrameLoop();
-      enemyGalleryModal.classList.remove("show");
+      enemyGalleryModal.classList.remove("show", "intel-opening");
       enemyGalleryModal.setAttribute("aria-hidden", "true");
+      resumeMusicFromModal();
       enemyGalleryButton.focus();
     }
 
-    function startDebugBattle(stage) {
+    function startDebugBattle(stage, enemyId = "") {
       if (!canUseDebugMode()) {
         syncDebugModeAccess();
         return;
@@ -10481,6 +12635,7 @@
       playerState = playerState || cloneDefaultState();
       score = 0;
       levelNumber = stage;
+      debugSingleEnemyId = enemyId || "";
       currentEnemy = createEnemy(levelNumber);
       debugBossIdiomMode = currentEnemy.id === "boss";
       laneStates = [];
@@ -10491,9 +12646,10 @@
       trainingHits = {};
       trainingActive = false;
       trainingLocked = false;
-      trainedStage = 0;
+      trainedStage = debugSingleEnemyId ? stage : 0;
       currentTrainingWord = null;
       enemyTank.classList.remove("fragmented");
+      enemyTank.classList.remove("reloading", "fire", "boss-slam", "boss-attack-approach", "crash-attack", "spring-bounce-attack", "swarm-volley", "pack-pounce", "flea-burst-attack", "melee-strike");
       playerTank.classList.remove("fragmented", "destroyed");
       smokeCoverCharges = 0;
       lives = getMaxLives();
@@ -10517,12 +12673,16 @@
     function buildWarSummary() {
       const topWords = getTopDamagingWords();
       const coinsBeforeDefeat = playerState.coins;
+      const maxDamage = topWords.reduce((total, item) => total + (Number(item.damage) || 0), 0);
       const summary = {
         date: new Date().toISOString(),
         player: activeProfileName || "Commander",
         score,
         stage: levelNumber,
         coins: coinsBeforeDefeat,
+        deaths: 1,
+        damage: maxDamage,
+        maxDamage,
         upgrades: [...runUpgradeLog],
         topDamagingWords: topWords
       };
@@ -10547,10 +12707,11 @@
     function showGameOver() {
       if (isGameOver) return;
       isGameOver = true;
+      stopBattleMusic();
       clearPauseState();
       stopCountdown();
       locked = true;
-      enemyTank.classList.remove("reloading", "fire", "boss-slam", "boss-attack-approach", "crash-attack");
+      enemyTank.classList.remove("reloading", "fire", "boss-slam", "boss-attack-approach", "crash-attack", "spring-bounce-attack", "swarm-volley", "pack-pounce", "flea-burst-attack", "melee-strike");
       enemyBullet.classList.remove("fly");
       playerTank.classList.remove("hit", "fire");
       playerTank.classList.add("destroyed", "fragmented");
@@ -10583,6 +12744,7 @@
         absoluteDefense: 0,
         armor: 0
       };
+      debugSingleEnemyId = "";
       currentEnemy = createEnemy(levelNumber);
       laneStates = [];
       activeLaneIndex = 0;
@@ -10615,7 +12777,7 @@
       syncHud();
       playerTank.classList.remove("hit", "fire", "destroyed");
       playerTank.classList.remove("fragmented");
-      enemyTank.classList.remove("hit", "fire");
+      enemyTank.classList.remove("hit", "fire", "reloading", "boss-slam", "boss-attack-approach", "crash-attack", "spring-bounce-attack", "swarm-volley", "pack-pounce", "flea-burst-attack", "melee-strike");
       enemyTank.classList.remove("fragmented");
       renderLaneLayer();
       bullet.classList.remove("fly", "ap-shell", "he-shell", "cannon-shell", "smoke-shell", "repair-shell", "armor-shell", "arcane-shell", "flash-shell");
@@ -10634,6 +12796,22 @@
       }
       if (currentEnemy.id === "truck") {
         truckCrashAttack(damage, result);
+        return;
+      }
+      if (currentEnemy.attackStyle === "springHop") {
+        springSoldierBounceAttack(damage, result);
+        return;
+      }
+      if (currentEnemy.attackStyle === "droneSwarm") {
+        droneSwarmVolleyAttack(damage, result);
+        return;
+      }
+      if (currentEnemy.attackStyle === "wolfPack") {
+        wolfPackPounceAttack(damage, result);
+        return;
+      }
+      if (currentEnemy.attackStyle === "fleaHop") {
+        mechanicalFleaHopAttack(damage, result);
         return;
       }
       if (currentEnemy.attackStyle === "melee") {
@@ -10685,10 +12863,11 @@
     function truckCrashAttack(damage = 1, result = { hpDamage: damage }) {
       if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
       playTone(82, 0.28, { type: "sawtooth", endFrequency: 45, volume: 0.12 });
+      playPhaserRushWarning(enemyTank, playerTank);
       enemyTank.classList.remove("reloading", "crash-attack");
       playerTank.classList.remove("hit");
       playerBurst.classList.remove("show");
-      tweenEnemyAttackToBase(130, { angle: 3, inDuration: 520, outDuration: 360 });
+      tweenEnemyAttackToBase(170, { angle: 3, inDuration: 420, outDuration: 520 });
       requestAnimationFrame(() => {
         if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
         enemyTank.classList.add("crash-attack");
@@ -10698,6 +12877,7 @@
         if (isGameOver || isLevelCleared) return;
         playExplosionSound();
         playPhaserExplosion(playerTank, "heavy");
+        playPhaserSelfDestructDebris(playerTank);
         if (result.missed) {
           showDamage(playerTank, 0, { miss: true });
         } else if (result.absoluteBlocked) {
@@ -10714,6 +12894,122 @@
         enemyTank.classList.remove("crash-attack");
         if (!playerTank.classList.contains("destroyed")) playerTank.classList.remove("hit");
       }, 880);
+    }
+
+    function renderEnemyAttackImpact(damage = 1, result = { hpDamage: damage }, options = {}) {
+      if (isGameOver || isLevelCleared) return;
+      if (options.sound === "explosion") {
+        playExplosionSound();
+      } else {
+        playHitSound();
+      }
+      if (options.vfx === "explosion") playPhaserExplosion(playerTank, options.heavy ? "heavy" : "normal");
+      if (options.vfx === "impact") playPhaserImpact(playerTank, result.missed ? "absolute" : "hit");
+      if (options.vfx === "stun") playPhaserEmStun(playerTank);
+      if (options.vfx === "slow") playPhaserSlowVfx(playerTank);
+      if (result.missed) {
+        showDamage(playerTank, 0, { miss: true });
+      } else if (result.absoluteBlocked) {
+        showDamage(playerTank, 0, { absolute: true });
+      } else {
+        showDamage(playerTank, result.totalDamage || damage, { armor: result.armorDamage > 0 });
+      }
+      playerBurst.classList.add("show");
+      playerTank.classList.add("hit");
+      playPhaserPlayerState("hit", true);
+      shakeBattlefield(options.heavy ? "heavy" : "normal");
+    }
+
+    function springSoldierBounceAttack(damage = 1, result = { hpDamage: damage }) {
+      if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
+      playTone(180, 0.14, { type: "triangle", endFrequency: 96, volume: 0.09 });
+      enemyTank.classList.remove("reloading", "spring-bounce-attack");
+      playerTank.classList.remove("hit");
+      playerBurst.classList.remove("show");
+      playPhaserSpringCoilTelegraph(enemyTank);
+      tweenEnemyAttackToBase(currentEnemy.approachDistance || 118, { angle: -8, inDuration: 320, outDuration: 500 });
+      requestAnimationFrame(() => {
+        if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
+        enemyTank.classList.add("spring-bounce-attack");
+      });
+      setTimeout(() => renderEnemyAttackImpact(damage, result, { vfx: "impact" }), 430);
+      setTimeout(() => {
+        enemyTank.classList.remove("spring-bounce-attack");
+        if (!playerTank.classList.contains("destroyed")) playerTank.classList.remove("hit");
+      }, 900);
+    }
+
+    function droneSwarmVolleyAttack(damage = 1, result = { hpDamage: damage }) {
+      if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
+      playTone(520, 0.12, { type: "sawtooth", endFrequency: 740, volume: 0.055 });
+      enemyTank.classList.remove("reloading", "swarm-volley");
+      playerTank.classList.remove("hit");
+      playerBurst.classList.remove("show");
+      playPhaserDroneOrbitCharge(enemyTank);
+      requestAnimationFrame(() => {
+        if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
+        enemyTank.classList.add("swarm-volley");
+      });
+      [0.18, 0.5, 0.82].forEach((fromY, index) => {
+        setTimeout(() => {
+          if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
+          playPhaserTargetingLine(enemyTank, playerTank, { color: 0x67e8f9, width: 3, duration: 260, fromX: 0.24, fromY, toX: 0.72, toY: 0.35 + index * 0.13 });
+          playPhaserProjectile(enemyTank, playerTank, { fromX: 0.24, fromY, toX: 0.72, toY: 0.35 + index * 0.13, color: 0x67e8f9, width: 18, height: 8, duration: 360 });
+        }, 120 + index * 120);
+      });
+      setTimeout(() => renderEnemyAttackImpact(damage, result, { vfx: "stun" }), 760);
+      setTimeout(() => {
+        enemyTank.classList.remove("swarm-volley");
+        if (!playerTank.classList.contains("destroyed")) playerTank.classList.remove("hit");
+        updatePhaserActors();
+      }, 1040);
+    }
+
+    function wolfPackPounceAttack(damage = 2, result = { hpDamage: damage }) {
+      if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
+      playTone(110, 0.18, { type: "sawtooth", endFrequency: 60, volume: 0.1 });
+      enemyTank.classList.remove("reloading", "pack-pounce");
+      playerTank.classList.remove("hit");
+      playerBurst.classList.remove("show");
+      playPhaserWolfFlankTelegraph(enemyTank);
+      tweenEnemyAttackToBase(currentEnemy.approachDistance || 138, { angle: 6, inDuration: 360, outDuration: 520 });
+      requestAnimationFrame(() => {
+        if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
+        enemyTank.classList.add("pack-pounce");
+      });
+      [-24, 12, 42].forEach((offset, index) => {
+        setTimeout(() => {
+          if (!phaserEffects || isGameOver || isLevelCleared) return;
+          const start = getBattlefieldPoint(enemyTank, 0.24, 0.45 + index * 0.13);
+          const end = getBattlefieldPoint(playerTank, 0.74, 0.5);
+          const marker = phaserEffects.add.triangle(start.x, start.y + offset, 0, -10, 30, 0, 0, 10, 0xf97316, 0.72).setDepth(36);
+          phaserEffects.tweens.add({ targets: marker, x: end.x, y: end.y + offset * 0.35, alpha: 0, duration: 280, ease: "Cubic.easeIn", onComplete: () => marker.destroy() });
+        }, index * 140);
+      });
+      setTimeout(() => renderEnemyAttackImpact(damage, result, { vfx: "impact", heavy: true }), 620);
+      setTimeout(() => {
+        enemyTank.classList.remove("pack-pounce");
+        if (!playerTank.classList.contains("destroyed")) playerTank.classList.remove("hit");
+      }, 980);
+    }
+
+    function mechanicalFleaHopAttack(damage = 1, result = { hpDamage: damage }) {
+      if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
+      playTone(420, 0.1, { type: "square", endFrequency: 260, volume: 0.055 });
+      enemyTank.classList.remove("reloading", "flea-burst-attack");
+      playerTank.classList.remove("hit");
+      playerBurst.classList.remove("show");
+      playPhaserFleaHopTelegraph(enemyTank);
+      tweenEnemyAttackToBase(currentEnemy.approachDistance || 92, { angle: -4, inDuration: 260, outDuration: 360 });
+      requestAnimationFrame(() => {
+        if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
+        enemyTank.classList.add("flea-burst-attack");
+      });
+      setTimeout(() => renderEnemyAttackImpact(damage, result, { vfx: "slow" }), 430);
+      setTimeout(() => {
+        enemyTank.classList.remove("flea-burst-attack");
+        if (!playerTank.classList.contains("destroyed")) playerTank.classList.remove("hit");
+      }, 760);
     }
 
     function meleeStrikeAttack(damage = 1, result = { hpDamage: damage }) {
@@ -10754,16 +13050,19 @@
     function bossHammerAttack(damage = 1, result = { hpDamage: damage }) {
       if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
       playTone(68, 0.24, { type: "sawtooth", endFrequency: 38, volume: 0.13 });
-      const wasApproaching = enemyTank.classList.contains("reloading") || Boolean(phaserEnemyReloadTween);
-      const approachDuration = wasApproaching ? 0 : 520;
-      const swingWindup = 520;
-      const impactTime = approachDuration + swingWindup;
-      const cleanupTime = impactTime + 600;
-      enemyTank.classList.remove("reloading", "boss-slam", "boss-attack-approach");
+      const wasApproaching = enemyTank.classList.contains("reloading") || Boolean(phaserEnemyReloadTween) || enemyMeleePoseHeldForAttack;
+      const approachDuration = wasApproaching ? 0 : 420;
+      const chargeHold = 360;
+      const swingWindup = 360;
+      const impactTime = approachDuration + chargeHold + swingWindup;
+      const postImpactHold = 520;
+      const retreatDuration = 440;
+      enemyTank.classList.remove("boss-slam", "boss-attack-approach");
+      if (!wasApproaching) enemyTank.classList.remove("reloading");
       playerTank.classList.remove("hit");
       playerBurst.classList.remove("show");
       stopPhaserEnemyApproach(false);
-      tweenEnemyAttackToBase(getEnemyApproachDistance(), { angle: -9, inDuration: Math.max(160, impactTime), outDuration: 520 });
+      tweenEnemyAttackToBase(getEnemyApproachDistance(), { angle: -7, inDuration: Math.max(120, approachDuration || 120), outDuration: 0 });
       if (!wasApproaching) {
         requestAnimationFrame(() => {
           if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
@@ -10774,11 +13073,12 @@
         if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
         enemyTank.classList.remove("boss-attack-approach");
         enemyTank.classList.add("boss-slam");
+        enemyTank.classList.remove("reloading");
       }, approachDuration);
       setTimeout(() => {
         if (isGameOver || isLevelCleared || lives <= 0 || currentEnemy.hp <= 0) return;
         playPhaserBossSlam();
-      }, approachDuration + 80);
+      }, approachDuration + chargeHold);
 
       setTimeout(() => {
         if (isGameOver || isLevelCleared) return;
@@ -10797,9 +13097,11 @@
       }, impactTime);
 
       setTimeout(() => {
+        tweenEnemyAttackToBase(0, { angle: 0, inDuration: retreatDuration, outDuration: 0 });
+        enemyMeleePoseHeldForAttack = false;
         enemyTank.classList.remove("boss-slam", "boss-attack-approach", "reloading");
         if (!playerTank.classList.contains("destroyed")) playerTank.classList.remove("hit");
-      }, cleanupTime);
+      }, impactTime + postImpactHold);
     }
 
     function getChineseVoice() {
@@ -10819,18 +13121,19 @@
 
     function queueChineseSpeech(text, options = {}) {
       if (!text) return;
+      const speechOptions = getLearningSpeechOptions(options);
       const token = ++speechRequestToken;
       pendingSpeechText = text;
       queuedSpeechRequest = {
         text,
-        options,
+        options: speechOptions,
         token,
         attempts: 0,
-        maxAttempts: options.maxAttempts || 5
+        maxAttempts: speechOptions.maxAttempts || 5
       };
       setTimeout(() => {
         flushQueuedSpeech(token);
-      }, options.delay || 0);
+      }, speechOptions.delay || 0);
     }
 
     function flushQueuedSpeech(expectedToken = speechRequestToken) {
@@ -10857,13 +13160,14 @@
       if (!pendingSpeechText) return;
       const text = pendingSpeechText;
       pendingSpeechText = "";
-      speakChinese(text, { preserveMessage: true });
+      speakChinese(text, withLearningAudio({ preserveMessage: true }));
     }
 
     function speakChinese(text, options = {}) {
       if (!text) return false;
       if (!("speechSynthesis" in window)) {
         if (!options.preserveMessage) messageEl.textContent = "This browser does not support speech. Try Edge or Chrome.";
+        options.onEnd?.();
         return false;
       }
 
@@ -10878,7 +13182,10 @@
       if (chineseVoice) {
         utterance.voice = chineseVoice;
       }
+      utterance.onstart = () => options.onStart?.();
+      utterance.onend = () => options.onEnd?.();
       utterance.onerror = () => {
+        options.onEnd?.();
         pendingSpeechText = text;
         if (options.autoRetry && !queuedSpeechRequest) {
           queueChineseSpeech(text, { ...options, delay: 300, autoRetry: false, preserveMessage: true });
@@ -10956,8 +13263,21 @@
     debugButton.addEventListener("click", openDebugMode);
     adminButton.addEventListener("click", openAdminPanel);
     enemyGalleryButton.addEventListener("click", openEnemyGallery);
+    ["pointerenter", "focus", "pointerdown"].forEach((eventName) => {
+      enemyGalleryButton.addEventListener(eventName, () => enemyGalleryButton.classList.add("is-enlarged"));
+    });
+    ["pointerleave", "blur", "pointerup", "pointercancel"].forEach((eventName) => {
+      enemyGalleryButton.addEventListener(eventName, () => enemyGalleryButton.classList.remove("is-enlarged"));
+    });
+    ["pointerenter", "focus", "pointerdown"].forEach((eventName) => {
+      switchProfileButton.addEventListener(eventName, () => switchProfileButton.classList.add("is-enlarged"));
+    });
+    ["pointerleave", "blur", "pointerup", "pointercancel"].forEach((eventName) => {
+      switchProfileButton.addEventListener(eventName, () => switchProfileButton.classList.remove("is-enlarged"));
+    });
     enemyGalleryAttackButton.addEventListener("click", playEnemyGalleryAttackPreview);
     arsenalButton.addEventListener("click", openArsenal);
+    leaderboardButton.addEventListener("click", openLeaderboardModal);
     switchProfileButton.addEventListener("click", () => {
       unlockAudio();
       playUiSound();
@@ -10966,18 +13286,27 @@
       closeDebugMode();
       closeMasteryRecords();
       closeEnemyGallery();
+      closeLeaderboardModal();
       closeVersusMode();
       showProfileGate("Enter another player profile.");
     });
     closeArsenalButton.addEventListener("click", closeArsenal);
     closeMasteryButton.addEventListener("click", closeMasteryRecords);
     closeArchiveButton.addEventListener("click", closeArchives);
+    closeLeaderboardButton.addEventListener("click", closeLeaderboardModal);
     closeDebugButton.addEventListener("click", closeDebugMode);
     closeEnemyGalleryButton.addEventListener("click", closeEnemyGallery);
     closeVersusButton.addEventListener("click", closeVersusMode);
     document.addEventListener("keydown", handleVersusKeydown);
     arsenal.addEventListener("click", (event) => {
       if (event.target === arsenal) closeArsenal();
+    });
+    leaderboardTabs.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-ranking]");
+      if (!button) return;
+      activeLeaderboardRanking = button.dataset.ranking;
+      playUiSound();
+      renderLeaderboard();
     });
     archiveModal.addEventListener("click", (event) => {
       if (event.target === archiveModal) closeArchives();
@@ -10990,6 +13319,9 @@
     });
     enemyGalleryModal.addEventListener("click", (event) => {
       if (event.target === enemyGalleryModal) closeEnemyGallery();
+    });
+    leaderboardModal.addEventListener("click", (event) => {
+      if (event.target === leaderboardModal) closeLeaderboardModal();
     });
     shopGrid.addEventListener("click", (event) => {
       const button = event.target.closest("[data-item]");
@@ -11020,7 +13352,7 @@
     debugGrid.addEventListener("click", (event) => {
       const button = event.target.closest("[data-debug-stage]");
       if (!button) return;
-      startDebugBattle(Number(button.dataset.debugStage));
+      startDebugBattle(Number(button.dataset.debugStage), button.dataset.debugEnemyId || "");
     });
     enemyGalleryList.addEventListener("click", (event) => {
       const button = event.target.closest("[data-enemy-id]");

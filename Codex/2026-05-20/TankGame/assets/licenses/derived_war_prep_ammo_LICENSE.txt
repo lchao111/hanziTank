@@ -1,0 +1,21 @@
+Derived War Prep Ammo Effect Assets
+
+Date: 2026-05-29
+
+Final assets:
+- assets/sprites/effects/armor-piercing-shell-spritesheet.png
+- assets/sprites/effects/smoke-shell-spritesheet.png
+- assets/sprites/effects/repair-capsule-shell-spritesheet.png
+- assets/sprites/effects/flash-flare-shell-spritesheet.png
+- assets/sprites/effects/long-barrel-shot-spritesheet.png
+
+Source and license:
+- Deterministically produced in-project with tools/generate-war-prep-ammo-spritesheets.ps1.
+- Visual direction follows ART_STYLE_GUIDE.md for Hanzi Tank's warm war-room, kid-friendly, hand-painted WWII-inspired UI.
+- Derived/composited from existing project projectile/effect language and CC0 Kenney Top-down Tanks Redux source already tracked in assets/source/kenney_topdownTanksRedux/ and documented in assets/licenses/kenney_topdownTanksRedux_LICENSE.txt.
+- No third-party copyrighted reference beyond the tracked CC0/project assets was added.
+
+Generation note:
+- Codex built-in image generation was not exposed in this session.
+- ComfyUI Desktop was installed previously, but no ComfyUI process or command-line entry point was available from this sandboxed session.
+- These files are therefore deterministic derived bitmap assets, not fresh model-native generated art.

@@ -43,7 +43,9 @@ const showGameOver = bodyOf('showGameOver');
 assert.match(showGameOver, /if \(isGameOver\) return/, 'Game over should be idempotent.');
 assert.match(showGameOver, /isGameOver = true/, 'Game over should set terminal state before cleanup.');
 assert.match(showGameOver, /stopCountdown\(\)/, 'Game over should stop reload countdown.');
-assert.match(showGameOver, /enemyTank\.classList\.remove\("reloading", "fire", "boss-slam", "boss-attack-approach", "crash-attack"\)/, 'Game over should clear enemy attack/reload classes.');
+['reloading', 'fire', 'boss-slam', 'boss-attack-approach', 'crash-attack', 'spring-bounce-attack', 'swarm-volley', 'pack-pounce', 'flea-burst-attack', 'melee-strike'].forEach((className) => {
+  assert.match(showGameOver, new RegExp(`enemyTank\\.classList\\.remove\\([\\s\\S]*"${className}"`), `Game over should clear ${className}.`);
+});
 
 const restartGame = bodyOf('restartGame');
 assert.match(restartGame, /cancelStageAdvance\(\)/, 'Restart should cancel any stage-clear advance animation.');
@@ -78,7 +80,8 @@ assert.match(restoreRunProgress, /catch \(error\)[\s\S]*playerState\.runProgress
 
 const restoreStageClearProgress = bodyOf('restoreStageClearProgress');
 assert.match(restoreStageClearProgress, /warShopAvailable = true/, 'Stage-clear restore should reopen war prep availability.');
-assert.match(restoreStageClearProgress, /showSupplyChallenge\(\)/, 'Stage-clear restore should resume supply challenge stages.');
+assert.match(restoreStageClearProgress, /shouldShowSupplyChallenge\(levelNumber\)/, 'Stage-clear restore should use the War Supply gate.');
+assert.doesNotMatch(restoreStageClearProgress, /levelNumber % 5 === 0[\s\S]*showSupplyChallenge\(\)/, 'Restoring a Boss stage-clear checkpoint should not resume War Supply.');
 assert.match(restoreStageClearProgress, /showPerkChoices\(\)/, 'Stage-clear restore should resume upgrade choice stages.');
 
 const startAdventureMode = bodyOf('startAdventureMode');

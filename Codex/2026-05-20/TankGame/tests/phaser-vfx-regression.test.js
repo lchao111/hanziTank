@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const source = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const enemyDataSource = fs.readFileSync(path.join(__dirname, '..', 'src/data/enemies.js'), 'utf8');
 
 function bodyOf(functionName) {
   const start = source.indexOf(`function ${functionName}`);
@@ -41,6 +42,8 @@ assert.match(explosion, /kickPhaserCamera\(heavy \? "heavy" : "normal"\)/, 'Expl
 assert.match(explosion, /addPhaserShockwave\(/, 'Explosion should include shockwave.');
 assert.match(explosion, /addPhaserSparks\(/, 'Explosion should include sparks.');
 assert.match(explosion, /addPhaserSmoke\(/, 'Explosion should include smoke.');
+assert.match(explosion, /kenney:explosion5/, 'Explosion should layer a bitmap explosion asset over primitive VFX.');
+assert.match(explosion, /kenney:explosionSmoke5/, 'Explosion should layer a bitmap smoke asset over primitive VFX.');
 assert.doesNotMatch(explosion, /const smoke = scene\.add\.circle/, 'Explosion should not regress to a single smoke circle.');
 
 const debris = bodyOf('addPhaserArmorDebris');
@@ -73,10 +76,13 @@ const projectile = bodyOf('playPhaserProjectile');
 assert.match(projectile, /addPhaserMuzzleFlash\(/, 'Projectile should trigger muzzle flash.');
 assert.match(projectile, /addPhaserProjectileTrail\(/, 'Projectile should trigger trail effects.');
 assert.match(projectile, /addPhaserImpactGlint\(/, 'Projectile should trigger impact glint.');
+assert.match(projectile, /kenney:shotLarge/, 'Projectile should use Kenney bitmap shots when a generated shell sheet is not active.');
 assert.match(projectile, /options\.onImpact\?\.\(\)/, 'Projectile impact callbacks should run only after the projectile reaches the target.');
 
 assert.match(projectile, /options\.effectSheet === "arcaneSparkShell"/, 'Arcane Spark Shell should use its projectile spritesheet path.');
 assert.match(projectile, /addPhaserArcaneSpark\(/, 'Arcane Spark Shell should render as a Phaser spritesheet projectile.');
+assert.match(projectile, /phaserShellEffectMap\[options\.effectSheet\]/, 'Generated shell spritesheets should use their Phaser projectile path.');
+assert.match(projectile, /addPhaserSheetShell\(/, 'Armor and high-explosive shells should render from generated spritesheets.');
 
 const arcaneProjectile = bodyOf('addPhaserArcaneSpark');
 assert.match(arcaneProjectile, /scene\.add\.sprite\(start\.x, start\.y, "arcaneSparkShell", 0\)/, 'Arcane projectile should be created from the spritesheet.');
@@ -88,6 +94,51 @@ const arcaneImpact = bodyOf('addPhaserArcaneImpact');
 assert.match(arcaneImpact, /setDisplaySize\(460, 288\)/, 'Arcane impact should use an oversized explosion sheet frame.');
 assert.match(arcaneImpact, /scene\.add\.rectangle/, 'Arcane impact should include a visible magic pillar.');
 
+const sheetShell = bodyOf('addPhaserSheetShell');
+assert.match(sheetShell, /scene\.add\.sprite\(start\.x, start\.y, textureKey, 0\)/, 'Generated shell projectiles should be created from their spritesheet.');
+assert.match(sheetShell, /sprite\.play\(config\.animation, true\)/, 'Generated shell projectiles should animate while flying.');
+assert.match(sheetShell, /addPhaserShellSheetImpact\(/, 'Generated shell projectiles should trigger their spritesheet impact frame.');
+
+const sheetImpact = bodyOf('addPhaserShellSheetImpact');
+assert.match(sheetImpact, /scene\.add\.sprite\(x, y, textureKey, 3\)/, 'Generated shell impacts should use the final spritesheet frame.');
+assert.match(sheetImpact, /addPhaserPiercingImpact\(scene, x, y, angle\)/, 'Armor-Piercing Shell should trigger piercing chip impact VFX.');
+assert.match(sheetImpact, /addPhaserSmokeCoverBurst\(scene, x, y\)/, 'Smoke Shell should trigger a smoke cover burst.');
+assert.match(sheetImpact, /addPhaserRepairPulse\(scene, x, y\)/, 'Repair Capsule should trigger a repair pulse.');
+assert.match(sheetImpact, /addPhaserFlashFlare\(scene, x, y\)/, 'Flash Flare Shell should trigger a controlled flash flare.');
+assert.match(sheetImpact, /addPhaserArmorPlatePulse\(scene, x, y\)/, 'Armor Plate Round should trigger an armor plate pulse.');
+assert.match(sheetImpact, /addPhaserCannonImpact\(scene, x, y, angle\)/, 'Long-Barrel Shot should trigger a heavy cannon impact.');
+
+assert.match(source, /armorPiercingShell:\s*\{[\s\S]*impactKind: "pierce"/, 'Armor-Piercing Shell should have a named Phaser sheet effect config.');
+assert.match(source, /smokeShell:\s*\{[\s\S]*impactKind: "smoke"/, 'Smoke Shell should have a named Phaser sheet effect config.');
+assert.match(source, /repairCapsuleShell:\s*\{[\s\S]*impactKind: "repair"/, 'Repair Capsule should have a named Phaser sheet effect config.');
+assert.match(source, /flashFlareShell:\s*\{[\s\S]*impactKind: "flash"/, 'Flash Flare Shell should have a named Phaser sheet effect config.');
+assert.match(source, /armorPlateShell:\s*\{[\s\S]*impactKind: "plating"/, 'Armor Plate Round should have a named Phaser sheet effect config.');
+assert.match(source, /longBarrelShot:\s*\{[\s\S]*impactKind: "cannon"/, 'Long-Barrel Shot should have a named Phaser sheet effect config.');
+
+const piercingImpact = bodyOf('addPhaserPiercingImpact');
+assert.match(piercingImpact, /scene\.add\.rectangle/, 'Armor-Piercing impact should throw metal chips.');
+assert.match(piercingImpact, /addPhaserSparks/, 'Armor-Piercing impact should include sparks.');
+
+const smokeBurst = bodyOf('addPhaserSmokeCoverBurst');
+assert.match(smokeBurst, /scene\.add\.ellipse/, 'Smoke Shell should create fog puffs.');
+assert.match(smokeBurst, /setStrokeStyle/, 'Smoke Shell should include a cover cue ring.');
+
+const repairPulse = bodyOf('addPhaserRepairPulse');
+assert.match(repairPulse, /plusVertical/, 'Repair Capsule should show a medic plus pulse.');
+assert.match(repairPulse, /wrenchHandle/, 'Repair Capsule should include a wrench cue.');
+
+const flashFlare = bodyOf('addPhaserFlashFlare');
+assert.match(flashFlare, /scene\.add\.star/, 'Flash Flare should use a Phaser star.');
+assert.doesNotMatch(flashFlare, /camera\.flash/, 'Flash Flare should not blind the whole UI with a camera flash.');
+
+const armorPlatePulse = bodyOf('addPhaserArmorPlatePulse');
+assert.match(armorPlatePulse, /scene\.add\.rectangle/, 'Armor Plate Round should show a shield-like plate pulse.');
+assert.match(armorPlatePulse, /addPhaserArmorDebris/, 'Armor Plate Round should add armor debris feedback.');
+
+const cannonImpact = bodyOf('addPhaserCannonImpact');
+assert.match(cannonImpact, /setLineWidth\(16\)/, 'Long-Barrel Shot should use a heavy cannon trail.');
+assert.match(cannonImpact, /addPhaserSparks\(scene, x, y, true\)/, 'Long-Barrel Shot should use heavy impact sparks.');
+
 const fire = bodyOf('fire');
 assert.match(fire, /duration: projectileDuration,[\s\S]*onImpact: explodeOnImpact/, 'Player shell explosions should be tied to projectile impact completion.');
 assert.doesNotMatch(fire, /setTimeout\(\(\) => \{[\s\S]*playPhaserExplosion\(enemyTank/, 'Player shell explosions should not use a fixed early timeout.');
@@ -96,10 +147,29 @@ const initPhaserEffects = bodyOf('initPhaserEffects');
 assert.match(initPhaserEffects, /this\.load\.image\("kenney:playerHull"/, 'Phaser should preload Kenney player hull PNG.');
 assert.match(initPhaserEffects, /this\.load\.image\("kenney:playerTurret"/, 'Phaser should preload Kenney player turret PNG.');
 assert.match(initPhaserEffects, /this\.load\.image\("kenney:enemyHull"/, 'Phaser should preload Kenney enemy hull PNG.');
+assert.match(initPhaserEffects, /this\.load\.image\("kenney:shotLarge"/, 'Phaser should preload bitmap projectile assets.');
+assert.match(initPhaserEffects, /this\.load\.image\(`kenney:explosion\$\{frame\}`/, 'Phaser should preload bitmap explosion assets.');
+assert.match(initPhaserEffects, /battlefieldEnvironments\.forEach\(\(environment\) => this\.load\.image\(`battlefield:\$\{environment\.id\}`/, 'Phaser should preload generated environment backgrounds.');
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("playerTankBattle"/, 'Phaser should preload the player tank battle spritesheet.');
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("playerTankIs2Battle"/, 'Phaser should preload the IS-2 player tank battle spritesheet.');
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("playerTankCromwellBattle"/, 'Phaser should preload the Cromwell player tank battle spritesheet.');
+['armorPiercingShell', 'smokeShell', 'repairCapsuleShell', 'flashFlareShell', 'longBarrelShot'].forEach((textureKey) => {
+  assert.match(initPhaserEffects, new RegExp(`this\\.load\\.spritesheet\\("${textureKey}"`), `Phaser should preload the ${textureKey} ammo effect spritesheet.`);
+});
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("arcaneSparkShell"/, 'Phaser should preload the Arcane Spark Shell effect spritesheet.');
+assert.match(initPhaserEffects, /this\.load\.spritesheet\("armorPlateShell"/, 'Phaser should preload the Armor Plate Shell effect spritesheet.');
+const ammoEffectsBuilder = bodyOf('buildPhaserAmmoEffects');
+[
+  'armor-piercing-shell-fire',
+  'smoke-shell-fire',
+  'repair-capsule-shell-fire',
+  'flash-flare-shell-fire',
+  'high-explosive-shell-fire',
+  'armor-plate-shell-fire',
+  'long-barrel-shot-fire'
+].forEach((animationKey) => {
+  assert.match(ammoEffectsBuilder, new RegExp(animationKey), `${animationKey} should be registered as a Phaser ammo animation.`);
+});
 assert.match(initPhaserEffects, /frameWidth: 224[\s\S]*frameHeight: 144/, 'Player tank spritesheet should use fixed frame dimensions.');
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("bossTankDismantler"/, 'Phaser should preload the Tank Dismantler boss spritesheet.');
 assert.match(initPhaserEffects, /frameWidth: 224/, 'Tank Dismantler spritesheet should use fixed frame width.');
@@ -108,6 +178,25 @@ assert.match(initPhaserEffects, /this\.load\.spritesheet\("regularInfantry"/, 'P
 assert.match(initPhaserEffects, /frameWidth: 469[\s\S]*frameHeight: 300/, 'Regular soldier spritesheet should use fixed frame dimensions.');
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("regularEnemyTank"/, 'Phaser should preload the regular enemy tank spritesheet.');
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("grenadier"/, 'Phaser should preload the grenadier spritesheet.');
+assert.match(initPhaserEffects, /buildPhaserEnvironmentScenery\(this\)/, 'Phaser environment scenery should be built when the effects scene starts.');
+
+const battlefieldEnvironment = bodyOf('applyBattlefieldEnvironment');
+['snow-mountain', 'desert', 'night', 'rain', 'sunny', 'storm', 'snowfall'].forEach((environmentId) => {
+  assert.match(source, new RegExp(`id: "${environmentId}"`), `Battlefield should define the ${environmentId} generated environment.`);
+});
+assert.match(battlefieldEnvironment, /battlefieldEl\.style\.setProperty\("--battlefield-image"/, 'Battlefield environment changes should swap bitmap backgrounds through a CSS variable.');
+assert.match(battlefieldEnvironment, /playPhaserEnvironmentWeather\(environment\)/, 'Battlefield environment changes should update Phaser weather VFX.');
+
+const weather = bodyOf('playPhaserEnvironmentWeather');
+assert.match(weather, /clearPhaserWeatherVfx\(\)/, 'Weather changes should clean up old Phaser weather sprites.');
+assert.match(weather, /phaserEffects\.time\.addEvent/, 'Rain, snow, storm, and dust should use Phaser-timed particle VFX.');
+
+assert.match(bodyOf('playPhaserIceVfx'), /scene\.add\.triangle|phaserEffects\.add\.triangle/, 'Ice VFX should render Phaser shard geometry.');
+assert.match(bodyOf('playPhaserFireVfx'), /kenney:shotOrange/, 'Fire VFX should use bitmap ember assets.');
+assert.match(bodyOf('playPhaserWaterFlood'), /add\.ellipse/, 'Flood/water VFX should use Phaser wave geometry.');
+assert.match(bodyOf('playPhaserFogOfWar'), /add\.ellipse/, 'Fog of war should be a Phaser overlay effect.');
+assert.match(bodyOf('playPhaserStun'), /add\.star/, 'Stun should use visible Phaser stars.');
+assert.match(bodyOf('playPhaserSlowVfx'), /add\.line/, 'Slow should use a Phaser clock-hand style effect.');
 assert.match(initPhaserEffects, /phaserPlayerSprite = this\.add\.sprite/, 'Player actor should be a Phaser sprite so it can play animations.');
 assert.match(initPhaserEffects, /buildPhaserAmmoEffects\(this\)/, 'Phaser should build ammo effect animations after preload.');
 assert.match(initPhaserEffects, /phaserPlayerTurretSprite = this\.add\.image/, 'Phaser should create a player turret actor.');
@@ -125,13 +214,13 @@ assert.match(galleryAnimations, /Object\.entries\(enemyGalleryAnimationMap\)/, '
 assert.match(galleryAnimations, /generateFrameNumbers\(`gallerySheet:\$\{config\.sheet\}`/, 'Enemy Gallery animations should use the configured spritesheet frames.');
 assert.match(galleryAnimations, /gallery-\$\{id\}-attack/, 'Enemy Gallery should define a one-shot attack animation for each enemy id.');
 assert.match(galleryAnimations, /start: config\.attackStart, end: config\.attackEnd/, 'Enemy Gallery attack animations should use configured attack frame ranges.');
-assert.match(source, /tank:\s*\{ sheet: "enemyTank"/, 'Basic tank gallery item should use the enemy tank spritesheet.');
-assert.match(source, /tank:\s*\{[^}]*attackStart: 4, attackEnd: 7/, 'Basic tank gallery attack preview should use the enemy tank fire row.');
-assert.match(source, /infantry:\s*\{ sheet: "regularInfantry"/, 'Regular soldier gallery item should use the regular infantry spritesheet.');
-assert.match(source, /infantry:\s*\{[^}]*attackStart: 6, attackEnd: 11/, 'Regular soldier gallery attack preview should use its firing row.');
-assert.match(source, /grenadier:\s*\{ sheet: "grenadier"/, 'Grenadier gallery item should use the grenadier spritesheet.');
-assert.match(source, /boss:\s*\{ sheet: "bossTankDismantler"/, 'Boss gallery item should use the Tank Dismantler spritesheet.');
-assert.match(source, /boss:\s*\{[^}]*attackStart: 6, attackEnd: 11/, 'Boss gallery attack preview should use the Tank Dismantler attack row.');
+assert.match(enemyDataSource, /tank:\s*\{[\s\S]*?sheet: "enemyTank"/, 'Basic tank gallery item should use the enemy tank spritesheet.');
+assert.match(enemyDataSource, /tank:\s*\{[\s\S]*?attackStart: 4, attackEnd: 7/, 'Basic tank gallery attack preview should use the enemy tank fire row.');
+assert.match(enemyDataSource, /infantry:\s*\{[\s\S]*?sheet: "regularInfantry"/, 'Regular soldier gallery item should use the regular infantry spritesheet.');
+assert.match(enemyDataSource, /infantry:\s*\{[\s\S]*?attackStart: 6, attackEnd: 11/, 'Regular soldier gallery attack preview should use its firing row.');
+assert.match(enemyDataSource, /grenadier:\s*\{[\s\S]*?sheet: "grenadier"/, 'Grenadier gallery item should use the grenadier spritesheet.');
+assert.match(enemyDataSource, /boss:\s*\{[\s\S]*?sheet: "bossTankDismantler"/, 'Boss gallery item should use the Tank Dismantler spritesheet.');
+assert.match(enemyDataSource, /boss:\s*\{[\s\S]*?attackStart: 6, attackEnd: 11/, 'Boss gallery attack preview should use the Tank Dismantler attack row.');
 assert.match(source, /id="enemyGalleryAttackButton"/, 'Enemy Gallery should expose an Attack Preview button for children to trigger attacks.');
 
 const renderEnemyGalleryPreview = bodyOf('renderEnemyGalleryPreview');
@@ -243,6 +332,7 @@ const infantryBuilder = bodyOf('buildPhaserRegularInfantry');
 assert.match(infantryBuilder, /scene\.textures\.exists\("regularInfantry"\)/, 'Regular soldier builder should verify that the spritesheet loaded.');
 assert.match(infantryBuilder, /key: "regular-infantry-walk"/, 'Regular soldier should define a walk animation.');
 assert.match(infantryBuilder, /generateFrameNumbers\("regularInfantry", \{ start: 0, end: 5 \}\)/, 'Regular soldier walk should use row 1 frames.');
+assert.match(infantryBuilder, /frameRate: 10,\s*repeat: -1/, 'Regular soldier walk should run fast enough for smooth stepping.');
 assert.match(infantryBuilder, /key: "regular-infantry-fire"/, 'Regular soldier should define a firing animation.');
 assert.match(infantryBuilder, /generateFrameNumbers\("regularInfantry", \{ start: 6, end: 11 \}\)/, 'Regular soldier fire should use row 2 frames.');
 assert.match(infantryBuilder, /key: "regular-infantry-hit"/, 'Regular soldier should define a hit animation.');
@@ -253,9 +343,11 @@ assert.match(infantryUpdater, /currentEnemy\.id === "infantry"/, 'Regular soldie
 assert.match(infantryUpdater, /phaser-infantry-active/, 'DOM infantry fallback should hide only while the Phaser soldier is active.');
 assert.match(infantryUpdater, /setDisplaySize\(rect\.width \* 1\.18, rect\.height \* 1\.42\)/, 'Regular soldier spritesheet should scale from the enemy DOM slot.');
 assert.match(infantryUpdater, /phaserRegularInfantry\.setFlipX\(true\)/, 'Regular soldier orientation should stay flipped toward the left-side player after resize and updates.');
+assert.match(infantryUpdater, /phaserRegularInfantry\.setFrame\(0\)/, 'Regular soldier should reset cleanly when the sprite is reactivated.');
 
 const infantryState = bodyOf('playPhaserRegularInfantryState');
 assert.match(infantryState, /regular-infantry-\$\{stateName\}/, 'Regular soldier animation helper should play named states.');
+assert.match(infantryState, /off\(`animationcomplete-regular-infantry-\$\{stateName\}`\)/, 'Regular soldier state changes should clear stale animation-complete handlers.');
 
 const enemyTankBuilder = bodyOf('buildPhaserRegularEnemyTank');
 assert.match(enemyTankBuilder, /scene\.textures\.exists\("regularEnemyTank"\)/, 'Regular enemy tank builder should verify that the spritesheet loaded.');
@@ -292,8 +384,11 @@ const grenadierState = bodyOf('playPhaserGrenadierState');
 assert.match(grenadierState, /grenadier-\$\{stateName\}/, 'Grenadier animation helper should play named states.');
 
 const showDamage = bodyOf('showDamage');
-assert.match(showDamage, /targetTank === enemyTank && currentEnemy\.id === "armor"/, 'Stage 3 regular tank should play hit animation when damaged.');
-assert.match(showDamage, /targetTank === enemyTank && currentEnemy\.id === "grenadier"/, 'Stage 4 grenadier should play hit animation when damaged.');
+assert.match(showDamage, /playEnemyHitReaction\(targetTank, options\)/, 'Enemy damage should route through the shared Phaser hit-reaction helper.');
+const enemyHitReaction = bodyOf('playEnemyHitReaction');
+assert.match(enemyHitReaction, /targetTank !== enemyTank/, 'Enemy hit reactions should only run for the enemy tank.');
+assert.match(enemyHitReaction, /currentEnemy\.id === "armor"\) playPhaserRegularEnemyTankState\("hit"\)/, 'Stage 3 regular tank should play hit animation when damaged.');
+assert.match(enemyHitReaction, /currentEnemy\.id === "grenadier"\) playPhaserGrenadierState\("hit"\)/, 'Stage 4 grenadier should play hit animation when damaged.');
 
 const enemyFire = bodyOf('enemyFire');
 assert.match(enemyFire, /playPhaserTargetingLine\(enemyTank, playerTank/, 'Enemy fire should show a Phaser targeting line before impact.');
@@ -305,7 +400,10 @@ assert.match(enemyFire, /if \(currentEnemy\.id === "armor"\) playPhaserRegularEn
 assert.match(enemyFire, /if \(currentEnemy\.id === "grenadier"\) playPhaserGrenadierState\("fire"\)/, 'Grenadier should play its throw/fire animation when attacking.');
 
 const enemyApproach = bodyOf('startPhaserEnemyApproach');
-assert.match(enemyApproach, /currentEnemy\.attackStyle !== "melee"/, 'Only melee enemies should approach during reload.');
+assert.match(enemyApproach, /enemyUsesReloadApproach\(currentEnemy\)/, 'Only enemies that opt into reload approach should approach during reload.');
+const enemyReloadApproach = bodyOf('enemyUsesReloadApproach');
+assert.match(enemyReloadApproach, /enemy\?\.attackStyle === "melee"/, 'Melee enemies should approach during reload.');
+assert.match(enemyReloadApproach, /enemy\?\.reloadMotion === "approach"/, 'Scripted non-melee enemies can opt into reload approach.');
 assert.match(enemyApproach, /getEnemyApproachDistance\(\)/, 'Phaser melee approach should use the shared actual-distance helper.');
 const enemyApproachDistance = bodyOf('getEnemyApproachDistance');
 assert.match(enemyApproachDistance, /currentEnemy\.approachDistance/, 'Melee approach should use per-enemy distance metadata.');
@@ -339,13 +437,14 @@ assert.match(laneEnemyAttack, /playLaneProjectile\(lane\.element, playerTank/, '
 assert.match(laneEnemyAttack, /lane\.progress = 0;[\s\S]*lane\.attacking = false;[\s\S]*syncLaneHud\(\)/, 'Lane soldiers should reset position only after the attack resolves.');
 
 const shootLaneTargetFunction = bodyOf('shootLaneTarget');
-assert.match(shootLaneTargetFunction, /ammo\?\.projectileSheet[\s\S]*playPhaserProjectile\(playerTank, lane\.element/, 'Multi-lane Arcane shots should use the Phaser projectile spritesheet path.');
+assert.match(shootLaneTargetFunction, /playPhaserProjectile\(playerTank, lane\.element,[\s\S]*effectSheet: ammo\.projectileSheet/, 'Multi-lane Arcane shots should use the Phaser projectile spritesheet path.');
 assert.match(shootLaneTargetFunction, /projectileDuration = ammo\?\.projectileDuration \|\| 560/, 'Multi-lane projectile cleanup should respect slow special ammo travel time.');
 
 const fireFunction = bodyOf('fire');
-assert.match(fireFunction, /playPhaserPlayerState\(ammo\?\.id === "shell_he" \? "heavy-fire" : "fire", true\)/, 'Player fire should trigger the Phaser fire animation.');
+assert.match(fireFunction, /const heavyShot = ammo\?\.id === "shell_he" \|\| ammo\?\.id === "weapon_cannon"/, 'Heavy ammo should opt into the heavy fire animation.');
+assert.match(fireFunction, /playPhaserPlayerState\(heavyShot \? "heavy-fire" : "fire", true\)/, 'Player fire should trigger the Phaser fire animation.');
 assert.match(fireFunction, /effectSheet: ammo\?\.projectileSheet/, 'Player fire should pass ammo projectile spritesheet config to Phaser.');
-assert.match(source, /const impactDelay = \(shotAmmo\?\.projectileDuration \|\| 900\) \+ \(shotAmmo\?\.projectileSheet \? 1050 : 0\)/, 'Multi-lane damage resolution should wait for slow Arcane projectile impact.');
+assert.match(source, /const impactDelay = \(shotAmmo\?\.projectileDuration \|\| 900\) \+ \(shotAmmo\?\.projectileSheet \? 220 : 0\)/, 'Multi-lane damage resolution should wait for slow spritesheet projectile impact.');
 assert.match(fireFunction, /const projectileDuration = ammo\?\.projectileDuration \|\| 560/, 'Special ammo should be able to slow down projectile travel for visibility.');
 
 const gameOverFunction = bodyOf('showGameOver');
@@ -354,18 +453,22 @@ assert.match(gameOverFunction, /playPhaserPlayerState\("destroyed", true\)/, 'Ga
 const bossHammer = bodyOf('bossHammerAttack');
 assert.match(bossHammer, /playPhaserBossSlam\(\)/, 'Boss hammer attack should trigger the assembled Phaser boss slam.');
 assert.match(bossHammer, /const wasApproaching = enemyTank\.classList\.contains\("reloading"\) \|\| Boolean\(phaserEnemyReloadTween\)/, 'Boss hammer should detect an already-advanced reload pose.');
-assert.match(bossHammer, /const approachDuration = wasApproaching \? 0 : 520/, 'Boss hammer should not jump back for a second approach when already close.');
-assert.match(bossHammer, /const impactTime = approachDuration \+ swingWindup/, 'Boss hammer impact should happen after approach plus swing wind-up.');
-assert.match(bossHammer, /const cleanupTime = impactTime \+ 600/, 'Boss hammer cleanup should wait for retreat after impact.');
+assert.match(bossHammer, /const approachDuration = wasApproaching \? 0 : 420/, 'Boss hammer should not jump back for a second approach when already close.');
+assert.match(bossHammer, /const chargeHold = 360/, 'Boss hammer should visibly hold and charge before swinging.');
+assert.match(bossHammer, /const impactTime = approachDuration \+ chargeHold \+ swingWindup/, 'Boss hammer impact should happen after approach, charge, and swing wind-up.');
+assert.match(bossHammer, /\}, impactTime \+ postImpactHold\)/, 'Boss hammer cleanup should wait for retreat after postImpactHold.');
 assert.match(bossHammer, /stopPhaserEnemyApproach\(false\)/, 'Boss hammer should stop stale approach tweens without resetting position.');
-assert.match(bossHammer, /tweenEnemyAttackToBase\(getEnemyApproachDistance\(\), \{ angle: -9, inDuration: Math\.max\(160, impactTime\), outDuration: 520 \}\)/, 'Boss Phaser movement should continue from the current position to impact and retreat afterward.');
+assert.match(bossHammer, /tweenEnemyAttackToBase\(getEnemyApproachDistance\(\), \{ angle: -7, inDuration: Math\.max\(120, approachDuration \|\| 120\), outDuration: 0 \}\)/, 'Boss Phaser movement should approach and hold instead of scheduling an immediate retreat.');
 assert.match(bossHammer, /enemyTank\.classList\.add\("boss-attack-approach"\)/, 'Boss DOM attack should visibly approach before swinging.');
 assert.match(bossHammer, /enemyTank\.classList\.remove\("boss-attack-approach"\);\s*enemyTank\.classList\.add\("boss-slam"\)/, 'Boss DOM attack should switch from approach to slam.');
 assert.match(bossHammer, /\}, impactTime\)/, 'Boss damage should land at the scripted axe impact timing.');
-assert.match(source, /\.tank\.enemy\.boss-slam \{\s*animation: boss-hammer-slam 1120ms/, 'Boss DOM slam animation duration should match the post-approach swing window.');
-assert.match(source, /\.tank\.enemy\.boss-attack-approach \{\s*animation: boss-attack-approach 520ms/, 'Boss DOM approach duration should match the scripted approach phase.');
+assert.match(source, /\.tank\.enemy\.boss-slam \{\s*animation: boss-hammer-slam 1240ms/, 'Boss DOM slam animation duration should match the charge, impact, and post-impact hold window.');
+assert.match(source, /\.tank\.enemy\.boss-attack-approach \{\s*animation: boss-attack-approach 420ms/, 'Boss DOM approach duration should match the scripted approach phase.');
 
-assert.match(source, /playPhaserDestruction\(enemyTank, \{ heavy: currentEnemy\.id === "boss", direction: -1 \}\)/, 'Enemy death should use Phaser destruction.');
+const enemyDeathVfx = bodyOf('playEnemyDeathVfx');
+assert.match(enemyDeathVfx, /const heavy = enemy\.id === "boss" \|\| enemy\.role === "elite"/, 'Boss and elite enemies should use heavy death VFX.');
+assert.match(enemyDeathVfx, /playPhaserDestruction\(targetEl, \{ heavy, direction: -1 \}\)/, 'Enemy death should use Phaser destruction.');
+assert.match(source, /playEnemyDeathVfx\(enemyTank, currentEnemy\)/, 'Enemy defeat should route through the shared death VFX helper.');
 assert.match(source, /playPhaserDestruction\(playerTank, \{ heavy: true, direction: 1 \}\)/, 'Player defeat should use Phaser destruction.');
 assert.match(source, /\.tank\.player\.destroyed\.fragmented \.tank-sprite/, 'Fragmented player tank styling should override static destroyed sprite styling.');
 

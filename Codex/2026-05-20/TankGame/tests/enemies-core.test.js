@@ -33,18 +33,52 @@ assert.strictEqual(enemies.levelTypes[3].damage, 2, 'Stage 4 grenadier should de
 assert.strictEqual(enemies.levelTypes[3].attackInterval, 3, 'Stage 4 grenadier should use a shorter attack timer.');
 
 assert.strictEqual(enemies.levelTypes.find((enemy) => enemy.id === 'heavyInfantry').attackStyle, 'melee');
-assert.strictEqual(enemies.levelTypes.find((enemy) => enemy.id === 'truck').attackStyle, 'melee');
+const truck = enemies.levelTypes.find((enemy) => enemy.id === 'truck');
+assert.strictEqual(truck.attackStyle, 'selfDestruct');
+assert.strictEqual(truck.telegraph, 'rushWarning');
+assert.strictEqual(truck.deathVfx, 'selfDestructDebris');
+
+assert.deepStrictEqual(enemies.eliteTypes.map((enemy) => enemy.id), [
+  'springSoldier',
+  'droneSwarm',
+  'wolfPack',
+  'mechanicalFleas'
+]);
+enemies.eliteTypes.forEach((enemy) => {
+  assert.ok(enemy.attackStyle, `${enemy.id} should define an attack style.`);
+  assert.ok(enemy.telegraph, `${enemy.id} should define a telegraph.`);
+  assert.ok(enemy.attackTiming, `${enemy.id} should define attack timing.`);
+  assert.ok(enemy.hitReaction, `${enemy.id} should define a hit reaction.`);
+  assert.ok(enemy.deathVfx, `${enemy.id} should define destruction VFX.`);
+  assert.match(enemy.asset.status, /pending-final-generation/, `${enemy.id} should not claim final bitmap art.`);
+  assert.match(enemy.asset.promptSpec, /^assets\/source\/enemy-candidates\//, `${enemy.id} should point to an enemy prompt spec.`);
+  assert.match(enemy.asset.galleryPreview, /^assets\/sprites\/enemies\/gallery\/.+\.png$/, `${enemy.id} should expose an interim PNG gallery preview.`);
+});
 
 assert.strictEqual(enemies.enemySpriteMap.truck, 'assets/enemy-suicide-truck.svg');
+assert.strictEqual(enemies.enemySpriteMap.springSoldier, 'assets/enemy-heavy-infantry.svg');
+assert.strictEqual(enemies.enemySpriteMap.droneSwarm, 'assets/enemy-scout.svg');
+assert.strictEqual(enemies.enemySpriteMap.wolfPack, 'assets/enemy-armor.svg');
+assert.strictEqual(enemies.enemySpriteMap.mechanicalFleas, 'assets/enemy-scout.svg');
 assert.strictEqual(enemies.enemySpriteMap.infantry, 'assets/enemy-infantry.svg');
 assert.strictEqual(enemies.enemySpriteMap.grenadier, 'assets/enemy-rpg-infantry.svg');
 assert.strictEqual(enemies.enemySpriteMap.rpgInfantry, 'assets/enemy-rpg-infantry.svg');
 assert.strictEqual(enemies.tankSpriteMap.tank_sherman, 'assets/tank-sherman.svg');
-assert.strictEqual(enemies.enemyPortraitDetails.boss, 'Boss portrait for the Tank Dismantler hammer fight.');
+assert.match(enemies.enemyPortraitDetails.boss, /Boss portrait for the Tank Dismantler hammer fight\./);
+assert.match(enemies.enemyPortraitDetails.boss, /坦克拆解者铁锤 Boss 战头像/);
+assert.ok(enemies.enemyGalleryPreviewMap.truck.cardArt.endsWith('.png'), 'Truck gallery card art should be bitmap-backed.');
+assert.ok(enemies.enemyGalleryPreviewMap.boss.cardArt.endsWith('.png'), 'Boss gallery card art should be bitmap-backed.');
 
-assert.ok(enemies.debugTargets.some((target) => target.stage === 5 && target.title.includes('Boss')), 'Debug targets should include a boss battle.');
-assert.ok(enemies.debugTargets.some((target) => target.stage === 2 && target.title === 'Regular Soldier'), 'Debug targets should name the regular soldier stage.');
-assert.ok(enemies.debugTargets.some((target) => target.stage === 4 && target.title === 'Grenadier'), 'Debug targets should name the grenadier stage.');
-assert.ok(enemies.debugTargets.some((target) => target.stage === 12 && target.title === 'Self-Destruct Truck'), 'Debug targets should include the self-destruct truck.');
+const debugEnemyIds = enemies.debugTargets.map((target) => target.enemyId).filter(Boolean);
+enemies.levelTypes.forEach((enemy) => {
+  assert.ok(debugEnemyIds.includes(enemy.id), `Debug targets should include direct ${enemy.id} testing.`);
+});
+enemies.eliteTypes.forEach((enemy) => {
+  assert.ok(debugEnemyIds.includes(enemy.id), `Debug targets should include direct ${enemy.id} testing.`);
+});
+assert.ok(enemies.debugTargets.filter((target) => target.enemyId === 'boss').length >= 3, 'Debug targets should include multiple direct Boss checkpoints.');
+assert.ok(enemies.debugTargets.every((target) => target.category), 'Debug targets should label Enemy, Boss, or Elite cards.');
+assert.ok(enemies.debugTargets.every((target) => target.enemyId), 'Every debug target should directly choose a test enemy.');
+assert.ok(!enemies.debugTargets.some((target) => /Scout Car/.test(target.title)), 'Debug targets should not advertise enemies that are not in data.');
 
 console.log('enemies core tests passed');

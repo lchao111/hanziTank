@@ -3,11 +3,10 @@
   if (typeof module === "object" && module.exports) module.exports = api;
   root.HanziTankCombat = api;
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
-  function createEnemyForStage(stageNumber, levelTypes, bossTemplate) {
-    const template = stageNumber % 5 === 0 ? bossTemplate : levelTypes[(stageNumber - 1) % levelTypes.length];
-    const hpBonus = Math.floor((stageNumber - 1) / levelTypes.length);
+  function createEnemyFromTemplate(template, hpBonus = 0) {
     const isBoss = template.id === "boss";
-    const hp = template.hp + (isBoss ? 0 : hpBonus);
+    const shouldScale = !isBoss && template.scaleWithStage !== false;
+    const hp = template.hp + (shouldScale ? hpBonus : 0);
     return {
       ...template,
       maxHp: hp,
@@ -19,6 +18,23 @@
       armor: template.armor || 0,
       attackInterval: template.attackInterval || 5
     };
+  }
+
+  function createEnemyForStage(stageNumber, levelTypes, bossTemplate) {
+    const template = stageNumber % 5 === 0 ? bossTemplate : levelTypes[(stageNumber - 1) % levelTypes.length];
+    const hpBonus = Math.floor((stageNumber - 1) / levelTypes.length);
+    return createEnemyFromTemplate(template, hpBonus);
+  }
+
+  function createEnemyById(enemyId, levelTypes, bossTemplate, eliteTypes = [], stageNumber = 1) {
+    const fallback = () => createEnemyForStage(stageNumber, levelTypes, bossTemplate);
+    if (!enemyId) return fallback();
+    const template = enemyId === bossTemplate.id
+      ? bossTemplate
+      : [...levelTypes, ...eliteTypes].find((enemy) => enemy.id === enemyId);
+    if (!template) return fallback();
+    const hpBonus = Math.floor((Math.max(1, stageNumber) - 1) / Math.max(1, levelTypes.length));
+    return createEnemyFromTemplate(template, hpBonus);
   }
 
   function applyDamageToDefender(defender, amount) {
@@ -69,6 +85,7 @@
   }
 
   return {
+    createEnemyById,
     createEnemyForStage,
     applyDamageToDefender,
     applyPlayerDamage,

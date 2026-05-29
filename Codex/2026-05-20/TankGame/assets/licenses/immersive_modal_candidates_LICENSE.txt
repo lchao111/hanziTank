@@ -1,0 +1,7 @@
+Immersive modal candidate prompt/spec files
+
+Created for this TankGame workspace on 2026-05-29.
+
+Status: prompt/spec files only. No bitmap images were generated in this session.
+
+Source/provenance: authored from project requirements and ART_STYLE_GUIDE.md. Before any future generated bitmap is promoted into assets/sprites/ui/, add the actual generation tool, date, prompt source file, and any third-party references used.

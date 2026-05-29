@@ -20,8 +20,17 @@ function bodyOf(functionName) {
   throw new Error(`Could not parse function ${functionName}`);
 }
 
-assert.match(source, /id="pauseButton"[^>]*aria-pressed="false"/, 'Pause button should exist and expose pressed state.');
+const pauseButtonMarkupMatch = source.match(/<button(?=[^>]*id="pauseButton")[^>]*>/);
+assert.ok(pauseButtonMarkupMatch, 'Pause button should exist.');
+const pauseButtonMarkup = pauseButtonMarkupMatch[0];
+assert.match(pauseButtonMarkup, /aria-pressed="false"/, 'Pause button should expose pressed state.');
+assert.match(pauseButtonMarkup, /class="[^"]*pause-icon-button[^"]*"/, 'Pause button should use the generated pause icon treatment.');
+assert.match(source, /pause-button-spritesheet\.png\?v=20260528/, 'Pause icon should use the generated two-frame spritesheet.');
 assert.match(source, /const pauseButton = document\.querySelector\("#pauseButton"\)/, 'Pause button should be wired in JavaScript.');
+assert.match(source, /id="pauseOverlay"/, 'Pause should show a centered overlay.');
+assert.match(source, /暂停[\s\S]*PAUSED/, 'Pause overlay should include bilingual pause text.');
+assert.match(source, /@keyframes pause-card-breathe/, 'Pause overlay should have a light animation.');
+assert.match(source, /const pauseOverlay = document\.querySelector\("#pauseOverlay"\)/, 'Pause overlay should be wired in JavaScript.');
 assert.match(source, /let isPaused = false/, 'Pause state should be tracked explicitly.');
 
 const pauseCountdown = bodyOf('pauseCountdown');
@@ -42,6 +51,15 @@ assert.match(pauseGame, /pauseCountdown\(\)/, 'Pause should stop reload ticking.
 const resumeGame = bodyOf('resumeGame');
 assert.match(resumeGame, /startCountdown\(countdown\)/, 'Resume should continue from the saved countdown value.');
 assert.match(resumeGame, /locked\s*=\s*pausedLockedState/, 'Resume should restore prior lock state.');
+
+const syncPauseButton = bodyOf('syncPauseButton');
+assert.match(syncPauseButton, /pauseButton\.setAttribute\("aria-label", pauseLabel\)/, 'Pause icon should keep an accessible label in sync.');
+assert.match(syncPauseButton, /pauseButton\.title\s*=\s*pauseLabel/, 'Pause icon tooltip should describe the current action.');
+assert.match(syncPauseButton, /pauseOverlay\.classList\.toggle\("show", isPaused\)/, 'Pause overlay should appear while paused.');
+assert.match(syncPauseButton, /pauseOverlay\.setAttribute\("aria-hidden", String\(!isPaused\)\)/, 'Pause overlay hidden state should sync with pause state.');
+
+const playPauseButtonAction = bodyOf('playPauseButtonAction');
+assert.match(playPauseButtonAction, /pauseButton\.classList\.add\("is-activating"\)/, 'Pause icon should play its pressed action animation.');
 
 const chooseAnswer = bodyOf('chooseAnswer');
 assert.match(chooseAnswer, /if \(locked \|\| isPaused\) return/, 'Normal answers should be ignored while paused.');

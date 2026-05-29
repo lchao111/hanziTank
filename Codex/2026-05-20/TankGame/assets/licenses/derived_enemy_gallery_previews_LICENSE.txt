@@ -1,0 +1,26 @@
+Derived Enemy Gallery preview assets for Hanzi Tank
+Date: 2026-05-29
+
+These PNG previews and interim spritesheets were deterministically derived from existing project-native bitmap spritesheets already stored in this repository:
+
+- assets/sprites/enemies/enemy-tank-spritesheet.png
+- assets/sprites/enemies/regular-enemy-tank-spritesheet.png
+- assets/sprites/enemies/regular-infantry-spritesheet.png
+- assets/sprites/enemies/grenadier-spritesheet.png
+- assets/sprites/enemies/tank-dismantler-spritesheet.png
+
+Process:
+
+- Cropped transparent content from selected idle/attack frames.
+- Refit the cropped bitmap frame into 256x192 transparent PNG gallery previews.
+- Composed interim truck and elite gallery spritesheets from the same project-native bitmap frame sources.
+- No SVG, CSS, canvas-rendered, or procedural placeholder art is used as final card art in the Enemy Gallery preview map.
+
+Art status:
+
+- Tank, Armored Tank, Regular Soldier, Grenadier, RPG Soldier, Heavy Soldier, and Tank Dismantler previews are derived from existing in-game bitmap spritesheets.
+- Self-Destruct Truck, Spring Soldier, Drone Swarm, Mechanical Wolf Pack, and Mechanical Fleas previews are interim derived bitmap previews pending final generated/reviewed spritesheets from the prompt specs under assets/source/enemy-candidates/.
+
+License/source note:
+
+These derived files inherit the source status of the project-native spritesheets listed above. They are intended for this project and should be replaced for interim enemies once final reviewed spritesheets are generated and logged.

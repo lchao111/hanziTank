@@ -1,0 +1,43 @@
+{
+  "status": "interim-gallery-bitmap-previews-generated",
+  "generatedBitmapAssets": false,
+  "interimGalleryBitmapAssets": true,
+  "fallbackPolicy": "Use existing project SVGs only as temporary battlefield fallbacks until reviewed transparent PNG spritesheets are generated. Enemy Gallery card art and gallery previews must use the interim PNG assets below, not SVG fallback art.",
+  "candidates": [
+    {
+      "id": "truck",
+      "promptSpec": "self-destruct-truck-spritesheet.prompt.md",
+      "interimGalleryPreview": "assets/sprites/enemies/gallery/self-destruct-truck-interim-preview.png",
+      "interimGallerySpritesheet": "assets/sprites/enemies/gallery/self-destruct-truck-interim-spritesheet.png",
+      "fallback": "assets/enemy-suicide-truck.svg"
+    },
+    {
+      "id": "springSoldier",
+      "promptSpec": "spring-soldier-spritesheet.prompt.md",
+      "interimGalleryPreview": "assets/sprites/enemies/gallery/spring-soldier-interim-preview.png",
+      "interimGallerySpritesheet": "assets/sprites/enemies/gallery/spring-soldier-interim-spritesheet.png",
+      "fallback": "assets/enemy-heavy-infantry.svg"
+    },
+    {
+      "id": "droneSwarm",
+      "promptSpec": "drone-swarm-spritesheet.prompt.md",
+      "interimGalleryPreview": "assets/sprites/enemies/gallery/drone-swarm-interim-preview.png",
+      "interimGallerySpritesheet": "assets/sprites/enemies/gallery/drone-swarm-interim-spritesheet.png",
+      "fallback": "assets/enemy-scout.svg"
+    },
+    {
+      "id": "wolfPack",
+      "promptSpec": "mechanical-wolf-pack-spritesheet.prompt.md",
+      "interimGalleryPreview": "assets/sprites/enemies/gallery/mechanical-wolf-pack-interim-preview.png",
+      "interimGallerySpritesheet": "assets/sprites/enemies/gallery/mechanical-wolf-pack-interim-spritesheet.png",
+      "fallback": "assets/enemy-armor.svg"
+    },
+    {
+      "id": "mechanicalFleas",
+      "promptSpec": "mechanical-fleas-spritesheet.prompt.md",
+      "interimGalleryPreview": "assets/sprites/enemies/gallery/mechanical-fleas-interim-preview.png",
+      "interimGallerySpritesheet": "assets/sprites/enemies/gallery/mechanical-fleas-interim-spritesheet.png",
+      "fallback": "assets/enemy-scout.svg"
+    }
+  ]
+}

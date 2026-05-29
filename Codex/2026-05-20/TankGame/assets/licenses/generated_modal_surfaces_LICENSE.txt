@@ -1,0 +1,17 @@
+Generated modal surface texture assets for Hanzi Tank.
+
+Files:
+- assets/sprites/ui/modal-supply-depot-texture.png
+- assets/sprites/ui/modal-quartermaster-texture.png
+- assets/sprites/ui/modal-war-dossier-texture.png
+- assets/sprites/ui/modal-password-book-texture.png
+- assets/sprites/ui/modal-enemy-field-guide-texture.png
+- assets/sprites/ui/modal-medal-board-texture.png
+
+Source:
+- Project-generated bitmap textures created for Hanzi Tank on 2026-05-29.
+- Generated locally from deterministic procedural drawing code using System.Drawing.
+- No third-party imagery, logos, or external image assets were used.
+
+License:
+- Project-owned generated assets for use in Hanzi Tank.

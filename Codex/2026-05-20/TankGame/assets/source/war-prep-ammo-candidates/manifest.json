@@ -1,0 +1,17 @@
+{
+  "created": "2026-05-29",
+  "status": "prompt specs for future model-native regeneration; current promoted assets are deterministic derived PNGs",
+  "frameWidth": 320,
+  "frameHeight": 192,
+  "columns": 4,
+  "items": [
+    { "id": "shell_ap", "name": "Armor-Piercing Shell", "recommendedFinalPath": "assets/sprites/effects/armor-piercing-shell-spritesheet.png" },
+    { "id": "shell_smoke", "name": "Smoke Shell", "recommendedFinalPath": "assets/sprites/effects/smoke-shell-spritesheet.png" },
+    { "id": "shell_repair", "name": "Repair Capsule", "recommendedFinalPath": "assets/sprites/effects/repair-capsule-shell-spritesheet.png" },
+    { "id": "shell_flash", "name": "Flash Flare Shell", "recommendedFinalPath": "assets/sprites/effects/flash-flare-shell-spritesheet.png" },
+    { "id": "shell_plating", "name": "Armor Plate Round", "recommendedFinalPath": "assets/sprites/effects/armor-plate-shell-spritesheet.png" },
+    { "id": "shell_he", "name": "High-Explosive Shell", "recommendedFinalPath": "assets/sprites/effects/high-explosive-shell-spritesheet.png" },
+    { "id": "shell_arcane", "name": "Arcane Spark Shell", "recommendedFinalPath": "assets/sprites/effects/arcane-spark-shell-spritesheet.png" },
+    { "id": "weapon_cannon", "name": "Long-Barrel Shot", "recommendedFinalPath": "assets/sprites/effects/long-barrel-shot-spritesheet.png" }
+  ]
+}

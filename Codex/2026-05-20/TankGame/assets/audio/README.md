@@ -9,6 +9,15 @@ Expected file names:
 
 Keep clips short and normalized so they do not mask gameplay sound effects.
 
+## Runtime Music And UI SFX
+
+Background music and UI click cues are currently generated with original
+WebAudio code in `src/core/bgm-manager.js` and `src/core/sfx-helper.js`.
+These are not placeholders and do not use third-party samples. The BGM manager
+switches procedural moods from the active battlefield environment and ducks
+during Hanzi MP3/TTS learning audio. The UI cue set covers normal clicks,
+confirm, buy/equip, close/cancel, error/disabled, and special panel transitions.
+
 To generate or replace the batch with local Edge TTS MP3 files, install the Python CLI once and run:
 
 ```powershell

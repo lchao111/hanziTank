@@ -1,0 +1,23 @@
+Generated War Prep tank preview assets for Hanzi Tank.
+
+Files:
+- assets/sprites/tanks/war-prep/sherman.png
+- assets/sprites/tanks/war-prep/tiger-i.png
+- assets/sprites/tanks/war-prep/panzer-iv.png
+- assets/sprites/tanks/war-prep/is-2.png
+- assets/sprites/tanks/war-prep/t-34.png
+- assets/sprites/tanks/war-prep/cromwell.png
+- assets/sprites/tanks/war-prep/churchill.png
+
+Source:
+- Project-local generated bitmap tank sheets processed on 2026-05-29.
+- Sherman source: assets/source/wwii-common-tank-spritesheet.png.
+- IS-2 source: assets/source/is2-player-reference.png.
+- Cromwell source: assets/source/cromwell-player-reference.png.
+- Tiger I / Panzer IV / T-34 / Churchill sources: assets/source/war-prep-tank-previews/*.png.
+- Processing script: tools/generate-war-prep-tank-previews.ps1.
+- Visual direction follows ART_STYLE_GUIDE.md: child-friendly hand-painted WWII tank art, warm war-room UI palette, thick readable outlines, transparent PNG delivery.
+
+License:
+- Project-owned generated assets for use in Hanzi Tank.
+- The source sheets were locally generated/imported for this project and are not third-party stock art.

@@ -1,0 +1,14 @@
+Generated battlefield background assets for Hanzi Tank
+
+Files:
+- assets/sprites/environment/battlefield-snow-mountain.png
+- assets/sprites/environment/battlefield-desert.png
+- assets/sprites/environment/battlefield-night.png
+- assets/sprites/environment/battlefield-rain.png
+- assets/sprites/environment/battlefield-sunny.png
+- assets/sprites/environment/battlefield-storm.png
+- assets/sprites/environment/battlefield-snowfall.png
+
+Source: OpenAI image generation in this Codex session on 2026-05-29.
+Purpose: Project-generated bitmap battlefield environments for Hanzi Tank.
+Restrictions requested in prompts: no text, no watermark, no flags, no gore, no photorealism, no SVG placeholders.

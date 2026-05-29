@@ -20,8 +20,15 @@ function bodyOf(functionName) {
   throw new Error(`Could not parse function ${functionName}`);
 }
 
-assert.match(source, /id="masteryButton"/, 'Mastery Records button should exist.');
-assert.match(source, /id="masteryModal"/, 'Mastery Records modal should exist.');
+assert.match(source, /id="masteryButton"/, 'Password-book button should exist.');
+assert.match(source, /<button[^>]*class="[^"]*codex-book-button[^"]*"[^>]*id="masteryButton"/, 'Password-book button should use the codex animation sheet styling.');
+assert.match(source, /密码簿/, 'Mastery Records should be renamed to 密码簿.');
+assert.doesNotMatch(source, />Mastery Records<|aria-label="Mastery Records"/, 'Old Mastery Records label should not remain visible.');
+assert.match(source, /id="masteryModal"/, 'Password-book modal should exist.');
+assert.match(source, /codex-book-spritesheet\.png/, 'Password-book UI should reference the generated codex spritesheet.');
+assert.match(source, /@keyframes codex-button-open/, 'Password-book button should animate through unfold frames.');
+assert.match(source, /masteryButton\.classList\.add\("is-opening"\)/, 'Opening the password book should trigger the button unfold animation.');
+assert.match(source, /masteryModal\.classList\.add\("show", "codex-opening"\)/, 'Opening the password book should animate the modal panel.');
 assert.match(source, /id="currentRankIcon"/, 'Mastery Records should show the current rank icon.');
 assert.match(source, /\.rank-card-icon \{[\s\S]*width: 100%;[\s\S]*height: 100%;[\s\S]*object-fit: contain;/, 'Rank ladder icons should fit inside their square frames without being cropped.');
 assert.match(source, /\.rank-hero-icon \{[\s\S]*width: 100%;[\s\S]*height: 100%;[\s\S]*object-fit: contain;/, 'Current rank hero icon should fit inside its square frame without being cropped.');
@@ -105,9 +112,9 @@ assert.match(getProfileBestRecord, /masteredCount,/, 'Leaderboard records should
 assert.match(getProfileBestRecord, /rankName: rank\.name/, 'Leaderboard records should expose English rank name.');
 assert.match(getProfileBestRecord, /rankZh: rank\.zh/, 'Leaderboard records should expose Chinese rank name.');
 
-const renderLeaderboard = bodyOf('renderLeaderboard');
-assert.match(renderLeaderboard, /Mastered \$\{escapeInteger\(record\.masteredCount\)\} Hanzi/, 'Leaderboard should display mastered Hanzi count.');
-assert.match(renderLeaderboard, /Rank \$\{escapeHtml\(record\.rankZh\)\} · \$\{escapeHtml\(record\.rankName\)\}/, 'Leaderboard should display current rank.');
+const renderLeaderboardRecords = bodyOf('renderLeaderboardRecords');
+assert.match(renderLeaderboardRecords, /Mastered \$\{escapeInteger\(record\.masteredCount\)\} Hanzi/, 'Leaderboard should display mastered Hanzi count.');
+assert.match(renderLeaderboardRecords, /Rank \$\{escapeHtml\(record\.rankZh\)\} · \$\{escapeHtml\(record\.rankName\)\}/, 'Leaderboard should display current rank.');
 
 
 const renderMasteredWords = bodyOf('renderMasteredWords');

@@ -19,13 +19,16 @@ const defaults = storage.createDefaultState(today);
 assert.strictEqual(defaults.coins, 0);
 assert.deepStrictEqual(defaults.owned, ['tank_sherman']);
 assert.deepStrictEqual(defaults.equipped, { tank: 'tank_sherman', shell: '', weapon: '' });
+assert.deepStrictEqual(defaults.tankMastery, {});
 assert.strictEqual(defaults.runProgress, null);
 
 const clone = storage.cloneDefaultState(defaults);
 clone.owned.push('tank_tiger');
 clone.correctBank['一'] = { hanzi: '一' };
+clone.tankMastery.tank_sherman = { xp: 20 };
 assert.deepStrictEqual(defaults.owned, ['tank_sherman'], 'Clone should not share owned array with defaults.');
 assert.deepStrictEqual(defaults.correctBank, {}, 'Clone should not share banks with defaults.');
+assert.deepStrictEqual(defaults.tankMastery, {}, 'Clone should not share tank mastery with defaults.');
 
 assert.strictEqual(storage.normalizeProfileName('  Kid   One  '), 'Kid One');
 assert.strictEqual(storage.getProfileId('  Kid   One  '), 'kid one');
@@ -40,6 +43,7 @@ const staleState = {
   dailyDate: '2026-05-23',
   dailyScore: 99,
   equipped: { tank: 'tank_tiger' },
+  tankMastery: { tank_tiger: { xp: 90, clears: 3 } },
   runProgress: { stage: 6, phase: 'battle', lives: 2, score: 120 },
   correctBank: { 一: { hanzi: '一', count: 2 } },
   owned: []
@@ -49,6 +53,7 @@ assert.strictEqual(merged.dailyDate, today);
 assert.strictEqual(merged.dailyScore, 0, 'Daily score should reset across dates.');
 assert.strictEqual(merged.coins, 10);
 assert.strictEqual(merged.equipped.tank, 'tank_tiger');
+assert.deepStrictEqual(merged.tankMastery, staleState.tankMastery, 'Tank mastery should persist across old save merges.');
 assert.deepStrictEqual(merged.runProgress, staleState.runProgress, 'Run progress should persist so players can resume later.');
 assert.ok(merged.owned.includes('tank_sherman'), 'Sherman should always be owned.');
 assert.deepStrictEqual(merged.correctBank, staleState.correctBank);
@@ -60,5 +65,6 @@ storage.saveState(memory, 'kid', merged);
 assert.strictEqual(JSON.parse(memory.data['hanziTankState:kid']).coins, 10);
 assert.strictEqual(JSON.parse(memory.data['hanziTankState:kid']).runProgress.stage, 6);
 assert.strictEqual(storage.loadState(memory, 'missing', defaults, today).equipped.tank, 'tank_sherman');
+assert.deepStrictEqual(storage.mergeSavedState({ tankMastery: null }, defaults, today).tankMastery, {}, 'Old saves without tank mastery should remain compatible.');
 
 console.log('storage core tests passed');

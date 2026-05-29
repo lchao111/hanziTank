@@ -93,6 +93,11 @@
       ammoPerPurchase: 1,
       damageBonus: 1,
       bulletClass: "ap-shell",
+      projectileColor: 0xfff2a1,
+      projectileWidth: 56,
+      projectileHeight: 18,
+      projectileDuration: 640,
+      projectileSheet: "armorPiercingShell",
       desc: "Consumable ammo. +1 attack for one equipped shot. Buy 1 round."
     },
     {
@@ -109,7 +114,10 @@
       smokeCover: 1,
       bulletClass: "smoke-shell",
       projectileColor: 0x94a3b8,
+      projectileWidth: 78,
       projectileHeight: 14,
+      projectileDuration: 780,
+      projectileSheet: "smokeShell",
       desc: "Consumable tactics ammo. Next enemy attack must miss. Buy 1 round."
     },
     {
@@ -126,6 +134,10 @@
       repairOnHit: 1,
       bulletClass: "repair-shell",
       projectileColor: 0x22c55e,
+      projectileWidth: 72,
+      projectileHeight: 30,
+      projectileDuration: 720,
+      projectileSheet: "repairCapsuleShell",
       desc: "Consumable recovery ammo. Repair 1 HP after a hit. Buy 1 round."
     },
     {
@@ -142,7 +154,10 @@
       smokeCover: 1,
       bulletClass: "flash-shell",
       projectileColor: 0xfef08a,
+      projectileWidth: 74,
       projectileHeight: 14,
+      projectileDuration: 680,
+      projectileSheet: "flashFlareShell",
       desc: "Consumable agility ammo. Blind and dodge the next enemy attack. Buy 1 round."
     },
     {
@@ -159,6 +174,10 @@
       armorOnHit: 1,
       bulletClass: "armor-shell",
       projectileColor: 0x60a5fa,
+      projectileWidth: 72,
+      projectileHeight: 34,
+      projectileDuration: 980,
+      projectileSheet: "armorPlateShell",
       desc: "Consumable defense ammo. Gain 1 armor after a hit. Buy 1 round."
     },
     {
@@ -176,6 +195,8 @@
       projectileColor: 0xff7a2f,
       projectileWidth: 48,
       projectileHeight: 22,
+      projectileDuration: 900,
+      projectileSheet: "highExplosiveShell",
       explosionVariant: "massive",
       desc: "Consumable ammo. +2 attack for one equipped shot and bigger explosion. Buy 1 round."
     },
@@ -210,6 +231,12 @@
       ammoPerPurchase: 1,
       damageBonus: 3,
       bulletClass: "cannon-shell",
+      projectileColor: 0xdbeafe,
+      projectileWidth: 88,
+      projectileHeight: 28,
+      projectileDuration: 820,
+      projectileSheet: "longBarrelShot",
+      explosionVariant: "heavy",
       desc: "Consumable ammo. +3 attack for one equipped shot. Buy 1 round."
     }
   ];

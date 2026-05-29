@@ -1,0 +1,12 @@
+Generated war UI crate assets for Hanzi Tank.
+
+Files:
+- assets/sprites/ui/war-supply-crate.png
+- assets/sprites/ui/war-prep-button.png
+
+Source:
+- Project-generated bitmap assets created for Hanzi Tank on 2026-05-29.
+- Visual direction follows ART_STYLE_GUIDE.md: warm illustrated war-room UI, parchment/brass/olive palette, kid-friendly 2D game asset styling.
+
+License:
+- Project-owned generated assets for use in Hanzi Tank.

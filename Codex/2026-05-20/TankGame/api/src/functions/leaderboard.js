@@ -66,6 +66,7 @@ function sanitizeRecord(input) {
   const record = input && typeof input === "object" ? input : {};
   const profileId = cleanProfileId(record.profileId);
   const now = new Date().toISOString();
+  const damage = cleanNumber(record.damage ?? record.maxDamage);
   return {
     id: profileId,
     profileId,
@@ -74,6 +75,9 @@ function sanitizeRecord(input) {
     score: cleanNumber(record.score),
     coins: cleanNumber(record.coins),
     masteredCount: cleanNumber(record.masteredCount, 3000),
+    deaths: cleanNumber(record.deaths, 10000),
+    damage,
+    maxDamage: damage,
     rankName: cleanText(record.rankName, "Recruit", 32),
     rankZh: cleanText(record.rankZh, "新兵", 12),
     date: cleanText(record.date, now, 40),
@@ -202,23 +206,36 @@ async function getContainer() {
 async function readLeaderboard() {
   const container = await getContainer();
   const querySpec = {
-    query: "SELECT TOP 200 c.profileId, c.name, c.stage, c.score, c.coins, c.masteredCount, c.rankName, c.rankZh, c.date, c.updatedAt, c.source FROM c WHERE c.stage > 0"
+    query: "SELECT TOP 200 c.profileId, c.name, c.stage, c.score, c.coins, c.masteredCount, c.deaths, c.damage, c.maxDamage, c.rankName, c.rankZh, c.date, c.updatedAt, c.source FROM c"
   };
   const { resources } = await container.items.query(querySpec).fetchAll();
   return resources
     .map(sanitizeRecord)
-    .sort((a, b) => b.stage - a.stage || b.score - a.score || b.masteredCount - a.masteredCount || a.name.localeCompare(b.name))
-    .slice(0, 20);
+    .filter((record) => record.stage > 0 || record.masteredCount > 0 || record.deaths > 0 || record.damage > 0)
+    .sort((a, b) => Math.max(b.stage, b.masteredCount, b.deaths, b.damage) - Math.max(a.stage, a.masteredCount, a.deaths, a.damage) || b.score - a.score || a.name.localeCompare(b.name))
+    .slice(0, 200);
 }
 
 async function saveLeaderboardRecord(record) {
   const container = await getContainer();
   const next = sanitizeRecord(record);
-  if (!next.stage) return next;
+  if (!next.stage && !next.masteredCount && !next.deaths && !next.damage) return next;
   try {
     const { resource: current } = await container.item(next.id, next.profileId).read();
-    if (current && (current.stage > next.stage || (current.stage === next.stage && current.score >= next.score))) {
-      return sanitizeRecord(current);
+    if (current) {
+      const merged = sanitizeRecord({
+        ...current,
+        ...next,
+        stage: Math.max(current.stage || 0, next.stage || 0),
+        score: Math.max(current.score || 0, next.score || 0),
+        coins: Math.max(current.coins || 0, next.coins || 0),
+        masteredCount: Math.max(current.masteredCount || 0, next.masteredCount || 0),
+        deaths: Math.max(current.deaths || 0, next.deaths || 0),
+        damage: Math.max(current.damage || current.maxDamage || 0, next.damage || next.maxDamage || 0),
+        date: next.date || current.date
+      });
+      await container.items.upsert(merged);
+      return merged;
     }
   } catch (error) {
     if (error.code !== 404) throw error;
@@ -241,11 +258,23 @@ async function countAccountsForField(container, field, value) {
 async function saveLeaderboardRecordForClient(record, clientIdentity) {
   const container = await getContainer();
   const next = sanitizeRecord(record);
-  if (!next.stage) return next;
+  if (!next.stage && !next.masteredCount && !next.deaths && !next.damage) return next;
   try {
     const { resource: current } = await container.item(next.id, next.profileId).read();
-    if (current && (current.stage > next.stage || (current.stage === next.stage && current.score >= next.score))) {
-      return sanitizeRecord(current);
+    if (current) {
+      const merged = sanitizeRecord({
+        ...current,
+        ...next,
+        stage: Math.max(current.stage || 0, next.stage || 0),
+        score: Math.max(current.score || 0, next.score || 0),
+        coins: Math.max(current.coins || 0, next.coins || 0),
+        masteredCount: Math.max(current.masteredCount || 0, next.masteredCount || 0),
+        deaths: Math.max(current.deaths || 0, next.deaths || 0),
+        damage: Math.max(current.damage || current.maxDamage || 0, next.damage || next.maxDamage || 0),
+        date: next.date || current.date
+      });
+      await container.items.upsert({ ...merged, clientIp: clientIdentity.ip, clientNetwork: clientIdentity.network });
+      return merged;
     }
     await container.items.upsert({ ...next, clientIp: clientIdentity.ip, clientNetwork: clientIdentity.network });
     return next;

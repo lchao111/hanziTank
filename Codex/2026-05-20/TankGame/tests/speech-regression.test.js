@@ -78,6 +78,7 @@ assert.match(playCustomVoiceLine, /new Audio\(src\)/, 'Custom voice lines should
 assert.match(playCustomVoiceLine, /audio\.onerror = useFallback/, 'Custom voice lines should fallback if the recording fails to load.');
 assert.match(playCustomVoiceLine, /playback\.catch/, 'Custom voice lines should fallback if browser playback is blocked.');
 assert.match(playCustomVoiceLine, /onMissing\?\.\(\)/, 'Custom voice line failures should report missing audio to the download queue.');
+assert.match(playCustomVoiceLine, /finishLearningAudio\(\);[\s\S]*onMissing\?\.\(\);[\s\S]*fallback\?\.\(\)/, 'Failed MP3 playback should restore ducking before the TTS fallback starts.');
 
 const queueHanziAudioBackgroundDownload = bodyOf('queueHanziAudioBackgroundDownload');
 assert.match(queueHanziAudioBackgroundDownload, /new Audio\(src\)/, 'Generated questions should probe offline audio availability in the background.');
@@ -91,15 +92,16 @@ const speakBossPhrase = bodyOf('speakBossPhrase');
 assert.match(speakBossPhrase, /playCustomVoiceLine\(/, 'Boss speech should try offline Hanzi MP3 before browser TTS.');
 assert.match(speakBossPhrase, /getHanziVoiceLine\(word\)/, 'Boss speech should use the regular Hanzi MP3 path.');
 assert.match(speakBossPhrase, /queueMissingHanziAudio\(word, "background-tts-download", speechText\)/, 'Boss speech should enqueue missing regular Hanzi clips for background TTS.');
-assert.match(speakBossPhrase, /queueChineseSpeech\(speechText, options\)/, 'Boss speech should temporarily fallback to browser TTS after queueing missing audio.');
+assert.match(speakBossPhrase, /queueChineseSpeech\(speechText, speechOptions\)/, 'Boss speech should temporarily fallback to browser TTS after queueing missing audio.');
 
 const speakWord = bodyOf('speakWord');
-assert.match(speakWord, /const speechOptions = \{ preserveMessage:\s*true, autoRetry:\s*true, delay:\s*80 \}/, 'Word speech should preserve prompts and retry TTS fallback.');
+assert.match(speakWord, /const speechOptions = withLearningAudio\(\{ preserveMessage:\s*true, autoRetry:\s*true, delay:\s*80 \}\)/, 'Word speech should preserve prompts and retry TTS fallback.');
 assert.match(speakWord, /getHanziVoiceLine\(word\)/, 'Word speech should try offline Hanzi MP3 first.');
 assert.match(speakWord, /queueMissingHanziAudio\(word\)/, 'Missing custom Hanzi recordings should be added to the download queue.');
 assert.match(speakWord, /queueChineseSpeech\(getSpokenWordText\(word\), speechOptions\)/, 'Custom Hanzi recording failures should fallback to the normal word TTS queue.');
 
 const queueChineseSpeech = bodyOf('queueChineseSpeech');
+assert.match(queueChineseSpeech, /getLearningSpeechOptions\(options\)/, 'Queued speech should default to learning-audio ducking.');
 assert.match(queueChineseSpeech, /pendingSpeechText\s*=\s*text/, 'Queued speech should be remembered for retry.');
 assert.match(queueChineseSpeech, /queuedSpeechRequest\s*=\s*\{/, 'Queued speech should store a structured retry request.');
 assert.match(queueChineseSpeech, /flushQueuedSpeech\(token\)/, 'Queued speech should flush through retry-aware logic.');
@@ -112,7 +114,7 @@ assert.match(flushQueuedSpeech, /speakChinese\(request\.text, request\.options\)
 
 const retryPendingSpeech = bodyOf('retryPendingSpeech');
 assert.match(retryPendingSpeech, /if \(queuedSpeechRequest\)/, 'User interaction should flush queued speech first.');
-assert.match(retryPendingSpeech, /speakChinese\(text, \{ preserveMessage:\s*true \}\)/, 'Pending speech retry should not overwrite gameplay prompts.');
+assert.match(retryPendingSpeech, /speakChinese\(text, withLearningAudio\(\{ preserveMessage:\s*true \}\)\)/, 'Pending speech retry should not overwrite gameplay prompts.');
 
 const speakChinese = bodyOf('speakChinese');
 assert.match(speakChinese, /utterance\.lang\s*=\s*"zh-CN"/, 'Chinese speech must request zh-CN pronunciation.');
