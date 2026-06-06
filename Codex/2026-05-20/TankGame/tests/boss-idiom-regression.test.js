@@ -64,8 +64,8 @@ assert.match(playBossIdiomEffect, /queueChineseSpeech\(technique\.phrase/, 'Boss
 assert.match(playBossIdiomEffect, /setBossCharredState\(true\)/, 'Thunder idiom attack should char the Boss.');
 assert.match(playBossIdiomEffect, /\}, 2400\)/, 'Boss idiom visual cleanup should match the longer effect duration.');
 
-const startDebugBattle = bodyOf('startDebugBattle');
-assert.match(startDebugBattle, /debugBossIdiomMode = currentEnemy\.id === "boss"/, 'Only Debug Mode Boss battles should enable idiom prep.');
+const startBattleScenario = bodyOf('startBattleScenario');
+assert.match(startBattleScenario, /debugBossIdiomMode = currentEnemy\.id === "boss"/, 'Only direct Tank Dismantler Boss battles should enable idiom prep.');
 
 const resetRunForProfile = bodyOf('resetRunForProfile');
 assert.match(resetRunForProfile, /shownBossIdiomStage = 0/, 'Profile reset should clear Boss idiom stage state.');

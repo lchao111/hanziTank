@@ -17,7 +17,7 @@ assert.match(indexSource, /renderLeaderboardRecords\(records\.slice\(0, 200\), `
 assert.match(indexSource, /function queueLeaderboardSync\(\)/, "Saving progress should be able to submit best records to the shared leaderboard.");
 assert.match(indexSource, /id="leaderboardButton"/, "Leaderboard should have its own footer button.");
 assert.match(indexSource, /id="leaderboardModal"/, "Leaderboard should open in its own modal.");
-assert.match(indexSource, /const leaderboardRankings = \[[\s\S]*mostHanzi[\s\S]*highestStage[\s\S]*mostDeaths[\s\S]*highestDamage/, "Leaderboard should support all requested ranking tabs.");
+assert.match(indexSource, /const leaderboardRankings = \[[\s\S]*mostHanzi[\s\S]*highestStage[\s\S]*mostDeaths[\s\S]*highestDamage[\s\S]*antiAirScore/, "Leaderboard should support all requested ranking tabs, including anti-air score.");
 assert.match(indexSource, /leaderboardTabs\.addEventListener\("click"/, "Leaderboard tabs should be interactive.");
 assert.match(indexSource, /archiveModal\.classList\.add\("show", "dossier-opening"\)/, "War Archives should use a dossier opening animation.");
 assert.match(indexSource, /enemyGalleryModal\.classList\.add\("show", "intel-opening"\)/, "Enemy Gallery should use an intel scan opening animation.");
@@ -34,6 +34,9 @@ assert.match(indexSource, /modal-enemy-field-guide-texture\.png/, "Enemy Gallery
 assert.match(indexSource, /modal-medal-board-texture\.png/, "Leaderboard should use a bitmap medal board surface.");
 assert.match(indexSource, /deaths: Math\.max\(0, Math\.floor\(Number\(record\?\.deaths\)/, "Frontend should normalize the deaths leaderboard field.");
 assert.match(indexSource, /damage,\s*\n\s*maxDamage: damage/, "Frontend should normalize compatible damage and maxDamage fields.");
+assert.match(indexSource, /antiAirScore: Math\.max\(0, Math\.floor\(Number\(record\?\.antiAirScore\)/, "Frontend should normalize the anti-air leaderboard field.");
+assert.match(indexSource, /if \(ranking === "antiAirScore"\) return record\.antiAirScore \|\| 0;/, "Leaderboard should rank anti-air scores from anti-airScore.");
+assert.match(indexSource, /record\.stage > 0 \|\| record\.masteredCount > 0 \|\| record\.deaths > 0 \|\| record\.damage > 0 \|\| record\.antiAirScore > 0/, "Local leaderboard records should include anti-air-only runs.");
 assert.doesNotMatch(indexSource, /COSMOS_CONNECTION_STRING|AccountKey=|@azure\/cosmos|CosmosClient/, "Frontend must not contain Cosmos DB credentials or SDK access.");
 
 assert.match(buildSource, /process\.env\.HANZI_TANK_LEADERBOARD_API/, "Production builds should inject only the public leaderboard API URL.");
@@ -42,11 +45,13 @@ assert.match(apiSource, /process\.env\.COSMOS_CONNECTION_STRING/, "Cosmos connec
 assert.match(apiSource, /authLevel: "anonymous"/, "Leaderboard read/write API should not require exposing a function key in the browser.");
 assert.match(apiSource, /sanitizeRecord/, "Leaderboard API should sanitize submitted public records.");
 assert.match(apiSource, /SELECT TOP 200/, "Leaderboard API should query a bounded candidate list.");
-assert.match(apiSource, /c\.deaths, c\.damage, c\.maxDamage/, "Leaderboard API should include the new public ranking fields.");
+assert.match(apiSource, /c\.deaths, c\.damage, c\.maxDamage, c\.antiAirScore/, "Leaderboard API should include the public ranking fields, including anti-air score.");
 assert.match(apiSource, /\.slice\(0, 200\)/, "Leaderboard API should return a bounded candidate set for client-side ranking tabs.");
 assert.match(apiSource, /deaths: cleanNumber\(record\.deaths, 10000\)/, "Leaderboard API should sanitize deaths.");
+assert.match(apiSource, /antiAirScore: cleanNumber\(record\.antiAirScore\)/, "Leaderboard API should sanitize anti-air score.");
 assert.match(apiSource, /const damage = cleanNumber\(record\.damage \?\? record\.maxDamage\)/, "Leaderboard API should accept damage and maxDamage compatibly.");
 assert.match(apiSource, /masteredCount: Math\.max\(current\.masteredCount/, "Leaderboard API should merge best compatible fields for existing profiles.");
+assert.match(apiSource, /antiAirScore: Math\.max\(current\.antiAirScore \|\| 0, next\.antiAirScore \|\| 0\)/, "Leaderboard API should merge each profile's best anti-air score.");
 assert.match(apiSource, /maxBodyBytes = Number\(process\.env\.MAX_LEADERBOARD_BODY_BYTES \|\| 4096\)/, "Leaderboard API should reject oversized write payloads before parsing JSON.");
 assert.match(apiSource, /writeRateLimit = Number\(process\.env\.LEADERBOARD_WRITE_RATE_LIMIT \|\| 30\)/, "Leaderboard API should rate-limit write traffic per client network.");
 assert.match(apiSource, /readRateLimit = Number\(process\.env\.LEADERBOARD_READ_RATE_LIMIT \|\| 120\)/, "Leaderboard API should rate-limit read traffic per client network.");

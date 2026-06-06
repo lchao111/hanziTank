@@ -78,6 +78,7 @@ function sanitizeRecord(input) {
     deaths: cleanNumber(record.deaths, 10000),
     damage,
     maxDamage: damage,
+    antiAirScore: cleanNumber(record.antiAirScore),
     rankName: cleanText(record.rankName, "Recruit", 32),
     rankZh: cleanText(record.rankZh, "新兵", 12),
     date: cleanText(record.date, now, 40),
@@ -206,20 +207,20 @@ async function getContainer() {
 async function readLeaderboard() {
   const container = await getContainer();
   const querySpec = {
-    query: "SELECT TOP 200 c.profileId, c.name, c.stage, c.score, c.coins, c.masteredCount, c.deaths, c.damage, c.maxDamage, c.rankName, c.rankZh, c.date, c.updatedAt, c.source FROM c"
+    query: "SELECT TOP 200 c.profileId, c.name, c.stage, c.score, c.coins, c.masteredCount, c.deaths, c.damage, c.maxDamage, c.antiAirScore, c.rankName, c.rankZh, c.date, c.updatedAt, c.source FROM c"
   };
   const { resources } = await container.items.query(querySpec).fetchAll();
   return resources
     .map(sanitizeRecord)
-    .filter((record) => record.stage > 0 || record.masteredCount > 0 || record.deaths > 0 || record.damage > 0)
-    .sort((a, b) => Math.max(b.stage, b.masteredCount, b.deaths, b.damage) - Math.max(a.stage, a.masteredCount, a.deaths, a.damage) || b.score - a.score || a.name.localeCompare(b.name))
+    .filter((record) => record.stage > 0 || record.masteredCount > 0 || record.deaths > 0 || record.damage > 0 || record.antiAirScore > 0)
+    .sort((a, b) => Math.max(b.stage, b.masteredCount, b.deaths, b.damage, b.antiAirScore) - Math.max(a.stage, a.masteredCount, a.deaths, a.damage, a.antiAirScore) || b.score - a.score || a.name.localeCompare(b.name))
     .slice(0, 200);
 }
 
 async function saveLeaderboardRecord(record) {
   const container = await getContainer();
   const next = sanitizeRecord(record);
-  if (!next.stage && !next.masteredCount && !next.deaths && !next.damage) return next;
+  if (!next.stage && !next.masteredCount && !next.deaths && !next.damage && !next.antiAirScore) return next;
   try {
     const { resource: current } = await container.item(next.id, next.profileId).read();
     if (current) {
@@ -232,6 +233,7 @@ async function saveLeaderboardRecord(record) {
         masteredCount: Math.max(current.masteredCount || 0, next.masteredCount || 0),
         deaths: Math.max(current.deaths || 0, next.deaths || 0),
         damage: Math.max(current.damage || current.maxDamage || 0, next.damage || next.maxDamage || 0),
+        antiAirScore: Math.max(current.antiAirScore || 0, next.antiAirScore || 0),
         date: next.date || current.date
       });
       await container.items.upsert(merged);
@@ -258,7 +260,7 @@ async function countAccountsForField(container, field, value) {
 async function saveLeaderboardRecordForClient(record, clientIdentity) {
   const container = await getContainer();
   const next = sanitizeRecord(record);
-  if (!next.stage && !next.masteredCount && !next.deaths && !next.damage) return next;
+  if (!next.stage && !next.masteredCount && !next.deaths && !next.damage && !next.antiAirScore) return next;
   try {
     const { resource: current } = await container.item(next.id, next.profileId).read();
     if (current) {
@@ -271,6 +273,7 @@ async function saveLeaderboardRecordForClient(record, clientIdentity) {
         masteredCount: Math.max(current.masteredCount || 0, next.masteredCount || 0),
         deaths: Math.max(current.deaths || 0, next.deaths || 0),
         damage: Math.max(current.damage || current.maxDamage || 0, next.damage || next.maxDamage || 0),
+        antiAirScore: Math.max(current.antiAirScore || 0, next.antiAirScore || 0),
         date: next.date || current.date
       });
       await container.items.upsert({ ...merged, clientIp: clientIdentity.ip, clientNetwork: clientIdentity.network });

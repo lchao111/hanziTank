@@ -194,6 +194,33 @@
       accentSemitone: 16,
       percussion: "snow",
       percussionEvery: 4
+    },
+    cave: {
+      id: "cave",
+      label: "Cave Tension",
+      rootFrequency: 146.83,
+      stepMs: 420,
+      volumeScale: 0.82,
+      rhythm: [1, 0, 1, 0, 1, 1, 0, 1],
+      motif: [0, 1, 6, 5, 1, -2, 3, -5],
+      bass: [-12, -12, -6, -13],
+      leadWave: "sawtooth",
+      padWave: "triangle",
+      accentWave: "square",
+      leadGain: 0.026,
+      padGain: 0.03,
+      bassGain: 0.05,
+      accentGain: 0.012,
+      leadDuration: 0.12,
+      padDuration: 0.7,
+      bassDuration: 0.38,
+      accentDuration: 0.06,
+      padEvery: 4,
+      bassEvery: 2,
+      accentEvery: 3,
+      accentSemitone: 13,
+      percussion: "stone",
+      percussionEvery: 2
     }
   };
 
@@ -202,7 +229,10 @@
     "sunny-grassland": "sunny",
     "snow mountain": "snow-mountain",
     snow_mountain: "snow-mountain",
-    snow: "snowfall"
+    snow: "snowfall",
+    "rock-shaft": "cave",
+    rock_shaft: "cave",
+    elevator: "cave"
   };
 
   function cloneMoodConfig(config) {

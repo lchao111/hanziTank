@@ -22,9 +22,12 @@ function bodyOf(functionName) {
   throw new Error(`Could not parse ${functionName}.`);
 }
 
-const environmentIds = ['sunny', 'desert', 'snow-mountain', 'rain', 'night', 'storm', 'snowfall'];
+const environmentIds = ['sunny', 'dunes', 'desert', 'snow-mountain', 'rain', 'night', 'storm', 'snowfall'];
+const directMusicEnvironmentIds = ['sunny', 'desert', 'snow-mountain', 'rain', 'night', 'storm', 'snowfall'];
 environmentIds.forEach((environmentId) => {
   assert.match(source, new RegExp(`id: "${environmentId}"`), `Battlefield should define the ${environmentId} environment.`);
+});
+directMusicEnvironmentIds.forEach((environmentId) => {
   assert.ok(BGM_MOOD_CONFIGS[environmentId], `${environmentId} should have a matching BGM mood.`);
   assert.strictEqual(getBgmMoodForEnvironment({ id: environmentId }), environmentId, `${environmentId} should map directly to its mood.`);
 });
@@ -35,6 +38,10 @@ const earlyReturnIndex = applyBattlefieldEnvironment.indexOf('if (activeBattlefi
 assert.ok(moodCallIndex >= 0, 'Battlefield environment changes should update the BGM mood.');
 assert.ok(moodCallIndex < earlyReturnIndex, 'BGM mood should stay synced even when the visual environment is already active.');
 assert.match(applyBattlefieldEnvironment, /playPhaserEnvironmentWeather\(environment\)/, 'Environment changes should keep weather VFX wiring.');
+assert.match(source, /id: "dunes"[\s\S]*musicMood: "desert"/, 'Dunes should reuse the desert BGM mood.');
+assert.match(source, /id: "dunes"[\s\S]*scenery: "none"/, 'Dunes should render without mismatched scenery overlays.');
+assert.match(source, /id: "desert"[\s\S]*scenery: "none"/, 'Desert should render without forest or ruin scenery overlays.');
+assert.match(bodyOf('updatePhaserEnvironmentScenery'), /environment\.scenery === "none"[\s\S]*hidePhaserBattlefieldScenery\(\)/, 'Environment scenery update should hide overlays for clean scenery environments.');
 
 assert.match(bodyOf('setBattleMusicEnvironment'), /bgmManager\.setMood\(environment\)/, 'Battle music environment helper should delegate to the BGM mood API.');
 assert.match(bodyOf('startBattleMusic'), /setBattleMusicEnvironment\(getBattlefieldEnvironment\(levelNumber\)\)/, 'Starting battle music should use the current battlefield environment.');

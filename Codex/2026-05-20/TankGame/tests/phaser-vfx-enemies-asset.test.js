@@ -35,6 +35,7 @@ const ENEMY_SPRITES = [
 
 const ENVIRONMENT_BACKGROUNDS = [
   'assets/sprites/environment/battlefield-snow-mountain.png',
+  'assets/sprites/environment/battlefield-dunes.png',
   'assets/sprites/environment/battlefield-desert.png',
   'assets/sprites/environment/battlefield-night.png',
   'assets/sprites/environment/battlefield-rain.png',

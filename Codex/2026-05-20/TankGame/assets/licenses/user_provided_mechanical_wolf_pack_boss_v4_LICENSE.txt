@@ -1,0 +1,5 @@
+Asset: mechanical wolf pack boss v4 spritesheet
+Source: User-provided local download, Gemini_Generated_Image_cqk2njcqk2njcqk2.png
+Imported: 2026-05-30
+Processing: Normalized into the TankGame strict 6x5 enemy sheet contract, then chroma-key processed by tools/asset-factory.mjs.
+Usage: TankGame project enemy/boss source asset candidate.

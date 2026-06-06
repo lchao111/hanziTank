@@ -30,4 +30,29 @@ assert.strictEqual(learning.recordProfileWord(playerState, 'correctBank', null),
 assert.throws(() => learning.recordProfileWord(null, 'correctBank', { hanzi: '一' }), /valid player state/);
 assert.throws(() => learning.recordProfileWord({}, '', { hanzi: '一' }), /valid bank name/);
 
+const sharedWords = [
+  { hanzi: '一', meaning: 'one' },
+  { hanzi: '二', meaning: 'two' },
+  { hanzi: '三', meaning: 'three' },
+  { hanzi: '四', meaning: 'four' },
+  { hanzi: '三', meaning: 'duplicate three' },
+  { meaning: 'missing hanzi' }
+];
+const sharedSource = learning.getSharedLearningWordSource(sharedWords, {
+  review: { 三: 2, 一: 0 },
+  correctBank: { 一: { hanzi: '一', count: 3 }, 四: { hanzi: '四', count: 1 } },
+  wrongBank: { 三: { hanzi: '三', count: 2 } }
+});
+assert.deepStrictEqual(
+  sharedSource.map((word) => word.hanzi),
+  ['三', '二', '一', '四'],
+  'Shared source should prioritize review words, then new words, then learned practice words.'
+);
+assert.strictEqual(sharedSource[0].meaning, 'three', 'Shared source should preserve the first word object for a Hanzi.');
+assert.deepStrictEqual(
+  learning.getSharedLearningWordSource(sharedWords, null).map((word) => word.hanzi),
+  ['一', '二', '三', '四'],
+  'Shared source should tolerate missing player state and return unique valid words.'
+);
+
 console.log('learning core tests passed');

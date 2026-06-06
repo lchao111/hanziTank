@@ -1,0 +1,5 @@
+Asset: Boss Challenge button UI PNG
+Path: assets/sprites/ui/boss-challenge-button.png
+Source: Gemini-generated image created from the project prompt in assets/source/ui-candidates/boss-challenge-button-gemini.prompt.md on 2026-06-06.
+Processing: Copied from Gemini to the Windows clipboard, saved as assets/source/ui-candidates/boss-challenge-button-gemini-clipboard.png, then checkerboard-cleaned to transparent PNG via local deterministic edge flood-fill. The cleaned source is stored at assets/source/ui-candidates/boss-challenge-button-gemini-transparent.png.
+Usage: Project UI asset for the public Boss Challenge button in HanziTank.

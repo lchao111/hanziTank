@@ -1,0 +1,528 @@
+{
+  "source": "assets/source/enemy-candidates/bouncing-tank-boss-reference.png",
+  "spritesheet": "assets/sprites/enemies/bouncing-tank-boss-spritesheet.png",
+  "galleryPreview": "assets/sprites/enemies/gallery/bouncing-tank-boss-preview.png",
+  "sourceWidth": 2816,
+  "sourceHeight": 1504,
+  "columns": 6,
+  "rows": 5,
+  "frameWidth": 469,
+  "frameHeight": 300,
+  "processing": "Copied user-provided Gemini bouncing tank boss sheet, chroma-keyed green background, despilled green edges, normalized to 469x300 Phaser frames, and exported a transparent gallery preview.",
+  "qc": {
+    "frameStats": [
+      {
+        "frame": 0,
+        "sourceRect": {
+          "height": 301,
+          "width": 469,
+          "x": 0,
+          "y": 0
+        },
+        "alphaBounds": {
+          "height": 218,
+          "width": 351,
+          "x": 59,
+          "y": 75
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 1,
+        "sourceRect": {
+          "height": 301,
+          "width": 470,
+          "x": 469,
+          "y": 0
+        },
+        "alphaBounds": {
+          "height": 243,
+          "width": 351,
+          "x": 60,
+          "y": 50
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 2,
+        "sourceRect": {
+          "height": 301,
+          "width": 469,
+          "x": 939,
+          "y": 0
+        },
+        "alphaBounds": {
+          "height": 279,
+          "width": 350,
+          "x": 60,
+          "y": 14
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 3,
+        "sourceRect": {
+          "height": 301,
+          "width": 469,
+          "x": 1408,
+          "y": 0
+        },
+        "alphaBounds": {
+          "height": 292,
+          "width": 351,
+          "x": 59,
+          "y": 1
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 4,
+        "sourceRect": {
+          "height": 301,
+          "width": 470,
+          "x": 1877,
+          "y": 0
+        },
+        "alphaBounds": {
+          "height": 279,
+          "width": 351,
+          "x": 59,
+          "y": 14
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 5,
+        "sourceRect": {
+          "height": 301,
+          "width": 469,
+          "x": 2347,
+          "y": 0
+        },
+        "alphaBounds": {
+          "height": 232,
+          "width": 380,
+          "x": 48,
+          "y": 61
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 6,
+        "sourceRect": {
+          "height": 301,
+          "width": 469,
+          "x": 0,
+          "y": 301
+        },
+        "alphaBounds": {
+          "height": 277,
+          "width": 351,
+          "x": 60,
+          "y": 20
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 7,
+        "sourceRect": {
+          "height": 301,
+          "width": 470,
+          "x": 469,
+          "y": 301
+        },
+        "alphaBounds": {
+          "height": 277,
+          "width": 364,
+          "x": 60,
+          "y": 20
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 8,
+        "sourceRect": {
+          "height": 301,
+          "width": 469,
+          "x": 939,
+          "y": 301
+        },
+        "alphaBounds": {
+          "height": 277,
+          "width": 375,
+          "x": 60,
+          "y": 20
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 9,
+        "sourceRect": {
+          "height": 301,
+          "width": 469,
+          "x": 1408,
+          "y": 301
+        },
+        "alphaBounds": {
+          "height": 277,
+          "width": 352,
+          "x": 60,
+          "y": 20
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 10,
+        "sourceRect": {
+          "height": 301,
+          "width": 470,
+          "x": 1877,
+          "y": 301
+        },
+        "alphaBounds": {
+          "height": 277,
+          "width": 379,
+          "x": 60,
+          "y": 20
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 11,
+        "sourceRect": {
+          "height": 301,
+          "width": 469,
+          "x": 2347,
+          "y": 301
+        },
+        "alphaBounds": {
+          "height": 282,
+          "width": 400,
+          "x": 60,
+          "y": 15
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 12,
+        "sourceRect": {
+          "height": 300,
+          "width": 469,
+          "x": 0,
+          "y": 602
+        },
+        "alphaBounds": {
+          "height": 276,
+          "width": 351,
+          "x": 59,
+          "y": 23
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 13,
+        "sourceRect": {
+          "height": 300,
+          "width": 470,
+          "x": 469,
+          "y": 602
+        },
+        "alphaBounds": {
+          "height": 275,
+          "width": 425,
+          "x": 24,
+          "y": 24
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 14,
+        "sourceRect": {
+          "height": 300,
+          "width": 469,
+          "x": 939,
+          "y": 602
+        },
+        "alphaBounds": {
+          "height": 281,
+          "width": 445,
+          "x": 13,
+          "y": 18
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 15,
+        "sourceRect": {
+          "height": 300,
+          "width": 469,
+          "x": 1408,
+          "y": 602
+        },
+        "alphaBounds": {
+          "height": 276,
+          "width": 380,
+          "x": 59,
+          "y": 23
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 16,
+        "sourceRect": {
+          "height": 300,
+          "width": 470,
+          "x": 1877,
+          "y": 602
+        },
+        "alphaBounds": {
+          "height": 275,
+          "width": 350,
+          "x": 60,
+          "y": 24
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 17,
+        "sourceRect": {
+          "height": 300,
+          "width": 469,
+          "x": 2347,
+          "y": 602
+        },
+        "alphaBounds": {
+          "height": 275,
+          "width": 350,
+          "x": 60,
+          "y": 24
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 18,
+        "sourceRect": {
+          "height": 301,
+          "width": 469,
+          "x": 0,
+          "y": 902
+        },
+        "alphaBounds": {
+          "height": 298,
+          "width": 349,
+          "x": 60,
+          "y": 1
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 19,
+        "sourceRect": {
+          "height": 301,
+          "width": 470,
+          "x": 469,
+          "y": 902
+        },
+        "alphaBounds": {
+          "height": 298,
+          "width": 350,
+          "x": 60,
+          "y": 1
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 20,
+        "sourceRect": {
+          "height": 301,
+          "width": 469,
+          "x": 939,
+          "y": 902
+        },
+        "alphaBounds": {
+          "height": 298,
+          "width": 349,
+          "x": 60,
+          "y": 1
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 21,
+        "sourceRect": {
+          "height": 301,
+          "width": 469,
+          "x": 1408,
+          "y": 902
+        },
+        "alphaBounds": {
+          "height": 298,
+          "width": 351,
+          "x": 61,
+          "y": 1
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 22,
+        "sourceRect": {
+          "height": 301,
+          "width": 470,
+          "x": 1877,
+          "y": 902
+        },
+        "alphaBounds": {
+          "height": 298,
+          "width": 358,
+          "x": 62,
+          "y": 1
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 23,
+        "sourceRect": {
+          "height": 301,
+          "width": 469,
+          "x": 2347,
+          "y": 902
+        },
+        "alphaBounds": {
+          "height": 298,
+          "width": 356,
+          "x": 63,
+          "y": 1
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 24,
+        "sourceRect": {
+          "height": 301,
+          "width": 469,
+          "x": 0,
+          "y": 1203
+        },
+        "alphaBounds": {
+          "height": 298,
+          "width": 354,
+          "x": 58,
+          "y": 1
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 25,
+        "sourceRect": {
+          "height": 301,
+          "width": 470,
+          "x": 469,
+          "y": 1203
+        },
+        "alphaBounds": {
+          "height": 298,
+          "width": 352,
+          "x": 58,
+          "y": 1
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 26,
+        "sourceRect": {
+          "height": 301,
+          "width": 469,
+          "x": 939,
+          "y": 1203
+        },
+        "alphaBounds": {
+          "height": 298,
+          "width": 363,
+          "x": 55,
+          "y": 1
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 27,
+        "sourceRect": {
+          "height": 301,
+          "width": 469,
+          "x": 1408,
+          "y": 1203
+        },
+        "alphaBounds": {
+          "height": 298,
+          "width": 344,
+          "x": 75,
+          "y": 1
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 28,
+        "sourceRect": {
+          "height": 301,
+          "width": 470,
+          "x": 1877,
+          "y": 1203
+        },
+        "alphaBounds": {
+          "height": 298,
+          "width": 317,
+          "x": 90,
+          "y": 1
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      },
+      {
+        "frame": 29,
+        "sourceRect": {
+          "height": 301,
+          "width": 469,
+          "x": 2347,
+          "y": 1203
+        },
+        "alphaBounds": {
+          "height": 298,
+          "width": 360,
+          "x": 58,
+          "y": 1
+        },
+        "greenResiduePixels": 0,
+        "edgeTouch": false
+      }
+    ],
+    "edgeTouchFrames": [],
+    "greenResiduePixels": 0.0
+  }
+}

@@ -170,3 +170,82 @@ Create a durable image-generation workflow for TankGame assets: immersive modal 
 
 - Added `enemyGalleryPreviewMap` and `enemyGallerySpriteSheets` to `src/data/enemies.js` so Field Guide thumbnails and Phaser preview animations use bitmap PNG/spritesheet art rather than SVG card art.
 - Self-Destruct Truck and all new elite enemies are explicitly marked `interim-derived-bitmap`; final generated sheets are still a tracked art gap.
+
+## 2026-05-29 - Drone Swarm Boss Interim Framesheet Package
+
+### Generation Availability Check
+
+- Built-in `image_gen` was not exposed to this Codex session.
+- No callable ComfyUI/local generation backend was available from the sandboxed PowerShell session.
+- Final generated Drone Swarm Boss art therefore remains pending under `assets/source/enemy-candidates/drone-swarm-boss-spritesheet.prompt.md`.
+
+### Deterministic Derived Assets
+
+- Added `tools/generate-drone-swarm-boss-interim-spritesheet.ps1` to rebuild interim runtime art from existing project-native `assets/sprites/enemies/enemy-tank-spritesheet.png` frames.
+- Generated transparent interim PNG assets:
+  - `assets/sprites/enemies/drone-swarm-boss-interim-spritesheet.png`
+  - `assets/sprites/enemies/drone-swarm-boss-interim-preview.png`
+  - `assets/sprites/enemies/drone-swarm-boss-drone-1.png`
+  - `assets/sprites/enemies/drone-swarm-boss-drone-2.png`
+  - `assets/sprites/enemies/drone-swarm-boss-drone-3.png`
+  - `assets/sprites/enemies/drone-swarm-boss-drone-4.png`
+  - `assets/sprites/enemies/drone-swarm-boss-drone-5.png`
+- Added provenance/license note: `assets/licenses/derived_drone_swarm_boss_interim_LICENSE.txt`.
+- Manifest status is `interim-derived-bitmap`; do not claim this as final generated art.
+
+## 2026-05-30 - Self-Destruct Truck Interim Runtime Package
+
+### Generation Availability Check
+
+- Built-in `image_gen` was not exposed to this Codex session.
+- No callable local ComfyUI/image-generation backend was available from the sandboxed PowerShell session.
+- Final model-generated Self-Destruct Truck art remains pending under `assets/source/enemy-candidates/self-destruct-truck-spritesheet.prompt.md`.
+
+### Deterministic Interim Assets
+
+- Added `tools/generate-self-destruct-truck-interim-assets.ps1` to rebuild the interim truck runtime package.
+- Generated transparent PNG assets:
+  - `assets/sprites/enemies/self-destruct-truck-interim-spritesheet.png`
+  - `assets/sprites/effects/self-destruct-truck-explosion-interim-spritesheet.png`
+  - `assets/sprites/enemies/gallery/self-destruct-truck-interim-preview.png`
+- Added QC metadata:
+  - `assets/source/enemy-candidates/self-destruct-truck-interim-pipeline-meta.json`
+  - Truck sheet: 2814x1500, 5 rows x 6 columns, 469x300 frames, edge-touch false.
+  - Explosion sheet: 1280x384, 2 rows x 4 columns, 320x192 frames, edge-touch false.
+- Added provenance/license note: `assets/licenses/derived_self_destruct_truck_interim_LICENSE.txt`.
+
+### Integration Notes
+
+- Runtime Phaser now preloads and uses `selfDestructTruckBattle` for the truck warning, charge, hit, wind-up, and destroyed states.
+- Runtime Phaser now preloads and uses `selfDestructTruckExplosion` for the truck crash/death explosion layer.
+- Enemy Gallery truck preview now uses the runtime truck sheet instead of the old regular-tank-derived 4x2 gallery sheet.
+- Asset status remains `interim-derived-bitmap-pending-final-generation`; do not claim final truck art is complete until real generated/imported hand-painted bitmap art is promoted and visually QC'd.
+
+## 2026-05-30 - Tiger I Runtime Sheet Import
+
+### Source Import
+
+- Imported the user-provided Tiger I green-screen animation sheet from `C:\Users\chlia\Downloads\Tiger1.png`.
+- Durable project source copy: `assets/source/war-prep-tank-previews/tiger-i-player-reference.png`.
+- Source dimensions: 2816x1504.
+- Logical grid: 6 columns x 5 rows, recorded in `assets/source/war-prep-tank-previews/tiger-i-player-pipeline-meta.json`.
+
+### Deterministic Processing
+
+- Added `tools/generate-tiger-i-player-spritesheet.ps1`.
+- Generated transparent Phaser runtime sheet: `assets/sprites/tanks/tiger-i-player-tank-spritesheet.png`.
+- Runtime sheet dimensions: 1344x720, 6 columns x 5 rows, 224x144 frames.
+- Frame ranges:
+  - Idle: 0-5.
+  - Fire: 6-11.
+  - Heavy fire: 12-17.
+  - Hit / weak: 18-23.
+  - Destroyed / burning: 24-29.
+- QC metadata reports transparent corners, no frame-edge touches, and zero strong green-screen residue after deterministic cleanup.
+
+### Integration Notes
+
+- Updated Phaser player tank mapping so equipping `tank_tiger` uses texture `playerTankTigerBattle`.
+- Updated asset manifest provenance and tests for the Tiger I runtime sheet.
+- Regenerated War Prep tank previews from the current source set; Tiger I preview remains `assets/sprites/tanks/war-prep/tiger-i.png`.
+- Added provenance note: `assets/licenses/user_provided_tiger_i_player_reference_LICENSE.txt`.

@@ -51,10 +51,25 @@
       hitReaction: "smokeJolt",
       deathVfx: "selfDestructDebris",
       asset: {
-        status: "interim-gallery-bitmap-pending-final-generation",
+        status: "interim-derived-bitmap-pending-final-generation",
         promptSpec: "assets/source/enemy-candidates/self-destruct-truck-spritesheet.prompt.md",
+        runtimeSpritesheet: "assets/sprites/enemies/self-destruct-truck-interim-spritesheet.png",
+        explosionSpritesheet: "assets/sprites/effects/self-destruct-truck-explosion-interim-spritesheet.png",
         galleryPreview: "assets/sprites/enemies/gallery/self-destruct-truck-interim-preview.png",
-        gallerySpritesheet: "assets/sprites/enemies/gallery/self-destruct-truck-interim-spritesheet.png",
+        gallerySpritesheet: "assets/sprites/enemies/self-destruct-truck-interim-spritesheet.png",
+        frameWidth: 469,
+        frameHeight: 300,
+        columns: 6,
+        rows: 5,
+        frames: {
+          idle: [0, 1, 2, 3, 4, 5],
+          reloadWarning: [6, 7, 8, 9, 10, 11],
+          charge: [12, 13, 14, 15, 16, 17],
+          hitSmokeJolt: [18, 19, 20],
+          explosionWindup: [21, 22, 23],
+          destroyed: [24, 25, 26, 27, 28, 29]
+        },
+        explosionFrames: [0, 1, 2, 3, 4, 5, 6, 7],
         fallback: "assets/enemy-suicide-truck.svg"
       },
       intro: "Elite truck. Watch the red rush warning, then stop its accelerating crash before the blast. / 精英自爆卡车：看到红色冲锋预警后，赶在加速撞击和爆炸前拦截。"
@@ -126,6 +141,85 @@
       intro: "Elite drone swarm. Small drones orbit, lock on, and fire a staggered volley. / 精英无人机群：小无人机环绕锁定，随后分段齐射。"
     },
     {
+      id: "droneSwarmBoss",
+      name: "Drone Swarm Boss",
+      hp: 4,
+      damage: 1,
+      attackInterval: 4,
+      attackStyle: "droneSwarm",
+      role: "boss",
+      reloadMotion: "orbit",
+      telegraph: "orbitCharge",
+      attackTiming: "first-defeat-split-five-lanes",
+      hitReaction: "emStun",
+      deathVfx: "swarmDispersal",
+      scaleWithStage: false,
+      splitPhase: {
+        type: "droneSwarmBoss",
+        count: 5,
+        droneHp: 2,
+        droneDamage: 1,
+        droneAttackInterval: 4,
+        droneVariants: [
+          { id: "droneSwarmBossDrone1", name: "Scout Drone", asset: "assets/sprites/enemies/drone-swarm-boss-drone-1.png" },
+          { id: "droneSwarmBossDrone2", name: "Shield Drone", asset: "assets/sprites/enemies/drone-swarm-boss-drone-2.png" },
+          { id: "droneSwarmBossDrone3", name: "Pulse Drone", asset: "assets/sprites/enemies/drone-swarm-boss-drone-3.png" },
+          { id: "droneSwarmBossDrone4", name: "Spark Drone", asset: "assets/sprites/enemies/drone-swarm-boss-drone-4.png" },
+          { id: "droneSwarmBossDrone5", name: "Command Drone", asset: "assets/sprites/enemies/drone-swarm-boss-drone-5.png" }
+        ]
+      },
+      asset: {
+        status: "interim-derived-bitmap-pending-final-generation",
+        promptSpec: "assets/source/enemy-candidates/drone-swarm-boss-spritesheet.prompt.md",
+        runtimePreview: "assets/sprites/enemies/drone-swarm-boss-interim-preview.png",
+        runtimeSpritesheet: "assets/sprites/enemies/drone-swarm-boss-interim-spritesheet.png",
+        fallback: "assets/enemy-scout.svg"
+      },
+      intro: "Boss drone swarm. Defeat the formation once, then it splits into five Hanzi drones across lanes. / Boss 无人机群：先击破编队，再分裂为五条路线上的汉字无人机。"
+    },
+    {
+      id: "bouncingTankBoss",
+      name: "Bouncing Tank Boss",
+      hp: 10,
+      damage: 1,
+      attackInterval: 4,
+      attackStyle: "bouncingDodge",
+      role: "boss",
+      reloadMotion: "hop",
+      telegraph: "malfunctionSpark",
+      attackTiming: "dodge-three-then-malfunction-window",
+      hitReaction: "electricFault",
+      deathVfx: "bossExplosion",
+      scaleWithStage: false,
+      bossMechanic: {
+        type: "bouncingTankBoss",
+        dodgesUntilMalfunction: 3
+      },
+      asset: {
+        status: "user-provided-bitmap",
+        promptSpec: "assets/source/enemy-candidates/bouncing-tank-boss-spritesheet.prompt.md",
+        sourceImagePath: "assets/source/enemy-candidates/bouncing-tank-boss-reference.png",
+        runtimeSpritesheet: "assets/sprites/enemies/bouncing-tank-boss-spritesheet.png",
+        galleryPreview: "assets/sprites/enemies/gallery/bouncing-tank-boss-preview.png",
+        gallerySpritesheet: "assets/sprites/enemies/bouncing-tank-boss-spritesheet.png",
+        frameWidth: 469,
+        frameHeight: 300,
+        columns: 6,
+        rows: 5,
+        frames: {
+          idle: [0, 1, 2, 3, 4, 5],
+          dodge: [0, 1, 2, 3, 4, 5],
+          fire: [6, 7, 8, 9, 10, 11],
+          smoke: [12, 13, 14, 15, 16, 17],
+          weak: [18, 19, 20],
+          malfunctionSpark: [21, 22, 23],
+          destroyed: [24, 25, 26, 27, 28, 29]
+        },
+        fallback: "assets/enemy-armor.svg"
+      },
+      intro: "Boss Bouncing Tank. Correct attacks make it leap away three times. When it sparks and malfunctions, strike fast before it recovers. / Boss 弹跳坦克：答对开火会让它连续弹跳躲避三次；冒电火花机械故障时，立刻抓住机会攻击。"
+    },
+    {
       id: "wolfPack",
       name: "Mechanical Wolf Pack",
       hp: 4,
@@ -195,6 +289,8 @@
     truck: "Elite rush unit with a red warning, accelerating crash, explosion impact, and debris death burst. / 带红色预警、加速撞击、爆炸冲击和碎片死亡效果的精英冲锋单位。",
     springSoldier: "Spring-legged elite that telegraphs with coil compression, bounces into attack, recoils elastically on hit, and scatters springs on defeat. / 弹簧腿精英：压缩预警、跳跃攻击、受击弹回、击毁时弹簧散落。",
     droneSwarm: "Orbiting mini-drone elite with charge rings, staggered volley fire, EM stun sparks on hit, and swarm dispersal on defeat. / 环绕小无人机精英：充能环、分段齐射、受击电磁火花、击毁时群体散开。",
+    droneSwarmBoss: "Multi-phase drone swarm Boss. First defeat splits into five separate lane drones, each carrying its own Hanzi target until every drone is destroyed. / 多阶段无人机群 Boss：第一次击破后分裂成五个带独立汉字目标的路线无人机，全部击毁才算胜利。",
+    bouncingTankBoss: "Bouncing Tank Boss that dodges three attacks, then suffers a spark-filled mechanical malfunction that creates a short damage window. / 弹跳坦克 Boss：连续弹跳躲避三次后机械故障冒电火花，短暂露出可攻击窗口。",
     wolfPack: "Mechanical pack elite that flanks before staggered pounces, throws metal sparks on hit, and breaks apart into multiple chassis pieces. / 机械狼群精英：侧翼包抄、分段扑击、受击金属火花、击毁时多机体解体。",
     mechanicalFleas: "Tiny jumping elite swarm with rapid hop telegraphs, chip-damage pressure, squish sparks on hit, and pop bursts on defeat. / 小型跳跃精英群：快速跳跃预警、轻伤害压迫、受击压扁火花、击毁时爆裂弹出。",
     rpgInfantry: "Anti-tank RPG soldier. Low HP but dangerous burst damage. / 反坦克火箭兵，生命低但爆发伤害危险。",
@@ -215,10 +311,17 @@
   const enemySpriteMap = {
     tank: "assets/enemy-tank.svg",
     armor: "assets/enemy-armor.svg",
-    truck: "assets/enemy-suicide-truck.svg",
+    truck: "assets/sprites/enemies/gallery/self-destruct-truck-interim-preview.png",
     scout: "assets/enemy-scout.svg",
     springSoldier: "assets/enemy-heavy-infantry.svg",
     droneSwarm: "assets/enemy-scout.svg",
+    droneSwarmBoss: "assets/sprites/enemies/drone-swarm-boss-interim-preview.png",
+    bouncingTankBoss: "assets/sprites/enemies/gallery/bouncing-tank-boss-preview.png",
+    droneSwarmBossDrone1: "assets/sprites/enemies/drone-swarm-boss-drone-1.png",
+    droneSwarmBossDrone2: "assets/sprites/enemies/drone-swarm-boss-drone-2.png",
+    droneSwarmBossDrone3: "assets/sprites/enemies/drone-swarm-boss-drone-3.png",
+    droneSwarmBossDrone4: "assets/sprites/enemies/drone-swarm-boss-drone-4.png",
+    droneSwarmBossDrone5: "assets/sprites/enemies/drone-swarm-boss-drone-5.png",
     wolfPack: "assets/enemy-armor.svg",
     mechanicalFleas: "assets/enemy-scout.svg",
     grenadier: "assets/enemy-rpg-infantry.svg",
@@ -259,10 +362,10 @@
       columns: 6
     },
     selfDestructTruckInterim: {
-      url: "assets/sprites/enemies/gallery/self-destruct-truck-interim-spritesheet.png?v=20260529",
-      frameWidth: 256,
-      frameHeight: 192,
-      columns: 4
+      url: "assets/sprites/enemies/self-destruct-truck-interim-spritesheet.png?v=20260530",
+      frameWidth: 469,
+      frameHeight: 300,
+      columns: 6
     },
     springSoldierInterim: {
       url: "assets/sprites/enemies/gallery/spring-soldier-interim-spritesheet.png?v=20260529",
@@ -275,6 +378,18 @@
       frameWidth: 256,
       frameHeight: 192,
       columns: 4
+    },
+    droneSwarmBossInterim: {
+      url: "assets/sprites/enemies/drone-swarm-boss-interim-spritesheet.png?v=20260529",
+      frameWidth: 256,
+      frameHeight: 192,
+      columns: 4
+    },
+    bouncingTankBoss: {
+      url: "assets/sprites/enemies/bouncing-tank-boss-spritesheet.png?v=20260605",
+      frameWidth: 469,
+      frameHeight: 300,
+      columns: 6
     },
     wolfPackInterim: {
       url: "assets/sprites/enemies/gallery/mechanical-wolf-pack-interim-spritesheet.png?v=20260529",
@@ -310,11 +425,11 @@
     truck: {
       cardArt: "assets/sprites/enemies/gallery/self-destruct-truck-interim-preview.png",
       sheet: "selfDestructTruckInterim",
-      artStatus: "interim-derived-bitmap",
-      sourceSpritesheetPath: "assets/sprites/enemies/regular-enemy-tank-spritesheet.png",
+      artStatus: "interim-derived-bitmap-pending-final-generation",
+      sourceSpritesheetPath: "assets/sprites/enemies/self-destruct-truck-interim-spritesheet.png",
       promptSpec: "assets/source/enemy-candidates/self-destruct-truck-spritesheet.prompt.md",
       fallbackSvg: "assets/enemy-suicide-truck.svg",
-      animation: { start: 0, end: 3, frameRate: 7, attackStart: 4, attackEnd: 7, attackFrameRate: 10, maxHeight: 220, displayScale: 1.08, y: 198 }
+      animation: { start: 0, end: 5, frameRate: 8, attackStart: 6, attackEnd: 17, attackFrameRate: 12, maxHeight: 235, displayScale: 1.02, y: 198 }
     },
     infantry: {
       cardArt: "assets/sprites/enemies/gallery/regular-soldier-preview.png",
@@ -366,6 +481,24 @@
       fallbackSvg: "assets/enemy-scout.svg",
       animation: { start: 0, end: 3, frameRate: 11, attackStart: 4, attackEnd: 7, attackFrameRate: 14, maxHeight: 205, displayScale: 0.92, y: 198 }
     },
+    droneSwarmBoss: {
+      cardArt: "assets/sprites/enemies/drone-swarm-boss-interim-preview.png",
+      sheet: "droneSwarmBossInterim",
+      artStatus: "interim-derived-bitmap",
+      sourceSpritesheetPath: "assets/sprites/enemies/enemy-tank-spritesheet.png",
+      promptSpec: "assets/source/enemy-candidates/drone-swarm-boss-spritesheet.prompt.md",
+      fallbackSvg: "assets/enemy-scout.svg",
+      animation: { start: 0, end: 3, frameRate: 10, attackStart: 8, attackEnd: 11, attackFrameRate: 13, maxHeight: 210, displayScale: 0.94, y: 198 }
+    },
+    bouncingTankBoss: {
+      cardArt: "assets/sprites/enemies/gallery/bouncing-tank-boss-preview.png",
+      sheet: "bouncingTankBoss",
+      artStatus: "user-provided-bitmap",
+      sourceSpritesheetPath: "assets/source/enemy-candidates/bouncing-tank-boss-reference.png",
+      promptSpec: "assets/source/enemy-candidates/bouncing-tank-boss-spritesheet.prompt.md",
+      fallbackSvg: "assets/enemy-armor.svg",
+      animation: { start: 0, end: 5, frameRate: 10, attackStart: 21, attackEnd: 23, attackFrameRate: 12, maxHeight: 242, displayScale: 1.08, y: 198 }
+    },
     wolfPack: {
       cardArt: "assets/sprites/enemies/gallery/mechanical-wolf-pack-interim-preview.png",
       sheet: "wolfPackInterim",
@@ -407,6 +540,8 @@
     { stage: 12, enemyId: "truck", category: "Elite", title: "Self-Destruct Truck", desc: "Direct elite test: rush warning, acceleration, explosion, debris death. / 精英直测：冲锋预警、加速、爆炸、碎片击毁。" },
     { stage: 21, enemyId: "springSoldier", category: "Elite", title: "Spring Soldier", desc: "Direct elite test: spring-hop approach, bounce attack, elastic recoil, spring scatter. / 精英直测：弹簧跳跃、反弹攻击、弹性受击、弹簧散落。" },
     { stage: 22, enemyId: "droneSwarm", category: "Elite", title: "Drone Swarm", desc: "Direct elite test: orbiting drones, volley attack, EM stun sparks, swarm dispersal. / 精英直测：无人机环绕、齐射、电磁火花、群体散开。" },
+    { stage: 25, enemyId: "droneSwarmBoss", category: "Boss", title: "Drone Swarm Boss", desc: "Direct Boss test: defeat the swarm once, split into five Hanzi lane drones, clear all five. / Boss 直测：先击破无人机群，再分裂为五个汉字路线无人机并全部清除。" },
+    { stage: 26, enemyId: "bouncingTankBoss", category: "Boss", title: "Bouncing Tank Boss", desc: "Direct Boss test: three dodge jumps, spark malfunction window, 10 HP weak and destroyed states. / Boss 直测：三次弹跳躲避、冒电火花故障窗口、10 点血弱化和损毁状态。" },
     { stage: 23, enemyId: "wolfPack", category: "Elite", title: "Mechanical Wolf Pack", desc: "Direct elite test: flank dash, staggered pounce, metal sparks, pack break-apart. / 精英直测：侧翼冲刺、分段扑击、金属火花、狼群解体。" },
     { stage: 24, enemyId: "mechanicalFleas", category: "Elite", title: "Mechanical Fleas", desc: "Direct elite test: rapid hops, chip pressure, squish sparks, pop destruction. / 精英直测：快速跳跃、轻伤压迫、压扁火花、爆裂击毁。" }
   ];

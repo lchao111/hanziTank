@@ -43,9 +43,16 @@ const showGameOver = bodyOf('showGameOver');
 assert.match(showGameOver, /if \(isGameOver\) return/, 'Game over should be idempotent.');
 assert.match(showGameOver, /isGameOver = true/, 'Game over should set terminal state before cleanup.');
 assert.match(showGameOver, /stopCountdown\(\)/, 'Game over should stop reload countdown.');
-['reloading', 'fire', 'boss-slam', 'boss-attack-approach', 'crash-attack', 'spring-bounce-attack', 'swarm-volley', 'pack-pounce', 'flea-burst-attack', 'melee-strike'].forEach((className) => {
+['reloading', 'enemy-reload-ready', 'boss-slam', 'boss-attack-approach'].forEach((className) => {
   assert.match(showGameOver, new RegExp(`enemyTank\\.classList\\.remove\\([\\s\\S]*"${className}"`), `Game over should clear ${className}.`);
 });
+assert.doesNotMatch(showGameOver, /enemyTank\.classList\.remove\([^\n]*"fire"/, 'Game over should not clear the enemy firing pose after the player is defeated.');
+assert.match(showGameOver, /updatePhaserActors\(\)[\s\S]*playEnemyGameOverPressure\(\)/, 'Game over should keep Phaser enemy actors active before showing enemy pressure.');
+
+const gameOverPressure = bodyOf('playEnemyGameOverPressure');
+assert.match(gameOverPressure, /enemyTank\.classList\.add\("fire"\)/, 'Enemy should remain visibly attacking after player defeat.');
+assert.match(gameOverPressure, /currentEnemy\.id === "infantry"\) playPhaserRegularInfantryState\("fire", \{ loop: true \}\)/, 'Regular Soldier should keep Phaser fire art visible after defeat.');
+assert.match(gameOverPressure, /currentEnemy\.id === "grenadier"\) playPhaserGrenadierState\("fire", \{ loop: true \}\)/, 'Grenadier should keep Phaser fire art visible after defeat.');
 
 const restartGame = bodyOf('restartGame');
 assert.match(restartGame, /cancelStageAdvance\(\)/, 'Restart should cancel any stage-clear advance animation.');
@@ -90,10 +97,10 @@ assert.match(startAdventureMode, /if \(!restoreRunProgress\(\)\) resetRunForProf
 const enterProfile = bodyOf('enterProfile');
 assert.match(enterProfile, /showModeGate\(\)/, 'Profile entry should show game mode selection before starting play.');
 
-const startDebugBattle = bodyOf('startDebugBattle');
-assert.match(startDebugBattle, /cancelStageAdvance\(\)/, 'Debug battle should cancel any stage-clear advance animation.');
-assert.match(startDebugBattle, /isGameOver = false/, 'Debug battle should clear game-over state.');
-assert.match(startDebugBattle, /isLevelCleared = false/, 'Debug battle should clear level-clear state.');
+const startBattleScenario = bodyOf('startBattleScenario');
+assert.match(startBattleScenario, /cancelStageAdvance\(\)/, 'Direct battle scenarios should cancel any stage-clear advance animation.');
+assert.match(startBattleScenario, /isGameOver = false/, 'Direct battle scenarios should clear game-over state.');
+assert.match(startBattleScenario, /isLevelCleared = false/, 'Direct battle scenarios should clear level-clear state.');
 
 const enemyFire = bodyOf('enemyFire');
 assert.match(enemyFire, /if \(isGameOver \|\| isLevelCleared \|\| lives <= 0 \|\| currentEnemy\.hp <= 0\) return/, 'Enemy fire should not start after game over or enemy defeat.');

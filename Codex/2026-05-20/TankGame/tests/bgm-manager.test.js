@@ -5,7 +5,7 @@ const {
   getBgmMoodForEnvironment
 } = require('../src/core/bgm-manager.js');
 
-const expectedMoodIds = ['sunny', 'desert', 'night', 'rain', 'storm', 'snow-mountain', 'snowfall'];
+const expectedMoodIds = ['sunny', 'desert', 'night', 'rain', 'storm', 'snow-mountain', 'snowfall', 'cave'];
 assert.deepStrictEqual(Object.keys(BGM_MOOD_CONFIGS), expectedMoodIds, 'BGM should define one mood for each battlefield environment.');
 expectedMoodIds.forEach((id) => {
   assert.strictEqual(getBgmMoodForEnvironment({ id }), id, `${id} environment should map to the matching BGM mood.`);
@@ -13,6 +13,10 @@ expectedMoodIds.forEach((id) => {
   assert.ok(BGM_MOOD_CONFIGS[id].leadWave, `${id} mood should define an instrument/timbre.`);
 });
 assert.strictEqual(getBgmMoodForEnvironment('grassland'), 'sunny', 'Grassland alias should use the sunny mood.');
+assert.strictEqual(getBgmMoodForEnvironment({ id: 'dunes', musicMood: 'desert' }), 'desert', 'Dunes environment should use desert music.');
+assert.strictEqual(getBgmMoodForEnvironment('rock-shaft'), 'cave', 'Rock shaft mode should use the cave mood alias.');
+assert.ok(BGM_MOOD_CONFIGS.cave.stepMs <= 460, 'Cave mood should feel tense rather than sleepy.');
+assert.ok(BGM_MOOD_CONFIGS.cave.percussion, 'Cave mood should use an unsettling rhythmic texture.');
 assert.strictEqual(getBgmMoodForEnvironment({ id: 'unknown', weather: 'snow' }), 'snowfall', 'Snow weather should fall back to snowfall music.');
 assert.ok(new Set(expectedMoodIds.map((id) => BGM_MOOD_CONFIGS[id].stepMs)).size >= 5, 'Environment moods should not all share one tempo.');
 assert.notStrictEqual(BGM_MOOD_CONFIGS.rain.percussion, BGM_MOOD_CONFIGS.night.percussion, 'Rain and night should use distinct rhythmic texture.');

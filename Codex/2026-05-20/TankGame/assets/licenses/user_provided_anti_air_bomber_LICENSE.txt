@@ -1,0 +1,23 @@
+User-provided anti-air bomber spritesheet and derived runtime assets for Hanzi Tank.
+
+Files:
+- assets/source/Gemini_Generated_Image_lw9jhqlw9jhqlw9j.png
+- assets/sprites/anti-air/bomber-fly.png
+- assets/sprites/anti-air/bomber-dropBomb.png
+- assets/sprites/anti-air/bomber-explode.png
+- tools/slice-anti-air-bomber-assets.ps1
+
+Source:
+- User-provided local source file: C:\Users\chlia\Downloads\Gemini_Generated_Image_lw9jhqlw9jhqlw9j.png.
+- Imported into the project on 2026-06-02 so runtime anti-air assets do not depend on Downloads.
+- Source dimensions: 2816x1504.
+- Logical source grid: 6 columns x 5 rows.
+
+Processing:
+- Deterministic copy, green-screen chroma key, source guide-line cleanup, tight crop, and transparent PNG export.
+- Fly, dropBomb, and explode states are direct crops from the supplied source sheet.
+- No SVG, CSS, canvas, or procedurally drawn replacement art was added.
+
+License / provenance:
+- User-provided project asset for use in Hanzi Tank.
+- Treat as project-owned source material unless superseded by a more specific user-provided license note.

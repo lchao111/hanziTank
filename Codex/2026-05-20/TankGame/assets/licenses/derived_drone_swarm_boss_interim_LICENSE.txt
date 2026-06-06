@@ -1,0 +1,17 @@
+Derived Drone Swarm Boss interim bitmap assets
+
+Created on 2026-05-29 for Hanzi Tank as deterministic interim runtime art.
+
+Source material:
+- assets/sprites/enemies/enemy-tank-spritesheet.png
+
+Generated outputs:
+- assets/sprites/enemies/drone-swarm-boss-interim-spritesheet.png
+- assets/sprites/enemies/drone-swarm-boss-interim-preview.png
+- assets/sprites/enemies/drone-swarm-boss-drone-1.png
+- assets/sprites/enemies/drone-swarm-boss-drone-2.png
+- assets/sprites/enemies/drone-swarm-boss-drone-3.png
+- assets/sprites/enemies/drone-swarm-boss-drone-4.png
+- assets/sprites/enemies/drone-swarm-boss-drone-5.png
+
+These are project-derived interim bitmaps for runtime testing only. Final generated Drone Swarm Boss art remains pending under assets/source/enemy-candidates/drone-swarm-boss-spritesheet.prompt.md.

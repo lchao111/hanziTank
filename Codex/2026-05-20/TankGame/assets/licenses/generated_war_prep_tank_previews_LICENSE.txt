@@ -14,7 +14,8 @@ Source:
 - Sherman source: assets/source/wwii-common-tank-spritesheet.png.
 - IS-2 source: assets/source/is2-player-reference.png.
 - Cromwell source: assets/source/cromwell-player-reference.png.
-- Tiger I / Panzer IV / T-34 / Churchill sources: assets/source/war-prep-tank-previews/*.png.
+- Tiger I source: assets/source/war-prep-tank-previews/tiger-i-player-reference.png copied from user-provided C:\Users\chlia\Downloads\Tiger1.png; see assets/licenses/user_provided_tiger_i_player_reference_LICENSE.txt.
+- Panzer IV / T-34 / Churchill sources: assets/source/war-prep-tank-previews/*.png.
 - Processing script: tools/generate-war-prep-tank-previews.ps1.
 - Visual direction follows ART_STYLE_GUIDE.md: child-friendly hand-painted WWII tank art, warm war-room UI palette, thick readable outlines, transparent PNG delivery.
 

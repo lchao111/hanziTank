@@ -1,0 +1,6 @@
+Rock Shaft Gemini Asset Set
+
+Source: User-provided/generated via Google Gemini during local development session on 2026-06-02.
+Usage: Integrated into TankGame rock-shaft/elevator-escape mode as cave background, rock platform, stalactite spikes, adventurer sprites, and rock-breaking animation frames.
+Processing: Green-screen/chroma-key cleanup, cropping, and runtime PNG exports performed locally in this repository.
+Notes: Assets are provided by the project owner for use in this project. No third-party trademarked characters, logos, or text are intentionally included.

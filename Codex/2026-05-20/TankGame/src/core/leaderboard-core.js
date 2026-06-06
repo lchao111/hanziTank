@@ -28,6 +28,12 @@
       zh: "最高伤害",
       en: "Highest Damage",
       tooltip: "最高伤害 / Max Damage"
+    },
+    {
+      key: "antiAirScore",
+      zh: "防空最高分",
+      en: "Best Anti-Air Score",
+      tooltip: "防空最高分 / Best Anti-Air Score"
     }
   ];
 
@@ -41,6 +47,10 @@
       highestDamage: archive.reduce((max, run) => {
         const topWordDamage = (run.topDamagingWords || []).reduce((sum, word) => sum + (Number(word.damage) || 0), 0);
         return Math.max(max, Number(run.damage ?? run.maxDamage ?? topWordDamage) || 0);
+      }, 0),
+      antiAirScore: archive.reduce((max, run) => {
+        const score = Number(run.antiAirScore ?? (run.mode === "antiAir" ? run.score : 0)) || 0;
+        return Math.max(max, score);
       }, 0)
     };
   }

@@ -1,0 +1,23 @@
+User-provided Tiger I player tank reference and derived runtime assets for Hanzi Tank.
+
+Files:
+- assets/source/war-prep-tank-previews/tiger-i-player-reference.png
+- assets/source/war-prep-tank-previews/tiger-i-player-pipeline-meta.json
+- assets/sprites/tanks/tiger-i-player-tank-spritesheet.png
+- assets/sprites/tanks/war-prep/tiger-i.png
+
+Source:
+- User-provided local source file: C:\Users\chlia\Downloads\Tiger1.png.
+- Imported into the project on 2026-05-30 so runtime and War Prep assets do not depend on Downloads.
+- Source dimensions: 2816x1504.
+- Logical source grid: 6 columns x 5 rows.
+- Processing script: tools/generate-tiger-i-player-spritesheet.ps1.
+- War Prep preview script: tools/generate-war-prep-tank-previews.ps1.
+
+Processing:
+- Deterministic copy, green-screen chroma key, green-edge despill, fixed-frame rescale, one-pixel transparent frame-border cleanup, and QC metadata only.
+- No generated, redrawn, or procedural creative art was added.
+
+License / provenance:
+- User-provided project asset for use in Hanzi Tank.
+- Treat as project-owned source material unless superseded by a more specific user-provided license note.

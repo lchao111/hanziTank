@@ -98,6 +98,7 @@ assert.match(renderTrainingQuestion, /if \(!word\) \{[\s\S]*startButton\.textCon
 assert.match(renderTrainingQuestion, /if \(!word\) \{[\s\S]*setQuestionPrompt\("Training Complete"\)/, 'Completed training should replace the normal Meaning-of prompt instead of showing Meaning of checkmark.');
 assert.doesNotMatch(renderTrainingQuestion, /questionWordEl\.textContent = "✓"/, 'Completed training should not display a checkmark in the question word slot.');
 assert.doesNotMatch(renderTrainingQuestion, /if \(!word\) \{[\s\S]*trainingLocked = true;\s*finishTrainingAndStartBattle\(\);/, 'Completed training should not auto-start battle before the player clicks Start Battle.');
+assert.match(source, /\.battlefield\.training-mode \.lane-layer\s*\{[\s\S]*display:\s*block/, 'Training mode should display the lane layer so training targets are visible.');
 assert.doesNotMatch(source, /\.lane-enemy\.phaser-target-dummy-active \.lane-dummy\s*\{[\s\S]*display:\s*none/, 'Training target fallback should stay visible under Phaser dummies so targets never disappear before boss stages.');
 
 console.log('training core tests passed');

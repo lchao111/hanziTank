@@ -1,0 +1,19 @@
+Anti-Air Tank Asset Attribution
+=================================
+
+Source: User-provided Gemini Generated Image (yysowhyysowhyyso)
+Generated: 2026
+License: User-provided for TankGame project use
+
+The anti-air tank visual states were extracted from a user-provided Gemini-generated image and processed for use in the TankGame project.
+
+Processing:
+- Green-screen background removal through chroma-key detection
+- 6x5 source sheet cell extraction
+- Individual transparent PNG state exports for normal, weakened, bombed, firing, and destroyed tank states
+- Asset locations: assets/sprites/anti-air/tank-*.png
+
+Attribution Requirements:
+- Credit the user for providing the source image
+- Include this license file with any distribution that includes these derived assets
+- Use and modify within the TankGame project context

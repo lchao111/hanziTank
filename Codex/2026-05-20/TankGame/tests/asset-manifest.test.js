@@ -33,6 +33,33 @@ assert.deepStrictEqual(byTexture.playerTankBattle.heavyFireFrames, [12, 13, 14, 
 assert.deepStrictEqual(byTexture.playerTankBattle.hitFrames, [18, 19, 20, 21, 22, 23]);
 assert.deepStrictEqual(byTexture.playerTankBattle.weakFrames, [18, 19, 20, 21, 22, 23]);
 assert.deepStrictEqual(byTexture.playerTankBattle.destroyedFrames, [24, 25, 26, 27, 28, 29]);
+assert.strictEqual(byTexture.playerTankTigerBattle.shopItemId, 'tank_tiger');
+assert.strictEqual(byTexture.playerTankTigerBattle.spritesheetPath, 'assets/sprites/tanks/tiger-i-player-tank-spritesheet.png');
+assert.strictEqual(byTexture.playerTankTigerBattle.sourceImagePath, 'assets/source/war-prep-tank-previews/tiger-i-player-reference.png');
+assert.strictEqual(byTexture.playerTankTigerBattle.sourceWidth, 2816);
+assert.strictEqual(byTexture.playerTankTigerBattle.sourceHeight, 1504);
+assert.strictEqual(byTexture.playerTankTigerBattle.sourceColumns, 6);
+assert.strictEqual(byTexture.playerTankTigerBattle.sourceRows, 5);
+assert.strictEqual(byTexture.playerTankTigerBattle.frameWidth, 224);
+assert.strictEqual(byTexture.playerTankTigerBattle.frameHeight, 144);
+assert.strictEqual(byTexture.playerTankTigerBattle.pipelineMeta, 'assets/source/war-prep-tank-previews/tiger-i-player-pipeline-meta.json');
+assert.deepStrictEqual(byTexture.playerTankTigerBattle.idleFrames, [0, 1, 2, 3, 4, 5]);
+assert.deepStrictEqual(byTexture.playerTankTigerBattle.fireFrames, [6, 7, 8, 9, 10, 11]);
+assert.deepStrictEqual(byTexture.playerTankTigerBattle.heavyFireFrames, [12, 13, 14, 15, 16, 17]);
+assert.deepStrictEqual(byTexture.playerTankTigerBattle.hitFrames, [18, 19, 20, 21, 22, 23]);
+assert.deepStrictEqual(byTexture.playerTankTigerBattle.weakFrames, [18, 19, 20, 21, 22, 23]);
+assert.deepStrictEqual(byTexture.playerTankTigerBattle.destroyedFrames, [24, 25, 26, 27, 28, 29]);
+assert.match(byTexture.playerTankTigerBattle.license, /user_provided_tiger_i_player_reference_LICENSE/);
+assert.strictEqual(byTexture.playerTankTigerBattle.fallbackSvg, 'assets/tank-tiger.svg');
+{
+  const dimensions = imageSize(fs.readFileSync(path.join(__dirname, '..', byTexture.playerTankTigerBattle.spritesheetPath)));
+  assert.strictEqual(dimensions.width, 1344);
+  assert.strictEqual(dimensions.height, 720);
+  const meta = JSON.parse(fs.readFileSync(path.join(__dirname, '..', byTexture.playerTankTigerBattle.pipelineMeta), 'utf8'));
+  assert.strictEqual(meta.qc.greenResiduePixels, 0);
+  assert.deepStrictEqual(meta.qc.edgeTouchFrames, []);
+  assert.deepStrictEqual(meta.qc.transparentCornerAlpha, { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 });
+}
 assert.strictEqual(byTexture.playerTankCromwellBattle.spritesheetPath, 'assets/sprites/tanks/cromwell-player-tank-spritesheet.png');
 assert.deepStrictEqual(byTexture.playerTankCromwellBattle.idleFrames, [0, 1, 2, 3, 4, 5]);
 assert.deepStrictEqual(byTexture.playerTankCromwellBattle.destroyedFrames, [24, 25, 26, 27, 28, 29]);
@@ -109,6 +136,54 @@ assert.strictEqual(byTexture.grenadier.frameHeight, 300);
 assert.deepStrictEqual(byTexture.grenadier.walkFrames, [0, 1, 2, 3, 4, 5]);
 assert.deepStrictEqual(byTexture.grenadier.fireFrames, [6, 7, 8, 9, 10, 11]);
 assert.deepStrictEqual(byTexture.grenadier.hitFrames, [18, 19, 20, 21, 22, 23]);
+assert.strictEqual(byTexture.selfDestructTruckBattle.spritesheetPath, 'assets/sprites/enemies/self-destruct-truck-interim-spritesheet.png');
+assert.strictEqual(byTexture.selfDestructTruckBattle.frameWidth, 469);
+assert.strictEqual(byTexture.selfDestructTruckBattle.frameHeight, 300);
+assert.strictEqual(byTexture.selfDestructTruckBattle.columns, 6);
+assert.strictEqual(byTexture.selfDestructTruckBattle.rows, 5);
+assert.deepStrictEqual(byTexture.selfDestructTruckBattle.idleFrames, [0, 1, 2, 3, 4, 5]);
+assert.deepStrictEqual(byTexture.selfDestructTruckBattle.reloadWarningFrames, [6, 7, 8, 9, 10, 11]);
+assert.deepStrictEqual(byTexture.selfDestructTruckBattle.chargeFrames, [12, 13, 14, 15, 16, 17]);
+assert.deepStrictEqual(byTexture.selfDestructTruckBattle.hitFrames, [18, 19, 20]);
+assert.deepStrictEqual(byTexture.selfDestructTruckBattle.explosionWindupFrames, [21, 22, 23]);
+assert.deepStrictEqual(byTexture.selfDestructTruckBattle.destroyedFrames, [24, 25, 26, 27, 28, 29]);
+assert.match(byTexture.selfDestructTruckBattle.license, /derived_self_destruct_truck_interim_LICENSE/);
+{
+  const dimensions = imageSize(fs.readFileSync(path.join(__dirname, '..', byTexture.selfDestructTruckBattle.spritesheetPath)));
+  assert.strictEqual(dimensions.width, 2814);
+  assert.strictEqual(dimensions.height, 1500);
+}
+assert.strictEqual(byTexture.bouncingTankBoss.spritesheetPath, 'assets/sprites/enemies/bouncing-tank-boss-spritesheet.png');
+assert.strictEqual(byTexture.bouncingTankBoss.sourceImagePath, 'assets/source/enemy-candidates/bouncing-tank-boss-reference.png');
+assert.strictEqual(byTexture.bouncingTankBoss.frameWidth, 469);
+assert.strictEqual(byTexture.bouncingTankBoss.frameHeight, 300);
+assert.strictEqual(byTexture.bouncingTankBoss.columns, 6);
+assert.strictEqual(byTexture.bouncingTankBoss.rows, 5);
+assert.deepStrictEqual(byTexture.bouncingTankBoss.idleFrames, [0, 1, 2, 3, 4, 5]);
+assert.deepStrictEqual(byTexture.bouncingTankBoss.dodgeFrames, [0, 1, 2, 3, 4, 5]);
+assert.deepStrictEqual(byTexture.bouncingTankBoss.malfunctionSparkFrames, [21, 22, 23]);
+assert.deepStrictEqual(byTexture.bouncingTankBoss.weakFrames, [18, 19, 20]);
+assert.deepStrictEqual(byTexture.bouncingTankBoss.destroyedFrames, [24, 25, 26, 27, 28, 29]);
+assert.match(byTexture.bouncingTankBoss.license, /user_provided_bouncing_tank_boss_LICENSE/);
+{
+  const dimensions = imageSize(fs.readFileSync(path.join(__dirname, '..', byTexture.bouncingTankBoss.spritesheetPath)));
+  assert.strictEqual(dimensions.width, 2814);
+  assert.strictEqual(dimensions.height, 1500);
+}
+assert.strictEqual(byTexture['css:enemy-gallery-card-bouncing-tank-boss'].imagePath, 'assets/sprites/enemies/gallery/bouncing-tank-boss-preview.png');
+assert.strictEqual(byTexture['css:enemy-gallery-card-bouncing-tank-boss'].enemyId, 'bouncingTankBoss');
+assert.strictEqual(byTexture.selfDestructTruckExplosion.spritesheetPath, 'assets/sprites/effects/self-destruct-truck-explosion-interim-spritesheet.png');
+assert.strictEqual(byTexture.selfDestructTruckExplosion.frameWidth, 320);
+assert.strictEqual(byTexture.selfDestructTruckExplosion.frameHeight, 192);
+assert.strictEqual(byTexture.selfDestructTruckExplosion.columns, 4);
+assert.strictEqual(byTexture.selfDestructTruckExplosion.rows, 2);
+assert.deepStrictEqual(byTexture.selfDestructTruckExplosion.effectFrames, [0, 1, 2, 3, 4, 5, 6, 7]);
+assert.match(byTexture.selfDestructTruckExplosion.license, /derived_self_destruct_truck_interim_LICENSE/);
+{
+  const dimensions = imageSize(fs.readFileSync(path.join(__dirname, '..', byTexture.selfDestructTruckExplosion.spritesheetPath)));
+  assert.strictEqual(dimensions.width, 1280);
+  assert.strictEqual(dimensions.height, 384);
+}
 assert.strictEqual(byTexture.burnedTrees.spritesheetPath, 'assets/sprites/environment/burned-trees-spritesheet.png');
 assert.strictEqual(byTexture.burnedTrees.frameWidth, 704);
 assert.strictEqual(byTexture.burnedTrees.frameHeight, 1536);
@@ -125,6 +200,7 @@ assert.strictEqual(byTexture['css:battlefield-background'].width, 2752);
 assert.strictEqual(byTexture['css:battlefield-background'].height, 1536);
 [
   ['battlefield:snow-mountain', 'assets/sprites/environment/battlefield-snow-mountain.png', 'snow mountain'],
+  ['battlefield:dunes', 'assets/sprites/environment/battlefield-dunes.png', 'dunes'],
   ['battlefield:desert', 'assets/sprites/environment/battlefield-desert.png', 'desert'],
   ['battlefield:night', 'assets/sprites/environment/battlefield-night.png', 'night'],
   ['battlefield:rain', 'assets/sprites/environment/battlefield-rain.png', 'rain'],
@@ -157,6 +233,24 @@ assert.strictEqual(byTexture['css:war-supply-crate'].width, 512);
 assert.match(byTexture['css:war-supply-crate'].license, /generated_war_ui_crates_LICENSE/);
 assert.strictEqual(byTexture['css:war-prep-button'].imagePath, 'assets/sprites/ui/war-prep-button.png');
 assert.strictEqual(byTexture['css:war-prep-button'].height, 512);
+assert.strictEqual(byTexture['css:boss-challenge-button'].imagePath, 'assets/sprites/ui/boss-challenge-button.png');
+assert.strictEqual(byTexture['css:boss-challenge-button'].width, 1024);
+assert.strictEqual(byTexture['css:boss-challenge-button'].height, 1024);
+assert.match(byTexture['css:boss-challenge-button'].license, /generated_boss_challenge_button_LICENSE/);
+{
+  const dimensions = imageSize(fs.readFileSync(path.join(__dirname, '..', byTexture['css:boss-challenge-button'].imagePath)));
+  assert.strictEqual(dimensions.width, 1024);
+  assert.strictEqual(dimensions.height, 1024);
+}
+assert.strictEqual(byTexture['css:switch-general-button'].imagePath, 'assets/sprites/ui/switch-general-button.png');
+assert.strictEqual(byTexture['css:switch-general-button'].width, 512);
+assert.strictEqual(byTexture['css:switch-general-button'].height, 512);
+assert.match(byTexture['css:switch-general-button'].license, /generated_switch_general_button_LICENSE/);
+{
+  const dimensions = imageSize(fs.readFileSync(path.join(__dirname, '..', byTexture['css:switch-general-button'].imagePath)));
+  assert.strictEqual(dimensions.width, 512);
+  assert.strictEqual(dimensions.height, 512);
+}
 [
   ['css:modal-supply-depot-texture', 'assets/sprites/ui/modal-supply-depot-texture.png'],
   ['css:modal-quartermaster-texture', 'assets/sprites/ui/modal-quartermaster-texture.png'],

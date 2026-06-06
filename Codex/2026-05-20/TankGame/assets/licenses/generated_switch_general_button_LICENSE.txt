@@ -1,0 +1,12 @@
+Generated Switch General button asset for Hanzi Tank.
+
+Files:
+- assets/sprites/ui/switch-general-button.png
+
+Source:
+- Deterministic local bitmap generation via tools/generate-switch-general-button.ps1 on 2026-05-29.
+- The asset is drawn directly to PNG using System.Drawing gradients, vector paths, and deterministic texture speckles.
+- Visual direction follows ART_STYLE_GUIDE.md and the War Prep/Mastery button family: olive command panel, brass trim, roster papers, two general silhouettes, and gold swap arrows.
+
+License:
+- Project-owned generated asset for use in Hanzi Tank.

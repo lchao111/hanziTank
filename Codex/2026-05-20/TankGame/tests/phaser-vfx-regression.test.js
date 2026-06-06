@@ -151,6 +151,7 @@ assert.match(initPhaserEffects, /this\.load\.image\("kenney:shotLarge"/, 'Phaser
 assert.match(initPhaserEffects, /this\.load\.image\(`kenney:explosion\$\{frame\}`/, 'Phaser should preload bitmap explosion assets.');
 assert.match(initPhaserEffects, /battlefieldEnvironments\.forEach\(\(environment\) => this\.load\.image\(`battlefield:\$\{environment\.id\}`/, 'Phaser should preload generated environment backgrounds.');
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("playerTankBattle"/, 'Phaser should preload the player tank battle spritesheet.');
+assert.match(initPhaserEffects, /this\.load\.spritesheet\("playerTankTigerBattle"/, 'Phaser should preload the Tiger I player tank battle spritesheet.');
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("playerTankIs2Battle"/, 'Phaser should preload the IS-2 player tank battle spritesheet.');
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("playerTankCromwellBattle"/, 'Phaser should preload the Cromwell player tank battle spritesheet.');
 ['armorPiercingShell', 'smokeShell', 'repairCapsuleShell', 'flashFlareShell', 'longBarrelShot'].forEach((textureKey) => {
@@ -178,6 +179,11 @@ assert.match(initPhaserEffects, /this\.load\.spritesheet\("regularInfantry"/, 'P
 assert.match(initPhaserEffects, /frameWidth: 469[\s\S]*frameHeight: 300/, 'Regular soldier spritesheet should use fixed frame dimensions.');
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("regularEnemyTank"/, 'Phaser should preload the regular enemy tank spritesheet.');
 assert.match(initPhaserEffects, /this\.load\.spritesheet\("grenadier"/, 'Phaser should preload the grenadier spritesheet.');
+assert.match(initPhaserEffects, /this\.load\.spritesheet\("selfDestructTruckBattle"/, 'Phaser should preload the self-destruct truck runtime spritesheet.');
+assert.match(initPhaserEffects, /self-destruct-truck-interim-spritesheet\.png\?v=20260530[\s\S]*frameWidth: 469[\s\S]*frameHeight: 300/, 'Self-destruct truck spritesheet should use fixed 469x300 frames.');
+assert.match(initPhaserEffects, /this\.load\.spritesheet\("selfDestructTruckExplosion"/, 'Phaser should preload the self-destruct truck explosion spritesheet.');
+assert.match(initPhaserEffects, /self-destruct-truck-explosion-interim-spritesheet\.png\?v=20260530[\s\S]*frameWidth: 320[\s\S]*frameHeight: 192/, 'Self-destruct truck explosion spritesheet should use fixed 320x192 frames.');
+assert.match(initPhaserEffects, /buildPhaserSelfDestructTruck\(this\)/, 'Phaser should build the truck actor after preload.');
 assert.match(initPhaserEffects, /buildPhaserEnvironmentScenery\(this\)/, 'Phaser environment scenery should be built when the effects scene starts.');
 
 const battlefieldEnvironment = bodyOf('applyBattlefieldEnvironment');
@@ -268,8 +274,10 @@ assert.match(updatePhaserActors, /updatePhaserGrenadier\(\)/, 'Grenadier sprites
 const playerBuilder = bodyOf('buildPhaserPlayerTank');
 const playerTextureReady = bodyOf('isPhaserPlayerTankTextureReady');
 assert.match(playerTextureReady, /textures\?\.exists\(textureKey\)/, 'Player tank texture helper should verify that the selected spritesheet loaded.');
+assert.match(source, /tank_tiger:\s*"playerTankTigerBattle"/, 'Equipping Germany: Tiger I should switch the Phaser player tank texture.');
 assert.match(source, /tank_is2:\s*"playerTankIs2Battle"/, 'Equipping Soviet: IS-2 should switch the Phaser player tank texture.');
 assert.match(source, /tank_cromwell:\s*"playerTankCromwellBattle"/, 'Equipping Britain: Cromwell should switch the Phaser player tank texture.');
+assert.match(source, /createPhaserPlayerTankAnimations\(scene, "playerTankTigerBattle", "player-tank-tiger"\)/, 'Tiger I should have its own Phaser animation keys.');
 assert.match(source, /createPhaserPlayerTankAnimations\(scene, "playerTankIs2Battle", "player-tank-is2"\)/, 'IS-2 should have its own Phaser animation keys.');
 assert.match(source, /createPhaserPlayerTankAnimations\(scene, "playerTankCromwellBattle", "player-tank-cromwell"\)/, 'Cromwell should have its own Phaser animation keys.');
 const playerAnimationFactory = bodyOf('createPhaserPlayerTankAnimations');
@@ -333,6 +341,8 @@ assert.match(infantryBuilder, /scene\.textures\.exists\("regularInfantry"\)/, 'R
 assert.match(infantryBuilder, /key: "regular-infantry-walk"/, 'Regular soldier should define a walk animation.');
 assert.match(infantryBuilder, /generateFrameNumbers\("regularInfantry", \{ start: 0, end: 5 \}\)/, 'Regular soldier walk should use row 1 frames.');
 assert.match(infantryBuilder, /frameRate: 10,\s*repeat: -1/, 'Regular soldier walk should run fast enough for smooth stepping.');
+assert.match(infantryBuilder, /key: "regular-infantry-reload-ready"/, 'Regular soldier should define a named reload-ready animation for the countdown.');
+assert.match(infantryBuilder, /generateFrameNumbers\("regularInfantry", \{ start: 0, end: 2 \}\)/, 'Regular soldier reload-ready should reuse the closest non-firing ready frames until dedicated reload art exists.');
 assert.match(infantryBuilder, /key: "regular-infantry-fire"/, 'Regular soldier should define a firing animation.');
 assert.match(infantryBuilder, /generateFrameNumbers\("regularInfantry", \{ start: 6, end: 11 \}\)/, 'Regular soldier fire should use row 2 frames.');
 assert.match(infantryBuilder, /key: "regular-infantry-hit"/, 'Regular soldier should define a hit animation.');
@@ -340,6 +350,8 @@ assert.match(infantryBuilder, /setFlipX\(true\)/, 'Regular soldier source art fa
 
 const infantryUpdater = bodyOf('updatePhaserRegularInfantry');
 assert.match(infantryUpdater, /currentEnemy\.id === "infantry"/, 'Regular soldier spritesheet should only appear for stage 2 infantry.');
+assert.doesNotMatch(infantryUpdater, /!isGameOver/, 'Regular soldier Phaser sprite should stay visible after player defeat so SVG fallback does not reappear.');
+assert.match(infantryUpdater, /!isLevelCleared && currentEnemy\.hp > 0/, 'Regular soldier Phaser sprite should stay active only while the enemy is alive and stage is not cleared.');
 assert.match(infantryUpdater, /phaser-infantry-active/, 'DOM infantry fallback should hide only while the Phaser soldier is active.');
 assert.match(infantryUpdater, /setDisplaySize\(rect\.width \* 1\.18, rect\.height \* 1\.42\)/, 'Regular soldier spritesheet should scale from the enemy DOM slot.');
 assert.match(infantryUpdater, /phaserRegularInfantry\.setFlipX\(true\)/, 'Regular soldier orientation should stay flipped toward the left-side player after resize and updates.');
@@ -348,6 +360,8 @@ assert.match(infantryUpdater, /phaserRegularInfantry\.setFrame\(0\)/, 'Regular s
 const infantryState = bodyOf('playPhaserRegularInfantryState');
 assert.match(infantryState, /regular-infantry-\$\{stateName\}/, 'Regular soldier animation helper should play named states.');
 assert.match(infantryState, /off\(`animationcomplete-regular-infantry-\$\{stateName\}`\)/, 'Regular soldier state changes should clear stale animation-complete handlers.');
+const infantryIdle = bodyOf('playPhaserRegularInfantryIdle');
+assert.match(infantryIdle, /playPhaserRegularInfantryState\("reload-ready", \{ loop: true \}\)/, 'Regular soldier idle/countdown should show reload-ready instead of walking closer.');
 
 const enemyTankBuilder = bodyOf('buildPhaserRegularEnemyTank');
 assert.match(enemyTankBuilder, /scene\.textures\.exists\("regularEnemyTank"\)/, 'Regular enemy tank builder should verify that the spritesheet loaded.');
@@ -366,22 +380,55 @@ assert.match(enemyTankUpdater, /phaserRegularEnemyTank\.setFlipX\(true\)/, 'Regu
 const enemyTankState = bodyOf('playPhaserRegularEnemyTankState');
 assert.match(enemyTankState, /regular-enemy-tank-\$\{stateName\}/, 'Regular enemy tank animation helper should play named states.');
 
+const truckBuilder = bodyOf('buildPhaserSelfDestructTruck');
+assert.match(truckBuilder, /scene\.textures\.exists\("selfDestructTruckBattle"\)/, 'Truck builder should verify that the runtime spritesheet loaded.');
+assert.match(truckBuilder, /key: "self-destruct-truck-idle"/, 'Truck should define an idle/rolling animation.');
+assert.match(truckBuilder, /generateFrameNumbers\("selfDestructTruckBattle", \{ start: 0, end: 5 \}\)/, 'Truck idle should use row 1 frames.');
+assert.match(truckBuilder, /key: "self-destruct-truck-warning"/, 'Truck should define a reload/rush warning animation.');
+assert.match(truckBuilder, /generateFrameNumbers\("selfDestructTruckBattle", \{ start: 6, end: 11 \}\)/, 'Truck warning should use row 2 frames.');
+assert.match(truckBuilder, /key: "self-destruct-truck-charge"/, 'Truck should define an accelerating charge animation.');
+assert.match(truckBuilder, /generateFrameNumbers\("selfDestructTruckBattle", \{ start: 12, end: 17 \}\)/, 'Truck charge should use row 3 frames.');
+assert.match(truckBuilder, /key: "self-destruct-truck-hit"/, 'Truck should define a smoke-jolt hit animation.');
+assert.match(truckBuilder, /generateFrameNumbers\("selfDestructTruckBattle", \{ start: 18, end: 20 \}\)/, 'Truck hit should use row 4 hit frames.');
+assert.match(truckBuilder, /key: "self-destruct-truck-windup"/, 'Truck should define an explosion wind-up animation.');
+assert.match(truckBuilder, /generateFrameNumbers\("selfDestructTruckBattle", \{ start: 21, end: 23 \}\)/, 'Truck wind-up should use row 4 wind-up frames.');
+assert.match(truckBuilder, /key: "self-destruct-truck-destroyed"/, 'Truck should define a destroyed debris/smoke animation.');
+assert.match(truckBuilder, /generateFrameNumbers\("selfDestructTruckBattle", \{ start: 24, end: 29 \}\)/, 'Truck destroyed should use row 5 frames.');
+assert.match(truckBuilder, /key: "self-destruct-truck-explosion"/, 'Truck should define a separate explosion VFX animation.');
+assert.match(truckBuilder, /generateFrameNumbers\("selfDestructTruckExplosion", \{ start: 0, end: 7 \}\)/, 'Truck explosion should use all 8 effect frames.');
+
+const truckUpdater = bodyOf('updatePhaserSelfDestructTruck');
+assert.match(truckUpdater, /currentEnemy\.id === "truck"/, 'Truck Phaser actor should only appear for the self-destruct truck.');
+assert.match(truckUpdater, /phaser-self-destruct-truck-active/, 'Truck DOM fallback should hide only while the Phaser truck is active.');
+assert.match(truckUpdater, /setDisplaySize\(rect\.width \* 1\.34, rect\.height \* 0\.96\)/, 'Truck spritesheet should scale from the enemy DOM slot.');
+assert.match(truckUpdater, /setFlipX\(true\)/, 'Truck spritesheet should face the left-side player.');
+
+const truckState = bodyOf('playPhaserSelfDestructTruckState');
+assert.match(truckState, /self-destruct-truck-\$\{stateName\}/, 'Truck animation helper should play named states.');
+assert.match(truckState, /animationcomplete-self-destruct-truck-\$\{stateName\}/, 'Truck non-looping states should return to idle after completion.');
+
 const grenadierBuilder = bodyOf('buildPhaserGrenadier');
 assert.match(grenadierBuilder, /scene\.textures\.exists\("grenadier"\)/, 'Grenadier builder should verify that the spritesheet loaded.');
 assert.match(grenadierBuilder, /key: "grenadier-walk"/, 'Grenadier should define a walk animation.');
 assert.match(grenadierBuilder, /generateFrameNumbers\("grenadier", \{ start: 0, end: 5 \}\)/, 'Grenadier walk should use row 1 frames.');
+assert.match(grenadierBuilder, /key: "grenadier-reload-ready"/, 'Grenadier should define a named reload-ready animation for the countdown.');
+assert.match(grenadierBuilder, /generateFrameNumbers\("grenadier", \{ start: 0, end: 2 \}\)/, 'Grenadier reload-ready should reuse the closest non-firing ready frames until dedicated reload art exists.');
 assert.match(grenadierBuilder, /key: "grenadier-fire"/, 'Grenadier should define a throw/fire animation.');
 assert.match(grenadierBuilder, /generateFrameNumbers\("grenadier", \{ start: 6, end: 11 \}\)/, 'Grenadier fire should use row 2 frames.');
 assert.match(grenadierBuilder, /setFlipX\(true\)/, 'Grenadier source art faces right and must be flipped to face the player on the left.');
 
 const grenadierUpdater = bodyOf('updatePhaserGrenadier');
 assert.match(grenadierUpdater, /currentEnemy\.id === "grenadier"/, 'Grenadier spritesheet should appear for stage 4 grenadier enemy.');
+assert.doesNotMatch(grenadierUpdater, /!isGameOver/, 'Grenadier Phaser sprite should stay visible after player defeat so SVG fallback does not reappear.');
+assert.match(grenadierUpdater, /!isLevelCleared && currentEnemy\.hp > 0/, 'Grenadier Phaser sprite should stay active only while the enemy is alive and stage is not cleared.');
 assert.match(grenadierUpdater, /phaser-grenadier-active/, 'DOM grenadier fallback should hide only while the Phaser grenadier is active.');
 assert.match(grenadierUpdater, /setDisplaySize\(rect\.width \* 1\.2, rect\.height \* 1\.42\)/, 'Grenadier spritesheet should scale from the enemy DOM slot.');
 assert.match(grenadierUpdater, /phaserGrenadier\.setFlipX\(true\)/, 'Grenadier orientation should stay flipped toward the left-side player after resize and updates.');
 
 const grenadierState = bodyOf('playPhaserGrenadierState');
 assert.match(grenadierState, /grenadier-\$\{stateName\}/, 'Grenadier animation helper should play named states.');
+const grenadierIdle = bodyOf('playPhaserGrenadierIdle');
+assert.match(grenadierIdle, /playPhaserGrenadierState\("reload-ready", \{ loop: true \}\)/, 'Grenadier idle/countdown should show reload-ready instead of walking closer.');
 
 const showDamage = bodyOf('showDamage');
 assert.match(showDamage, /playEnemyHitReaction\(targetTank, options\)/, 'Enemy damage should route through the shared Phaser hit-reaction helper.');
@@ -389,25 +436,34 @@ const enemyHitReaction = bodyOf('playEnemyHitReaction');
 assert.match(enemyHitReaction, /targetTank !== enemyTank/, 'Enemy hit reactions should only run for the enemy tank.');
 assert.match(enemyHitReaction, /currentEnemy\.id === "armor"\) playPhaserRegularEnemyTankState\("hit"\)/, 'Stage 3 regular tank should play hit animation when damaged.');
 assert.match(enemyHitReaction, /currentEnemy\.id === "grenadier"\) playPhaserGrenadierState\("hit"\)/, 'Stage 4 grenadier should play hit animation when damaged.');
+assert.match(enemyHitReaction, /currentEnemy\.id === "truck"\) playPhaserSelfDestructTruckState\("hit"\)/, 'Self-destruct truck should play its hit/smoke-jolt frames when damaged.');
 
 const enemyFire = bodyOf('enemyFire');
 assert.match(enemyFire, /playPhaserTargetingLine\(enemyTank, playerTank/, 'Enemy fire should show a Phaser targeting line before impact.');
 assert.match(enemyFire, /if \(currentEnemy\.attackStyle === "melee"\)/, 'Melee enemies should route through melee strike attacks.');
 assert.match(enemyFire, /const windupTime = currentEnemy\.id === "infantry" \|\| currentEnemy\.id === "grenadier" \? 260 : 160/, 'Ranged enemies should wind up before firing.');
 assert.match(enemyFire, /getPhaserEnemyAttackTargets\(\)\.forEach/, 'Ranged wind-up should move the visible Phaser enemy actor.');
+assert.match(enemyFire, /enemyTank\.classList\.remove\("enemy-reload-ready"\)/, 'Ranged fire should leave the countdown reload-ready pose before shooting.');
 assert.match(enemyFire, /if \(currentEnemy\.id === "infantry"\) playPhaserRegularInfantryState\("fire"\)/, 'Regular soldier should play its firing animation when attacking.');
 assert.match(enemyFire, /if \(currentEnemy\.id === "armor"\) playPhaserRegularEnemyTankState\("fire"\)/, 'Regular enemy tank should play its firing animation when attacking.');
 assert.match(enemyFire, /if \(currentEnemy\.id === "grenadier"\) playPhaserGrenadierState\("fire"\)/, 'Grenadier should play its throw/fire animation when attacking.');
 
+const rangedReloadReady = bodyOf('enemyUsesReloadReadyAnimation');
+assert.match(rangedReloadReady, /\["infantry", "grenadier", "rpgInfantry"\]\.includes\(enemy\?\.id\)/, 'Regular, grenadier, and RPG soldiers should use an anchored reload-ready countdown.');
+assert.match(rangedReloadReady, /!enemyUsesReloadApproach\(enemy\)/, 'Reload-ready soldiers must not also satisfy reload approach.');
 const enemyApproach = bodyOf('startPhaserEnemyApproach');
 assert.match(enemyApproach, /enemyUsesReloadApproach\(currentEnemy\)/, 'Only enemies that opt into reload approach should approach during reload.');
 const enemyReloadApproach = bodyOf('enemyUsesReloadApproach');
+assert.match(enemyReloadApproach, /!isRangedSoldierEnemy\(enemy\)/, 'Regular/ranged soldiers should be excluded from reload approach even if metadata changes.');
 assert.match(enemyReloadApproach, /enemy\?\.attackStyle === "melee"/, 'Melee enemies should approach during reload.');
 assert.match(enemyReloadApproach, /enemy\?\.reloadMotion === "approach"/, 'Scripted non-melee enemies can opt into reload approach.');
 assert.match(enemyApproach, /getEnemyApproachDistance\(\)/, 'Phaser melee approach should use the shared actual-distance helper.');
 const enemyApproachDistance = bodyOf('getEnemyApproachDistance');
 assert.match(enemyApproachDistance, /currentEnemy\.approachDistance/, 'Melee approach should use per-enemy distance metadata.');
 assert.match(enemyApproachDistance, /enemyPoint\.x - playerPoint\.x - desiredGap/, 'Phaser melee approach should derive distance from actual player/enemy positions.');
+const startCountdown = bodyOf('startCountdown');
+assert.match(startCountdown, /enemyTank\.classList\.toggle\("enemy-reload-ready", enemyUsesReloadReadyAnimation\(currentEnemy\)\)/, 'Countdown should visibly mark ranged soldiers as reload-ready without adding an approach class.');
+assert.match(startCountdown, /playEnemyReloadReadyAnimation\(currentEnemy\)/, 'Countdown should start the ranged reload-ready animation.');
 assert.match(source, /@keyframes boss-menace-approach[\s\S]*translateX\(clamp\(300px, 44vw, 760px\)\)/, 'Visible Boss reload approach should use viewport-relative distance.');
 assert.match(source, /@keyframes boss-hammer-slam[\s\S]*0%[\s\S]*translateX\(clamp\(300px, 44vw, 760px\)\)/, 'Boss slam should start from its viewport-relative close reload position.');
 assert.match(source, /@keyframes boss-attack-approach[\s\S]*translateX\(clamp\(300px, 44vw, 760px\)\)/, 'Boss attack should explicitly approach before the hammer swing.');
@@ -418,6 +474,7 @@ const enemyAttackTargets = bodyOf('getPhaserEnemyAttackTargets');
 assert.match(enemyAttackTargets, /currentEnemy\.id === "infantry" && phaserRegularInfantry\?\.visible/, 'Regular soldier wind-up should target the visible infantry sprite.');
 assert.match(enemyAttackTargets, /currentEnemy\.id === "armor" && phaserRegularEnemyTank\?\.visible/, 'Armored tank wind-up should target the visible tank sprite.');
 assert.match(enemyAttackTargets, /currentEnemy\.id === "grenadier" && phaserGrenadier\?\.visible/, 'Grenadier wind-up should target the visible grenadier sprite.');
+assert.match(enemyAttackTargets, /currentEnemy\.id === "truck" && phaserSelfDestructTruck\?\.visible/, 'Truck hit and rush tweens should target the visible truck spritesheet.');
 
 const meleeStrike = bodyOf('meleeStrikeAttack');
 assert.match(meleeStrike, /tweenEnemyAttackToBase\(currentEnemy\.approachDistance/, 'Melee attack should close in using approach distance.');
@@ -449,6 +506,7 @@ assert.match(fireFunction, /const projectileDuration = ammo\?\.projectileDuratio
 
 const gameOverFunction = bodyOf('showGameOver');
 assert.match(gameOverFunction, /playPhaserPlayerState\("destroyed", true\)/, 'Game over should trigger the Phaser destroyed animation.');
+assert.match(gameOverFunction, /playEnemyGameOverPressure\(\)/, 'Game over should leave the enemy visibly attacking in place.');
 
 const bossHammer = bodyOf('bossHammerAttack');
 assert.match(bossHammer, /playPhaserBossSlam\(\)/, 'Boss hammer attack should trigger the assembled Phaser boss slam.');
@@ -465,9 +523,22 @@ assert.match(bossHammer, /\}, impactTime\)/, 'Boss damage should land at the scr
 assert.match(source, /\.tank\.enemy\.boss-slam \{\s*animation: boss-hammer-slam 1240ms/, 'Boss DOM slam animation duration should match the charge, impact, and post-impact hold window.');
 assert.match(source, /\.tank\.enemy\.boss-attack-approach \{\s*animation: boss-attack-approach 420ms/, 'Boss DOM approach duration should match the scripted approach phase.');
 
+const reloadTelegraph = bodyOf('playEnemyReloadTelegraph');
+assert.match(reloadTelegraph, /enemy\.telegraph === "rushWarning"[\s\S]*playPhaserSelfDestructTruckState\("warning", \{ loop: true \}\)/, 'Truck reload warning should play the dedicated warning row.');
+
+const truckCrash = bodyOf('truckCrashAttack');
+assert.match(truckCrash, /playPhaserSelfDestructTruckState\("charge", \{ loop: true \}\)/, 'Truck crash should play accelerating charge frames.');
+assert.match(truckCrash, /playPhaserSelfDestructTruckState\("windup"\)/, 'Truck crash should show explosion wind-up frames before impact.');
+assert.match(truckCrash, /playPhaserSelfDestructTruckExplosion\(playerTank/, 'Truck crash should layer the dedicated explosion spritesheet on impact.');
+
+const truckExplosion = bodyOf('playPhaserSelfDestructTruckExplosion');
+assert.match(truckExplosion, /scene\.add\.sprite\(x, y, "selfDestructTruckExplosion", 0\)/, 'Truck explosion VFX should be a Phaser spritesheet sprite.');
+assert.match(truckExplosion, /blast\.play\("self-destruct-truck-explosion", true\)/, 'Truck explosion VFX should animate through its effect sheet.');
+
 const enemyDeathVfx = bodyOf('playEnemyDeathVfx');
-assert.match(enemyDeathVfx, /const heavy = enemy\.id === "boss" \|\| enemy\.role === "elite"/, 'Boss and elite enemies should use heavy death VFX.');
+assert.match(enemyDeathVfx, /const heavy = enemy\.id === "boss" \|\| enemy\.role === "boss" \|\| enemy\.role === "elite"/, 'Boss and elite enemies should use heavy death VFX.');
 assert.match(enemyDeathVfx, /playPhaserDestruction\(targetEl, \{ heavy, direction: -1 \}\)/, 'Enemy death should use Phaser destruction.');
+assert.match(enemyDeathVfx, /playPhaserSelfDestructTruckState\("destroyed"/, 'Truck death should hold the destroyed debris/smoke spritesheet row.');
 assert.match(source, /playEnemyDeathVfx\(enemyTank, currentEnemy\)/, 'Enemy defeat should route through the shared death VFX helper.');
 assert.match(source, /playPhaserDestruction\(playerTank, \{ heavy: true, direction: 1 \}\)/, 'Player defeat should use Phaser destruction.');
 assert.match(source, /\.tank\.player\.destroyed\.fragmented \.tank-sprite/, 'Fragmented player tank styling should override static destroyed sprite styling.');

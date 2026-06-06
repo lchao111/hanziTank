@@ -40,8 +40,37 @@
     return entry;
   }
 
+  function getSharedLearningWordSource(words = [], state = {}) {
+    const uniqueWords = [];
+    const seen = new Set();
+    (Array.isArray(words) ? words : []).forEach((word) => {
+      if (!word?.hanzi || seen.has(word.hanzi)) return;
+      seen.add(word.hanzi);
+      uniqueWords.push(word);
+    });
+
+    const review = state?.review && typeof state.review === "object" ? state.review : {};
+    const correctBank = state?.correctBank && typeof state.correctBank === "object" ? state.correctBank : {};
+    const reviewWords = [];
+    const newWords = [];
+    const practiceWords = [];
+
+    uniqueWords.forEach((word) => {
+      if (Number(review[word.hanzi] || 0) > 0) {
+        reviewWords.push(word);
+      } else if (correctBank[word.hanzi]) {
+        practiceWords.push(word);
+      } else {
+        newWords.push(word);
+      }
+    });
+
+    return [...reviewWords, ...newWords, ...practiceWords];
+  }
+
   return {
     normalizeBankWord,
-    recordProfileWord
+    recordProfileWord,
+    getSharedLearningWordSource
   };
 });

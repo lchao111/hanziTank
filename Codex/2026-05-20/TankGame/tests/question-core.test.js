@@ -55,4 +55,43 @@ assert.deepStrictEqual(questions.pickWeightedWord(weightedOptions, { 一: { coun
 assert.deepStrictEqual(questions.pickWeightedWord(weightedOptions, { 一: { count: 10 } }, {}, () => 0.99), { hanzi: '二' });
 assert.strictEqual(questions.pickWeightedWord([], {}, {}, () => 0), null);
 
+assert.strictEqual(questions.getAntiAirFlightDuration(0), 7000, 'Anti-air wave should start with a 7 second flight.');
+assert.strictEqual(questions.getAntiAirFlightDuration(4), 7000, 'Anti-air speed should hold until each fifth score.');
+assert.strictEqual(questions.getAntiAirFlightDuration(5), 7000, 'Anti-air flight duration should no longer speed up after 5 points.');
+assert.strictEqual(questions.getAntiAirFlightDuration(20), 7000, 'Anti-air flight duration should stay fixed while plane count scales.');
+assert.strictEqual(questions.getAntiAirPlaneCount(1), 4, 'Anti-air should start with four planes.');
+assert.strictEqual(questions.getAntiAirPlaneCount(5), 4, 'Anti-air should keep four planes through wave 5.');
+assert.strictEqual(questions.getAntiAirPlaneCount(6), 5, 'Anti-air should add one plane every five waves.');
+assert.strictEqual(questions.getAntiAirPlaneCount(11), 6, 'Anti-air should keep scaling plane count by wave bands.');
+
+const antiAirWords = ['一', '二', '三', '四', '五', '六'].map((hanzi) => wordByHanzi[hanzi]);
+const antiAirWave = questions.createAntiAirWave({
+	words: antiAirWords,
+	currentHanzi: '一',
+	correctBank: { 二: { count: 10 } },
+	runCorrectCounts: {},
+	score: 6,
+	waveNumber: 6,
+	random: () => 0.01
+});
+assert.strictEqual(antiAirWave.planes.length, 5, 'Anti-air wave 6 should launch five planes.');
+assert.strictEqual(antiAirWave.target.hanzi, '三', 'Anti-air target should use the same weighted Hanzi selection logic while excluding the current word.');
+assert.ok(antiAirWave.planes.some((plane) => plane.word.hanzi === antiAirWave.target.hanzi), 'One anti-air plane should carry the spoken target Hanzi.');
+assert.strictEqual(antiAirWave.planes.filter((plane) => plane.isTarget).length, 1, 'Only the spoken Hanzi plane should be marked as the real plane.');
+assert.strictEqual(antiAirWave.planes.find((plane) => plane.isTarget).word.hanzi, antiAirWave.target.hanzi, 'The real plane should be the spoken Hanzi plane.');
+assert.ok(antiAirWave.planes.filter((plane) => !plane.isTarget).every((plane) => plane.word.hanzi !== antiAirWave.target.hanzi), 'Fake planes should not be marked as bomb-dropping targets.');
+assert.strictEqual(new Set(antiAirWave.planes.map((plane) => plane.word.hanzi)).size, antiAirWave.planes.length, 'Anti-air planes should carry unique Hanzi.');
+assert.ok(new Set(antiAirWave.planes.map((plane) => plane.startYPercent)).size > 1, 'Anti-air planes should be vertically staggered.');
+assert.ok(new Set(antiAirWave.planes.map((plane) => plane.xOffsetPercent)).size > 1, 'Anti-air planes should not fly as one vertical line.');
+const antiAirRouteKeys = antiAirWave.planes.map((plane) => [plane.startXPercent, plane.startYPercent, plane.endXPercent, plane.endYPercent, plane.launchDelayMs].join(':'));
+assert.strictEqual(new Set(antiAirRouteKeys).size, antiAirWave.planes.length, 'Extra anti-air planes should not overlap an earlier plane route and launch timing.');
+assert.ok(antiAirWave.planes.some((plane) => plane.endXPercent > plane.startXPercent), 'Some anti-air planes should fly left-to-right.');
+assert.ok(antiAirWave.planes.some((plane) => plane.endXPercent < plane.startXPercent), 'Some anti-air planes should fly right-to-left.');
+assert.ok(antiAirWave.planes.some((plane) => plane.endYPercent !== plane.startYPercent), 'Anti-air planes should include diagonal flight paths.');
+assert.ok(antiAirWave.planes.every((plane) => Number.isFinite(plane.headingDeg)), 'Each anti-air plane should carry a heading angle for nose direction.');
+assert.ok(new Set(antiAirWave.planes.map((plane) => Math.round(plane.headingDeg))).size > 1, 'Anti-air plane heading angles should vary with their flight direction.');
+assert.strictEqual(antiAirWave.flightDurationMs, 7000, 'Anti-air wave should keep a fixed 7 second flight duration.');
+assert.strictEqual(questions.applyAntiAirMiss(10), 9, 'Missing one anti-air plane should cost one tank HP.');
+assert.strictEqual(questions.applyAntiAirMiss(0), 0, 'Anti-air HP should not drop below zero.');
+
 console.log('question core tests passed');

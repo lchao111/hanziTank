@@ -62,6 +62,7 @@ Current test suite:
 - `tests/storage-core.test.js`
 - `tests/combat-core.test.js`
 - `tests/learning-core.test.js`
+- `tests/drone-swarm-boss-regression.test.js`
 - `tests/question-core.test.js`
 - `tests/mastery-core.test.js`
 - `tests/mastery-regression.test.js`
@@ -101,6 +102,10 @@ Core modules:
 - `src/core/learning-core.js`
   - `correctBank` / `wrongBank` normalization and recording.
   - Browser global: `window.HanziTankLearning`.
+
+- `src/core/drone-swarm-boss-core.js`
+  - Drone Swarm Boss split-lane state creation, unique Hanzi target selection, lane movement, selected-lane damage routing, and all-drones-defeated detection.
+  - Browser global: `window.HanziTankDroneSwarmBoss`.
 
 - `src/core/question-core.js`
   - Shuffle, weighted word selection, Boss phrase generation, Boss choice generation.
@@ -162,6 +167,7 @@ Enemy Reload / Hit Stun:
 - Pausing should freeze, not reset, reload.
 - Game Over is terminal until restart/debug/profile reset; after defeat, enemy reload and enemy firing must not restart.
 - Enemy defeat is terminal until the next stage starts; after enemy HP reaches 0, enemy reload and enemy firing must not restart.
+- Drone Swarm Boss direct Debug Mode entry uses enemy id `droneSwarmBoss` at a Boss-stage checkpoint. First defeat starts a split phase instead of clearing: five individual drone lane targets appear with unique Hanzi/word targets, HP, and attack countdowns. The player moves up/down between lanes, correct answers damage only the selected drone, and the stage clears only after all five split drones are defeated. War Supply remains gated off by `shouldShowSupplyChallenge`.
 - Melee enemies use `attackStyle: "melee"` and `approachDistance` metadata. During reload they gradually move toward the player, then attack near the player and retreat. The visible DOM enemy must also approach, not only hidden Phaser actors. Visible melee approach distances use responsive `clamp(...vw...)` values instead of fixed pixels so large screens still show close-range pressure.
 
 Defense:
@@ -244,12 +250,15 @@ Asset sourcing plan:
 - Tank Dismantler Boss now has a Phaser spritesheet path: `assets/sprites/enemies/tank-dismantler-spritesheet.png`, loaded as `bossTankDismantler` with `frameWidth: 224` and `frameHeight: 224`. Frames `0-5` are the walking loop and frames `6-11` are the hammer attack.
 - To rebuild the Boss spritesheet from the user-provided reference image, save the source as `assets/source/tank-breaker-robot-reference.png`, then run `./tools/crop-dismantler-spritesheet.ps1`. The script crops the 2x6 reference grid and removes the white background for Phaser.
 - Player tank battle art now uses `assets/sprites/tanks/player-tank-spritesheet.png`, loaded as `playerTankBattle` with `frameWidth: 224` and `frameHeight: 144`. Rows are idle (`0-5`), fire (`6-11`), heavy fire (`12-17`), hit/weak smoking (`18-23`), and destroyed/burning (`24-29`). The DOM tank SVG stays as fallback if the Phaser texture is unavailable.
+- Tiger I player battle art now uses the user-provided project-owned sheet `assets/sprites/tanks/tiger-i-player-tank-spritesheet.png`, loaded as `playerTankTigerBattle` when `tank_tiger` is equipped. The source copy is `assets/source/war-prep-tank-previews/tiger-i-player-reference.png`, with QC metadata at `assets/source/war-prep-tank-previews/tiger-i-player-pipeline-meta.json`. Rows are idle (`0-5`), fire (`6-11`), heavy fire (`12-17`), hit/weak (`18-23`), and destroyed/burning (`24-29`).
 - Stage 2 Regular Soldier art now uses `assets/sprites/enemies/regular-infantry-spritesheet.png`, loaded as `regularInfantry` with `frameWidth: 469` and `frameHeight: 300`. Frames `0-5` are walk/idle, `6-11` are rifle firing, and `18-23` are hit frames. The DOM infantry SVG stays as fallback.
 - Stage 3 regular enemy tank art now uses `assets/sprites/enemies/regular-enemy-tank-spritesheet.png`, loaded as `regularEnemyTank` with `frameWidth: 469` and `frameHeight: 300`. Frames `0-5` are idle, `6-11` are cannon firing, and `18-23` are hit frames. The DOM armor SVG stays as fallback.
 - Stage 4 Grenadier art now uses `assets/sprites/enemies/grenadier-spritesheet.png`, loaded as `grenadier` with `frameWidth: 469` and `frameHeight: 300`. Frames `0-5` are walk/idle, `6-11` are grenade throw/fire, and `18-23` are hit frames. The DOM RPG infantry SVG stays as fallback.
 - Stage 2 Regular Soldier walk now uses a 10 FPS looping Phaser walk with frame reset on activation and stale animation-complete handler cleanup to avoid stepping stutter.
 - Enemy side-view spritesheets should face the left-side player in battle. If source art faces right, set `setFlipX(true)` in the Phaser actor builder/updater and cover it with regression tests.
 - Generated battlefield background license/source notes are stored at `assets/licenses/generated_battlefield_backgrounds_LICENSE.txt`.
+- Drone Swarm Boss runtime art is interim-derived bitmap, not final generated art: `assets/sprites/enemies/drone-swarm-boss-interim-spritesheet.png`, `assets/sprites/enemies/drone-swarm-boss-interim-preview.png`, and `assets/sprites/enemies/drone-swarm-boss-drone-1.png` through `drone-swarm-boss-drone-5.png`. Final art prompt/spec is tracked at `assets/source/enemy-candidates/drone-swarm-boss-spritesheet.prompt.md`.
+- Self-Destruct Truck runtime art is interim-derived bitmap, not final generated art: `assets/sprites/enemies/self-destruct-truck-interim-spritesheet.png` uses 5 rows x 6 columns of 469x300 frames, and `assets/sprites/effects/self-destruct-truck-explosion-interim-spritesheet.png` uses 2 rows x 4 columns of 320x192 VFX frames. Enemy Gallery uses the truck runtime sheet and `assets/sprites/enemies/gallery/self-destruct-truck-interim-preview.png`. Final art prompt/spec remains at `assets/source/enemy-candidates/self-destruct-truck-spritesheet.prompt.md`.
 
 Next recommended feature slice:
 

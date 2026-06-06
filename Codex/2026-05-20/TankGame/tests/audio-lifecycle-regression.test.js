@@ -49,6 +49,8 @@ assert.match(bodyOf('speakChinese'), /utterance\.onend = \(\) => options\.onEnd\
 
 assert.match(bodyOf('applyBattlefieldEnvironment'), /setBattleMusicEnvironment\(environment\)/, 'Battlefield environment changes should update BGM mood.');
 assert.match(bodyOf('startBattleMusic'), /setBattleMusicEnvironment\(getBattlefieldEnvironment\(levelNumber\)\)/, 'Battle music startup should sync the current environment mood.');
+assert.match(bodyOf('startElevatorEscapeMode'), /setBattleMusicEnvironment\("rock-shaft"\)/, 'Rock shaft mode should switch BGM to the tense cave mood.');
+assert.match(bodyOf('startElevatorEscapeMode'), /bgmManager\.start\(\)/, 'Rock shaft mode should start BGM after selecting its cave mood.');
 
 assert.match(bodyOf('buyOrEquip'), /playBuySound\(\)/, 'Buying and equipping should use the buy/equip UI SFX.');
 assert.match(bodyOf('buyOrEquip'), /playErrorSound\(\)/, 'Disabled or unaffordable shop actions should use error UI SFX.');

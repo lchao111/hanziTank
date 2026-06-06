@@ -51,10 +51,13 @@ const renderDebugTargets = bodyOf('renderDebugTargets');
 assert.match(renderDebugTargets, /data-debug-enemy-id="\$\{target\.enemyId \|\| ""\}"/, 'Debug target cards should carry direct enemy ids.');
 assert.match(renderDebugTargets, /target\.category \|\| "Stage"/, 'Debug target cards should show whether the entry is an Enemy, Boss, or Elite.');
 
-const startDebugBattle = bodyOf('startDebugBattle');
 assert.match(source, /function startDebugBattle\(stage, enemyId = ""\)/, 'Debug battle should accept a direct enemy id.');
-assert.match(startDebugBattle, /debugSingleEnemyId = enemyId \|\| ""/, 'Debug battle should store the direct enemy id.');
-assert.match(startDebugBattle, /trainedStage = debugSingleEnemyId \? stage : 0/, 'Direct elite debug battles should skip training and enter battle directly.');
+const startDebugBattle = bodyOf('startDebugBattle');
+assert.match(startDebugBattle, /if \(!canUseDebugMode\(\)\)/, 'Debug battle should stay guarded by the Chao profile check.');
+assert.match(startDebugBattle, /startBattleScenario\(stage, enemyId, \{ debug: true \}\)/, 'Debug battle should reuse the shared direct-battle launcher after the guard.');
+const startBattleScenario = bodyOf('startBattleScenario');
+assert.match(startBattleScenario, /debugSingleEnemyId = enemyId \|\| ""/, 'Direct battle scenarios should store the direct enemy id.');
+assert.match(startBattleScenario, /trainedStage = debugSingleEnemyId \? stage : 0/, 'Direct elite battles should skip training and enter battle directly.');
 
 const debugEnemyIds = enemies.debugTargets.map((target) => target.enemyId).filter(Boolean);
 enemies.levelTypes.forEach((enemy) => {

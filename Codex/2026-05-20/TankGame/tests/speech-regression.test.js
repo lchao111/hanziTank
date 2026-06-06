@@ -75,6 +75,8 @@ assert.match(queueMissingHanziAudio, /existing\.attempts = \(existing\.attempts 
 
 const playCustomVoiceLine = bodyOf('playCustomVoiceLine');
 assert.match(playCustomVoiceLine, /new Audio\(src\)/, 'Custom voice lines should use browser audio playback.');
+assert.match(playCustomVoiceLine, /options\.shouldSpeak && !options\.shouldSpeak\(\)/, 'Custom voice lines should support stale-state guards before MP3 playback.');
+assert.match(playCustomVoiceLine, /options\.stopPrevious && activeCustomVoiceLineAudio/, 'Custom voice lines should be able to stop stale MP3 playback.');
 assert.match(playCustomVoiceLine, /audio\.onerror = useFallback/, 'Custom voice lines should fallback if the recording fails to load.');
 assert.match(playCustomVoiceLine, /playback\.catch/, 'Custom voice lines should fallback if browser playback is blocked.');
 assert.match(playCustomVoiceLine, /onMissing\?\.\(\)/, 'Custom voice line failures should report missing audio to the download queue.');
@@ -96,6 +98,7 @@ assert.match(speakBossPhrase, /queueChineseSpeech\(speechText, speechOptions\)/,
 
 const speakWord = bodyOf('speakWord');
 assert.match(speakWord, /const speechOptions = withLearningAudio\(\{ preserveMessage:\s*true, autoRetry:\s*true, delay:\s*80 \}\)/, 'Word speech should preserve prompts and retry TTS fallback.');
+assert.match(speakWord, /Object\.assign\(speechOptions, options\)/, 'Word speech should accept guarded playback options for mode-specific prompts.');
 assert.match(speakWord, /getHanziVoiceLine\(word\)/, 'Word speech should try offline Hanzi MP3 first.');
 assert.match(speakWord, /queueMissingHanziAudio\(word\)/, 'Missing custom Hanzi recordings should be added to the download queue.');
 assert.match(speakWord, /queueChineseSpeech\(getSpokenWordText\(word\), speechOptions\)/, 'Custom Hanzi recording failures should fallback to the normal word TTS queue.');

@@ -1,0 +1,87 @@
+{
+  "status": "interim-derived-bitmap-pending-final-generation",
+  "generatedBitmapAssets": false,
+  "reason": "Built-in image generation was not exposed in this sandbox; this package is deterministic interim raster art for runtime wiring and QC only.",
+  "created": "2026-05-30",
+  "truckSpritesheet": {
+    "path": "assets/sprites/enemies/self-destruct-truck-interim-spritesheet.png",
+    "frameWidth": 469,
+    "frameHeight": 300,
+    "columns": 6,
+    "rows": 5,
+    "width": 2814,
+    "height": 1500,
+    "nonTransparentPixels": 1158271,
+    "edgeTouch": false,
+    "frames": {
+      "idle": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "reloadWarning": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "charge": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "hitSmokeJolt": [
+        18,
+        19,
+        20
+      ],
+      "explosionWindup": [
+        21,
+        22,
+        23
+      ],
+      "destroyed": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29
+      ]
+    }
+  },
+  "explosionSpritesheet": {
+    "path": "assets/sprites/effects/self-destruct-truck-explosion-interim-spritesheet.png",
+    "frameWidth": 320,
+    "frameHeight": 192,
+    "columns": 4,
+    "rows": 2,
+    "width": 1280,
+    "height": 384,
+    "nonTransparentPixels": 111057,
+    "edgeTouch": false,
+    "effectFrames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ]
+  },
+  "galleryPreview": {
+    "path": "assets/sprites/enemies/gallery/self-destruct-truck-interim-preview.png",
+    "width": 256,
+    "height": 192
+  }
+}

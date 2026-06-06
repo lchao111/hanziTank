@@ -94,6 +94,74 @@
     return safeOptions[safeOptions.length - 1];
   }
 
+  function getAntiAirFlightDuration(score = 0, options = {}) {
+    const startMs = Math.max(1000, Number(options.startMs) || 7000);
+    return startMs;
+  }
+
+  function getAntiAirPlaneCount(waveNumber = 1, options = {}) {
+    const baseCount = Math.max(1, Number(options.baseCount) || 4);
+    const addEvery = Math.max(1, Number(options.addEvery) || 5);
+    const safeWave = Math.max(1, Math.floor(Number(waveNumber) || 1));
+    return baseCount + Math.floor((safeWave - 1) / addEvery);
+  }
+
+  function getAntiAirHeadingDeg(path) {
+    const deltaX = Number(path.endXPercent) - Number(path.startXPercent);
+    const deltaY = Number(path.endYPercent) - Number(path.startYPercent);
+    if (!Number.isFinite(deltaX) || !Number.isFinite(deltaY)) return 0;
+    return Math.round(Math.atan2(deltaY, deltaX) * 180 / Math.PI);
+  }
+
+  function createAntiAirWave(config = {}) {
+    const safeWords = Array.isArray(config.words) ? config.words.filter((word) => word?.hanzi) : [];
+    const random = typeof config.random === "function" ? config.random : Math.random;
+    const currentHanzi = config.currentHanzi || "";
+    const candidates = safeWords.filter((word) => word.hanzi !== currentHanzi);
+    const target = pickWeightedWord(candidates, config.correctBank, config.runCorrectCounts, random) || candidates[0] || safeWords[0] || null;
+    if (!target) return { target: null, planes: [], flightDurationMs: getAntiAirFlightDuration(config.score) };
+    const planeCount = Math.min(safeWords.length, getAntiAirPlaneCount(config.waveNumber));
+
+    const uniqueByHanzi = new Map();
+    uniqueByHanzi.set(target.hanzi, target);
+    shuffleList(candidates.filter((word) => word.hanzi !== target.hanzi), random).forEach((word) => {
+      if (uniqueByHanzi.size < planeCount) uniqueByHanzi.set(word.hanzi, word);
+    });
+    shuffleList(safeWords.filter((word) => !uniqueByHanzi.has(word.hanzi)), random).forEach((word) => {
+      if (uniqueByHanzi.size < planeCount) uniqueByHanzi.set(word.hanzi, word);
+    });
+
+    const layout = [
+      { startXPercent: 112, startYPercent: 18, endXPercent: -18, endYPercent: 54, xOffsetPercent: 0, launchDelayMs: 0 },
+      { startXPercent: -20, startYPercent: 34, endXPercent: 112, endYPercent: 14, xOffsetPercent: 4, launchDelayMs: 170 },
+      { startXPercent: 94, startYPercent: -18, endXPercent: 18, endYPercent: 82, xOffsetPercent: -5, launchDelayMs: 330 },
+      { startXPercent: -16, startYPercent: 82, endXPercent: 102, endYPercent: 44, xOffsetPercent: 8, launchDelayMs: 520 },
+      { startXPercent: 42, startYPercent: -22, endXPercent: 76, endYPercent: 112, xOffsetPercent: -8, launchDelayMs: 690 },
+      { startXPercent: 118, startYPercent: 70, endXPercent: -22, endYPercent: 22, xOffsetPercent: 12, launchDelayMs: 860 },
+      { startXPercent: -24, startYPercent: 12, endXPercent: 86, endYPercent: 92, xOffsetPercent: -12, launchDelayMs: 1030 },
+      { startXPercent: 66, startYPercent: 116, endXPercent: 22, endYPercent: -20, xOffsetPercent: 6, launchDelayMs: 1200 }
+    ];
+
+    const planeWords = shuffleList([...uniqueByHanzi.values()], random).slice(0, planeCount);
+    return {
+      target,
+      flightDurationMs: getAntiAirFlightDuration(config.score),
+      planes: planeWords.map((word, index) => ({
+        id: `aa-${index + 1}-${word.hanzi}`,
+        word,
+        isTarget: word.hanzi === target.hanzi,
+        ...layout[index % layout.length],
+        xOffsetPercent: layout[index % layout.length].xOffsetPercent + Math.floor(index / layout.length) * 6,
+        launchDelayMs: layout[index % layout.length].launchDelayMs + Math.floor(index / layout.length) * 150,
+        headingDeg: getAntiAirHeadingDeg(layout[index % layout.length])
+      }))
+    };
+  }
+
+  function applyAntiAirMiss(lives) {
+    return Math.max(0, Math.floor(Number(lives) || 0) - 1);
+  }
+
   return {
     shuffleList,
     getBossPhraseOptions,
@@ -104,6 +172,10 @@
     getPracticeBucket,
     getSpacedRepetitionWeight,
     getWordWeight,
-    pickWeightedWord
+    pickWeightedWord,
+    getAntiAirFlightDuration,
+    getAntiAirPlaneCount,
+    createAntiAirWave,
+    applyAntiAirMiss
   };
 });

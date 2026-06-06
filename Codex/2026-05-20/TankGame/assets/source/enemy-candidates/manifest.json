@@ -1,14 +1,18 @@
 {
-  "status": "interim-gallery-bitmap-previews-generated",
+  "status": "interim-runtime-bitmap-assets-generated",
   "generatedBitmapAssets": false,
   "interimGalleryBitmapAssets": true,
+  "interimRuntimeBitmapAssets": true,
   "fallbackPolicy": "Use existing project SVGs only as temporary battlefield fallbacks until reviewed transparent PNG spritesheets are generated. Enemy Gallery card art and gallery previews must use the interim PNG assets below, not SVG fallback art.",
   "candidates": [
     {
       "id": "truck",
       "promptSpec": "self-destruct-truck-spritesheet.prompt.md",
+      "interimRuntimeSpritesheet": "assets/sprites/enemies/self-destruct-truck-interim-spritesheet.png",
+      "interimExplosionSpritesheet": "assets/sprites/effects/self-destruct-truck-explosion-interim-spritesheet.png",
+      "interimPipelineMeta": "assets/source/enemy-candidates/self-destruct-truck-interim-pipeline-meta.json",
       "interimGalleryPreview": "assets/sprites/enemies/gallery/self-destruct-truck-interim-preview.png",
-      "interimGallerySpritesheet": "assets/sprites/enemies/gallery/self-destruct-truck-interim-spritesheet.png",
+      "interimGallerySpritesheet": "assets/sprites/enemies/self-destruct-truck-interim-spritesheet.png",
       "fallback": "assets/enemy-suicide-truck.svg"
     },
     {
@@ -23,6 +27,20 @@
       "promptSpec": "drone-swarm-spritesheet.prompt.md",
       "interimGalleryPreview": "assets/sprites/enemies/gallery/drone-swarm-interim-preview.png",
       "interimGallerySpritesheet": "assets/sprites/enemies/gallery/drone-swarm-interim-spritesheet.png",
+      "fallback": "assets/enemy-scout.svg"
+    },
+    {
+      "id": "droneSwarmBoss",
+      "promptSpec": "drone-swarm-boss-spritesheet.prompt.md",
+      "interimRuntimePreview": "assets/sprites/enemies/drone-swarm-boss-interim-preview.png",
+      "interimRuntimeSpritesheet": "assets/sprites/enemies/drone-swarm-boss-interim-spritesheet.png",
+      "interimDroneVariantPreviews": [
+        "assets/sprites/enemies/drone-swarm-boss-drone-1.png",
+        "assets/sprites/enemies/drone-swarm-boss-drone-2.png",
+        "assets/sprites/enemies/drone-swarm-boss-drone-3.png",
+        "assets/sprites/enemies/drone-swarm-boss-drone-4.png",
+        "assets/sprites/enemies/drone-swarm-boss-drone-5.png"
+      ],
       "fallback": "assets/enemy-scout.svg"
     },
     {

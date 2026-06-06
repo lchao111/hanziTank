@@ -1,0 +1,21 @@
+Self-Destruct Truck interim runtime spritesheet and explosion VFX provenance
+
+Status: interim-derived bitmap assets, pending final model-generated or imported production art.
+Created: 2026-05-30.
+
+Files:
+- assets/sprites/enemies/self-destruct-truck-interim-spritesheet.png
+- assets/sprites/effects/self-destruct-truck-explosion-interim-spritesheet.png
+- assets/sprites/enemies/gallery/self-destruct-truck-interim-preview.png
+- assets/source/enemy-candidates/self-destruct-truck-interim-pipeline-meta.json
+- tools/generate-self-destruct-truck-interim-assets.ps1
+
+Source/provenance:
+- Deterministically drawn raster interim assets generated locally with System.Drawing.
+- No third-party trademarked, political, flag, gore, or real-world symbol content is included.
+- These assets are project-owned interim derivatives for Hanzi Tank gameplay wiring and regression coverage.
+- Built-in AI image generation was unavailable in the sandbox, so these assets must not be represented as final generated/imported production art.
+
+Replacement path:
+- Use assets/source/enemy-candidates/self-destruct-truck-spritesheet.prompt.md to generate or import final hand-painted transparent PNG art.
+- Preserve the runtime id `truck`, 469x300 frame size, 5x6 body sheet mapping, and separate 320x192 2x4 explosion VFX mapping unless integration metadata is updated with tests.

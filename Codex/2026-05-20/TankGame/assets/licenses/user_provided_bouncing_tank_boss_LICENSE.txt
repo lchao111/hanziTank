@@ -1,0 +1,8 @@
+Bouncing Tank Boss animation sheet
+
+Source file: C:\Users\chlia\Downloads\Gemini_Generated_Image_q7b6iaq7b6iaq7b6.png
+Project source copy: assets/source/enemy-candidates/bouncing-tank-boss-reference.png
+
+Provided by the project owner for use in this TankGame project.
+Processed locally to remove the green-screen background, normalize Phaser frame cells,
+and export a 256x192 Enemy Gallery preview.

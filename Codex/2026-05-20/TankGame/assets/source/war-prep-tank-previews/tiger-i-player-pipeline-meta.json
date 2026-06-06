@@ -1,0 +1,663 @@
+{
+  "id": "tiger-i-player-tank-spritesheet",
+  "generatedOn": "2026-05-30",
+  "processing": "Copied user-provided Tiger1.png into project source, chroma-keyed green background, despilled green edges, resized each logical grid frame into stable Phaser frames, and cleared a one-pixel transparent border around each fixed frame to remove scaled grid-edge residue. No generated or procedural creative art was added.",
+  "source": {
+    "originalInput": "C:\\Users\\chlia\\Downloads\\Tiger1.png",
+    "projectCopy": "assets/source/war-prep-tank-previews/tiger-i-player-reference.png",
+    "sha256": "1DABB48335DB353E642D53BB11E33E5BD965852EAF8553C0BCD1C1FA0ED9E4E9",
+    "width": 2816,
+    "height": 1504,
+    "logicalColumns": 6,
+    "logicalRows": 5,
+    "logicalCellWidth": 469.3333333333333,
+    "logicalCellHeight": 300.8,
+    "sourceFrameRects": [
+      {
+        "frame": 0,
+        "x": 0,
+        "y": 0,
+        "width": 469,
+        "height": 301
+      },
+      {
+        "frame": 1,
+        "x": 469,
+        "y": 0,
+        "width": 470,
+        "height": 301
+      },
+      {
+        "frame": 2,
+        "x": 939,
+        "y": 0,
+        "width": 469,
+        "height": 301
+      },
+      {
+        "frame": 3,
+        "x": 1408,
+        "y": 0,
+        "width": 469,
+        "height": 301
+      },
+      {
+        "frame": 4,
+        "x": 1877,
+        "y": 0,
+        "width": 470,
+        "height": 301
+      },
+      {
+        "frame": 5,
+        "x": 2347,
+        "y": 0,
+        "width": 469,
+        "height": 301
+      },
+      {
+        "frame": 6,
+        "x": 0,
+        "y": 301,
+        "width": 469,
+        "height": 301
+      },
+      {
+        "frame": 7,
+        "x": 469,
+        "y": 301,
+        "width": 470,
+        "height": 301
+      },
+      {
+        "frame": 8,
+        "x": 939,
+        "y": 301,
+        "width": 469,
+        "height": 301
+      },
+      {
+        "frame": 9,
+        "x": 1408,
+        "y": 301,
+        "width": 469,
+        "height": 301
+      },
+      {
+        "frame": 10,
+        "x": 1877,
+        "y": 301,
+        "width": 470,
+        "height": 301
+      },
+      {
+        "frame": 11,
+        "x": 2347,
+        "y": 301,
+        "width": 469,
+        "height": 301
+      },
+      {
+        "frame": 12,
+        "x": 0,
+        "y": 602,
+        "width": 469,
+        "height": 300
+      },
+      {
+        "frame": 13,
+        "x": 469,
+        "y": 602,
+        "width": 470,
+        "height": 300
+      },
+      {
+        "frame": 14,
+        "x": 939,
+        "y": 602,
+        "width": 469,
+        "height": 300
+      },
+      {
+        "frame": 15,
+        "x": 1408,
+        "y": 602,
+        "width": 469,
+        "height": 300
+      },
+      {
+        "frame": 16,
+        "x": 1877,
+        "y": 602,
+        "width": 470,
+        "height": 300
+      },
+      {
+        "frame": 17,
+        "x": 2347,
+        "y": 602,
+        "width": 469,
+        "height": 300
+      },
+      {
+        "frame": 18,
+        "x": 0,
+        "y": 902,
+        "width": 469,
+        "height": 301
+      },
+      {
+        "frame": 19,
+        "x": 469,
+        "y": 902,
+        "width": 470,
+        "height": 301
+      },
+      {
+        "frame": 20,
+        "x": 939,
+        "y": 902,
+        "width": 469,
+        "height": 301
+      },
+      {
+        "frame": 21,
+        "x": 1408,
+        "y": 902,
+        "width": 469,
+        "height": 301
+      },
+      {
+        "frame": 22,
+        "x": 1877,
+        "y": 902,
+        "width": 470,
+        "height": 301
+      },
+      {
+        "frame": 23,
+        "x": 2347,
+        "y": 902,
+        "width": 469,
+        "height": 301
+      },
+      {
+        "frame": 24,
+        "x": 0,
+        "y": 1203,
+        "width": 469,
+        "height": 301
+      },
+      {
+        "frame": 25,
+        "x": 469,
+        "y": 1203,
+        "width": 470,
+        "height": 301
+      },
+      {
+        "frame": 26,
+        "x": 939,
+        "y": 1203,
+        "width": 469,
+        "height": 301
+      },
+      {
+        "frame": 27,
+        "x": 1408,
+        "y": 1203,
+        "width": 469,
+        "height": 301
+      },
+      {
+        "frame": 28,
+        "x": 1877,
+        "y": 1203,
+        "width": 470,
+        "height": 301
+      },
+      {
+        "frame": 29,
+        "x": 2347,
+        "y": 1203,
+        "width": 469,
+        "height": 301
+      }
+    ]
+  },
+  "output": {
+    "path": "assets/sprites/tanks/tiger-i-player-tank-spritesheet.png",
+    "sha256": "D0D0198AE7E05AA42AC3E7A86F1820A76EF9E34B7CCC9F92F6A4BAA4CCBA7CD1",
+    "width": 1344,
+    "height": 720,
+    "columns": 6,
+    "rows": 5,
+    "frameWidth": 224,
+    "frameHeight": 144
+  },
+  "frameRanges": {
+    "idle": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "fire": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "heavyFire": [
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+    ],
+    "hit": [
+      18,
+      19,
+      20,
+      21,
+      22,
+      23
+    ],
+    "weak": [
+      18,
+      19,
+      20,
+      21,
+      22,
+      23
+    ],
+    "destroyed": [
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+    ]
+  },
+  "qc": {
+    "transparentCornerAlpha": {
+      "topLeft": 0,
+      "topRight": 0,
+      "bottomLeft": 0,
+      "bottomRight": 0
+    },
+    "greenResiduePixels": 0,
+    "finalGreenResiduePixelsRemoved": 21,
+    "edgeTouchFrames": [],
+    "frameQc": [
+      {
+        "frame": 0,
+        "visiblePixels": 9558,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 1,
+        "visiblePixels": 9517,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 2,
+        "visiblePixels": 9528,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 3,
+        "visiblePixels": 9590,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 4,
+        "visiblePixels": 9798,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 5,
+        "visiblePixels": 9550,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 6,
+        "visiblePixels": 9602,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 7,
+        "visiblePixels": 9986,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 8,
+        "visiblePixels": 11030,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 9,
+        "visiblePixels": 12702,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 10,
+        "visiblePixels": 13018,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 11,
+        "visiblePixels": 9650,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 12,
+        "visiblePixels": 9646,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 13,
+        "visiblePixels": 11620,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 14,
+        "visiblePixels": 12905,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 15,
+        "visiblePixels": 14351,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 16,
+        "visiblePixels": 16175,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 17,
+        "visiblePixels": 11008,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 18,
+        "visiblePixels": 9596,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 19,
+        "visiblePixels": 9860,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 20,
+        "visiblePixels": 9600,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 21,
+        "visiblePixels": 10473,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 22,
+        "visiblePixels": 12524,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 23,
+        "visiblePixels": 10641,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 24,
+        "visiblePixels": 12256,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 25,
+        "visiblePixels": 17315,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 26,
+        "visiblePixels": 15446,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 27,
+        "visiblePixels": 17187,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 28,
+        "visiblePixels": 15538,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      },
+      {
+        "frame": 29,
+        "visiblePixels": 10352,
+        "touchesEdge": false,
+        "greenResiduePixels": 0
+      }
+    ],
+    "chromaStats": [
+      {
+        "frame": 0,
+        "transparentPixels": 100836,
+        "despilledPixels": 72,
+        "visiblePixels": 40333
+      },
+      {
+        "frame": 1,
+        "transparentPixels": 101294,
+        "despilledPixels": 80,
+        "visiblePixels": 40176
+      },
+      {
+        "frame": 2,
+        "transparentPixels": 100981,
+        "despilledPixels": 126,
+        "visiblePixels": 40188
+      },
+      {
+        "frame": 3,
+        "transparentPixels": 100817,
+        "despilledPixels": 74,
+        "visiblePixels": 40352
+      },
+      {
+        "frame": 4,
+        "transparentPixels": 100093,
+        "despilledPixels": 119,
+        "visiblePixels": 41377
+      },
+      {
+        "frame": 5,
+        "transparentPixels": 100940,
+        "despilledPixels": 99,
+        "visiblePixels": 40229
+      },
+      {
+        "frame": 6,
+        "transparentPixels": 100491,
+        "despilledPixels": 62,
+        "visiblePixels": 40678
+      },
+      {
+        "frame": 7,
+        "transparentPixels": 99131,
+        "despilledPixels": 59,
+        "visiblePixels": 42339
+      },
+      {
+        "frame": 8,
+        "transparentPixels": 94467,
+        "despilledPixels": 320,
+        "visiblePixels": 46702
+      },
+      {
+        "frame": 9,
+        "transparentPixels": 87096,
+        "despilledPixels": 315,
+        "visiblePixels": 54073
+      },
+      {
+        "frame": 10,
+        "transparentPixels": 85923,
+        "despilledPixels": 727,
+        "visiblePixels": 55547
+      },
+      {
+        "frame": 11,
+        "transparentPixels": 100364,
+        "despilledPixels": 138,
+        "visiblePixels": 40805
+      },
+      {
+        "frame": 12,
+        "transparentPixels": 100024,
+        "despilledPixels": 111,
+        "visiblePixels": 40676
+      },
+      {
+        "frame": 13,
+        "transparentPixels": 91816,
+        "despilledPixels": 160,
+        "visiblePixels": 49184
+      },
+      {
+        "frame": 14,
+        "transparentPixels": 85884,
+        "despilledPixels": 331,
+        "visiblePixels": 54816
+      },
+      {
+        "frame": 15,
+        "transparentPixels": 79429,
+        "despilledPixels": 117,
+        "visiblePixels": 61271
+      },
+      {
+        "frame": 16,
+        "transparentPixels": 70987,
+        "despilledPixels": 396,
+        "visiblePixels": 70013
+      },
+      {
+        "frame": 17,
+        "transparentPixels": 94427,
+        "despilledPixels": 903,
+        "visiblePixels": 46273
+      },
+      {
+        "frame": 18,
+        "transparentPixels": 100552,
+        "despilledPixels": 174,
+        "visiblePixels": 40617
+      },
+      {
+        "frame": 19,
+        "transparentPixels": 99371,
+        "despilledPixels": 155,
+        "visiblePixels": 42099
+      },
+      {
+        "frame": 20,
+        "transparentPixels": 100774,
+        "despilledPixels": 219,
+        "visiblePixels": 40395
+      },
+      {
+        "frame": 21,
+        "transparentPixels": 96995,
+        "despilledPixels": 212,
+        "visiblePixels": 44174
+      },
+      {
+        "frame": 22,
+        "transparentPixels": 87857,
+        "despilledPixels": 349,
+        "visiblePixels": 53613
+      },
+      {
+        "frame": 23,
+        "transparentPixels": 96192,
+        "despilledPixels": 785,
+        "visiblePixels": 44977
+      },
+      {
+        "frame": 24,
+        "transparentPixels": 88779,
+        "despilledPixels": 220,
+        "visiblePixels": 52390
+      },
+      {
+        "frame": 25,
+        "transparentPixels": 66394,
+        "despilledPixels": 244,
+        "visiblePixels": 75076
+      },
+      {
+        "frame": 26,
+        "transparentPixels": 75415,
+        "despilledPixels": 421,
+        "visiblePixels": 65754
+      },
+      {
+        "frame": 27,
+        "transparentPixels": 67859,
+        "despilledPixels": 345,
+        "visiblePixels": 73310
+      },
+      {
+        "frame": 28,
+        "transparentPixels": 74480,
+        "despilledPixels": 181,
+        "visiblePixels": 66990
+      },
+      {
+        "frame": 29,
+        "transparentPixels": 97825,
+        "despilledPixels": 372,
+        "visiblePixels": 43344
+      }
+    ]
+  }
+}
